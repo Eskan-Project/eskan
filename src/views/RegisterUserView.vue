@@ -12,6 +12,6 @@ export default {
 
 <template >
 
-    <register-form :actionlink="actionlink"></register-form>
+    <register-form title="Register User" :actionlink="actionlink"></register-form>
     
 </template>
