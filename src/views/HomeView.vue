@@ -143,7 +143,9 @@
     <!-- Latest Properties Section -->
     <section class="py-16">
       <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-6">Latest Properties for Rent</h2>
+        <h2 class="text-3xl font-bold mb-6 text-[#364365]">
+          Latest Properties for Rent
+        </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <PropertyCard
             v-for="(property, index) in properties"
@@ -214,6 +216,11 @@
 import ContactUsHomePage from "../assets/images/ContactUsHomePage.jpg";
 import PropertyCard from "@/components/PropertyCard.vue";
 import heroSection from "../assets/images/heroSection.jpg";
+import propertyImage from "@/assets/images/department.png";
+import propertyImage1 from "@/assets/images/department.jpg";
+import propertyImage2 from "@/assets/images/department2.jpg";
+import propertyImage3 from "@/assets/images/department3.jpg";
+import propertyImage4 from "@/assets/images/department4.jpg";
 export default {
   components: { PropertyCard },
   data() {
@@ -228,6 +235,7 @@ export default {
           size: "150",
           rooms: "3",
           units: "10",
+          image: propertyImage1,
         },
         {
           title: "Luxury Condo",
@@ -236,6 +244,7 @@ export default {
           size: "180",
           rooms: "4",
           units: "5",
+          image: propertyImage2,
         },
         {
           title: "Apartment for sale",
@@ -244,6 +253,7 @@ export default {
           size: "150",
           rooms: "3",
           units: "10",
+          image: propertyImage3,
         },
         {
           title: "Apartment for sale",
@@ -252,6 +262,7 @@ export default {
           size: "150",
           rooms: "3",
           units: "10",
+          image: propertyImage4,
         },
         {
           title: "Luxury Condo",
@@ -260,6 +271,7 @@ export default {
           size: "180",
           rooms: "4",
           units: "5",
+          image: propertyImage1,
         },
         {
           title: "Apartment for sale",
@@ -268,6 +280,7 @@ export default {
           size: "150",
           rooms: "3",
           units: "10",
+          image: propertyImage2,
         },
       ],
     };
