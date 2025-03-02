@@ -109,12 +109,12 @@
 
 <script>
 import PropertyCard from "@/components/PropertyCard.vue";
-// import propertiesBg from "@/assets/images/properties.png";
-// import propertyImage from "@/assets/images/department.png";
-// import propertyImage1 from "@/assets/images/department.jpg";
-// import propertyImage2 from "@/assets/images/department2.jpg";
-// import propertyImage3 from "@/assets/images/department3.jpg";
-// import propertyImage4 from "@/assets/images/department4.jpg";
+import propertiesBg from "@/assets/images/properties.png";
+import propertyImage from "@/assets/images/department.png";
+import propertyImage1 from "@/assets/images/department.jpg";
+import propertyImage2 from "@/assets/images/department2.jpg";
+import propertyImage3 from "@/assets/images/department3.jpg";
+import propertyImage4 from "@/assets/images/department4.jpg";
 
 export default {
   components: { PropertyCard },
