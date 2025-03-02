@@ -1,7 +1,7 @@
 <template>
   <header
     :class="[
-      'fixed top-0 w-full transition-all px-3 bg-[var(--secondary-color)]',
+      'fixed top-0 w-full transition-all px-3 bg-[var(--secondary-color)] z-20',
       { 'shadow-lg': isSticky },
     ]"
   >
