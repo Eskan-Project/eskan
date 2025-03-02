@@ -1,9 +1,18 @@
 <template>
-  <div class="md:p-5  flex justify-center align-middle">
-    <div class="container bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 h-screen">
-      <div class="main-text p-8 rounded-l-xl">
+  <div class="md:p-5 flex justify-center align-middle ">
+    <div
+      class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 "
+    >
+      <div class="img-container hidden md:block p-5 relative rounded-l-xl">
+        <img src="@/assets/images/logo-black.png" class="bg-white w-30" />
+        <img
+          class="rounded-r-xl absolute bottom-0 left-0"
+          src="@/assets/images/login/register.png"
+        />
+      </div>
+      <div class="main-text p-8 rounded-xl bg-white">
         <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
-          Welcome Back
+          Register Now
         </h1>
         <form action="">
           <div class="mb-6">
@@ -34,35 +43,65 @@
               type="password"
               id="password"
               name="password"
-              class=" border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
+              class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
               required
             />
-            <i class="bi bi-eye-fill text-black  absolute right-0"></i>
-            <a class="text-[#364365] text-xs text-right pt-2 cursor-pointer block">
-              Forget Your Password?
-            </a>
+            <i class="bi bi-eye-fill text-black absolute right-0"></i>
           </div>
-          <div class="p-5">
-            <button
-              type="submit"
-              class="cursor-pointer shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-2 hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg"
+          <div class="mb-6">
+            <label for="password" class="text-sm text-[#364365]"
+              >Confirm Password</label
             >
-              Sign In
-            </button>
+            <input
+              type="password"
+              name="password"
+              class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
+              required
+            />
           </div>
+          <div class=" text-center text-black">
+            <p class=" font-medium p-2">please upload your ID </p>
+            <div class="border-1 border-stone-400 border-dashed p-5 mx-10 ">
+              <label for="file"> <i class="bi bi-cloud-upload text-5xl text-stone-400 cursor-pointer"></i>
+              <p>Drag &amp; drop files or <span class="font-bold text-[#364365] cursor-pointer underline decoration-2">Browse</span></p>
+              </label>
+              <input type="file" id="file" class="hidden" />
+              <p class="p-5 text-sm text-stone-400"> support JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT</p>
+              
+            </div>
+   
+          </div>
+          <button
+            type="submit"
+            class="cursor-pointer shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-2 hover:border-[#364365] text-white text-sm py-2 my-5"
+          >
+            Create Account
+          </button>
         </form>
         <div>
+          <p class="text-black text-xs">
+            Already have an accoun?
+            <a
+              class="text-blue-500 hover:text-blue-600 cursor-pointer"
+              @click.prevent="
+                $router.push({
+                  name: 'login',
+                })
+              "
+              >Log In</a
+            >
+          </p>
           <div
             class="text-[#364365] font-medium text-sm flex justify-center align-baseline gap-2 my-4 text-center"
           >
             <span class="border-b-1 w-20 self-center"></span>
-            <p>Or sign in with</p>
+            <p>Or sign Up with</p>
             <span class="border-b-1 w-20 self-center"></span>
           </div>
-          <div class="logs ">
+          <div class="logs">
             <div class="flex justify-center align-center gap-2 p-5">
               <button
-                class=" cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -126,26 +165,11 @@
                 twitter
               </button>
             </div>
-            <p class="text-black text-xs text-center">
-              Don't have an account?
-              <a class="text-blue-500 hover:text-blue-600  cursor-pointer" @click.prevent="$router.push({
-                name:'register'
-              })">Sign Up</a>
-              
-            </p>
           </div>
         </div>
-      </div>
-      <div class="img-container hidden md:block">
-        <img
-          class="w-full h-full rounded-r-xl"
-          src="@/assets/images/login/login.png"
-        />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-</script>
-
+<script></script>
