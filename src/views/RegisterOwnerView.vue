@@ -1,7 +1,7 @@
 <script>
 import registerForm from '../components/registerForm.vue'
 export default {
-   components:{registerForm},  
+    components:{registerForm},  
     data(){
         return{
             actionlink: 'link'

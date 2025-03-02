@@ -5,7 +5,7 @@
       <div class="relative z-10 flex justify-center items-center h-full w-full max-w-4xl text-gray-500 mx-auto p-4">
         <div class="bg-white  rounded-lg px-2 py-2 shadow-lg w-full flex flex-wrap md:flex-nowrap gap-3 md:gap-2 lg:gap-4 justify-center md:justify-between items-center">
           <input type="text" placeholder="🔍 Search by keyword" class="border px-2 py-2 rounded-md w-full text-sm block md:hidden">
-          <div class="w-full md:flex md:flex-wrap lg:flex-nowrap gap-2 md:gap-2 lg:gap-4 hidden md:flex">
+          <div class="w-full md:flex md:flex-wrap lg:flex-nowrap gap-2 md:gap-2 lg:gap-4 hidden ">
             <select class="hover:bg-gray-500 hover:text-white  hover:shadow-lg hover:rounded-md p-2  rounded-md text-sm w-full md:w-1/5 lg:w-auto">
               <option disabled selected>📍 Location</option>
               <option>🗽 New York</option>
