@@ -1,6 +1,6 @@
 <template>
-  <div class="md:p-5 flex justify-center align-middle">
-    <div class=" bg-white rounded-xl  w-screen text-black">
+  <div class="md:p-20 flex justify-center align-middle">
+    <div class=" bg-white rounded-xl  w-screen text-black lg:w-[60vw] ">
       <img src="@/assets/images/logo-black.png" class="block mx-auto" />
       <p class='md:text-3xl text-lg text-stone-500 text-center '>
         Welcome to ESKAN! <br />

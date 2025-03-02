@@ -1,6 +1,6 @@
 <template>
-  <div class="md:p-5  flex justify-center align-middle">
-    <div class="container bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 h-screen">
+  <div class="md:p-20  flex justify-center h-screen md:h-[auto]  ">
+    <div class=" bg-white rounded-xl grid md:grid-cols-2 grid-cols-1  lg:w-[60vw] ">
       <div class="main-text p-8 rounded-l-xl">
         <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
           Welcome Back

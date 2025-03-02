@@ -1,7 +1,7 @@
 <template>
-  <div class="md:p-5 flex justify-center align-middle ">
+  <div class="md:p-5 flex justify-center align-middle  ">
     <div
-      class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 "
+      class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 lg:w-[75vw]  "
     >
       <div class="img-container hidden md:block p-5 relative rounded-l-xl">
         <img src="@/assets/images/logo-black.png" class="bg-white w-30" />
