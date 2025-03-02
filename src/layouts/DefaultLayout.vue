@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import NavbarBase from "@/components/NavbarBase.vue";
-import FooterBase from "@/components/FooterBase.vue";
+import NavbarBase from "@/components/navbar/NavbarBase.vue";
+import FooterBase from "@/components/footer/FooterBase.vue";
 
 export default {
   components: {
