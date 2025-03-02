@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 @import "tailwindcss";
 :root {
-  --primary-color: #dfdfe2;
+  --primary-color: #f1f5ff;
   --secondary-color: #364365;
   --text-color: white;
   margin: 0;
@@ -13,5 +13,6 @@
 
 body {
   background-color: var(--primary-color);
+  /* background-color: #f1f5ff; */
   color: var(--text-color);
 }
