@@ -5,7 +5,7 @@ import ContactView from "@/views/ContactView.vue";
 import HomeView from "@/views/HomeView.vue";
 import PropertiesView from "@/views/PropertiesView.vue";
 // import LoginView from "@/views/LoginView.vue";
-// import AdminDashboardView from '@/views/AdminDashboardView.vue';
+import AdminDashboardView from "@/views/AdminDashboardView.vue";
 import PropertyItemView from "@/views/PropertyItemView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
 import CreatePropertyView from "@/views/CreatePropertyView.vue";
@@ -78,11 +78,6 @@ const routes = [
     path: "/register-owner",
     name: "registerOwner",
     component: () => import("@/views/RegisterOwnerView.vue"),
-  },
-  {
-    path: "/admin",
-    name: "admin",
-    component: () => import("@/views/AdminDashboardView.vue"),
   },
 
   /**

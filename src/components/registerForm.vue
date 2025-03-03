@@ -16,7 +16,7 @@ export default {
 </script>
 
 <template>
-  <div class="md:p-10 flex justify-center align-middle mt-10">
+  <div class="md:p-10 flex justify-center align-middle ">
     <div
       class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 lg:w-[75vw]"
     >

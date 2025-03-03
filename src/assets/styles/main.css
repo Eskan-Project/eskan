@@ -16,3 +16,7 @@ body {
   /* background-color: #f1f5ff; */
   color: var(--text-color);
 }
+
+button {
+  cursor: pointer;
+}
