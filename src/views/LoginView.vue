@@ -1,5 +1,4 @@
 <template>
-  <navbar-base></navbar-base>
   <div class="md:p-20 mt-20 flex justify-center h-screen md:h-[auto]">
     <div
       class="bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 lg:w-[60vw]"
@@ -109,12 +108,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import NavbarBase from "@/components/navbar/NavbarBase.vue";
-export default {
-  components: {
-    NavbarBase,
-  },
-};
-</script>

@@ -1,9 +1,5 @@
 <script>
-import NavbarBaseVue from "./navbar/NavbarBase.vue";
 export default {
-  components: {
-    NavbarBaseVue,
-  },
   props: {
     actionlink: {
       type: String,
@@ -14,14 +10,13 @@ export default {
     },
     title: {
       type: String,
-    }
+    },
   },
 };
 </script>
 
 <template>
-  <navbar-base-vue></navbar-base-vue>
-  <div class="md:p-10 flex justify-center align-middle mt-15">
+  <div class="md:p-10 flex justify-center align-middle mt-10">
     <div
       class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 lg:w-[75vw]"
     >
@@ -34,7 +29,7 @@ export default {
       </div>
       <div class="main-text p-8 rounded-r-xl bg-white">
         <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
-          {{title}}
+          {{ title }}
         </h1>
         <form :action="actionlink">
           <div class="mb-6">

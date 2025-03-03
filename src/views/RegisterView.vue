@@ -1,5 +1,4 @@
 <template>
-  <navbar-base></navbar-base>
   <div class="md:p-20 flex justify-center align-middle mt-20">
     <div class="bg-white rounded-xl w-screen text-black lg:w-[70vw] shadow-lg">
       <img src="@/assets/images/logo-black.png" class="block mx-auto" />
@@ -51,12 +50,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import NavbarBase from "@/components/navbar/NavbarBase.vue";
-export default {
-  components: {
-    NavbarBase,
-  },
-};
-</script>
