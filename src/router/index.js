@@ -18,7 +18,6 @@ const routes = [
       { path: "about", name: "About", component: AboutView },
       { path: "properties", name: "Properties", component: PropertiesView },
       { path: "contact", name: "Contact", component: ContactView },
-
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "userProfile", name: "userProfile", component: UserProfileView },
     ],
