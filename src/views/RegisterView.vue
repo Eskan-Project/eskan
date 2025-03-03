@@ -1,5 +1,5 @@
 <template>
-  <div class="md:p-20 flex justify-center align-middle mt-20">
+  <div class="md:p-10 flex justify-center align-middle ">
     <div class="bg-white rounded-xl w-screen text-black lg:w-[70vw] shadow-lg">
       <img src="@/assets/images/logo-black.png" class="block mx-auto" />
       <p class="md:text-3xl text-lg text-stone-500 text-center">

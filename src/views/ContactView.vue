@@ -8,7 +8,7 @@
               <img
                 src="@\assets\images\contact\contact-1.jpg"
                 alt="ContactUs tailwind section"
-                class="w-full h-full lg:rounded-l-2xl rounded-2xl bg-blend-multiply bg-indigo-700 object-cover md:block "
+                class="w-full h-full lg:rounded-l-2xl rounded-2xl object-cover md:block "
               />
               <h1
                 class="font-manrope text-white text-4xl font-bold leading-10 absolute top-11 left-11"
