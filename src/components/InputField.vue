@@ -9,7 +9,7 @@
     <template v-if="type === 'textarea'">
       <textarea
         v-model="inputValue"
-        class="text-black w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-blue-500 focus:ring-2 h-32 resize-none"
+        class="text-black w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
         :placeholder="placeholder"
         :required="required"
       ></textarea>

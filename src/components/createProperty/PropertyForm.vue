@@ -1,17 +1,21 @@
 <template>
-  <div class="w-[60vw] mx-auto p-6 bg-white shadow-md rounded-lg">
-    <h2 class="text-xl font-semibold mb-4">General Information</h2>
+  <div class="p-6 bg-white shadow-sm rounded-lg">
+    <h2 class="text-xl font-semibold mb-10 text-gray-700 text-center">
+      General Information
+    </h2>
 
-    <form class="grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div class="md:cols-span-3">
+    <form
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-6"
+    >
+      <div class="md:col-span-2 lg:col-span-3">
         <InputField
           v-model="formData.title"
           label="Title"
           required
-          class="w-90"
+          class="w-full md:w-[50%]"
         />
       </div>
-      <div class="md:col-span-3">
+      <div class="md:col-span-2 lg:col-span-3">
         <InputField
           v-model="formData.description"
           label="Description"
@@ -21,19 +25,19 @@
       </div>
       <InputField
         v-model="formData.rooms"
-        label="Number of Room"
+        label="Number of Rooms"
         type="number"
         required
       />
       <InputField
         v-model="formData.livingRooms"
-        label="Number of Living Room"
+        label="Number of Living Rooms"
         type="number"
         required
       />
       <InputField
         v-model="formData.bathrooms"
-        label="Number of Bathroom"
+        label="Number of Bathrooms"
         type="select"
         required
         :options="[
@@ -45,11 +49,11 @@
       <InputField v-model="formData.price" label="Price" required />
       <InputField
         v-model="formData.kitchens"
-        label="Number of Kitchen"
+        label="Number of Kitchens"
         type="number"
         required
       />
-      <InputField v-model="formData.area" label="Area M²" required />
+      <InputField v-model="formData.area" label="Area (M²)" required />
       <InputField v-model="formData.floor" label="Floor Location" required />
       <InputField
         v-model="formData.furnished"
@@ -68,7 +72,7 @@
         required
         :options="[
           { value: 'zero', label: 'Zero' },
-          { value: 'second-hand', label: 'Second hand' },
+          { value: 'second-hand', label: 'Second Hand' },
         ]"
       />
     </form>
