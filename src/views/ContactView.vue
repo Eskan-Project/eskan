@@ -118,7 +118,7 @@
 
             <textarea
               v-model="formData.message"
-              class="w-full h-24 text-gray-600 placeholder-gray-400 bg-transparent text-lg shadow-sm font-normal leading-7 rounded-xl border border-gray-200 focus:outline-none pl-4 mb-4"
+              class="resize-none w-full h-24 text-gray-600 placeholder-gray-400 bg-transparent text-lg shadow-sm font-normal leading-7 rounded-xl border border-gray-200 focus:outline-none pl-4 mb-4"
               placeholder="Message"
             ></textarea>
 
