@@ -84,6 +84,7 @@ const routes = [
     name: "registerOwner",
     component: () => import("@/views/RegisterOwnerView.vue"),
   },
+  { path: "/admin", name: "admin", component: AdminDashboardView },
 
   /**
    ********************************************************************************************
