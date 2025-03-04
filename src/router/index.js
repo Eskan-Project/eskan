@@ -8,6 +8,11 @@ import PropertiesView from "@/views/PropertiesView.vue";
 import AdminDashboardView from "@/views/AdminDashboardView.vue";
 import PropertyItemView from "@/views/PropertyItemView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
+import CreatePropertyView from "@/views/CreatePropertyView.vue";
+import PropertyDetails from "@/components/createProperty/PropertyDetails.vue";
+import PropertyPreview from "@/components/createProperty/PropertyPreview.vue";
+import PropertyContact from "@/components/createProperty/PropertyContact.vue";
+import Completed from "@/components/createProperty/Completed.vue";
 
 const routes = [
   {
@@ -18,8 +23,43 @@ const routes = [
       { path: "about", name: "About", component: AboutView },
       { path: "properties", name: "Properties", component: PropertiesView },
       { path: "contact", name: "Contact", component: ContactView },
-      { path: "admin", name: "admin", component: AdminDashboardView },
+      { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:id", component: PropertyItemView, props: true },
+      { path: "userProfile", name: "userProfile", component: UserProfileView },
+      {
+        path: "createProperty",
+        name: "createProperty",
+        component: CreatePropertyView,
+        children: [
+          {
+            path: "",
+            redirect: { name: "propertyDetails" },
+          },
+          {
+            path: "propertyDetails",
+            name: "propertyDetails",
+            component: PropertyDetails,
+            props: true,
+          },
+          {
+            path: "propertyPreview",
+            name: "propertyPreview",
+            component: PropertyPreview,
+            props: true,
+          },
+          {
+            path: "propertyContact",
+            name: "propertyContact",
+            component: PropertyContact,
+            props: true,
+          },
+          {
+            path: "completed",
+            name: "completed",
+            component: Completed,
+          },
+        ],
+      },
       { path: "userProfile", name: "userProfile", component: UserProfileView },
     ],
   },

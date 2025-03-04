@@ -37,8 +37,9 @@
         ></i>
 
         <!-- Login Button -->
-        <button @click="$router.push({ name: 'login' })"
-          class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer "
+        <button
+          @click="$router.push({ name: 'login' })"
+          class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           Log IN <i class="bi bi-box-arrow-in-right"></i>
         </button>

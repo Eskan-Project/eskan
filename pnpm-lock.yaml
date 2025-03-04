@@ -17,6 +17,9 @@ importers:
       bootstrap-icons:
         specifier: ^1.11.3
         version: 1.11.3
+      countries-and-timezones:
+        specifier: ^3.7.2
+        version: 3.7.2
       countup.js:
         specifier: ^2.8.0
         version: 2.8.0
@@ -29,6 +32,9 @@ importers:
       leaflet-routing-machine:
         specifier: ^3.2.12
         version: 3.2.12
+      swiper:
+        specifier: ^11.2.5
+        version: 11.2.5
       tailwindcss:
         specifier: ^4.0.9
         version: 4.0.9
@@ -667,6 +673,10 @@ packages:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
     engines: {node: '>=12.13'}
 
+  countries-and-timezones@3.7.2:
+    resolution: {integrity: sha512-BHAMt4pKb3U3r/mRfiIlVnDhRd8m6VC20gwCWtpZGZkSsjZmnMDKFnnjWYGWhBmypQAqcQILFJwmEhIgWGVTmw==}
+    engines: {node: '>=8.x', npm: '>=5.x'}
+
   countup.js@2.8.0:
     resolution: {integrity: sha512-f7xEhX0awl4NOElHulrl4XRfKoNH3rB+qfNSZZyjSZhaAoUk6elvhH+MNxMmlmuUJ2/QNTWPSA7U4mNtIAKljQ==}
 
@@ -1030,6 +1040,10 @@ packages:
 
   svg-tags@1.0.0:
     resolution: {integrity: sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA==}
+
+  swiper@11.2.5:
+    resolution: {integrity: sha512-nG0kbIyBfeE2BPFt9nPUX03qUBF75o6+enzjIT/DfCmbh8ORlwhc4eZz1+4H/yseAgb3H+OoEYzmb64i0tYNnQ==}
+    engines: {node: '>= 4.7.0'}
 
   tailwindcss@4.0.9:
     resolution: {integrity: sha512-12laZu+fv1ONDRoNR9ipTOpUD7RN9essRVkX36sjxuRUInpN7hIiHN4lBd/SIFjbISvnXzp8h/hXzmU8SQQYhw==}
@@ -1733,6 +1747,8 @@ snapshots:
     dependencies:
       is-what: 4.1.16
 
+  countries-and-timezones@3.7.2: {}
+
   countup.js@2.8.0: {}
 
   cross-spawn@7.0.6:
@@ -1804,6 +1820,7 @@ snapshots:
       '@tailwindcss/vite': 4.0.9(vite@6.2.0(jiti@2.4.2)(lightningcss@1.29.1))
       aos: 2.3.4
       bootstrap-icons: 1.11.3
+      countries-and-timezones: 3.7.2
       countup.js: 2.8.0
       leaflet: 1.9.4
       leaflet-routing-machine: 3.2.12
@@ -2070,6 +2087,8 @@ snapshots:
       copy-anything: 3.0.5
 
   svg-tags@1.0.0: {}
+
+  swiper@11.2.5: {}
 
   tailwindcss@4.0.9: {}
 

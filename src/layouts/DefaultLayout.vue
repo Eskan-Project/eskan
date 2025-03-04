@@ -1,7 +1,7 @@
 <template>
-  <div class="layout">
+  <div>
     <navbar-base />
-    <main class="content">
+    <main class="pt-[78px]">
       <router-view />
     </main>
     <footer-base />
