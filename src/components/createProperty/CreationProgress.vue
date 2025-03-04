@@ -40,6 +40,14 @@ export default {
       activeStep: 0,
     };
   },
+  watch: {
+    $route: {
+      handler: function (val) {
+        this.loadActiveStep();
+      },
+      immediate: true,
+    },
+  },
   created() {
     this.loadActiveStep();
   },

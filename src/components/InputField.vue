@@ -5,22 +5,24 @@
     >
       {{ label }} <span v-if="required" class="text-red-500">*</span>
     </label>
-
     <template v-if="type === 'textarea'">
       <textarea
         v-model="inputValue"
-        class="text-black w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
+        class="text-gray-700 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
+        :class="{ 'border-red-500': errorMessage }"
         :placeholder="placeholder"
         :required="required"
+        @blur="validateInput"
       ></textarea>
     </template>
-
     <template v-else-if="type === 'select'">
       <div class="relative">
         <select
           v-model="inputValue"
-          class="text-black cursor-pointer w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+          class="text-gray-700 cursor-pointer w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+          :class="{ 'border-red-500': errorMessage }"
           :required="required"
+          @blur="validateInput"
         >
           <option value="">Select option</option>
           <option
@@ -36,14 +38,23 @@
         ></i>
       </div>
     </template>
-
     <input
       v-else
       :type="type"
       v-model="inputValue"
-      class="text-black w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      :class="[
+        'text-gray-700 w-full p-3 border border-gray-300 rounded-md outline-none ',
+        errorMessage
+          ? 'border-red-500 focus:outline-none'
+          : 'focus:ring-2 focus:ring-blue-500',
+      ]"
       :required="required"
+      @blur="validateInput"
     />
+
+    <p v-if="errorMessage" class="text-red-500 text-sm mt-1">
+      {{ errorMessage }}
+    </p>
   </div>
 </template>
 
@@ -61,6 +72,11 @@ export default {
       type: Array,
     },
   },
+  data() {
+    return {
+      errorMessage: "",
+    };
+  },
   computed: {
     inputValue: {
       get() {
@@ -68,7 +84,24 @@ export default {
       },
       set(value) {
         this.$emit("update:modelValue", value);
+        this.validateInput();
       },
+    },
+  },
+  watch: {
+    inputValue: {
+      handler(value) {
+        this.$emit("update:modelValue", value);
+      },
+    },
+  },
+  methods: {
+    validateInput() {
+      if (this.required && !this.inputValue) {
+        this.errorMessage = `${this.label} is required`;
+      } else {
+        this.errorMessage = "";
+      }
     },
   },
 };

@@ -24,6 +24,8 @@ const routes = [
       { path: "properties", name: "Properties", component: PropertiesView },
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },
+      { path: "property/:id", component: PropertyItemView, props: true },
+      { path: "userProfile", name: "userProfile", component: UserProfileView },
       {
         path: "createProperty",
         name: "createProperty",
@@ -31,22 +33,25 @@ const routes = [
         children: [
           {
             path: "",
-            redirect: "propertyDetails",
+            redirect: { name: "propertyDetails" },
           },
           {
             path: "propertyDetails",
             name: "propertyDetails",
             component: PropertyDetails,
+            props: true,
           },
           {
             path: "propertyPreview",
             name: "propertyPreview",
             component: PropertyPreview,
+            props: true,
           },
           {
             path: "propertyContact",
             name: "propertyContact",
             component: PropertyContact,
+            props: true,
           },
           {
             path: "completed",
@@ -97,6 +102,9 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  },
 });
 
 export default router;
