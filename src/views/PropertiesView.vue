@@ -1,7 +1,7 @@
 <template>
   <div class="properties">
     <div
-      class="relative w-full mx-auto h-[380px] bg-cover bg-center"
+      class="relative w-full mx-auto h-[300px] bg-cover bg-center"
       :style="{ backgroundImage: `url(${bgImage})` }"
     >
       <div class="absolute inset-0 bg-black/40"></div>
@@ -11,8 +11,8 @@
         <div
           class="shadow-lg w-full fixed left-0 z-50 transition-all duration-500 flex justify-center"
           :class="{
-            'bg-white top-[70px]': isScrolled || isExpanded,
-            'bg-transparent top-1/3 transform -translate-y-1/2':
+            'bg-white top-[70px] py-5': isScrolled || isExpanded,
+            'bg-transparent top-[200px] transform -translate-y-1/2':
               !isScrolled && !isExpanded,
           }"
         >
@@ -21,54 +21,161 @@
               v-if="isExpanded || !isScrolled"
               class="inline-flex items-center gap-2 px-4 py-3 mt-5 mb-3 shadow-lg transition-all duration-300 transform bg-white rounded-lg text-center"
             >
-              <input
-                type="text"
-                placeholder=" Search by keyword"
-                class="border px-2 py-2 rounded-md text-sm"
-              />
-              <select
-                class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
-              >
-                <option disabled selected>Location</option>
-                <option>New York</option>
-                <option>Los Angeles</option>
-                <option>️ San Francisco</option>
-                <option>Chicago</option>
-                <option>Washington, D.C.</option>
-              </select>
-              <select
-                class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
-              >
-                <option disabled selected>Check-in</option>
-              </select>
-              <select
-                class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
-              >
-                <option disabled selected>Check-out</option>
-              </select>
-              <select
-                class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
-              >
-                <option disabled selected>Guests</option>
-              </select>
-              <button
-                class="bg-black text-white px-4 py-2 rounded-md transition hover:bg-gray-800"
-              >
-                Search
-              </button>
+              <div v-if="!isSmallScreen">
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search by keyword"
+                  class="px-2 py-2 text-sm"
+                />
+                <select
+                  v-model="selectedLocation"
+                  class="text-[#364365] hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
+                >
+                  <option value="" disabled selected>Location</option>
+                  <option>New York</option>
+                  <option>Los Angeles</option>
+                  <option>San Francisco</option>
+                  <option>Chicago</option>
+                  <option>Washington, D.C.</option>
+                </select>
+                <select
+                  v-model="selectedCheckIn"
+                  class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
+                >
+                  <option value="" disabled selected>Check-in</option>
+                  <option>Today</option>
+                  <option>Tomorrow</option>
+                  <option>This week</option>
+                </select>
+                <select
+                  v-model="selectedCheckOut"
+                  class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
+                >
+                  <option value="" disabled selected>Check-out</option>
+                  <option>Today</option>
+                  <option>Tomorrow</option>
+                  <option>This week</option>
+                </select>
+                <select
+                  v-model="selectedGuests"
+                  class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm "
+                >
+                  <option value="" disabled selected>Guests</option>
+                  <option>1 guest</option>
+                  <option>2 guests</option>
+                  <option>3 guests</option>
+                </select>
+                <button
+                  class="bg-black text-white px-4 py-2 rounded-md transition hover:bg-gray-800"
+                >
+                  Search
+                </button>
+              </div>
+
+              <div v-else class="rounded-full flex items-center bg-white p-2 relative">
+                <div class="relative w-full">
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search by keyword"
+                    class="px-4 py-2 rounded-md text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <div
+                    class="absolute inset-y-0 bg-[#364365] p-2 text-white bold rounded-[50%] right-3 flex items-center cursor-pointer"
+                    @click="toggleFilterOptions"
+                  >
+                    <i class="bi bi-filter-circle"></i>
+                  </div>
+                </div>
+                <div
+                  v-if="showFilterOptions"
+                  class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-64 z-10"
+                >
+                  <div class="space-y-4">
+                    <select
+                      v-model="selectedLocation"
+                      class="text-[#364365] hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-[100%] overflow-hidden mb-2"
+                    >
+                      <option class="w-[50%]" value="" disabled selected>Location</option>
+                      <option>New York</option>
+                      <option>Los Angeles</option>
+                      <option>San Francisco</option>
+                      <option>Chicago</option>
+                      <option>Washington, D.C.</option>
+                    </select>
+                    <select
+                      v-model="selectedCheckIn"
+                      class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-full mb-2"
+                    >
+                      <option value="" disabled selected>Check-in</option>
+                      <option>Today</option>
+                      <option>Tomorrow</option>
+                      <option>This week</option>
+                    </select>
+                    <select
+                      v-model="selectedCheckOut"
+                      class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-full mb-2"
+                    >
+                      <option value="" disabled selected>Check-out</option>
+                      <option>Today</option>
+                      <option>Tomorrow</option>
+                      <option>This week</option>
+                    </select>
+                    <div class="relative">
+                      <select
+                        v-model="selectedGuests"
+                        class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-full mb-2"
+                      
+                      >
+                        <option value="" disabled selected>Guests</option>
+                        <option v-if="!isGuestsOpen">Guests</option>
+                      </select>
+                      <div
+                        v-if="isGuestsOpen"
+                        class="absolute top-full left-0 bg-white rounded-md shadow-md p-2 w-full border"
+                        style="max-height: 150px; overflow-y: auto;"
+                      >
+                        <button
+                          @click="selectedGuests = '1 guest'"
+                          class="block w-full text-left p-2 hover:bg-gray-100"
+                        >
+                          1 guest
+                        </button>
+                        <button
+                          @click="selectedGuests = '2 guests'"
+                          class="block w-full text-left p-2 hover:bg-gray-100"
+                        >
+                          2 guests
+                        </button>
+                        <button
+                          @click="selectedGuests = '3 guests'"
+                          class="block w-full text-left p-2 hover:bg-gray-100"
+                        >
+                          3 guests
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      class="bg-black text-white px-4 py-2 rounded-md transition hover:bg-gray-800 w-full"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div
               v-else
               class="flex items-center justify-center w-auto p-3 transition-all duration-300"
             >
-              <div
-                class="border rounded-full flex items-center p-2 bg-white shadow-md"
-              >
-                <span class="px-2">Anywhere</span>
-                <span class="px-2">Any week</span>
-                <span class="px-2">Add guests</span>
+              <div class="border rounded-full w-full flex items-center p-2 bg-white shadow-md ">
+                <span class="px-2">{{ selectedLocation || "Anywhere" }}</span>
+                <span class="px-2">{{ selectedCheckIn || "Any week" }}</span>
+                <span class="px-2">{{ selectedGuests || "Add guests" }}</span>
                 <button
-                  class="bg-[#364365] text-white rounded-full w-8 h-8 ml-2 transition-transform duration-300 hover:scale-110"
+                  class="bg-[#364365] text-white  w-8 h-8 ml-auto mr-3 rounded-[50%]   transition-transform duration-300 hover:scale-110"
                   @click="toggleSearch"
                 >
                   Q
@@ -133,6 +240,16 @@ export default {
       properties,
       isScrolled: false,
       isExpanded: false,
+      searchQuery: "",
+      selectedLocation: "",
+      selectedCheckIn: "",
+      selectedCheckOut: "",
+      selectedGuests: "",
+      isSmallScreen: window.innerWidth < 860,
+      showFilterOptions: false,
+      isCheckInOpen: false,
+      isCheckOutOpen: false,
+      isGuestsOpen: false, 
     };
   },
   computed: {
@@ -155,13 +272,28 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("resize", this.handleResize);
   },
   methods: {
     handleScroll() {
       this.isScrolled = window.scrollY > 0;
+    },
+    toggleFilterOptions() {
+      this.showFilterOptions = !this.showFilterOptions;
+    },
+    toggleNested(filter) {
+      if (filter === "checkIn") {
+        this.isCheckInOpen = !this.isCheckInOpen;
+      } else if (filter === "checkOut") {
+        this.isCheckOutOpen = !this.isCheckOutOpen;
+      } else if (filter === "guests") { 
+        this.isGuestsOpen = !this.isGuestsOpen;
+      }
     },
     toggleSearch() {
       this.isExpanded = !this.isExpanded;
@@ -180,6 +312,49 @@ export default {
     prevPage() {
       if (this.currentPage > 1) this.currentPage--;
     },
+    handleResize() {
+      this.isSmallScreen = window.innerWidth < 860;
+    },
   },
 };
 </script>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-slide-enter,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.nested-fade-enter-active,
+.nested-fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.nested-fade-enter,
+.nested-fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@media (max-width: 859px) {
+  .rounded-full {
+    width: 70vw !important;
+  }
+}
+</style>
+
+
+
+
+
+
+
+
+
+
