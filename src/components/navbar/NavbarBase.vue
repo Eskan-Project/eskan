@@ -6,11 +6,11 @@
     ]"
   >
     <div class="container mx-auto flex items-center py-1">
-      <img
-        class="w-[120px] md:w-[180px] h-[70px]"
-        src="../../assets/images/logo.png"
-        alt="Logo"
-      />
+      <!-- Logo -->
+      <router-link to="/">
+        <img class="h-[70px]" src="../../assets/images/logo.png" alt="Logo" />
+      </router-link>
+      <!-- Desktop Navigation -->
       <ul class="hidden md:flex flex-grow justify-center space-x-6">
         <li v-for="(item, index) in navLinks" :key="index">
           <router-link
