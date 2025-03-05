@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Hero Section -->
     <section
       class="relative h-screen w-full bg-fixed bg-cover bg-center flex items-center justify-center text-white px-4"
       :style="{ backgroundImage: `url(${ImgForHeroSection})` }"
@@ -20,8 +19,6 @@
         </p>
       </div>
     </section>
-
-    <!-- Features Section -->
     <section
       class="container mx-auto pb-6 my-16 px-2 bg-white rounded-lg"
       data-aos="fade-up"
@@ -31,7 +28,6 @@
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-        <!-- Feature 1 -->
         <div class="flex flex-col items-center" data-aos="flip-left">
           <div
             class="w-24 h-24 rounded-full border-2 border-[#364365] flex items-center justify-center mb-4"
@@ -52,7 +48,6 @@
           </p>
         </div>
 
-        <!-- Feature 2 -->
         <div
           class="flex flex-col items-center"
           data-aos="flip-left"
@@ -77,7 +72,6 @@
           </p>
         </div>
 
-        <!-- Feature 3 -->
         <div
           class="flex flex-col items-center"
           data-aos="flip-left"
@@ -102,7 +96,6 @@
           </p>
         </div>
 
-        <!-- Feature 4 -->
         <div
           class="flex flex-col items-center"
           data-aos="flip-left"
@@ -127,7 +120,6 @@
           </p>
         </div>
 
-        <!-- Feature 5 -->
         <div
           class="flex flex-col items-center"
           data-aos="flip-left"
@@ -152,7 +144,6 @@
           </p>
         </div>
 
-        <!-- Feature 6 -->
         <div
           class="flex flex-col items-center"
           data-aos="flip-left"
@@ -179,7 +170,6 @@
       </div>
     </section>
 
-    <!-- Latest Properties Section -->
     <section class="py-16" data-aos="fade-up">
       <div class="container mx-auto text-center">
         <h2 class="text-3xl font-bold mb-6 text-[#364365]">
@@ -196,7 +186,6 @@
       </div>
     </section>
 
-    <!-- Stats Section -->
     <section
       class="py-16 bg-[#DDE1EB] text-[#364365] text-center mb-16"
       data-aos="fade-up"
@@ -235,7 +224,6 @@
       </div>
     </section>
 
-    <!-- Footer -->
     <section
       class="relative h-[508px] w-full bg-fixed bg-cover bg-center mt-16"
       :style="{ backgroundImage: `url(${ContactUsHomePage})` }"

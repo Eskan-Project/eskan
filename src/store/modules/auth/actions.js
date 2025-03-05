@@ -1,5 +1,5 @@
 import { auth, db } from "@/config/firebase";
-import { doc, getDoc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -14,20 +14,23 @@ const provider = new GoogleAuthProvider();
 
 export default {
   async login({ commit }, { email, password }) {
-    commit("setLoading", true);
+    commit("setLoading", true, { root: true });
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const role = userDoc.exists() ? userDoc.data().role : "user";
-      commit("setUser", { ...user, role });
+      commit("setUser", { uid: user.uid, email: user.email, role });
+      router.push("/");
     } catch (error) {
       commit("setError", error.message);
       throw error;
+    } finally {
+      commit("setLoading", false, { root: true });
     }
-    commit("setLoading", false);
   },
+
   async loginWithGoogle({ commit }) {
-    commit("setLoading", true);
+    commit("setLoading", true, { root: true });
     try {
       const { user } = await signInWithPopup(auth, provider);
       const userRef = doc(db, "users", user.uid);
@@ -47,11 +50,13 @@ export default {
     } catch (error) {
       commit("setError", error.message);
       throw error;
+    } finally {
+      commit("setLoading", false, { root: true });
     }
-    commit("setLoading", false);
   },
+
   async register({ commit }, { name, email, password, role }) {
-    commit("setLoading", true);
+    commit("setLoading", true, { root: true });
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -59,33 +64,39 @@ export default {
         password
       );
 
-      const userRef = collection(db, "users");
-      await addDoc(userRef, { name, email, role, createdAt: new Date() });
-
-      console.log("User successfully added to Firestore:", user.uid);
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        role,
+        createdAt: new Date(),
+      });
 
       commit("setUser", { uid: user.uid, email, role });
+      router.push("/");
     } catch (error) {
-      console.error("Firestore Write Error:", error);
       commit("setError", error.message);
       throw error;
     } finally {
-      commit("setLoading", false);
+      commit("setLoading", false, { root: true });
     }
   },
+
   async logout({ commit }) {
-    commit("setLoading", true);
+    commit("setLoading", true, { root: true });
     try {
       await signOut(auth);
       commit("logout");
+      router.push("/login");
     } catch (error) {
       commit("setError", error.message);
       throw error;
+    } finally {
+      commit("setLoading", false, { root: true });
     }
-    commit("setLoading", false);
   },
+
   async checkAuth({ commit }) {
-    commit("setLoading", true);
+    commit("setLoading", true, { root: true });
     return new Promise((resolve) => {
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
         unsubscribe();
@@ -101,7 +112,7 @@ export default {
         } else {
           commit("logout");
         }
-        commit("setLoading", false);
+        commit("setLoading", false, { root: true });
         resolve();
       });
     });
