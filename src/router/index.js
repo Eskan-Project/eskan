@@ -35,7 +35,7 @@ const routes = [
         path: "createProperty",
         name: "createProperty",
         component: CreatePropertyView,
-        meta: { requiresAuth: true, requiresOwner: true },
+        meta: { requiresOwner: true },
         children: [
           {
             path: "",
@@ -66,7 +66,6 @@ const routes = [
           },
         ],
       },
-      { path: "userProfile", name: "userProfile", component: UserProfileView },
     ],
   },
   // lazily load views when they are needed
@@ -94,7 +93,7 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: AdminDashboardView,
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAdmin: true },
   },
 
   /**

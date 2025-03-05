@@ -12,7 +12,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("auth", ["login"]),
+    ...mapActions("auth", ["login", "loginWithGoogle"]),
 
     async submitLogin() {
       this.errors = {};
@@ -150,21 +150,10 @@ export default {
           <div class="logs flex justify-center gap-2 p-5">
             <button
               class="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+              @click="loginWithGoogle"
             >
               <i class="bi bi-google"></i>
               Google
-            </button>
-            <button
-              class="cursor-pointer flex items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-            >
-              <i class="bi bi-facebook"></i>
-              Facebook
-            </button>
-            <button
-              class="cursor-pointer flex items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-            >
-              <i class="bi bi-twitter"></i>
-              Twitter
             </button>
           </div>
 

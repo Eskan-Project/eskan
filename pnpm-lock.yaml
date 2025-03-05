@@ -2555,6 +2555,7 @@ snapshots:
       bootstrap-icons: 1.11.3
       countries-and-timezones: 3.7.2
       countup.js: 2.8.0
+      firebase: 11.4.0
       leaflet: 1.9.4
       leaflet-routing-machine: 3.2.12
       swiper: 11.2.5
@@ -2564,6 +2565,7 @@ snapshots:
       vue-router: 4.5.0(vue@3.5.13)
       vuex: 4.1.0(vue@3.5.13)
     transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
       - typescript
       - vite
 
