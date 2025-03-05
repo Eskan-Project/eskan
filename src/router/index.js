@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "@/store";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import AboutView from "@/views/AboutView.vue";
 import ContactView from "@/views/ContactView.vue";
 import HomeView from "@/views/HomeView.vue";
 import PropertiesView from "@/views/PropertiesView.vue";
-// import LoginView from "@/views/LoginView.vue";
 import AdminDashboardView from "@/views/AdminDashboardView.vue";
 import PropertyItemView from "@/views/PropertyItemView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
@@ -25,11 +25,17 @@ const routes = [
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:id", component: PropertyItemView, props: true },
-      { path: "userProfile", name: "userProfile", component: UserProfileView },
+      {
+        path: "userProfile",
+        name: "userProfile",
+        component: UserProfileView,
+        meta: { requiresAuth: true },
+      },
       {
         path: "createProperty",
         name: "createProperty",
         component: CreatePropertyView,
+        meta: { requiresAuth: true, requiresOwner: true },
         children: [
           {
             path: "",
@@ -84,7 +90,12 @@ const routes = [
     name: "registerOwner",
     component: () => import("@/views/RegisterOwnerView.vue"),
   },
-  { path: "/admin", name: "admin", component: AdminDashboardView },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminDashboardView,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 
   /**
    ********************************************************************************************
@@ -106,6 +117,32 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 };
   },
+});
+
+router.beforeEach(async (to, from, next) => {
+  const isAuth = store.getters["auth/isAuth"];
+  const role = store.getters["auth/getRole"];
+  if (!store.state.auth.user) {
+    await store.dispatch("auth/checkAuth");
+  }
+
+  if (to.meta.requiresAuth && !isAuth) {
+    return next({ name: "login" });
+  }
+
+  if (role === "admin") {
+    return next();
+  }
+
+  if (to.meta.requiresAdmin && role !== "admin") {
+    return next({ name: "NotFound" });
+  }
+
+  if (to.meta.requiresOwner && role !== "owner") {
+    return next({ name: "NotFound" });
+  }
+
+  next();
 });
 
 export default router;
