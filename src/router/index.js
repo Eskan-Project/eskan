@@ -13,9 +13,14 @@ import PropertyDetails from "@/components/createProperty/PropertyDetails.vue";
 import PropertyPreview from "@/components/createProperty/PropertyPreview.vue";
 import PropertyContact from "@/components/createProperty/PropertyContact.vue";
 import Completed from "@/components/createProperty/Completed.vue";
+<<<<<<< HEAD
 import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
+=======
+import Payment from "@/components/Payment.vue";
+
+>>>>>>> 3517063837179de2686c20eaba759b517e9f700d
 const routes = [
   {
     path: "/",
