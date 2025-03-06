@@ -32,6 +32,8 @@ const routes = [
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:id", component: PropertyItemView, props: true },
+      { path: "payment", name: "payment", component: Payment },
+
       {
         path: "userProfile",
         name: "userProfile",
