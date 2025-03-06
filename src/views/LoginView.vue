@@ -1,5 +1,74 @@
+<script>
+import { mapActions } from "vuex";
+
+export default {
+  data() {
+    return {
+      email: "",
+      password: "",
+      errors: {},
+      loading: false,
+      showPassword: false,
+    };
+  },
+  methods: {
+    ...mapActions("auth", ["login", "loginWithGoogle"]),
+
+    async submitLogin() {
+      this.errors = {};
+
+      if (!this.email) {
+        this.errors.email = "Email is required";
+      } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
+        this.errors.email = "Invalid email format";
+      }
+      if (!this.password) {
+        this.errors.password = "Password is required";
+      } else if (this.password.length < 6) {
+        this.errors.password = "Password must be at least 6 characters";
+      }
+
+      if (Object.keys(this.errors).length > 0) return;
+
+      this.loading = true;
+      try {
+        const userData = {
+          email: this.email,
+          password: this.password,
+        };
+
+        await this.login(userData);
+        this.$router.push({ name: "Home" });
+      } catch (error) {
+        console.error("Login error:", error);
+
+        if (error.code === "auth/invalid-credential") {
+          this.errors.server = "Incorrect email or password.";
+        } else {
+          this.errors.server = "Login failed. Please try again.";
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
+  },
+  watch: {
+    email() {
+      this.errors.email = null;
+    },
+    password() {
+      this.errors.password = null;
+    },
+  },
+};
+</script>
+
 <template>
-  <div class="md:p-10  flex justify-center h-screen md:h-[auto]">
+  <div class="md:p-10 flex justify-center h-screen md:h-auto">
     <div
       class="bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 lg:w-[60vw]"
     >
@@ -7,98 +76,99 @@
         <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
           Welcome Back
         </h1>
-        <form action="">
+
+        <form @submit.prevent="submitLogin">
           <div class="mb-6">
-            <label for="username" class="block mb-1 text-[#364365]">Name</label>
+            <label class="block mb-1 text-[#364365]">Email</label>
             <input
-              type="text"
-              id="username"
-              name="name"
-              class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label for="email" class="block mb-1 text-[#364365]">Email</label>
-            <input
+              v-model="email"
               type="email"
-              name="email"
-              id="email"
-              class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              class="border-b-2 w-full focus:outline-none text-black"
+              :class="{
+                'border-red-500': errors.email,
+                'border-gray-300': !errors.email,
+              }"
             />
+            <p v-if="errors.email" class="text-red-500 text-sm">
+              {{ errors.email }}
+            </p>
           </div>
           <div class="mb-6 relative">
-            <label for="password" class="block mb-1 text-[#364365]"
-              >Password</label
-            >
+            <label class="block mb-1 text-[#364365]">Password</label>
             <input
-              type="password"
-              id="password"
-              name="password"
-              class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="border-b-2 w-full focus:outline-none text-black"
+              :class="{
+                'border-red-500': errors.password,
+                'border-gray-300': !errors.password,
+              }"
             />
-            <i class="bi bi-eye-fill text-black absolute right-2"></i>
+            <i
+              :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'"
+              class="text-black absolute right-2 cursor-pointer"
+              @click="togglePassword"
+            ></i>
+            <p v-if="errors.password" class="text-red-500 text-sm">
+              {{ errors.password }}
+            </p>
             <a
               class="text-[#364365] text-sm text-right pt-4 cursor-pointer block underline"
             >
-              Forget Your Password?
+              Forgot Your Password?
             </a>
           </div>
+
+          <p v-if="errors.server" class="text-red-500 text-center mb-4">
+            {{ errors.server }}
+          </p>
+
           <div class="p-5">
             <button
               type="submit"
-              class="border cursor-pointer shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg"
+              :disabled="loading"
+              class="border shadow-xl w-full bg-[#364365] text-white text-sm py-2 px-4 rounded-lg hover:bg-white hover:text-[#364365] hover:border-[#364365]"
+              :class="{
+                'opacity-50 cursor-not-allowed': loading,
+                'cursor-pointer': !loading,
+              }"
             >
-              Sign In
+              {{ loading ? "Signing In..." : "Sign In" }}
             </button>
           </div>
         </form>
+
         <div>
           <div
-            class="text-[#364365] font-medium text-sm flex justify-center align-baseline gap-2 my-4 text-center"
+            class="text-[#364365] font-medium text-sm flex justify-center gap-2 my-4 text-center"
           >
             <span class="border-b-1 w-20 self-center"></span>
             <p>Or sign in with</p>
             <span class="border-b-1 w-20 self-center"></span>
           </div>
-          <div class="logs">
-            <div class="flex justify-center align-center gap-2 p-5">
-              <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-              >
-                <i class="bi bi-google"></i>
-                Google
-              </button>
 
-              <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-              >
-                <i class="bi bi-facebook"></i>
-                facebook
-              </button>
-
-              <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-              >
-                <i class="bi bi-twitter"></i>
-                twitter
-              </button>
-            </div>
-
-            <p class="text-black text-center">
-              Don't have an account?
-              <a
-                class="text-blue-500 hover:text-blue-700 cursor-pointer"
-                @click.prevent="$router.push({ name: 'register' })"
-              >
-                Sign Up
-              </a>
-            </p>
+          <div class="logs flex justify-center gap-2 p-5">
+            <button
+              class="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+              @click="loginWithGoogle"
+            >
+              <i class="bi bi-google"></i>
+              Google
+            </button>
           </div>
+
+          <p class="text-black text-center">
+            Don't have an account?
+            <a
+              class="text-blue-500 hover:text-blue-700 cursor-pointer"
+              @click.prevent="$router.push({ name: 'register' })"
+            >
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
+
       <div class="img-container hidden md:block">
         <img
           class="w-full h-full rounded-r-xl"

@@ -7,12 +7,9 @@
   >
     <div class="container mx-auto flex items-center py-1">
       <!-- Logo -->
-      <img
-        class="w-[120px] md:w-[180px] h-[70px]"
-        src="../../assets/images/logo.png"
-        alt="Logo"
-      />
-
+      <router-link to="/">
+        <img class="h-[70px]" src="../../assets/images/logo.png" alt="Logo" />
+      </router-link>
       <!-- Desktop Navigation -->
       <ul class="hidden md:flex flex-grow justify-center space-x-6">
         <li v-for="(item, index) in navLinks" :key="index">
@@ -29,22 +26,34 @@
         </li>
       </ul>
 
-      <!-- Right Section -->
       <div class="flex items-center gap-2 ml-auto">
-        <i
+        <!-- <i
           class="bi bi-brightness-high text-lg text-white hidden md:block mr-2"
           aria-label="Brightness"
-        ></i>
+        ></i> -->
 
-        <!-- Login Button -->
+        <template v-if="user">
+          <router-link
+            :to="{ name: 'userProfile' }"
+            class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
+          >
+            Profile <i class="bi bi-person"></i>
+          </router-link>
+          <button
+            @click="logout"
+            class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
+          >
+            Log Out <i class="bi bi-box-arrow-in-right"></i>
+          </button>
+        </template>
+
         <button
+          v-else
           @click="$router.push({ name: 'login' })"
           class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           Log IN <i class="bi bi-box-arrow-in-right"></i>
         </button>
-
-        <!-- Mobile Menu Toggle -->
 
         <i
           v-if="isMenuOpen"
@@ -61,7 +70,6 @@
       </div>
     </div>
 
-    <!-- Mobile Navigation -->
     <navbar-mobile-vue
       v-if="isMenuOpen"
       :navLinks="navLinks"
@@ -73,6 +81,7 @@
 
 <script>
 import NavbarMobileVue from "./NavbarMobile.vue";
+import { mapState, mapActions } from "vuex";
 export default {
   components: {
     NavbarMobileVue,
@@ -89,6 +98,9 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapState("auth", ["user"]),
+  },
   methods: {
     handleScroll() {
       this.isSticky = window.scrollY > 0;
@@ -99,6 +111,7 @@ export default {
     closeMenu() {
       this.isMenuOpen = false;
     },
+    ...mapActions("auth", ["logout"]),
   },
   mounted() {
     window.onscroll = this.handleScroll;

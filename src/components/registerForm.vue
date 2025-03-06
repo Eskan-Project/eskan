@@ -1,5 +1,95 @@
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
+  data() {
+    return {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      errors: {},
+      loading: false,
+      showPassword: false,
+      showConfirmPassword: false,
+    };
+  },
+  computed: {
+    ...mapState("auth", ["error"]),
+  },
+  methods: {
+    ...mapActions("auth", ["register", "loginWithGoogle"]),
+    async submitRegister() {
+      this.errors = {};
+
+      if (!this.name) {
+        this.errors.name = "Name is required";
+      }
+      if (!this.email) {
+        this.errors.email = "Email is required";
+      } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
+        this.errors.email = "Invalid email format";
+      }
+      if (!this.password) {
+        this.errors.password = "Password is required";
+      } else if (this.password.length < 6) {
+        this.errors.password = "Password must be at least 6 characters";
+      }
+      if (!this.confirmPassword) {
+        this.errors.confirmPassword = "Confirm your password";
+      } else if (this.password !== this.confirmPassword) {
+        this.errors.confirmPassword = "Passwords do not match";
+      }
+      if (this.isOwner && !this.file) {
+        this.errors.file = "Please upload your ID";
+      }
+
+      if (Object.keys(this.errors).length > 0) return;
+
+      this.loading = true;
+      try {
+        const userData = {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          role: this.isOwner ? "owner" : "user",
+          idImage: this.isOwner ? this.file : null,
+        };
+
+        await this.register(userData);
+        this.$router.push({ name: "Home" });
+      } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+          this.errors.server = "The email address is already in use.";
+        } else {
+          this.errors.server = "Registration failed. Please try again.";
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
+
+    toggleConfirmPassword() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    },
+  },
+  watch: {
+    name() {
+      this.errors.name = null;
+    },
+    email() {
+      this.errors.email = null;
+    },
+    password() {
+      this.errors.password = null;
+    },
+    confirmPassword() {
+      this.errors.confirmPassword = null;
+    },
+  },
   props: {
     actionlink: {
       type: String,
@@ -16,7 +106,7 @@ export default {
 </script>
 
 <template>
-  <div class="md:p-10 flex justify-center align-middle ">
+  <div class="md:p-10 flex justify-center align-middle">
     <div
       class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 lg:w-[75vw]"
     >
@@ -31,50 +121,89 @@ export default {
         <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
           {{ title }}
         </h1>
-        <form :action="actionlink">
+        <form @submit.prevent="submitRegister" novalidate>
           <div class="mb-6">
             <label for="username" class="block mb-1 text-[#364365]">Name</label>
             <input
+              v-model="name"
               type="text"
               id="username"
               name="name"
               class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              :class="{
+                'border-red-500': errors.name,
+                'border-gray-300': !errors.name,
+              }"
             />
+            <p v-if="errors.name" class="text-red-500 text-sm">
+              {{ errors.name }}
+            </p>
           </div>
           <div class="mb-6">
             <label for="email" class="block mb-1 text-[#364365]">Email</label>
             <input
+              v-model="email"
               type="email"
               name="email"
               id="email"
               class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              :class="{
+                'border-red-500': errors.email,
+                'border-gray-300': !errors.email,
+              }"
             />
+            <p v-if="errors.email" class="text-red-500 text-sm">
+              {{ errors.email }}
+            </p>
           </div>
           <div class="mb-6 relative">
             <label for="password" class="block mb-1 text-[#364365]"
               >Password</label
             >
             <input
-              type="password"
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
               id="password"
               name="password"
               class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              :class="{
+                'border-red-500': errors.password,
+                'border-gray-300': !errors.password,
+              }"
             />
-            <i class="bi bi-eye-fill text-black absolute right-2"></i>
+            <i
+              :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'"
+              class="text-black absolute right-2 cursor-pointer"
+              @click="togglePassword"
+            ></i>
+            <p v-if="errors.password" class="text-red-500 text-sm">
+              {{ errors.password }}
+            </p>
           </div>
-          <div class="mb-6">
+          <div class="mb-6 relative">
             <label for="password" class="text-sm text-[#364365]"
               >Confirm Password</label
             >
             <input
-              type="password"
+              v-model="confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
               name="password"
               class="border-b-2 border-gray-300 w-full focus:outline-none focus:border-black text-black"
-              required
+              :class="{
+                'border-red-500': errors.confirmPassword,
+                'border-gray-300': !errors.confirmPassword,
+              }"
             />
+            <i
+              :class="
+                showConfirmPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'
+              "
+              class="text-black absolute right-2 cursor-pointer"
+              @click="toggleConfirmPassword"
+            ></i>
+            <p v-if="errors.confirmPassword" class="text-red-500 text-sm">
+              {{ errors.confirmPassword }}
+            </p>
           </div>
           <div v-if="isOwner" class="text-center text-black">
             <p class="font-medium p-2">please upload your ID</p>
@@ -95,11 +224,20 @@ export default {
               <p class="p-5 text-sm text-stone-400">support JPEG, PNG, JPG</p>
             </div>
           </div>
+          <div v-if="error" class="text-red-500 text-center mb-4">
+            {{ errors.server }}
+          </div>
+
           <button
             type="submit"
-            class="border cursor-pointer shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
+            :disabled="loading"
+            class="border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
+            :class="{
+              'opacity-50 cursor-not-allowed': loading,
+              'cursor-pointer': !loading,
+            }"
           >
-            Create Account
+            {{ loading ? "Loading..." : "Create Account" }}
           </button>
         </form>
         <div>
@@ -114,23 +252,10 @@ export default {
             <div class="flex justify-center align-center gap-2 p-5">
               <button
                 class="cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+                @click="loginWithGoogle"
               >
                 <i class="bi bi-google"></i>
                 Google
-              </button>
-
-              <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-              >
-                <i class="bi bi-facebook"></i>
-                facebook
-              </button>
-
-              <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-              >
-                <i class="bi bi-twitter"></i>
-                twitter
               </button>
             </div>
             <p class="text-black text-center">

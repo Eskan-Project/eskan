@@ -15,6 +15,7 @@
     "countries-and-timezones": "^3.7.2",
     "countup.js": "^2.8.0",
     "eskan": "file:",
+    "firebase": "^11.4.0",
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "swiper": "^11.2.5",
