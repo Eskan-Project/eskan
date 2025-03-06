@@ -13,6 +13,7 @@ import PropertyDetails from "@/components/createProperty/PropertyDetails.vue";
 import PropertyPreview from "@/components/createProperty/PropertyPreview.vue";
 import PropertyContact from "@/components/createProperty/PropertyContact.vue";
 import Completed from "@/components/createProperty/Completed.vue";
+import Payment from "@/components/Payment.vue";
 
 const routes = [
   {
@@ -25,6 +26,8 @@ const routes = [
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:id", component: PropertyItemView, props: true },
+      { path: "payment", name: "payment", component: Payment },
+
       {
         path: "userProfile",
         name: "userProfile",
