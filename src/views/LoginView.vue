@@ -113,7 +113,8 @@ export default {
               {{ errors.password }}
             </p>
             <a
-              class="text-[#364365] text-sm text-right pt-4 cursor-pointer block underline"
+              class="text-[#364365] text-sm text-right pt-4 cursor-pointer block underline w-fit"
+              @click.prevent="$router.push({ name: 'forgetPassword' })"
             >
               Forgot Your Password?
             </a>

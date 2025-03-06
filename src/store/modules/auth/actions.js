@@ -7,8 +7,13 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import router from "@/router";
+import {
+  fetchUserRole,
+  storeUserInCollection,
+} from "@/services/firebaseService";
 
 const provider = new GoogleAuthProvider();
 
@@ -17,9 +22,9 @@ export default {
     commit("setLoading", true, { root: true });
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      const role = userDoc.exists() ? userDoc.data().role : "user";
-      commit("setUser", { uid: user.uid, email: user.email, role });
+      const userRole = await fetchUserRole(user.uid);
+
+      commit("setUser", { uid: user.uid, email: user.email, role: userRole });
       router.push("/");
     } catch (error) {
       commit("setError", error.message);
@@ -33,20 +38,17 @@ export default {
     commit("setLoading", true, { root: true });
     try {
       const { user } = await signInWithPopup(auth, provider);
-      const userRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userRef);
+      const userRole = await fetchUserRole(user.uid);
 
-      if (!userDoc.exists()) {
-        await setDoc(userRef, {
-          name: user.displayName,
-          email: user.email,
-          role: "user",
-          createdAt: new Date(),
+      if (!userRole) {
+        router.push({
+          name: "SelectRole",
+          query: { uid: user.uid, email: user.email, name: user.displayName },
         });
+      } else {
+        commit("setUser", { uid: user.uid, email: user.email, role: userRole });
+        router.push("/");
       }
-
-      commit("setUser", { uid: user.uid, email: user.email, role: "user" });
-      router.push("/");
     } catch (error) {
       commit("setError", error.message);
       throw error;
@@ -55,7 +57,7 @@ export default {
     }
   },
 
-  async register({ commit }, { name, email, password, role }) {
+  async register({ commit }, { name, email, password, role, idImage }) {
     commit("setLoading", true, { root: true });
     try {
       const { user } = await createUserWithEmailAndPassword(
@@ -64,12 +66,7 @@ export default {
         password
       );
 
-      await setDoc(doc(db, "users", user.uid), {
-        name,
-        email,
-        role,
-        createdAt: new Date(),
-      });
+      await storeUserInCollection(user.uid, name, email, role, idImage);
 
       commit("setUser", { uid: user.uid, email, role });
       router.push("/");
@@ -80,7 +77,22 @@ export default {
       commit("setLoading", false, { root: true });
     }
   },
-
+  async resetPassword({ commit }, email) {
+    commit("setLoading", true, { root: true });
+    try {
+      await sendPasswordResetEmail(auth, email);
+      commit("setError", null);
+      return {
+        success: true,
+        message: "Password reset link sent to your email.",
+      };
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("setLoading", false, { root: true });
+    }
+  },
   async logout({ commit }) {
     commit("setLoading", true, { root: true });
     try {
