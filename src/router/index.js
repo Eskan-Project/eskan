@@ -13,6 +13,10 @@ import PropertyDetails from "@/components/createProperty/PropertyDetails.vue";
 import PropertyPreview from "@/components/createProperty/PropertyPreview.vue";
 import PropertyContact from "@/components/createProperty/PropertyContact.vue";
 import Completed from "@/components/createProperty/Completed.vue";
+import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
+import ResetPasswordView from "@/views/ResetPasswordView.vue";
+import SelectRole from "@/components/SelectRole.vue";
+
 import Payment from "@/components/Payment.vue";
 
 const routes = [
@@ -93,12 +97,27 @@ const routes = [
     component: () => import("@/views/RegisterOwnerView.vue"),
   },
   {
+    path: "/forget-password",
+    name: "forgetPassword",
+    component: ForgetPasswordView,
+  },
+  {
+    path: "/reset-password",
+    name: "resetPassword",
+    component: ResetPasswordView,
+  },
+  {
+    path: "/select-role",
+    name: "SelectRole",
+    component: SelectRole,
+  },
+
+  {
     path: "/admin",
     name: "admin",
     component: AdminDashboardView,
     meta: { requiresAdmin: true },
   },
-
   /**
    ********************************************************************************************
    ********************************************************************************************
@@ -122,8 +141,10 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  await store.dispatch("auth/checkAuth");
   const isAuth = store.getters["auth/isAuth"];
   const role = store.getters["auth/getRole"];
+
   if (!store.state.auth.user) {
     await store.dispatch("auth/checkAuth");
   }

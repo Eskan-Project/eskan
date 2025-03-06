@@ -61,7 +61,8 @@ export default {
         if (error.code === "auth/email-already-in-use") {
           this.errors.server = "The email address is already in use.";
         } else {
-          this.errors.server = "Registration failed. Please try again.";
+          this.errors.server =
+            error.message || "Registration failed. Please try again.";
         }
       } finally {
         this.loading = false;
