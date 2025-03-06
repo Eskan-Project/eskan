@@ -10,20 +10,52 @@
           />
           <div class="absolute inset-0 bg-[#053052]/80"></div>
         </div>
+
         <div class="relative px-6 pb-6 text-gray-900">
           <article class="flex flex-col sm:flex-row items-center">
             <figure class="-mt-16 relative">
               <img
-                :src="userDetails.photo || defaultPhoto"
+                :src="userDetails?.photo || defaultPhoto"
                 alt="Profile"
                 class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
               />
+
+              <div
+                v-if="isEditing"
+                class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow cursor-pointer"
+                @click="triggerFileInput"
+              >
+                <i class="bi bi-pencil-square text-xl"></i>
+              </div>
+
+              <input
+                type="file"
+                id="fileInput"
+                class="hidden"
+                accept="image/png, image/jpeg, image/jpg"
+                @change="handleFileChange"
+                ref="fileInput"
+              />
             </figure>
+
             <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
-              <h1 class="text-3xl font-bold text-gray-900">{{ userDetails.name || "No Name" }}</h1>
-              <div class="flex items-center justify-center sm:justify-start space-x-2 mt-2">
-                <span class="relative text-gray-600 text-sm font-medium bg-gray-200 px-4 py-1 rounded-lg shadow-md flex items-center">
-                  {{ userDetails.email }}
+              <div v-if="isEditing">
+                <input
+                  type="text"
+                  v-model="userDetails.name"
+                  class="text-3xl font-bold text-gray-900 border-b-2 border-gray-300 px-2 py-1 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <h1 v-else class="text-3xl font-bold text-gray-900">
+                {{ userDetails?.name || "No Name" }}
+              </h1>
+              <div
+                class="flex items-center justify-center sm:justify-start space-x-2 mt-2"
+              >
+                <span
+                  class="relative text-gray-600 text-sm font-medium bg-gray-200 px-4 py-1 rounded-lg shadow-md flex items-center"
+                >
+                  {{ userDetails?.email }}
                   <span
                     v-if="userDetails.isActive"
                     class="ml-2 bg-green-100 text-green-700 font-semibold px-2 py-1 rounded-md shadow-sm"
@@ -35,7 +67,7 @@
             </div>
             <button
               @click="toggleEdit"
-              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e] shadow-md"
+              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e] shadow-md cursor-pointer"
             >
               {{ isEditing ? "Cancel" : "Edit Profile" }}
             </button>
@@ -46,7 +78,9 @@
       <div class="mt-8 grid grid-cols-1 md:grid-cols-1 gap-6">
         <section class="md:col-span-2">
           <article class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Personal Information</h2>
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">
+              Personal Information
+            </h2>
             <form @submit.prevent="saveProfile">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div v-for="(value, key) in editableFields" :key="key">
@@ -60,12 +94,17 @@
                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
                     />
                   </div>
-                  <div v-else class="text-gray-900  bg-gray-100 px-4 py-2 rounded-lg shadow">
+                  <div
+                    v-else
+                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow"
+                  >
                     {{ userDetails[key] || "Not specified" }}
                   </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                  <label class="text-sm font-medium text-gray-700">Gender:</label>
+                  <label class="text-sm font-medium text-gray-700"
+                    >Gender:</label
+                  >
                   <div v-if="isEditing" class="flex-1">
                     <select
                       v-model="userDetails.gender"
@@ -76,17 +115,20 @@
                       <option value="Female">Female</option>
                     </select>
                   </div>
-                  <div v-else class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow">
-                    {{ userDetails.gender || "Not specified" }}
+                  <div
+                    v-else
+                    class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow"
+                  >
+                    {{ userDetails?.gender || "Not specified" }}
                   </div>
                 </div>
               </div>
               <button
                 v-if="isEditing"
                 type="submit"
-                class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md"
+                class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md cursor-pointer"
               >
-                 Save
+                Save
               </button>
             </form>
           </article>
@@ -97,75 +139,62 @@
 </template>
 
 <script>
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
-
+import { mapState, mapActions } from "vuex";
+import uploadToCloudinary from "../services/uploadToCloudinary";
 export default {
   data() {
     return {
-      userDetails: {
-        email: "",
-        name: "",
-        photo: "",
-        nickName: "",
-        location: "",
-        gender: "",
-        nationalId: "",
-        isActive: false, 
-      },
       isEditing: false,
-      defaultPhoto: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-      editableFields: {
-        name: "",
-        nickName: "",
-        location: "",
-        nationalId: "",
-      },
+      selectedFile: null,
     };
   },
   mounted() {
-    this.fetchUserData();
+    this.fetchUserDetails();
+  },
+  computed: {
+    ...mapState("auth", ["userDetails"]),
   },
   methods: {
-    async fetchUserData() {
-      const authInstance = getAuth();
-      onAuthStateChanged(authInstance, async (currentUser) => {
-        if (currentUser) {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            this.userDetails = {
-              email: currentUser.email,
-              name: userData.name || "No Name",
-              nickName: userData.nickName || "",
-              location: userData.location || "",
-              gender: userData.gender || "",
-              nationalId: userData.nationalId || "",
-              photo: userData.photo || this.defaultPhoto,
-              isActive: userData.isActive || false,
-            };
-          }
-        }
-      });
-    },
+    ...mapActions("auth", ["fetchUserDetails", "updateProfile"]),
     toggleEdit() {
       this.isEditing = !this.isEditing;
     },
     async saveProfile() {
-      const authInstance = getAuth();
-      const currentUser = authInstance.currentUser;
-      if (currentUser) {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        await setDoc(userDocRef, this.userDetails, { merge: true });
+      this.$store.commit("setLoading", true);
+      try {
+        if (this.selectedFile) {
+          const uploadImgUrl = await uploadToCloudinary(
+            this.selectedFile,
+            import.meta.env.VITE_CLOUDINARY_UPLOAD_USER_PRESET
+          );
+          this.userDetails.photo = uploadImgUrl;
+        }
+        await this.updateProfile();
         this.isEditing = false;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.$store.commit("setLoading", false);
       }
     },
     formatLabel(key) {
-      return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+      return key
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase());
+    },
+    handleFileChange(event) {
+      this.selectedFile = event.target.files[0];
+      if (this.selectedFile) {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.selectedFile);
+        reader.onload = () => {
+          this.userDetails.photo = reader.result;
+        };
+      }
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
     },
   },
 };
 </script>
-

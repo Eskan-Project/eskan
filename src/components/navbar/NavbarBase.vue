@@ -6,11 +6,9 @@
     ]"
   >
     <div class="container mx-auto flex items-center py-1">
-      <!-- Logo -->
       <router-link to="/">
         <img class="h-[70px]" src="../../assets/images/logo.png" alt="Logo" />
       </router-link>
-      <!-- Desktop Navigation -->
       <ul class="hidden md:flex flex-grow justify-center space-x-6">
         <li v-for="(item, index) in navLinks" :key="index">
           <router-link
@@ -27,12 +25,7 @@
       </ul>
 
       <div class="flex items-center gap-2 ml-auto">
-        <!-- <i
-          class="bi bi-brightness-high text-lg text-white hidden md:block mr-2"
-          aria-label="Brightness"
-        ></i> -->
-
-        <template v-if="user">
+        <template v-if="isAuth">
           <router-link
             :to="{ name: 'userProfile' }"
             class="flex items-center gap-1 px-2 py-1 md:px-4 md:py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
@@ -99,7 +92,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("auth", ["user"]),
+    ...mapState("auth", ["isAuth"]),
   },
   methods: {
     handleScroll() {
