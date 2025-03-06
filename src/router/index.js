@@ -17,6 +17,7 @@ import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
 import AdminPropertiesList from "@/views/AdminPropertiesList.vue";
+import AdminProfile from "@/views/AdminProfile.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -32,11 +33,7 @@ const routes = [
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:id", component: PropertyItemView, props: true },
       { path: "payment", name: "payment", component: Payment },
-      {
-        path: "admin/properties",
-        name: "prop",
-        component: AdminPropertiesList,
-      },
+
       {
         path: "userProfile",
         name: "userProfile",
@@ -122,9 +119,10 @@ const routes = [
     name: "admin",
     component: AdminDashboardView,
     children: [
+      { path: "", name: "adminProfile", component: AdminProfile },
       {
-        path: "/properties",
-        name: "prop",
+        path: "properties",
+        name: "adminProperties", // Changed from "prop" to "adminProperties"
         component: AdminPropertiesList,
       },
     ],
