@@ -1,7 +1,6 @@
 <template>
-  <main class="min-h-screen bg-gray-100 pt-[86px] py-8">
+  <main class="min-h-screen bg-gray-100 text-gray-900 pt-[86px] py-8">
     <div class="max-w-6xl mx-auto px-4">
-      <!-- Profile Header -->
       <section class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="relative h-48">
           <img
@@ -11,126 +10,162 @@
           />
           <div class="absolute inset-0 bg-[#053052]/80"></div>
         </div>
-        <div class="relative px-6 pb-6">
+        <div class="relative px-6 pb-6 text-gray-900">
           <article class="flex flex-col sm:flex-row items-center">
             <figure class="-mt-16 relative">
               <img
-                src="../assets/images/userProfilePhoto.jpg"
+                :src="userDetails.photo || defaultPhoto"
                 alt="Profile"
-                class="w-32 h-32 rounded-full border-4 border-white bg-white"
+                class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
               />
             </figure>
             <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
-              <h1 class="text-2xl font-bold text-gray-900">Alaa Mohamed</h1>
+              <h1 class="text-3xl font-bold text-gray-900">{{ userDetails.name || "No Name" }}</h1>
+              <div class="flex items-center justify-center sm:justify-start space-x-2 mt-2">
+                <span class="relative text-gray-600 text-sm font-medium bg-gray-200 px-4 py-1 rounded-lg shadow-md flex items-center">
+                  {{ userDetails.email }}
+                  <span
+                    v-if="userDetails.isActive"
+                    class="ml-2 bg-green-100 text-green-700 font-semibold px-2 py-1 rounded-md shadow-sm"
+                  >
+                    ✅ Active
+                  </span>
+                </span>
+              </div>
             </div>
             <button
-              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e]"
+              @click="toggleEdit"
+              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e] shadow-md"
             >
-              Edit Profile
+              {{ isEditing ? "Cancel" : "Edit Profile" }}
             </button>
           </article>
         </div>
       </section>
 
-      <!-- Profile Content -->
       <div class="mt-8 grid grid-cols-1 md:grid-cols-1 gap-6">
-        <!-- Personal Information -->
         <section class="md:col-span-2">
           <article class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
-            <dl class="space-y-4">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Personal Information</h2>
+            <form @submit.prevent="saveProfile">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">
-                    Full Name
-                  </dt>
-                  <dd class="mt-1 text-gray-900">Alaa Mohamed Mostafa</dd>
+                <div v-for="(value, key) in editableFields" :key="key">
+                  <label class="block text-sm font-medium text-gray-600">
+                    {{ formatLabel(key) }}
+                  </label>
+                  <div v-if="isEditing">
+                    <input
+                      v-model="userDetails[key]"
+                      type="text"
+                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
+                    />
+                  </div>
+                  <div v-else class="text-gray-900  bg-gray-100 px-4 py-2 rounded-lg shadow">
+                    {{ userDetails[key] || "Not specified" }}
+                  </div>
                 </div>
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">
-                    Nick Name
-                  </dt>
-                  <dd class="mt-1 text-gray-900">Alaa Mostafa</dd>
-                </div>
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">Phone</dt>
-                  <dd class="mt-1 text-gray-900">+201126355581</dd>
-                </div>
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">
-                    Location
-                  </dt>
-                  <dd class="mt-1 text-gray-900">Alexandria</dd>
-                </div>
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">
-                    Gender
-                  </dt>
-                  <dd class="mt-1 text-gray-900">Female</dd>
-                </div>
-                <div>
-                  <dt class="block text-sm font-medium text-gray-700">
-                    National ID
-                  </dt>
-                  <dd class="mt-1 text-gray-900">30001212121554</dd>
+                <div class="flex items-center space-x-4">
+                  <label class="text-sm font-medium text-gray-700">Gender:</label>
+                  <div v-if="isEditing" class="flex-1">
+                    <select
+                      v-model="userDetails.gender"
+                      class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
+                    >
+                      <option disabled value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div v-else class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow">
+                    {{ userDetails.gender || "Not specified" }}
+                  </div>
                 </div>
               </div>
-            </dl>
-          </article>
-
-          <!-- Properties -->
-          <article class="mt-6 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-900">
-              Email Address
-            </h2>
-            <ul class="space-y-4">
-              <li class="border rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div class="flex-grow">
-                    <h3 class="font-semibold text-gray-900">Alaa Mohamed</h3>
-                    <address class="text-gray-600 not-italic break-all">
-                      AlaaMohamed@gmail.com
-                    </address>
-                  </div>
-                  <span
-                    class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm whitespace-nowrap ml-4"
-                    role="status"
-                  >
-                    Active
-                  </span>
-                </div>
-              </li>
-            </ul>
+              <button
+                v-if="isEditing"
+                type="submit"
+                class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md"
+              >
+                 Save
+              </button>
+            </form>
           </article>
         </section>
-
-        <!-- Account Settings -->
-        <!-- <aside class="bg-white rounded-lg shadow-md p-6 h-fit">
-          <h2 class="text-xl font-semibold mb-4">Account Settings</h2>
-          <nav class="space-y-4">
-            <button
-              class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg"
-            >
-              Privacy Settings
-            </button>
-            <button
-              class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg"
-            >
-              Notification Preferences
-            </button>
-            <button
-              class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg"
-            >
-              Payment Methods
-            </button>
-            <button
-              class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg"
-            >
-              Security
-            </button>
-          </nav>
-        </aside> -->
       </div>
     </div>
   </main>
 </template>
+
+<script>
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+
+export default {
+  data() {
+    return {
+      userDetails: {
+        email: "",
+        name: "",
+        photo: "",
+        nickName: "",
+        location: "",
+        gender: "",
+        nationalId: "",
+        isActive: false, 
+      },
+      isEditing: false,
+      defaultPhoto: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      editableFields: {
+        name: "",
+        nickName: "",
+        location: "",
+        nationalId: "",
+      },
+    };
+  },
+  mounted() {
+    this.fetchUserData();
+  },
+  methods: {
+    async fetchUserData() {
+      const authInstance = getAuth();
+      onAuthStateChanged(authInstance, async (currentUser) => {
+        if (currentUser) {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            this.userDetails = {
+              email: currentUser.email,
+              name: userData.name || "No Name",
+              nickName: userData.nickName || "",
+              location: userData.location || "",
+              gender: userData.gender || "",
+              nationalId: userData.nationalId || "",
+              photo: userData.photo || this.defaultPhoto,
+              isActive: userData.isActive || false,
+            };
+          }
+        }
+      });
+    },
+    toggleEdit() {
+      this.isEditing = !this.isEditing;
+    },
+    async saveProfile() {
+      const authInstance = getAuth();
+      const currentUser = authInstance.currentUser;
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        await setDoc(userDocRef, this.userDetails, { merge: true });
+        this.isEditing = false;
+      }
+    },
+    formatLabel(key) {
+      return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+    },
+  },
+};
+</script>
+
