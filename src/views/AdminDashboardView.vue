@@ -11,10 +11,16 @@
             <i class="bi bi-person-circle mr-2"></i>Profile
           </router-link>
           <router-link
-            to="/admin/real-estate"
+            to="/admin/prop"
             class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
           >
-            <i class="bi bi-building mr-2"></i>Add Property
+            <i class="bi bi-building-add"></i> Add Property
+          </router-link>
+          <router-link
+            to="/admin/properties"
+            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
+          >
+            <i class="bi bi-building mr-2"></i>Properties
           </router-link>
           <router-link
             to="/admin/users"
