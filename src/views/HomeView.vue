@@ -253,6 +253,7 @@
             >
               Contact Us
             </router-link>
+            <button @click="getData">Get</button>
           </div>
         </div>
       </div>

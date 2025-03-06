@@ -1,0 +1,270 @@
+[
+    {
+      id: "2023-10-01T12:34:56.789Z",
+      data: {
+        date: "2023-10-01T12:34:56.789Z",
+        title: "Luxury Villa for Sale",
+        location: "Paris, Champs-Élysées",
+        description: "A stunning villa in the heart of Paris.",
+        price: 1500000,
+        size: 300,
+        rooms: 5,
+        livingRooms: 3,
+        bathRooms: 4,
+        type: "Villa",
+        status: "new",
+        furnished: false,
+        gallery: [
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272230/department_b6tslb.png",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272232/department4_uljzxs.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/ContactUsHomePage_regqbi.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/department2_fxttvn.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg"
+        ],
+        interiorFeatures: [
+          "Open Plan Kitchen",
+          "Central Heating",
+          "Large Windows",
+          "Walk-in Closet",
+          "Marble Flooring"
+        ],
+        externalFeatures: [
+          "Private Pool",
+          "Landscaped Garden",
+          "Double Garage",
+          "Alarm System",
+          "Outdoor Kitchen"
+        ],
+        coordinates: { latitude: 48.8686, longitude: 2.3136 },
+        video: "https://www.youtube.com/watch?v=abc123",
+        isActive: true
+      },
+      ApartmentOwnershipContract: "https://firebasestorage.com/contract1.pdf",
+      owner: {
+        name: "Alice Smith",
+        phone: "+33 612 345678",
+        email: "alicesmith@email.com",
+        profilePic: "https://firebasestorage.com/profile1.jpg",
+        address: "456 Elm St, Paris, France"
+      },
+      requestStatus: 1,
+      paymentStatus: true,
+      lastUpdated: "2023-10-01T12:34:56.789Z",
+      rejectionReason: "",
+      onlineMeetingStatus: "arranged",
+      comments: [{}]
+    },
+    {
+      id: "2023-10-02T10:11:12.345Z",
+      data: {
+        date: "2023-10-02T10:11:12.345Z",
+        title: "Cozy Studio Apartment",
+        location: "Berlin, Alexanderplatz",
+        description: "A cozy studio in the vibrant city of Berlin.",
+        price: 200000,
+        size: 50,
+        rooms: 1,
+        livingRooms: 1,
+        bathRooms: 1,
+        type: "Studio",
+        status: "second-hand",
+        furnished: true,
+        gallery: [
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272230/department_b6tslb.png",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272232/department4_uljzxs.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/ContactUsHomePage_regqbi.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/department2_fxttvn.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg"
+        ],
+        interiorFeatures: [
+          "Compact Kitchen",
+          "Wall Bed",
+          "Balcony",
+          "Laminate Flooring"
+        ],
+        externalFeatures: [
+          "Bike Storage",
+          "Shared Garden",
+          "Security Camera"
+        ],
+        coordinates: { latitude: 52.5219, longitude: 13.4132 },
+        video: "https://www.youtube.com/watch?v=def456",
+        isActive: true
+      },
+      ApartmentOwnershipContract: "https://firebasestorage.com/contract2.pdf",
+      owner: {
+        name: "Bob Johnson",
+        phone: "+49 176 9876543",
+        email: "bobjohnson@email.com",
+        profilePic: "https://firebasestorage.com/profile2.jpg",
+        address: "789 Oak St, Berlin, Germany"
+      },
+      requestStatus: 0,
+      paymentStatus: false,
+      lastUpdated: "2023-10-02T10:11:12.345Z",
+      rejectionReason: "Incomplete documentation",
+      onlineMeetingStatus: "pending",
+      comments: [{}]
+    },
+    {
+      id: "2023-10-03T14:15:16.789Z",
+      data: {
+        date: "2023-10-03T14:15:16.789Z",
+        title: "Modern Penthouse",
+        location: "New York, Manhattan",
+        description: "A luxurious penthouse with breathtaking views.",
+        price: 5000000,
+        size: 400,
+        rooms: 4,
+        livingRooms: 2,
+        bathRooms: 3,
+        type: "Penthouse",
+        status: "new",
+        furnished: true,
+        gallery: [
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272230/department_b6tslb.png",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272232/department4_uljzxs.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/ContactUsHomePage_regqbi.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/department2_fxttvn.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg"
+        ],
+        interiorFeatures: [
+          "Gourmet Kitchen",
+          "Floor-to-Ceiling Windows",
+          "Home Theater",
+          "Wine Cellar"
+        ],
+        externalFeatures: [
+          "Rooftop Terrace",
+          "Private Elevator",
+          "24/7 Concierge"
+        ],
+        coordinates: { latitude: 40.7484, longitude: -73.9857 },
+        video: "https://www.youtube.com/watch?v=ghi789",
+        isActive: true
+      },
+      ApartmentOwnershipContract: "https://firebasestorage.com/contract3.pdf",
+      owner: {
+        name: "Charlie Brown",
+        phone: "+1 212 555 6789",
+        email: "charliebrown@email.com",
+        profilePic: "https://firebasestorage.com/profile3.jpg",
+        address: "101 Pine St, New York, USA"
+      },
+      requestStatus: 2,
+      paymentStatus: true,
+      lastUpdated: "2023-10-03T14:15:16.789Z",
+      rejectionReason: "",
+      onlineMeetingStatus: "done",
+      comments: [{}]
+    },
+    {
+      id: "2023-10-04T08:09:10.123Z",
+      data: {
+        date: "2023-10-04T08:09:10.123Z",
+        title: "Rustic Country House",
+        location: "Tuscany, Italy",
+        description: "A charming country house surrounded by nature.",
+        price: 800000,
+        size: 250,
+        rooms: 6,
+        livingRooms: 2,
+        bathRooms: 3,
+        type: "House",
+        status: "second-hand",
+        furnished: false,
+        gallery: [
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272230/department_b6tslb.png",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272232/department4_uljzxs.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/ContactUsHomePage_regqbi.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/department2_fxttvn.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg"
+        ],
+        interiorFeatures: [
+          "Fireplace",
+          "Exposed Beams",
+          "Stone Walls",
+          "Farmhouse Kitchen"
+        ],
+        externalFeatures: [
+          "Vineyard",
+          "Outdoor Dining Area",
+          "Barn"
+        ],
+        coordinates: { latitude: 43.7711, longitude: 11.2486 },
+        video: "https://www.youtube.com/watch?v=jkl012",
+        isActive: true
+      },
+      ApartmentOwnershipContract: "https://firebasestorage.com/contract4.pdf",
+      owner: {
+        name: "Diana Prince",
+        phone: "+39 345 6789012",
+        email: "dianaprince@email.com",
+        profilePic: "https://firebasestorage.com/profile4.jpg",
+        address: "202 Olive St, Tuscany, Italy"
+      },
+      requestStatus: 1,
+      paymentStatus: false,
+      lastUpdated: "2023-10-04T08:09:10.123Z",
+      rejectionReason: "",
+      onlineMeetingStatus: "arranged",
+      comments: [{}]
+    },
+    {
+      id: "2023-10-05T16:17:18.456Z",
+      data: {
+        date: "2023-10-05T16:17:18.456Z",
+        title: "Beachfront Bungalow",
+        location: "Bali, Indonesia",
+        description: "A serene bungalow steps away from the beach.",
+        price: 600000,
+        size: 200,
+        rooms: 3,
+        livingRooms: 1,
+        bathRooms: 2,
+        type: "Bungalow",
+        status: "new",
+        furnished: true,
+        gallery: [
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272230/department_b6tslb.png",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272232/department4_uljzxs.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/ContactUsHomePage_regqbi.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272231/department2_fxttvn.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg",
+          "https://res.cloudinary.com/dml7ekwsc/image/upload/v1741272227/department3_ffnbm5.jpg"
+        ],
+        interiorFeatures: [
+          "Open Layout",
+          "Ceiling Fans",
+          "Outdoor Shower",
+          "Bamboo Furnishings"
+        ],
+        externalFeatures: [
+          "Private Beach Access",
+          "Sun Deck",
+          "Tropical Garden"
+        ],
+        coordinates: { latitude: -8.4095, longitude: 115.1889 },
+        video: "https://www.youtube.com/watch?v=mno345",
+        isActive: true
+      },
+      ApartmentOwnershipContract: "https://firebasestorage.com/contract5.pdf",
+      owner: {
+        name: "Eve Adams",
+        phone: "+62 812 3456789",
+        email: "eveadams@email.com",
+        profilePic: "https://firebasestorage.com/profile5.jpg",
+        address: "303 Palm St, Bali, Indonesia"
+      },
+      requestStatus: 0,
+      paymentStatus: false,
+      lastUpdated: "2023-10-05T16:17:18.456Z",
+      rejectionReason: "",
+      onlineMeetingStatus: "pending",
+      comments: [{}]
+    }
+  ];
