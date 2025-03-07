@@ -19,6 +19,7 @@ import SelectRole from "@/components/SelectRole.vue";
 import AdminPropertiesList from "@/views/AdminPropertiesList.vue";
 import AdminProfile from "@/views/AdminProfile.vue";
 import AdminPropItemCurdVue from "@/views/AdminPropItemCurd.vue";
+import AdminAddPropertyVue from "@/views/AdminAddProperty.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -122,6 +123,11 @@ const routes = [
     component: AdminDashboardView,
     children: [
       { path: "", name: "adminProfile", component: AdminProfile },
+      {
+        path: "add-property",
+        name: "addProperty", // Changed from "prop" to "adminProperties"
+        component: AdminAddPropertyVue,
+      },
       {
         path: "properties",
         name: "adminProperties", // Changed from "prop" to "adminProperties"

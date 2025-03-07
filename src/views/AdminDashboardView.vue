@@ -11,7 +11,7 @@
             <i class="bi bi-person-circle mr-2"></i>Profile
           </router-link>
           <router-link
-            to="/admin/prop"
+            to="/admin/add-property"
             class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
           >
             <i class="bi bi-building-add"></i> Add Property
