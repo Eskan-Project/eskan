@@ -291,38 +291,19 @@
               </div>
 
               <!-- Coordinates -->
-              <div class="sm:col-span-3">
+              <div class="sm:col-span-6">
                 <label
-                  for="latitude"
+                  for="googleMap"
                   class="block text-sm/6 font-medium text-gray-900"
-                  >Latitude</label
+                  >Google Map Link</label
                 >
                 <div class="mt-2">
                   <input
-                    type="number"
-                    step="0.0001"
-                    name="latitude"
-                    id="latitude"
+                    type="url"
+                    name="googleMap"
+                    id="googleMap"
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    placeholder="30.0444"
-                  />
-                </div>
-              </div>
-
-              <div class="sm:col-span-3">
-                <label
-                  for="longitude"
-                  class="block text-sm/6 font-medium text-gray-900"
-                  >Longitude</label
-                >
-                <div class="mt-2">
-                  <input
-                    type="number"
-                    step="0.0001"
-                    name="longitude"
-                    id="longitude"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    placeholder="31.2357"
+                    placeholder="https://www.google.com/maps/place/30.0444,31.2357"
                   />
                 </div>
               </div>
@@ -649,4 +630,24 @@
   </main>
 </template>
 
-<script></script>
+<script>
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    extractLatLng(url) {
+      const parts = url.split("/place/")[1]?.split(",");
+      if (parts && parts.length >= 2) {
+        return {
+          lat: parseFloat(parts[0]),
+          lng: parseFloat(parts[1]),
+        };
+      } else {
+        console.error("Invalid Google Maps URL");
+        return null;
+      }
+    },
+  },
+};
+</script>
