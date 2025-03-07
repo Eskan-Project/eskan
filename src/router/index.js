@@ -49,6 +49,7 @@ const routes = [
         children: [
           {
             path: "",
+            name: "11",
             redirect: { name: "propertyDetails" },
           },
           {
