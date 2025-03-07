@@ -329,44 +329,317 @@
 
               <!-- Interior Features -->
               <div class="col-span-full">
-                <label
-                  for="interiorFeatures"
-                  class="block text-sm/6 font-medium text-gray-900"
-                  >Interior Features</label
+                <h2 class="block text-sm/2 font-bold text-gray-900">
+                  Interior Features
+                </h2>
+                <div
+                  class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
                 >
-                <div class="mt-2">
-                  <textarea
-                    name="interiorFeatures"
-                    id="interiorFeatures"
-                    rows="3"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    placeholder="Enter features separated by commas: Modern Kitchen, Air Conditioning, etc."
-                  ></textarea>
+                  <!-- Modern Kitchen -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="ModernKitchen"
+                      name="kitchen"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="Modern Kitchen"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Modern Kitchen
+                    </label>
+                  </div>
+
+                  <!--  Air Conditioning -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="air"
+                      name="air"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="air"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Air Conditioning
+                    </label>
+                  </div>
+
+                  <!-- Spacious Living Room -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="SpaciousLivingRoom"
+                      name="Spacious Living Room"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="Spacious Living Room"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Swimming Pool
+                    </label>
+                  </div>
+
+                  <!-- Built-in Wardrobes -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="Wardrobes"
+                      name="Wardrobes"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="Wardrobes"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Built-in Wardrobes
+                    </label>
+                  </div>
+
+                  <!-- Hardwood Flooring -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="hardwood"
+                      name="hardwood"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="hardwood"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Hardwood Flooring
+                    </label>
+                  </div>
                 </div>
-                <p class="mt-3 text-sm/6 text-gray-600">
-                  Enter interior features separated by commas.
-                </p>
               </div>
 
               <!-- External Features -->
               <div class="col-span-full">
-                <label
-                  for="externalFeatures"
-                  class="block text-sm/6 font-medium text-gray-900"
-                  >External Features</label
+                <h3 class="block text-sm/6 font-bold text-gray-900">
+                  External Features
+                </h3>
+                <div
+                  class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
                 >
-                <div class="mt-2">
-                  <textarea
-                    name="externalFeatures"
-                    id="externalFeatures"
-                    rows="3"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    placeholder="Enter features separated by commas: Swimming Pool, Garden Area, etc."
-                  ></textarea>
+                  <!-- Garden -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="garden"
+                      name="garden"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="garden"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Garden
+                    </label>
+                  </div>
+
+                  <!-- Balcony -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="balcony"
+                      name="balcony"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="balcony"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Balcony
+                    </label>
+                  </div>
+
+                  <!-- Swimming Pool -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="pool"
+                      name="pool"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="pool"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Swimming Pool
+                    </label>
+                  </div>
+
+                  <!-- Parking -->
+                  <div class="sm:col-span-3 flex items-center gap-x-3">
+                    <input
+                      id="parking"
+                      name="parking"
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      for="parking"
+                      class="text-sm/6 font-medium text-gray-900"
+                    >
+                      Parking
+                    </label>
+                  </div>
                 </div>
-                <p class="mt-3 text-sm/6 text-gray-600">
-                  Enter external features separated by commas.
-                </p>
+              </div>
+              <!-- Gallery Images -->
+              <div class="col-span-full">
+                <h3 class="block text-sm/6 font-bold text-gray-900">
+                  Gallery Images
+                </h3>
+                <div class="mt-4">
+                  <input
+                    type="file"
+                    id="gallery"
+                    name="gallery"
+                    multiple
+                    accept="image/*"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                  <p class="mt-2 text-sm/6 text-gray-500">
+                    Upload multiple images for the property gallery.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Apartment Ownership Contract -->
+              <div class="col-span-full">
+                <h3 class="block text-sm/6 font-bold text-gray-900">
+                  Ownership Contract
+                </h3>
+                <div class="mt-4">
+                  <input
+                    type="file"
+                    id="contract"
+                    name="contract"
+                    accept=".pdf"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                  <p class="mt-2 text-sm/6 text-gray-500">
+                    Upload the ownership contract in PDF format.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Owner Information -->
+              <div class="col-span-full">
+                <h3 class="block text-sm/6 font-bold text-gray-900">
+                  Owner Information
+                </h3>
+                <div
+                  class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
+                >
+                  <!-- Owner Name -->
+                  <div class="sm:col-span-3">
+                    <label
+                      for="ownerName"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Owner Name</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        type="text"
+                        name="ownerName"
+                        id="ownerName"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Owner Phone -->
+                  <div class="sm:col-span-3">
+                    <label
+                      for="ownerPhone"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Owner Phone</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        type="tel"
+                        name="ownerPhone"
+                        id="ownerPhone"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        placeholder="+44 7911 123456"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Owner Email -->
+                  <div class="sm:col-span-3">
+                    <label
+                      for="ownerEmail"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Owner Email</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        type="email"
+                        name="ownerEmail"
+                        id="ownerEmail"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        placeholder="johndoe@email.com"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Owner Address -->
+                  <div class="sm:col-span-3">
+                    <label
+                      for="ownerAddress"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Owner Address</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        type="text"
+                        name="ownerAddress"
+                        id="ownerAddress"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        placeholder="123 Main St, London, UK"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Owner Profile Picture -->
+                  <div class="col-span-full">
+                    <label
+                      for="ownerProfilePic"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Owner Profile Picture</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        type="file"
+                        id="ownerProfilePic"
+                        name="ownerProfilePic"
+                        accept="image/*"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                      />
+                      <p class="mt-2 text-sm/6 text-gray-500">
+                        Upload a profile picture for the owner.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="col-span-full">
+                <button
+                  type="submit"
+                  class="rounded-md bg-indigo-600 px-4 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Add Property
+                </button>
               </div>
             </div>
           </div>
