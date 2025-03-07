@@ -16,6 +16,8 @@ import Completed from "@/components/createProperty/Completed.vue";
 import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
+import AdminPropertiesList from "@/views/AdminPropertiesList.vue";
+import AdminProfile from "@/views/AdminProfile.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -116,6 +118,14 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: AdminDashboardView,
+    children: [
+      { path: "", name: "adminProfile", component: AdminProfile },
+      {
+        path: "properties",
+        name: "adminProperties", // Changed from "prop" to "adminProperties"
+        component: AdminPropertiesList,
+      },
+    ],
     meta: { requiresAdmin: true },
   },
   /**

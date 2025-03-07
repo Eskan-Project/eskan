@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import uploadToCloudinary from "../services/uploadToCloudinary";
 export default {
   data() {
     return {
@@ -53,22 +53,13 @@ export default {
 
       if (!this.idFile) return;
 
-      const formData = new FormData();
-      formData.append("file", this.idFile);
-      formData.append(
-        "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_OWNER_PRESET
-      );
-
       try {
         this.$store.commit("setLoading", true);
-        const response = await axios.post(
-          `https://api.cloudinary.com/v1_1/${
-            import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-          }/image/upload`,
-          formData
+        const response = await uploadToCloudinary(
+          this.idFile,
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         );
-        this.imageUrl = response.data.secure_url;
+        this.imageUrl = response;
         this.$emit("idUploaded", this.imageUrl);
       } catch (error) {
         this.error = error.response.data.error;

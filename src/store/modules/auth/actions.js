@@ -18,13 +18,67 @@ import {
 const provider = new GoogleAuthProvider();
 
 export default {
+  async fetchUserDetails({ commit }) {
+    commit("setLoading", true, { root: true });
+    try {
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        throw new Error("fetchUserDetails: No authenticated user found.");
+      }
+
+      const userRole = await fetchUserRole(currentUser.uid);
+      if (!userRole.collection) {
+        throw new Error("fetchUserDetails: userRole.collection is undefined.");
+      }
+
+      const userRef = doc(db, userRole.collection, currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        console.error(`User document not found in ${userRole.collection}`);
+        commit("setUser", {});
+      } else {
+        commit("setUser", userDoc.data() || {});
+      }
+    } catch (error) {
+      commit("setError", error.message);
+      console.error(error);
+    } finally {
+      commit("setLoading", false, { root: true });
+    }
+  },
+  async updateProfile({ commit, state }) {
+    commit("setLoading", { root: true });
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        commit("setLoading", { root: false });
+        return null;
+      }
+
+      const userRole = await fetchUserRole(currentUser.uid);
+      const userRef = doc(db, userRole.collection, currentUser.uid);
+      const updatedUserDetails = {
+        ...state.userDetails,
+        updatedAt: new Date(),
+      };
+      await setDoc(userRef, updatedUserDetails, { merge: true });
+      commit("setUserDetails", updatedUserDetails);
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("setLoading", { root: false });
+    }
+  },
+
   async login({ commit }, { email, password }) {
     commit("setLoading", true, { root: true });
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      const userRole = await fetchUserRole(user.uid);
 
-      commit("setUser", { uid: user.uid, email: user.email, role: userRole });
+      await this.dispatch("auth/fetchUserDetails", user.uid);
       router.push("/");
     } catch (error) {
       commit("setError", error.message);
@@ -46,7 +100,7 @@ export default {
           query: { uid: user.uid, email: user.email, name: user.displayName },
         });
       } else {
-        commit("setUser", { uid: user.uid, email: user.email, role: userRole });
+        await this.dispatch("auth/fetchUserDetails", user.uid);
         router.push("/");
       }
     } catch (error) {
@@ -57,7 +111,7 @@ export default {
     }
   },
 
-  async register({ commit }, { name, email, password, role, idImage }) {
+  async register({ commit, state }, { name, email, password, role, idImage }) {
     commit("setLoading", true, { root: true });
     try {
       const { user } = await createUserWithEmailAndPassword(
@@ -65,10 +119,21 @@ export default {
         email,
         password
       );
+      const userDetails = { ...state.userDetails };
 
-      await storeUserInCollection(user.uid, name, email, role, idImage);
+      userDetails.uid = user.uid;
+      userDetails.name = name;
+      userDetails.email = email;
+      userDetails.role = role;
+      userDetails.isActive = true;
 
-      commit("setUser", { uid: user.uid, email, role });
+      if (role === "owner") {
+        userDetails.idImage = idImage || null;
+      }
+
+      await storeUserInCollection(user.uid, userDetails);
+
+      await this.dispatch("auth/fetchUserDetails", user.uid);
       router.push("/");
     } catch (error) {
       commit("setError", error.message);
@@ -114,9 +179,7 @@ export default {
         unsubscribe();
         if (user) {
           try {
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            const role = userDoc.exists() ? userDoc.data().role : "user";
-            commit("setUser", { uid: user.uid, email: user.email, role });
+            await this.dispatch("auth/fetchUserDetails", user.uid);
           } catch (error) {
             console.error("Error fetching user data:", error);
             commit("setUser", null);
