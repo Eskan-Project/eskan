@@ -1,3 +1,4 @@
+
 <template>
   <div class="properties">
     <div
@@ -228,7 +229,6 @@
 <script>
 import PropertyCard from "@/components/PropertyCard.vue";
 import propertiesBg from "@/assets/images/properties.png";
-import properties from "@/data/properties.js";
 
 export default {
   components: { PropertyCard },
@@ -237,7 +237,7 @@ export default {
       bgImage: propertiesBg,
       currentPage: 1,
       perPage: 8,
-      properties,
+      properties: [], 
       isScrolled: false,
       isExpanded: false,
       searchQuery: "",
@@ -274,12 +274,35 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
+    this.fetchProperties(); 
+    this.fetchProperties();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
+    async fetchProperties() {
+      try {
+        const response = await fetch("https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"); // استبدل برابط API الصحيح
+        const data = await response.json();
+
+        this.properties = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value.data,
+        }));
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    },
+    goToProperty(property) {
+      this.$router.push({
+        name: "PropertyItem",
+        params: { id: property.id },
+        state: { property },
+      });
+    },
+  
     handleScroll() {
       this.isScrolled = window.scrollY > 0;
     },
@@ -355,6 +378,6 @@ export default {
 
 
 
-
+ 
 
 
