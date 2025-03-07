@@ -10,7 +10,7 @@
           class="bi bi-images text-4xl text-gray-500"
           v-if="localImages.length === 0"
         ></i>
-        <p class="text-gray-500 text-center" v-if="localImages.length === 0">
+        <p class="text-gray-500 text-center">
           You can add up to 30 photos to your ad
         </p>
         <label
@@ -57,7 +57,7 @@
             />
             <button
               @click="removeImage(index)"
-              class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             >
               &times;
             </button>
@@ -75,12 +75,9 @@ export default {
   },
   data() {
     return {
-      localImages: [],
+      localImages: [...this.images],
       errorMessage: "",
     };
-  },
-  created() {
-    this.localImages = this.images ? [...this.images] : [];
   },
   watch: {
     images(newImages) {
@@ -88,10 +85,8 @@ export default {
     },
     localImages: {
       deep: true,
-      handler(newValue, oldValue) {
-        if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
-          this.$emit("update", [...newValue]);
-        }
+      handler(newValue) {
+        this.$emit("update", [...newValue]);
       },
     },
   },
@@ -99,34 +94,24 @@ export default {
     handleUpload(event) {
       const files = Array.from(event.target.files);
       this.errorMessage = "";
+
       if (files.length + this.localImages.length > 30) {
         this.errorMessage = "You can only upload up to 30 images.";
         return;
       }
 
       files.forEach((file) => {
-        if (
-          !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
-            file.type
-          )
-        ) {
-          this.errorMessage =
-            "Invalid file type. Only PNG, JPG, and WEBP are allowed.";
-          return;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-          this.errorMessage = "File size must be less than 5MB.";
-          return;
-        }
         const reader = new FileReader();
         reader.onload = (e) => {
           this.localImages.push(e.target.result);
+          this.$emit("update", this.localImages);
         };
         reader.readAsDataURL(file);
       });
     },
     removeImage(index) {
       this.localImages.splice(index, 1);
+      this.$emit("update", this.localImages);
     },
     validateForm() {
       if (this.localImages.length < 4) {

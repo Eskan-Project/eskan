@@ -98,7 +98,9 @@ export default {
       try {
         let idImageUrl;
         if (this.role === "owner" && this.file) {
-          const folderName = `${this.name.toLowerCase().replace(/\s+/g, "-")}`;
+          const folderName = `${this.name
+            .toLowerCase()
+            .replace(/\s+/g, "-")}-id`;
           idImageUrl = await uploadToCloudinary(
             this.file,
             "unsigned_owner_upload",

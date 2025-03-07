@@ -22,10 +22,14 @@ export default {
   },
   methods: {
     nextStep() {
-      this.$router.push({ name: this.name });
-      var storedStep = localStorage.getItem("activeStep");
-      storedStep++;
-      localStorage.setItem("activeStep", storedStep);
+      this.$emit("validateAndProceed", (valid) => {
+        if (valid) {
+          this.$router.push({ name: this.name });
+          var storedStep = localStorage.getItem("activeStep");
+          storedStep++;
+          localStorage.setItem("activeStep", storedStep);
+        }
+      });
     },
   },
 };

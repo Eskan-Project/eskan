@@ -9,7 +9,7 @@
     >
       <div class="md:col-span-2 lg:col-span-3">
         <InputField
-          v-model="formData.title"
+          v-model="propertyDetails.title"
           label="Title"
           required
           class="w-full md:w-[50%]"
@@ -17,26 +17,26 @@
       </div>
       <div class="md:col-span-2 lg:col-span-3">
         <InputField
-          v-model="formData.description"
+          v-model="propertyDetails.description"
           label="Description"
           required
           type="textarea"
         />
       </div>
       <InputField
-        v-model="formData.rooms"
+        v-model="propertyDetails.rooms"
         label="Number of Rooms"
         type="number"
         required
       />
       <InputField
-        v-model="formData.livingRooms"
+        v-model="propertyDetails.livingRooms"
         label="Number of Living Rooms"
         type="number"
         required
       />
       <InputField
-        v-model="formData.bathrooms"
+        v-model="propertyDetails.bathrooms"
         label="Number of Bathrooms"
         type="select"
         required
@@ -46,17 +46,21 @@
           { value: '3+', label: '3+' },
         ]"
       />
-      <InputField v-model="formData.price" label="Price" required />
+      <InputField v-model="propertyDetails.price" label="Price" required />
       <InputField
-        v-model="formData.kitchens"
+        v-model="propertyDetails.kitchens"
         label="Number of Kitchens"
         type="number"
         required
       />
-      <InputField v-model="formData.area" label="Area (M²)" required />
-      <InputField v-model="formData.floor" label="Floor Location" required />
+      <InputField v-model="propertyDetails.area" label="Area (M²)" required />
       <InputField
-        v-model="formData.furnished"
+        v-model="propertyDetails.floor"
+        label="Floor Location"
+        required
+      />
+      <InputField
+        v-model="propertyDetails.furnished"
         label="Furnished"
         type="select"
         required
@@ -66,7 +70,7 @@
         ]"
       />
       <InputField
-        v-model="formData.status"
+        v-model="propertyDetails.status"
         label="Status"
         type="select"
         required
@@ -81,27 +85,28 @@
 
 <script>
 import InputField from "@/components/InputField.vue";
+import { mapState } from "vuex";
 
 export default {
   components: {
     InputField,
   },
-  data() {
-    return {
-      formData: {
-        title: "",
-        description: "",
-        rooms: "",
-        livingRooms: "",
-        bathrooms: "",
-        price: "",
-        kitchens: "",
-        area: "",
-        floor: "",
-        furnished: "",
-        status: "",
+  computed: {
+    ...mapState("property", ["propertyDetails"]),
+  },
+  watch: {
+    propertyDetails: {
+      deep: true,
+      handler(newData) {
+        localStorage.setItem("propertyDetails", JSON.stringify(newData));
       },
-    };
+    },
+  },
+  created() {
+    const savedData = localStorage.getItem("propertyDetails");
+    if (savedData) {
+      this.$store.commit("property/updateProperty", JSON.parse(savedData));
+    }
   },
 };
 </script>
