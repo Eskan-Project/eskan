@@ -18,6 +18,7 @@ import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
 import AdminPropertiesList from "@/views/AdminPropertiesList.vue";
 import AdminProfile from "@/views/AdminProfile.vue";
+import AdminPropItemCurdVue from "@/views/AdminPropItemCurd.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -124,6 +125,11 @@ const routes = [
         path: "properties",
         name: "adminProperties", // Changed from "prop" to "adminProperties"
         component: AdminPropertiesList,
+      },
+      {
+        path: "properties/:id",
+        name: "adminPropertiesCURD", // Changed from "prop" to "adminProperties"
+        component: AdminPropItemCurdVue,
       },
     ],
     meta: { requiresAdmin: true },
