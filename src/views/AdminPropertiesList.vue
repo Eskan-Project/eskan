@@ -73,7 +73,7 @@
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
                   <router-link
-                    :to="`/admin/prop/${property.id}`"
+                    :to="`/admin/properties/${property.id}`"
                     type="button"
                     data-modal-show="editUserModal"
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
