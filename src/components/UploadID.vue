@@ -1,10 +1,10 @@
 <template>
   <div class="text-center text-black">
-    <p class="font-medium p-2" :class="{ 'text-green-500': imageUrl }">
-      {{ imageUrl ? "ID uploaded successfully" : "Please upload your ID" }}
+    <p class="font-medium p-2" :class="{ 'text-green-500': idImage }">
+      {{ idImage ? "ID uploaded successfully" : "Please upload your ID" }}
     </p>
     <div
-      v-if="!imageUrl"
+      v-if="!idImage"
       class="border-1 border-stone-400 border-dashed p-5 mx-10"
     >
       <label for="file">
@@ -23,14 +23,14 @@
         type="file"
         id="file"
         class="hidden"
-        @change="handleFileUpload"
+        @change="handleFileChange"
         accept="image/png, image/jpeg, image/jpg"
       />
       <p class="p-5 text-sm text-stone-400">Supports JPEG, PNG, JPG</p>
     </div>
 
-    <div v-if="imageUrl">
-      <img :src="imageUrl" alt="ID" class="w-1/2 mx-auto" />
+    <div v-if="idImage">
+      <img :src="idImage" alt="ID" class="w-1/2 mx-auto" />
     </div>
 
     <p v-if="error" class="text-red-500 my-5">{{ error }}</p>
@@ -38,34 +38,27 @@
 </template>
 
 <script>
-import uploadToCloudinary from "../services/uploadToCloudinary";
 export default {
   data() {
     return {
-      idFile: null,
-      imageUrl: "",
+      file: null,
+      idImage: null,
       error: null,
     };
   },
   methods: {
-    async handleFileUpload(event) {
-      this.idFile = event.target.files[0];
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      this.file = file;
 
-      if (!this.idFile) return;
-
-      try {
-        this.$store.commit("setLoading", true);
-        const response = await uploadToCloudinary(
-          this.idFile,
-          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-        );
-        this.imageUrl = response;
-        this.$emit("idUploaded", this.imageUrl);
-      } catch (error) {
-        this.error = error.response.data.error;
-      } finally {
-        this.$store.commit("setLoading", false);
+      if (this.file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.file);
+        reader.onload = () => {
+          this.idImage = reader.result;
+        };
       }
+      this.$emit("idUploaded", this.file);
     },
   },
 };

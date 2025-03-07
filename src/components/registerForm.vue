@@ -1,5 +1,6 @@
 <script>
 import { mapState, mapActions } from "vuex";
+import uploadToCloudinary from "@/services/uploadToCloudinary";
 export default {
   data() {
     return {
@@ -8,9 +9,11 @@ export default {
       password: "",
       confirmPassword: "",
       errors: {},
-      loading: false,
       showPassword: false,
       showConfirmPassword: false,
+      loading: false,
+      file: null,
+      imagePreview: null,
     };
   },
   computed: {
@@ -47,12 +50,23 @@ export default {
 
       this.loading = true;
       try {
+        let idImageUrl;
+
+        if (this.isOwner && this.file) {
+          const folderName = `${this.name.toLowerCase().replace(/\s+/g, "-")}`;
+          idImageUrl = await uploadToCloudinary(
+            this.file,
+            "unsigned_owner_upload",
+            folderName
+          );
+        }
+
         const userData = {
           name: this.name,
           email: this.email,
           password: this.password,
           role: this.isOwner ? "owner" : "user",
-          idImage: this.isOwner ? this.file : null,
+          idImage: idImageUrl,
         };
 
         await this.register(userData);
@@ -66,6 +80,19 @@ export default {
         }
       } finally {
         this.loading = false;
+      }
+    },
+
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      this.file = file;
+
+      if (this.file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.file);
+        reader.onload = () => {
+          this.imagePreview = reader.result;
+        };
       }
     },
 
@@ -89,6 +116,9 @@ export default {
     },
     confirmPassword() {
       this.errors.confirmPassword = null;
+    },
+    file() {
+      this.errors.file = null;
     },
   },
   props: {
@@ -207,9 +237,14 @@ export default {
             </p>
           </div>
           <div v-if="isOwner" class="text-center text-black">
-            <p class="font-medium p-2">please upload your ID</p>
+            <p class="font-medium p-2" v-if="!imagePreview">
+              please upload your ID
+            </p>
             <div class="border-1 border-stone-400 border-dashed p-5 mx-10">
-              <label for="file">
+              <div v-if="imagePreview">
+                <img :src="imagePreview" alt="Image Preview" />
+              </div>
+              <label for="file" v-else>
                 <i
                   class="bi bi-cloud-upload text-5xl text-stone-400 cursor-pointer"
                 ></i>
@@ -221,17 +256,26 @@ export default {
                   >
                 </p>
               </label>
-              <input type="file" id="file" class="hidden" />
-              <p class="p-5 text-sm text-stone-400">support JPEG, PNG, JPG</p>
+              <input
+                type="file"
+                id="file"
+                class="hidden"
+                @change="handleFileChange"
+              />
+              <p class="p-5 text-sm text-stone-400" v-if="!imagePreview">
+                support JPEG, PNG, JPG
+              </p>
+              <p v-if="errors.file" class="text-red-500 text-sm">
+                {{ errors.file }}
+              </p>
             </div>
           </div>
-          <div v-if="error" class="text-red-500 text-center mb-4">
+          <div v-if="errors.server" class="text-red-500 text-center mb-4">
             {{ errors.server }}
           </div>
 
           <button
             type="submit"
-            :disabled="loading"
             class="border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
             :class="{
               'opacity-50 cursor-not-allowed': loading,

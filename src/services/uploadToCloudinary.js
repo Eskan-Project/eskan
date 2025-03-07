@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const uploadToCloudinary = async (file, uploadPreset) => {
+const uploadToCloudinary = async (file, uploadPreset, folderName) => {
   if (!file) throw new Error("No file selected for upload.");
 
   const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -15,6 +15,7 @@ const uploadToCloudinary = async (file, uploadPreset) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", uploadPreset);
+  formData.append("folder", folderName);
 
   try {
     const response = await axios.post(

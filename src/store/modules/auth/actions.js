@@ -24,12 +24,12 @@ export default {
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
-        throw new Error("fetchUserDetails: No authenticated user found.");
+        return;
       }
 
       const userRole = await fetchUserRole(currentUser.uid);
-      if (!userRole.collection) {
-        throw new Error("fetchUserDetails: userRole.collection is undefined.");
+      if (!userRole?.collection) {
+        return;
       }
 
       const userRef = doc(db, userRole.collection, currentUser.uid);
@@ -111,6 +111,31 @@ export default {
     }
   },
 
+  async registerWithRole(
+    { commit, state },
+    { uid, name, email, role, idImage = null }
+  ) {
+    commit("setLoading", true, { root: true });
+    try {
+      const userDetails = { ...state.userDetails };
+      userDetails.uid = uid;
+      userDetails.name = name;
+      userDetails.email = email;
+      userDetails.role = role;
+      userDetails.isActive = true;
+
+      if (role === "owner") {
+        userDetails.idImage = idImage || null;
+      }
+
+      await storeUserInCollection(uid, userDetails);
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("setLoading", false, { root: true });
+    }
+  },
   async register({ commit, state }, { name, email, password, role, idImage }) {
     commit("setLoading", true, { root: true });
     try {
