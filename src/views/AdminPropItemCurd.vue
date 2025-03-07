@@ -246,6 +246,7 @@
           </button>
 
           <button
+            @click="deleteProperty"
             type="button"
             class="w-[25%] text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
           >
@@ -260,6 +261,8 @@
 <script>
 import L from "leaflet";
 import { nextTick } from "vue";
+import Swal from "sweetalert2";
+
 export default {
   data() {
     return {
@@ -306,6 +309,47 @@ export default {
   },
 
   methods: {
+    async deleteProperty() {
+      try {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        });
+
+        // If user cancels, exit the function
+        if (!result.isConfirmed) return;
+
+        this.loading = true;
+        this.error = null;
+
+        const response = await fetch(
+          `https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties/${this.id}.json`,
+          { method: "DELETE" }
+        );
+
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+
+        // Show success notification
+        await Swal.fire(
+          "Deleted!",
+          "Your property has been deleted.",
+          "success"
+        );
+        // Redirect to homepage after successful deletion
+        this.$router.push("/admin/properties");
+      } catch (error) {
+        console.error("Delete failed:", error);
+        this.error = `Failed to delete property: ${error.message}`;
+      } finally {
+        this.loading = false;
+      }
+    },
     // Optimized data fetching
     async fetchPropertyData() {
       this.loading = true;
