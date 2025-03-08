@@ -1,6 +1,8 @@
 import { createStore } from "vuex";
 import auth from "./modules/auth";
 import property from "./modules/property";
+import notifications from "./modules/notifications";
+
 export default createStore({
   state: {
     loading: false,
@@ -13,5 +15,6 @@ export default createStore({
   modules: {
     auth,
     property,
+    notifications,
   },
 });

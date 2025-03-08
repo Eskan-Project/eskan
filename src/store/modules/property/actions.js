@@ -4,7 +4,7 @@ import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
 export default {
-  async createProperty({ commit, state, rootState }, files) {
+  async createProperty({ commit, state, rootState, dispatch }, files) {
     commit("setLoading", true, { root: true });
     try {
       const propertyId = doc(collection(db, "requests")).id;
@@ -33,6 +33,13 @@ export default {
         status: "pending",
       };
       await setDoc(doc(db, "requests", propertyId), propertyData);
+      dispatch(
+        "notifications/addNotification",
+        `Your property ${propertyDetails.title} is under review.`,
+        {
+          root: true,
+        }
+      );
     } catch (error) {
       console.log(error);
     } finally {

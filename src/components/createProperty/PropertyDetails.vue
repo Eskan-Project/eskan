@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       errorMessage: "",
-      images: [],
+      images: JSON.parse(localStorage.getItem("localImages")) || [],
     };
   },
   computed: {
@@ -50,7 +50,6 @@ export default {
       this.images = images;
     },
     validateForm(callback) {
-      console.log(this.images);
       if (
         this.propertyDetails.title &&
         this.propertyDetails.description &&
@@ -60,12 +59,13 @@ export default {
         this.propertyDetails.price &&
         this.propertyDetails.area &&
         this.propertyDetails.floor &&
-        this.propertyDetails.neighborhood &&
         this.propertyDetails.coordinates &&
-        this.images.length > 0 &&
-        (this.propertyDetails.createdAt = new Date().toLocaleDateString())
+        this.images.length > 0
       ) {
         callback(true);
+      } else if (this.propertyDetails.neighborhood === "") {
+        this.errorMessage = "Please select property location on map";
+        callback(false);
       } else {
         this.errorMessage = "Please fill all the fields";
         callback(false);

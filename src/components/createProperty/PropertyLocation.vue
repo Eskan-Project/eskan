@@ -130,6 +130,7 @@ export default {
         coordinates: { lat, lng },
       });
       const neighborhood = await reverseGeocode(lat, lng);
+      console.log(neighborhood);
       this.$store.commit("property/updateProperty", {
         neighborhood,
       });
