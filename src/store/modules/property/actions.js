@@ -7,10 +7,10 @@ export default {
   async createProperty({ commit, state, rootState }, files) {
     commit("setLoading", true, { root: true });
     try {
-      const propertyId = doc(collection(db, "properties")).id;
+      const propertyId = doc(collection(db, "requests")).id;
       let imagesUrl;
       if (files.length) {
-        const folderName = `properties/${propertyId}`;
+        const folderName = `requests/${propertyId}`;
         imagesUrl = await Promise.all(
           files.map(async (file) => {
             const image = base64ToFile(file);
@@ -30,8 +30,9 @@ export default {
         images: imagesUrl,
         ownerId,
         createdAt: new Date(),
+        status: "pending",
       };
-      await setDoc(doc(db, "properties", propertyId), propertyData);
+      await setDoc(doc(db, "requests", propertyId), propertyData);
     } catch (error) {
       console.log(error);
     } finally {
