@@ -127,7 +127,7 @@ export default {
     return {
       properties: [],
       currentPage: 1,
-      perPage: 8,
+      perPage: 6,
       searchQuery: "",
       isLoading: false,
     };
