@@ -4,7 +4,7 @@
   >
     <PropertyForm />
     <PropertyLocation />
-    <PropertyImages :images="propertyDetails.images" @update="updateImages" />
+    <PropertyImages @images="handleImages" />
     <p v-if="errorMessage" class="text-lg text-red-500 mt-1 text-center">
       {{ errorMessage }}
     </p>
@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       errorMessage: "",
+      images: [],
     };
   },
   computed: {
@@ -45,10 +46,11 @@ export default {
     },
   },
   methods: {
-    updateImages(images) {
-      this.$store.dispatch("property/updateImages", images);
+    handleImages(images) {
+      this.images = images;
     },
     validateForm(callback) {
+      console.log(this.images);
       if (
         this.propertyDetails.title &&
         this.propertyDetails.description &&
@@ -60,7 +62,8 @@ export default {
         this.propertyDetails.floor &&
         this.propertyDetails.neighborhood &&
         this.propertyDetails.coordinates &&
-        this.propertyDetails.images.length > 0
+        this.images.length > 0 &&
+        (this.propertyDetails.createdAt = new Date().toLocaleDateString())
       ) {
         callback(true);
       } else {

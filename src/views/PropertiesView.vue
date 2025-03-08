@@ -284,7 +284,7 @@ export default {
   methods: {
     async fetchProperties() {
       try {
-        const response = await fetch("https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"); // استبدل برابط API الصحيح
+        const response = await fetch("https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"); 
         const data = await response.json();
 
         this.properties = Object.entries(data).map(([key, value]) => ({
