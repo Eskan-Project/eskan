@@ -24,6 +24,7 @@
         >
           Upload From Computer
           <input
+            required
             type="file"
             :multiple="isMultiple"
             @change="handleUpload"

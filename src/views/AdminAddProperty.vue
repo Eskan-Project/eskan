@@ -23,6 +23,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="title"
                     type="text"
                     name="title"
@@ -93,6 +94,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="price"
                     type="number"
                     name="price"
@@ -111,6 +113,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="size"
                     type="number"
                     name="size"
@@ -129,6 +132,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="rooms"
                     type="number"
                     name="rooms"
@@ -147,6 +151,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="livingRooms"
                     type="number"
                     name="livingRooms"
@@ -165,6 +170,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="bathRooms"
                     type="number"
                     name="bathRooms"
@@ -180,6 +186,7 @@
                   <div class="flex h-6 shrink-0 items-center">
                     <div class="group grid size-4 grid-cols-1">
                       <input
+                        required
                         v-model="furnished"
                         id="furnished"
                         name="furnished"
@@ -204,6 +211,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="videoUrl"
                     type="url"
                     name="video"
@@ -249,6 +257,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="city"
                         type="text"
                         name="city"
@@ -267,6 +276,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="street"
                         type="text"
                         name="street"
@@ -309,6 +319,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="googleMapUrl"
                     type="url"
                     name="googleMap"
@@ -552,6 +563,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerName"
                         type="text"
                         name="ownerName"
@@ -571,6 +583,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerPhone"
                         type="tel"
                         name="ownerPhone"
@@ -590,6 +603,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerEmail"
                         type="email"
                         name="ownerEmail"
@@ -609,6 +623,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerAdders"
                         type="text"
                         name="ownerAddress"
