@@ -35,88 +35,11 @@
       </div>
 
       <div class="p-5 bg-white shadow-lg rounded-lg text-center relative">
-        <template v-if="isOwnerDetailsLocked">
-          <div
-            class="absolute inset-0 bg-white bg-opacity-90 flex flex-col items-center justify-center p-5 rounded-lg"
-          >
-            <span class="text-4xl text-gray-500 mb-2">🔒</span>
-            <h3 class="text-lg font-bold text-[#364365]">
-              This Information is Locked
-            </h3>
-            <p class="text-gray-600 mb-3">
-              This is a paid service. Unlock to access owner details.
-            </p>
-            <button
-              @click="showUnlockModal = true"
-              class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-            >
-              🔓 Unlock Information
-            </button>
-          </div>
-        </template>
-        <template v-else-if="property && property.owner && isOwnerDetailsVisible">
-          <img
-            :src="property.owner.profilePic "
-            alt="Owner"
-            class="w-24 h-24 rounded-full mx-auto mb-3 mt-5"
-          />
-          <h3 class="text-lg font-bold text-[#364365]">
-            {{ property.owner.name }}
-          </h3>
-          <p class="text-gray-600">📞 {{ property.owner.phone }}</p>
-          <p class="text-gray-600">✉️ {{ property.owner.email }}</p>
-          <p class="text-gray-600">📍 {{ property.owner.address }}</p>
-          <button
-            @click="toggleOwnerDetails"
-            class="mt-3 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-700"
-          >
-            ❌ Hide Owner Information
-          </button>
-          <button
-            @click="handleOwnerLock"
-            class="mt-3 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-700"
-          >
-            🔒 Lock Owner Info Test
-          </button>
-        </template>
-        <template v-else>
-          <div class="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-3 mt-5"></div>
-          <div class="w-50 h-10 bg-gray-300 mx-auto mb-3"></div>
-          <h3 class="text-lg font-bold text-[#364365]">Real Estate Owner</h3>
-          <button
-            @click="toggleOwnerDetails"
-            class="mt-2 w-full bg-[#364365] text-white py-2 rounded-md hover:bg-gray-800"
-          >
-            📞 View Owner Information
-          </button>
-        </template>
+        <div class="property-item">
+         
+          
 
-        <div
-          v-if="showUnlockModal"
-          class="fixed inset-0 bg-gray-900 bg-opacity-40 z-10 flex items-center justify-center"
-        >
-          <div class="bg-white p-6 rounded-lg shadow-lg text-center w-96">
-            <h3 class="text-lg font-bold text-gray-800">
-              🔓 Unlock Information
-            </h3>
-            <p class="text-gray-600 mt-2 mb-4">
-              This is a paid service. Do you want to proceed?
-            </p>
-            <div class="flex justify-center space-x-3">
-              <button
-                @click="confirmUnlock"
-                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                ✅ OK
-              </button>
-              <button
-                @click="showUnlockModal = false"
-                class="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-              >
-                ❌ Cancel
-              </button>
-            </div>
-          </div>
+          <PropertyDetails  :property="property" :id="property.id" />
         </div>
       </div>
     </div>
@@ -159,7 +82,6 @@
 
         <div class="p-5 bg-white shadow-lg rounded-lg mt-6">
           <h3 class="text-lg font-bold text-[#364365]">External Features</h3>
-     
           <ul class="mt-2 text-gray-600 space-y-1">
             <li v-for="(feature, index) in property.externalFeatures" :key="index">
               ✔ {{ feature }}
@@ -185,6 +107,7 @@
 <script>
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import PropertyDetails from "../components/PropertyDetails.vue";
 
 export default {
   props: ["id"],
@@ -202,7 +125,11 @@ export default {
       ownerClickCount: 0,
       showUnlockModal: false,
       loading: true,
+      showDetails: false,
     };
+  },
+  components: {
+    PropertyDetails,
   },
   mounted() {
     this.fetchProperty().then(() => {
@@ -211,7 +138,7 @@ export default {
           this.initMap();
         });
       }
-      this.updateVisibleGallery(); 
+      this.updateVisibleGallery();
     });
   },
   methods: {
@@ -238,18 +165,26 @@ export default {
       if (this.property && this.property.gallery) {
         this.visibleGallery = [];
         for (let i = 0; i < 4; i++) {
-          this.visibleGallery.push(this.property.gallery[(this.galleryStartIndex + i) % this.property.gallery.length]);
+          this.visibleGallery.push(
+            this.property.gallery[
+              (this.galleryStartIndex + i) % this.property.gallery.length
+            ]
+          );
         }
       }
     },
     nextImage() {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.property.gallery.length;
-      this.galleryStartIndex = (this.currentImageIndex - (this.currentImageIndex % 4));
+      this.currentImageIndex =
+        (this.currentImageIndex + 1) % this.property.gallery.length;
+      this.galleryStartIndex =
+        this.currentImageIndex - (this.currentImageIndex % 4);
       this.updateVisibleGallery();
     },
     prevImage() {
-      this.currentImageIndex = (this.currentImageIndex - 1 + this.property.gallery.length) % this.property.gallery.length;
-      this.galleryStartIndex = (this.currentImageIndex - (this.currentImageIndex % 4));
+      this.currentImageIndex =
+        (this.currentImageIndex - 1 + this.property.gallery.length) %
+        this.property.gallery.length;
+      this.galleryStartIndex =this.currentImageIndex - (this.currentImageIndex % 4);
       this.updateVisibleGallery();
     },
     initMap() {
@@ -323,7 +258,7 @@ export default {
     },
     getCustomIcon(color) {
       return L.icon({
-        iconUrl: `https://maps.google.com/mapfiles/ms/icons/$$${color}-dot.png`,
+        iconUrl: `https://maps.google.com/mapfiles/ms/icons/$$$${color}-dot.png`,
         iconSize: [32, 32],
         iconAnchor: [16, 32],
         popupAnchor: [0, -32],
@@ -364,10 +299,6 @@ export default {
   border-radius: 10px;
 }
 </style>
-
-
-
-
 
 
 
