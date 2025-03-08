@@ -51,6 +51,8 @@
 
 <script>
 import { loadStripe } from "@stripe/stripe-js";
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, collection, runTransaction, arrayUnion } from "firebase/firestore";
 
 export default {
   data() {
@@ -60,41 +62,74 @@ export default {
       loading: false,
       message: "",
       success: false,
+      propertyId: null,
+      paymentAmount: 5000,
     };
   },
   async mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.propertyId = urlParams.get("propertyId");
+    
     this.stripe = await loadStripe(
       "pk_test_51Qz4y8FtCSCr88l3ZSWOi0AJ66ihq5nPNab2SHJBTyi60oyWPxfIbFS5EEPjpCsIyn6Q3zOKFi2DoDjchngDSuRU00pvUfcZuQ"
     );
-    const elements = this.stripe.elements();
-    this.card = elements.create("card", {
-      style: {
-        base: {
-          fontSize: "18px",
-          color: "#333",
-          "::placeholder": { color: "#888" },
+    this.$nextTick(() => {
+      const elements = this.stripe.elements();
+      this.card = elements.create("card", {
+        style: {
+          base: {
+            fontSize: "18px",
+            color: "#333",
+            "::placeholder": { color: "#888" },
+          },
         },
-      },
+      });
+      this.card.mount("#card-element");
     });
-    this.card.mount("#card-element");
   },
   methods: {
     async handlePayment() {
       this.loading = true;
       this.message = "";
       try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          this.message = "User not authenticated.";
+          this.success = false;
+          this.loading = false;
+          return;
+        }
+
+        const db = getFirestore();
+        await runTransaction(db, async (transaction) => {
+          const userRef = doc(db, `users/${user.uid}`);
+          const paymentRef = doc(collection(db, "payments"));
+
+          transaction.set(paymentRef, {
+            userId: user.uid,
+            propertyId: this.propertyId,
+            amount: this.paymentAmount,
+            timestamp: new Date(),
+          });
+
+          transaction.update(userRef, {
+            paidProperties: arrayUnion(this.propertyId),
+          });
+        });
+
         const response = await fetch(
           "http://localhost:3001/create-payment-intent",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: 5000 }),
+            body: JSON.stringify({ amount: this.paymentAmount }),
           }
         );
 
         const data = await response.json();
-        if (!response.ok)
-          throw new Error(data.error || "Failed to create payment");
+        if (!response.ok) throw new Error(data.error || "Failed to create payment");
+
         const { paymentMethod, error } = await this.stripe.createPaymentMethod({
           type: "card",
           card: this.card,
@@ -110,6 +145,9 @@ export default {
         } else {
           this.success = true;
           this.message = "✅ Payment successful!";
+          setTimeout(() => {
+            window.location.href = `/property/${this.propertyId}`;
+          }, 2000);
         }
       } catch (error) {
         this.success = false;
@@ -121,3 +159,15 @@ export default {
   },
 };
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
