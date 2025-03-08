@@ -502,23 +502,7 @@
               </div>
               <!-- Gallery Images -->
               <div class="col-span-full">
-                <h3 class="block text-sm/6 font-bold text-gray-900">
-                  Gallery Images
-                </h3>
-                <div class="mt-4">
-                  <input
-                    v-model="imgUrl"
-                    type="url"
-                    id="gallery"
-                    name="gallery"
-                    multiple
-                    accept="image/*"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                  <p class="mt-2 text-sm/6 text-gray-500">
-                    Upload multiple images for the property gallery.
-                  </p>
-                </div>
+                <property-images @images="handleImages" />
               </div>
 
               <!-- Apartment Ownership Contract -->
@@ -669,8 +653,10 @@
 <script>
 import { serverTimestamp } from "firebase/database";
 import Swal from "sweetalert2";
+import PropertyImages from "@/components/createProperty/PropertyImages.vue";
 
 export default {
+  components: { PropertyImages },
   data() {
     return {
       title: "",
@@ -691,7 +677,7 @@ export default {
       furnished: null,
       interiorFeatures: [],
       externalFeatures: [],
-      imgUrl: null,
+      images: null,
       videoUrl: null,
       propertyContract: null,
       ownerName: "",
@@ -703,6 +689,9 @@ export default {
   },
 
   methods: {
+    handleImages(images) {
+      this.images = images;
+    },
     async addNewProperty() {
       this.extractLatLng();
       const newProperty = {
@@ -720,7 +709,7 @@ export default {
           type: this.propertyType,
           status: this.propertyStatus,
           furnished: this.furnished,
-          gallery: [this.imgUrl],
+          gallery: this.images,
           interiorFeatures: this.interiorFeatures,
           externalFeatures: this.externalFeatures,
           coordinates: { latitude: this.lat, longitude: this.lng },
