@@ -171,20 +171,20 @@
     </section>
 
     <section class="py-16" data-aos="fade-up">
-      <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-6 text-[#364365]">
-          Latest Properties for Rent
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <PropertyCard
-            v-for="(property, index) in properties"
-            :key="index"
-            :property="property"
-            data-aos="zoom-in"
-          />
-        </div>
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6 text-[#364365]">
+        Latest Properties for Rent
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <PropertyCard
+          v-for="(property, index) in latestProperties"
+          :key="index"
+          :property="property"
+          data-aos="zoom-in"
+        />
       </div>
-    </section>
+    </div>
+  </section>
 
     <section
       class="py-16 bg-[#DDE1EB] text-[#364365] text-center mb-16"
@@ -273,10 +273,6 @@ import AOS from "aos";
 import ContactUsHomePage from "../assets/images/ContactUsHomePage.jpg";
 import PropertyCard from "@/components/PropertyCard.vue";
 import heroSection from "../assets/images/heroSection.jpg";
-import propertyImage1 from "@/assets/images/department.jpg";
-import propertyImage2 from "@/assets/images/department2.jpg";
-import propertyImage3 from "@/assets/images/department3.jpg";
-import propertyImage4 from "@/assets/images/department4.jpg";
 import CountUp from "vue-countup-v3";
 
 export default {
@@ -288,62 +284,8 @@ export default {
       showBackToTop: false,
       ImgForHeroSection: heroSection,
       ContactUsHomePage: ContactUsHomePage,
-      properties: [
-        {
-          title: "Apartment for sale",
-          location: "London, Oxford St.",
-          price: "290,000",
-          size: "150",
-          rooms: "3",
-          units: "10",
-          image: propertyImage1,
-        },
-        {
-          title: "Luxury Condo",
-          location: "New York, Times Sq.",
-          price: "450,000",
-          size: "180",
-          rooms: "4",
-          units: "5",
-          image: propertyImage2,
-        },
-        {
-          title: "Apartment for sale",
-          location: "London, Oxford St.",
-          price: "290,000",
-          size: "150",
-          rooms: "3",
-          units: "10",
-          image: propertyImage3,
-        },
-        {
-          title: "Apartment for sale",
-          location: "London, Oxford St.",
-          price: "290,000",
-          size: "150",
-          rooms: "3",
-          units: "10",
-          image: propertyImage4,
-        },
-        {
-          title: "Luxury Condo",
-          location: "New York, Times Sq.",
-          price: "450,000",
-          size: "180",
-          rooms: "4",
-          units: "5",
-          image: propertyImage1,
-        },
-        {
-          title: "Apartment for sale",
-          location: "London, Oxford St.",
-          price: "290,000",
-          size: "150",
-          rooms: "3",
-          units: "10",
-          image: propertyImage2,
-        },
-      ],
+      latestProperties: [],
+     
     };
   },
   mounted() {
@@ -352,8 +294,30 @@ export default {
       once: true,
     });
     window.addEventListener("scroll", this.handleScroll);
+    this.fetchProperties();
   },
   methods: {
+    async fetchProperties() {
+      try {
+        const response = await fetch(
+          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
+        );
+        const data = await response.json();
+        if (data) {
+          const propertiesArray = Object.entries(data).map(([key, value]) => ({
+            id: key,
+            ...value.data,
+          }));
+
+        
+          this.latestProperties = propertiesArray.slice(0, 6);
+          console.log("Latest Properties:", this.latestProperties);
+        }
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    },
+  
     handleScroll() {
       const countupSection = document.getElementById("countup-section");
       if (countupSection) {
