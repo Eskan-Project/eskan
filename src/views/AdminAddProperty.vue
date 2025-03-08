@@ -23,6 +23,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="title"
                     type="text"
                     name="title"
@@ -93,6 +94,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="price"
                     type="number"
                     name="price"
@@ -111,6 +113,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="size"
                     type="number"
                     name="size"
@@ -129,6 +132,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="rooms"
                     type="number"
                     name="rooms"
@@ -147,6 +151,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="livingRooms"
                     type="number"
                     name="livingRooms"
@@ -165,6 +170,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="bathRooms"
                     type="number"
                     name="bathRooms"
@@ -180,6 +186,7 @@
                   <div class="flex h-6 shrink-0 items-center">
                     <div class="group grid size-4 grid-cols-1">
                       <input
+                        required
                         v-model="furnished"
                         id="furnished"
                         name="furnished"
@@ -204,6 +211,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="videoUrl"
                     type="url"
                     name="video"
@@ -249,6 +257,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="city"
                         type="text"
                         name="city"
@@ -267,6 +276,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="street"
                         type="text"
                         name="street"
@@ -309,6 +319,7 @@
                 >
                 <div class="mt-2">
                   <input
+                    required
                     v-model="googleMapUrl"
                     type="url"
                     name="googleMap"
@@ -500,44 +511,38 @@
                   </div>
                 </div>
               </div>
-              <!-- Gallery Images -->
-              <div class="col-span-full">
-                <h3 class="block text-sm/6 font-bold text-gray-900">
-                  Gallery Images
-                </h3>
-                <div class="mt-4">
-                  <input
-                    v-model="imgUrl"
-                    type="url"
-                    id="gallery"
-                    name="gallery"
-                    multiple
-                    accept="image/*"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                  <p class="mt-2 text-sm/6 text-gray-500">
-                    Upload multiple images for the property gallery.
-                  </p>
+              <!-- Gallery Images and Property Contract -->
+              <div class="col-span-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h3 class="block text-sm/6 font-bold text-gray-900 py-4">
+                    Property Images
+                  </h3>
+                  <images-add
+                    @images="handleImages"
+                    :isMultiple="true"
+                    icon="bi bi-images"
+                  >
+                    <template #header>Posting Photos</template>
+                    <template #underIcon
+                      >You can Add up to 30 Images per add</template
+                    >
+                  </images-add>
                 </div>
-              </div>
 
-              <!-- Apartment Ownership Contract -->
-              <div class="col-span-full">
-                <h3 class="block text-sm/6 font-bold text-gray-900">
-                  Ownership Contract
-                </h3>
-                <div class="mt-4">
-                  <input
-                    v-model="propertyContract"
-                    type="url"
-                    id="contract"
-                    name="contract"
-                    accept=".pdf"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                  <p class="mt-2 text-sm/6 text-gray-500">
-                    Upload the ownership contract in PDF format.
-                  </p>
+                <div>
+                  <h3 class="block text-sm/6 font-bold text-gray-900 py-4">
+                    Property Contract
+                  </h3>
+                  <images-add
+                    @images="handleContract"
+                    :isMultiple="true"
+                    icon="bi bi-file-earmark-arrow-up-fill"
+                  >
+                    <template #header>Add Property Contract</template>
+                    <template v-slot:underIcon
+                      >Please upload the Property Contract</template
+                    >
+                  </images-add>
                 </div>
               </div>
 
@@ -558,6 +563,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerName"
                         type="text"
                         name="ownerName"
@@ -577,6 +583,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerPhone"
                         type="tel"
                         name="ownerPhone"
@@ -596,6 +603,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerEmail"
                         type="email"
                         name="ownerEmail"
@@ -615,6 +623,7 @@
                     >
                     <div class="mt-2">
                       <input
+                        required
                         v-model="ownerAdders"
                         type="text"
                         name="ownerAddress"
@@ -627,24 +636,16 @@
 
                   <!-- Owner Profile Picture -->
                   <div class="col-span-full">
-                    <label
-                      for="ownerProfilePic"
-                      class="block text-sm/6 font-medium text-gray-900"
-                      >Owner Profile Picture</label
+                    <images-add
+                      @images="handleOwnerProfilePic"
+                      :isMultiple="false"
+                      icon="bi bi-person-circle"
                     >
-                    <div class="mt-2">
-                      <input
-                        v-model="ownerProfilePicUrl"
-                        type="url"
-                        id="ownerProfilePic"
-                        name="ownerProfilePic"
-                        accept="image/*"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                      />
-                      <p class="mt-2 text-sm/6 text-gray-500">
-                        Upload a profile picture for the owner.
-                      </p>
-                    </div>
+                      <template #header>Owner Profile Picture</template>
+                      <template v-slot:underIcon
+                        >Please upload the owner Profile Pic</template
+                      >
+                    </images-add>
                   </div>
                 </div>
               </div>
@@ -670,7 +671,10 @@
 import { serverTimestamp } from "firebase/database";
 import Swal from "sweetalert2";
 
+import ImagesAdd from "@/components/adminDash/ImagesAdd.vue";
+
 export default {
+  components: { ImagesAdd },
   data() {
     return {
       title: "",
@@ -691,7 +695,7 @@ export default {
       furnished: null,
       interiorFeatures: [],
       externalFeatures: [],
-      imgUrl: null,
+      images: null,
       videoUrl: null,
       propertyContract: null,
       ownerName: "",
@@ -703,6 +707,15 @@ export default {
   },
 
   methods: {
+    handleOwnerProfilePic(profilePic) {
+      this.ownerProfilePicUrl = profilePic;
+    },
+    handleContract(contract) {
+      this.propertyContract = contract;
+    },
+    handleImages(images) {
+      this.images = images;
+    },
     async addNewProperty() {
       this.extractLatLng();
       const newProperty = {
@@ -720,7 +733,7 @@ export default {
           type: this.propertyType,
           status: this.propertyStatus,
           furnished: this.furnished,
-          gallery: [this.imgUrl],
+          gallery: this.images,
           interiorFeatures: this.interiorFeatures,
           externalFeatures: this.externalFeatures,
           coordinates: { latitude: this.lat, longitude: this.lng },

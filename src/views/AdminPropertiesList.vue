@@ -156,18 +156,36 @@ export default {
       );
     },
     paginatedProperties() {
-      // Ensure we're working with a clean slice of the data
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
-
-      // Create a new array with exactly perPage items (or fewer for the last page)
       return this.filteredProperties.slice(start, end);
+    },
+    visiblePages() {
+      // Create an array of page numbers to display, similar to front-end implementation
+      // This shows a maximum of 5 pages at a time
+      const startPage = Math.max(
+        1,
+        Math.min(this.currentPage - 2, this.totalPages - 4)
+      );
+      const endPage = Math.min(startPage + 4, this.totalPages);
+
+      return Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      );
     },
   },
   watch: {
     // Reset to page 1 when filtered data changes
     filteredProperties() {
-      this.currentPage = 1;
+      if (this.currentPage > this.totalPages && this.totalPages > 0) {
+        this.currentPage = this.totalPages;
+      } else if (this.currentPage === 0 && this.totalPages > 0) {
+        this.currentPage = 1;
+      }
+    },
+    searchQuery() {
+      this.resetPagination();
     },
   },
   async created() {
