@@ -56,10 +56,10 @@
           v-if="role"
           class="border shadow-xl bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
           @click="registerUser"
-          :disabled="role === 'owner' && !idImageUrl"
+          :disabled="role === 'owner' && !file"
           :class="{
-            'opacity-50 cursor-not-allowed': role === 'owner' && !idImageUrl,
-            'opacity-100 cursor-pointer': role === 'owner' && idImageUrl,
+            'opacity-50 cursor-not-allowed': role === 'owner' && !file,
+            'opacity-100 cursor-pointer': role === 'owner' && file,
           }"
         >
           Register
@@ -70,11 +70,10 @@
 </template>
 
 <script>
-import { db } from "@/config/firebase";
-import { doc, setDoc } from "firebase/firestore";
 import router from "@/router";
 import UploadID from "@/components/UploadID.vue";
-
+import uploadToCloudinary from "../services/uploadToCloudinary";
+import { mapActions } from "vuex";
 export default {
   components: { UploadID },
   data() {
@@ -82,31 +81,44 @@ export default {
       uid: this.$route.query.uid,
       email: this.$route.query.email,
       name: this.$route.query.name,
+      file: null,
       role: "",
-      idImageUrl: "",
     };
   },
   methods: {
+    ...mapActions("auth", ["registerWithRole"]),
     setRole(selectedRole) {
       this.role = selectedRole;
     },
-    handleIdUpload(imageUrl) {
-      this.idImageUrl = imageUrl;
+    handleIdUpload(file) {
+      this.file = file;
     },
     async registerUser() {
+      this.$store.commit("setLoading", true);
       try {
-        let collection = this.role === "owner" ? "owners" : "users";
-        await setDoc(doc(db, collection, this.uid), {
+        let idImageUrl;
+        if (this.role === "owner" && this.file) {
+          const folderName = `${this.name
+            .toLowerCase()
+            .replace(/\s+/g, "-")}-id`;
+          idImageUrl = await uploadToCloudinary(
+            this.file,
+            "unsigned_owner_upload",
+            folderName
+          );
+        }
+        await this.registerWithRole({
+          uid: this.uid,
           name: this.name,
           email: this.email,
           role: this.role,
-          idImage: this.role === "owner" ? this.idImageUrl : null,
-          createdAt: new Date(),
+          idImage: idImageUrl,
         });
-
         router.push("/");
       } catch (error) {
         console.error("Error setting role:", error);
+      } finally {
+        this.$store.commit("setLoading", false);
       }
     },
   },

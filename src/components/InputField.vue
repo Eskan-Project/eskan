@@ -8,8 +8,12 @@
     <template v-if="type === 'textarea'">
       <textarea
         v-model="inputValue"
-        class="text-gray-700 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
-        :class="{ 'border-red-500': errorMessage }"
+        :class="[
+          'text-gray-700 w-full p-3 border border-gray-300 rounded-md focus:outline-none h-32 resize-none',
+          errorMessage
+            ? 'border-red-500 focus:outline-none'
+            : 'focus:ring-2 focus:ring-blue-500',
+        ]"
         :placeholder="placeholder"
         :required="required"
         @blur="validateInput"
@@ -20,7 +24,6 @@
         <select
           v-model="inputValue"
           class="text-gray-700 cursor-pointer w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-          :class="{ 'border-red-500': errorMessage }"
           :required="required"
           @blur="validateInput"
         >
@@ -71,37 +74,40 @@ export default {
     options: {
       type: Array,
     },
+    placeholder: String,
   },
   data() {
     return {
       errorMessage: "",
+      internalValue: "",
     };
   },
   computed: {
     inputValue: {
       get() {
-        return this.modelValue;
+        return this.modelValue || this.internalValue;
       },
       set(value) {
+        this.internalValue = value;
         this.$emit("update:modelValue", value);
-        this.validateInput();
-      },
-    },
-  },
-  watch: {
-    inputValue: {
-      handler(value) {
-        this.$emit("update:modelValue", value);
+        if (this.errorMessage && String(value).trim()) {
+          this.errorMessage = "";
+        }
       },
     },
   },
   methods: {
     validateInput() {
-      if (this.required && !this.inputValue) {
+      if (this.required && !String(this.inputValue).trim()) {
         this.errorMessage = `${this.label} is required`;
       } else {
         this.errorMessage = "";
       }
+    },
+  },
+  watch: {
+    modelValue(newVal) {
+      this.internalValue = newVal;
     },
   },
 };

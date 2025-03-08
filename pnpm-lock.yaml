@@ -53,6 +53,9 @@ importers:
       stripe:
         specifier: ^17.7.0
         version: 17.7.0
+      sweetalert2:
+        specifier: ^11.17.2
+        version: 11.17.2
       swiper:
         specifier: ^11.2.5
         version: 11.2.5
@@ -1686,6 +1689,9 @@ packages:
   svg-tags@1.0.0:
     resolution: {integrity: sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA==}
 
+  sweetalert2@11.17.2:
+    resolution: {integrity: sha512-HKxDr1IyV3Lxr3W6sb61qm/p2epFIEdr5EKwteRFHnIg6f8nHFl2kX++DBVz16Mac+fFiU3hMpjq1L6yE2Ge5w==}
+
   swiper@11.2.5:
     resolution: {integrity: sha512-nG0kbIyBfeE2BPFt9nPUX03qUBF75o6+enzjIT/DfCmbh8ORlwhc4eZz1+4H/yseAgb3H+OoEYzmb64i0tYNnQ==}
     engines: {node: '>= 4.7.0'}
@@ -3014,6 +3020,7 @@ snapshots:
       leaflet: 1.9.4
       leaflet-routing-machine: 3.2.12
       stripe: 17.7.0
+      sweetalert2: 11.17.2
       swiper: 11.2.5
       tailwindcss: 4.0.9
       vue: 3.5.13
@@ -3592,6 +3599,8 @@ snapshots:
       copy-anything: 3.0.5
 
   svg-tags@1.0.0: {}
+
+  sweetalert2@11.17.2: {}
 
   swiper@11.2.5: {}
 

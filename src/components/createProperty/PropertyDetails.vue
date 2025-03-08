@@ -4,8 +4,15 @@
   >
     <PropertyForm />
     <PropertyLocation />
-    <PropertyImages />
-    <CreateBtn title="Next" name="propertyPreview" />
+    <PropertyImages @images="handleImages" />
+    <p v-if="errorMessage" class="text-lg text-red-500 mt-1 text-center">
+      {{ errorMessage }}
+    </p>
+    <CreateBtn
+      title="Next"
+      name="propertyPreview"
+      @validateAndProceed="validateForm"
+    />
   </div>
 </template>
 
@@ -14,12 +21,56 @@ import PropertyForm from "./PropertyForm.vue";
 import PropertyImages from "./PropertyImages.vue";
 import CreateBtn from "./CreateBtn.vue";
 import PropertyLocation from "./PropertyLocation.vue";
+import { mapState } from "vuex";
 export default {
   components: {
     PropertyForm,
     PropertyImages,
     CreateBtn,
     PropertyLocation,
+  },
+  data() {
+    return {
+      errorMessage: "",
+      images: [],
+    };
+  },
+  computed: {
+    ...mapState("property", ["propertyDetails"]),
+  },
+  watch: {
+    propertyDetails: {
+      handler() {
+        this.errorMessage = "";
+      },
+    },
+  },
+  methods: {
+    handleImages(images) {
+      this.images = images;
+    },
+    validateForm(callback) {
+      console.log(this.images);
+      if (
+        this.propertyDetails.title &&
+        this.propertyDetails.description &&
+        this.propertyDetails.rooms &&
+        this.propertyDetails.livingRooms &&
+        this.propertyDetails.bathrooms &&
+        this.propertyDetails.price &&
+        this.propertyDetails.area &&
+        this.propertyDetails.floor &&
+        this.propertyDetails.neighborhood &&
+        this.propertyDetails.coordinates &&
+        this.images.length > 0 &&
+        (this.propertyDetails.createdAt = new Date().toLocaleDateString())
+      ) {
+        callback(true);
+      } else {
+        this.errorMessage = "Please fill all the fields";
+        callback(false);
+      }
+    },
   },
 };
 </script>

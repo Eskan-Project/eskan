@@ -95,6 +95,7 @@ export default {
     ...mapState("auth", ["isAuth"]),
   },
   methods: {
+    ...mapActions("auth", ["logout"]),
     handleScroll() {
       this.isSticky = window.scrollY > 0;
     },
@@ -104,7 +105,6 @@ export default {
     closeMenu() {
       this.isMenuOpen = false;
     },
-    ...mapActions("auth", ["logout"]),
   },
   mounted() {
     window.onscroll = this.handleScroll;

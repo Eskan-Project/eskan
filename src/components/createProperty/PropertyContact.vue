@@ -9,29 +9,30 @@
 
       <form
         class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-6 items-center justify-center pb-5"
+        novalidate
       >
         <InputField
-          v-model="formData.title"
+          v-model="propertyDetails.propertyContact.name"
           label="Name"
           required
           class="w-full md:w-[70%] mx-auto"
         />
 
         <InputField
-          v-model="formData.title"
+          v-model="propertyDetails.propertyContact.email"
           label="Email"
           required
           class="w-full md:w-[70%]"
         />
 
         <InputField
-          v-model="formData.title"
+          v-model="propertyDetails.propertyContact.phone"
           label="Phone Number 1"
           required
           class="w-full md:w-[70%] mx-auto"
         />
         <InputField
-          v-model="formData.title"
+          v-model="propertyDetails.propertyContact.phone2"
           label="Phone Number 2"
           class="w-full md:w-[70%]"
         />
@@ -44,20 +45,28 @@
 <script>
 import InputField from "@/components/InputField.vue";
 import CreateBtn from "./CreateBtn.vue";
+import { mapState } from "vuex";
 export default {
   components: {
     InputField,
     CreateBtn,
   },
-  data() {
-    return {
-      formData: {
-        name: "",
-        email: "",
-        phoneNumber1: "",
-        phoneNumber2: "",
+  computed: {
+    ...mapState("property", ["propertyDetails"]),
+  },
+  watch: {
+    propertyDetails: {
+      deep: true,
+      handler(newData) {
+        localStorage.setItem("propertyDetails", JSON.stringify(newData));
       },
-    };
+    },
+  },
+  created() {
+    const savedData = localStorage.getItem("propertyDetails");
+    if (savedData) {
+      this.$store.commit("property/updateProperty", JSON.parse(savedData));
+    }
   },
 };
 </script>

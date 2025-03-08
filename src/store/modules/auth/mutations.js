@@ -4,9 +4,6 @@ export default {
     state.isAuth = !!userData.uid;
     state.error = null;
   },
-  setLoading(state, loading) {
-    state.loading = loading;
-  },
   setError(state, error) {
     state.error = error;
   },

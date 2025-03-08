@@ -5,7 +5,7 @@
     </h2>
     <form class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 mb-10">
       <InputField
-        v-model="governorate"
+        v-model="propertyDetails.governorate"
         label="Governorate"
         type="select"
         required
@@ -14,7 +14,7 @@
         @change="updateCities"
       />
       <InputField
-        v-model="city"
+        v-model="propertyDetails.city"
         label="City"
         type="select"
         required
@@ -30,6 +30,9 @@
     </form>
 
     <div id="map" class="w-full h-64 mt-2 rounded-lg z-10"></div>
+    <p class="text-sm text-gray-500 text-center mt-3">
+      You can move the marker to the correct location
+    </p>
   </div>
 </template>
 
@@ -38,17 +41,18 @@ import L from "leaflet";
 import governoratesData from "@/assets/data/governorates.json";
 import citiesData from "@/assets/data/cities.json";
 import InputField from "../InputField.vue";
+import { mapState } from "vuex";
+import { reverseGeocode } from "@/services/geocodingService";
 
 export default {
   components: {
     InputField,
   },
+  computed: {
+    ...mapState("property", ["propertyDetails"]),
+  },
   data() {
     return {
-      governorate: "",
-      city: "",
-      neighborhood: "",
-      coordinates: null,
       defaultCoordinates: {
         lat: 30.0444,
         lng: 31.2357,
@@ -59,30 +63,33 @@ export default {
       })),
       cities: [],
       map: null,
+      marker: null,
     };
   },
   mounted() {
     this.updateCities();
-    this.initMap();
+    this.$nextTick(() => {
+      this.initMap();
+    });
   },
   watch: {
-    governorate: {
-      handler(value) {
-        this.governorate = value;
+    propertyDetails: {
+      deep: true,
+      handler(newData) {
+        localStorage.setItem("propertyDetails", JSON.stringify(newData));
       },
-      immediate: true,
     },
-    city: {
-      handler(value) {
-        this.city = value;
-      },
-      immediate: true,
-    },
+  },
+  created() {
+    const savedData = localStorage.getItem("propertyDetails");
+    if (savedData) {
+      this.$store.commit("property/updateProperty", JSON.parse(savedData));
+    }
   },
   methods: {
     updateCities() {
       const selectedGov = this.governorates.find(
-        (g) => g.value === this.governorate
+        (g) => g.value === this.propertyDetails.governorate
       );
       this.cities = selectedGov
         ? citiesData
@@ -94,7 +101,8 @@ export default {
         : [];
     },
     initMap() {
-      const { lat, lng } = this.defaultCoordinates;
+      const { lat, lng } =
+        this.propertyDetails.coordinates || this.defaultCoordinates;
       this.map = L.map("map", { scrollWheelZoom: false }).setView(
         [lat, lng],
         13
@@ -104,13 +112,27 @@ export default {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(this.map);
 
-      this.updateMarker(lat, lng);
+      this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+
+      this.marker.on("dragend", (e) => {
+        const { lat, lng } = e.target.getLatLng();
+        this.updateLocation(lat, lng);
+      });
     },
     updateMarker(lat, lng) {
       if (this.map) {
-        L.marker([lat, lng]).addTo(this.map);
+        this.marker.setLatLng([lat, lng]);
         this.map.setView([lat, lng], 13);
       }
+    },
+    async updateLocation(lat, lng) {
+      this.$store.commit("property/updateProperty", {
+        coordinates: { lat, lng },
+      });
+      const neighborhood = await reverseGeocode(lat, lng);
+      this.$store.commit("property/updateProperty", {
+        neighborhood,
+      });
     },
     async getUserLocation() {
       if (navigator.geolocation) {
@@ -118,14 +140,11 @@ export default {
           async (position) => {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            console.log("User Location Retrieved:", { lat, lng });
-
-            this.coordinates = { lat, lng };
             this.updateMarker(lat, lng);
+            this.updateLocation(lat, lng);
           },
           (error) => {
             console.error("Geolocation error:", error);
-
             if (error.code === error.PERMISSION_DENIED) {
               alert(
                 "You have denied location access. Please refresh the page and enable location access."

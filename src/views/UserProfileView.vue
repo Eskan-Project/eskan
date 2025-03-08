@@ -163,9 +163,15 @@ export default {
       this.$store.commit("setLoading", true);
       try {
         if (this.selectedFile) {
+          const folderName = `${this.userDetails.name
+            .toLowerCase()
+            .replace(/\s+/g, "-")}-profile`;
           const uploadImgUrl = await uploadToCloudinary(
             this.selectedFile,
-            import.meta.env.VITE_CLOUDINARY_UPLOAD_USER_PRESET
+            this.userDetails.role === "owner"
+              ? import.meta.env.VITE_CLOUDINARY_UPLOAD_OWNER_PRESET
+              : import.meta.env.VITE_CLOUDINARY_UPLOAD_USER_PRESET,
+            folderName
           );
           this.userDetails.photo = uploadImgUrl;
         }

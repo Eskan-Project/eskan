@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapActions, mapMutations } from "vuex";
 export default {
   props: {
     name: {
@@ -21,11 +22,38 @@ export default {
     },
   },
   methods: {
+    ...mapActions("property", ["createProperty"]),
+    ...mapMutations("property", ["updateProperty"]),
     nextStep() {
-      this.$router.push({ name: this.name });
-      var storedStep = localStorage.getItem("activeStep");
-      storedStep++;
-      localStorage.setItem("activeStep", storedStep);
+      let storedStep = localStorage.getItem("activeStep");
+
+      if (this.name === "propertyPreview") {
+        this.$emit("validateAndProceed", (valid) => {
+          if (valid) {
+            storedStep++;
+            localStorage.setItem("activeStep", storedStep);
+            this.$router.push({ name: this.name });
+          }
+        });
+      } else if (this.name === "propertyContact") {
+        storedStep++;
+        localStorage.setItem("activeStep", storedStep);
+        this.$router.push({ name: this.name });
+      } else if (this.name === "completed") {
+        storedStep++;
+        localStorage.setItem("activeStep", storedStep);
+        const localImages = JSON.parse(localStorage.getItem("localImages"));
+        const propertyDetails = localStorage.getItem("propertyDetails");
+        this.updateProperty(JSON.parse(propertyDetails));
+        this.createProperty(localImages);
+        this.$router.push({ name: "completed" });
+      } else {
+        this.$router.push({ name: this.name });
+        localStorage.removeItem("localImages");
+        localStorage.removeItem("propertyDetails");
+        localStorage.removeItem("activeStep");
+        localStorage.removeItem("maxSteps");
+      }
     },
   },
 };
