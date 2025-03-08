@@ -500,28 +500,38 @@
                   </div>
                 </div>
               </div>
-              <!-- Gallery Images -->
-              <div class="col-span-full">
-                <property-images @images="handleImages" />
-              </div>
+              <!-- Gallery Images and Property Contract -->
+              <div class="col-span-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h3 class="block text-sm/6 font-bold text-gray-900 py-4">
+                    Property Images
+                  </h3>
+                  <images-add
+                    @images="handleImages"
+                    :isMultiple="true"
+                    icon="bi bi-images"
+                  >
+                    <template #header>Posting Photos</template>
+                    <template #underIcon
+                      >You can Add up to 30 Images per add</template
+                    >
+                  </images-add>
+                </div>
 
-              <!-- Apartment Ownership Contract -->
-              <div class="col-span-full">
-                <h3 class="block text-sm/6 font-bold text-gray-900">
-                  Ownership Contract
-                </h3>
-                <div class="mt-4">
-                  <input
-                    v-model="propertyContract"
-                    type="url"
-                    id="contract"
-                    name="contract"
-                    accept=".pdf"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                  <p class="mt-2 text-sm/6 text-gray-500">
-                    Upload the ownership contract in PDF format.
-                  </p>
+                <div>
+                  <h3 class="block text-sm/6 font-bold text-gray-900 py-4">
+                    Property Contract
+                  </h3>
+                  <images-add
+                    @images="handleContract"
+                    :isMultiple="true"
+                    icon="bi bi-file-earmark-arrow-up-fill"
+                  >
+                    <template #header>Add Property Contract</template>
+                    <template v-slot:underIcon
+                      >Please upload the Property Contract</template
+                    >
+                  </images-add>
                 </div>
               </div>
 
@@ -611,24 +621,16 @@
 
                   <!-- Owner Profile Picture -->
                   <div class="col-span-full">
-                    <label
-                      for="ownerProfilePic"
-                      class="block text-sm/6 font-medium text-gray-900"
-                      >Owner Profile Picture</label
+                    <images-add
+                      @images="handleOwnerProfilePic"
+                      :isMultiple="false"
+                      icon="bi bi-person-circle"
                     >
-                    <div class="mt-2">
-                      <input
-                        v-model="ownerProfilePicUrl"
-                        type="url"
-                        id="ownerProfilePic"
-                        name="ownerProfilePic"
-                        accept="image/*"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                      />
-                      <p class="mt-2 text-sm/6 text-gray-500">
-                        Upload a profile picture for the owner.
-                      </p>
-                    </div>
+                      <template #header>Owner Profile Picture</template>
+                      <template v-slot:underIcon
+                        >Please upload the owner Profile Pic</template
+                      >
+                    </images-add>
                   </div>
                 </div>
               </div>
@@ -653,10 +655,11 @@
 <script>
 import { serverTimestamp } from "firebase/database";
 import Swal from "sweetalert2";
-import PropertyImages from "@/components/createProperty/PropertyImages.vue";
+
+import ImagesAdd from "@/components/adminDash/ImagesAdd.vue";
 
 export default {
-  components: { PropertyImages },
+  components: { ImagesAdd },
   data() {
     return {
       title: "",
@@ -689,6 +692,12 @@ export default {
   },
 
   methods: {
+    handleOwnerProfilePic(profilePic) {
+      this.ownerProfilePicUrl = profilePic;
+    },
+    handleContract(contract) {
+      this.propertyContract = contract;
+    },
     handleImages(images) {
       this.images = images;
     },
