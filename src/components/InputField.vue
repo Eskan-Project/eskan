@@ -90,7 +90,7 @@ export default {
       set(value) {
         this.internalValue = value;
         this.$emit("update:modelValue", value);
-        if (this.errorMessage && value.trim()) {
+        if (this.errorMessage && String(value).trim()) {
           this.errorMessage = "";
         }
       },
@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     validateInput() {
-      if (this.required && !this.inputValue.trim()) {
+      if (this.required && !String(this.inputValue).trim()) {
         this.errorMessage = `${this.label} is required`;
       } else {
         this.errorMessage = "";

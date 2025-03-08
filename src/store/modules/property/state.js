@@ -16,11 +16,12 @@ export default {
     neighborhood: "",
     coordinates: null,
     images: [],
-  },
-  propertyContact: {
-    name: "",
-    email: "",
-    phone: "",
-    phone2: "",
+    createdAt: "",
+    propertyContact: {
+      name: "",
+      email: "",
+      phone: "",
+      phone2: "",
+    },
   },
 };

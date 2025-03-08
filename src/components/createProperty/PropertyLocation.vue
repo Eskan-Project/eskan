@@ -68,7 +68,9 @@ export default {
   },
   mounted() {
     this.updateCities();
-    this.initMap();
+    this.$nextTick(() => {
+      this.initMap();
+    });
   },
   watch: {
     propertyDetails: {

@@ -12,6 +12,5 @@ export default {
     isActive: false,
   },
   isAuth: false,
-  loading: false,
   error: null,
 };

@@ -6,11 +6,4 @@ export default {
       JSON.stringify(state.propertyDetails)
     );
   },
-  updateImages(state, images) {
-    state.propertyDetails.images = images;
-    localStorage.setItem(
-      "propertyDetails",
-      JSON.stringify(state.propertyDetails)
-    );
-  },
 };

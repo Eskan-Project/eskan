@@ -71,22 +71,24 @@
 <script>
 export default {
   props: {
-    images: Array,
+    images: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
-      localImages: [...this.images],
+      localImages:
+        JSON.parse(localStorage.getItem("localImages")) || this.images,
       errorMessage: "",
     };
   },
   watch: {
-    images(newImages) {
-      this.localImages = [...newImages];
-    },
     localImages: {
       deep: true,
       handler(newValue) {
-        this.$emit("update", [...newValue]);
+        localStorage.setItem("localImages", JSON.stringify(newValue));
+        this.$emit("images", newValue);
       },
     },
   },
@@ -104,14 +106,12 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => {
           this.localImages.push(e.target.result);
-          this.$emit("update", this.localImages);
         };
         reader.readAsDataURL(file);
       });
     },
     removeImage(index) {
       this.localImages.splice(index, 1);
-      this.$emit("update", this.localImages);
     },
     validateForm() {
       if (this.localImages.length < 4) {
