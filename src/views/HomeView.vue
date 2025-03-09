@@ -5,7 +5,7 @@
       :style="{
         backgroundImage: ImgForHeroSection
           ? `url(${ImgForHeroSection})`
-          : 'none',
+          : `url('/fallback-hero.jpg')`,
       }"
       data-aos="fade-in"
     >
@@ -36,7 +36,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-10">
         <feature-card
           v-for="(feature, index) in features"
-          :key="index"
+          :key="feature.title"
           :feature="feature"
           :delay="index * 100"
           data-aos="flip-left"
@@ -49,8 +49,9 @@
         <h2 class="text-3xl font-bold mb-6 text-[#364365]">
           Latest Properties for Rent
         </h2>
+        <div v-if="isLoading" class="text-gray-500">Loading properties...</div>
         <div
-          v-if="latestProperties.length && !error"
+          v-else-if="latestProperties.length && !error"
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
         >
           <property-card
@@ -60,10 +61,13 @@
             data-aos="zoom-in"
           />
         </div>
-        <p v-else-if="!error" class="text-gray-500">Loading properties...</p>
-        <p v-else class="text-red-500">
-          Failed to load properties. Please try again later.
+        <p v-else-if="error" class="text-red-500">
+          {{ error }}
+          <button @click="fetchProperties" class="text-blue-500 underline">
+            Retry
+          </button>
         </p>
+        <p v-else class="text-gray-500">No properties available.</p>
       </div>
     </section>
 
@@ -75,7 +79,7 @@
         id="countup-section"
         class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-12"
       >
-        <div v-for="(stat, index) in stats" :key="index" class="p-6">
+        <div v-for="stat in stats" :key="stat.label" class="p-6">
           <count-up
             v-if="startCounting"
             :end-val="stat.value"
@@ -92,7 +96,7 @@
       :style="{
         backgroundImage: ContactUsHomePage
           ? `url(${ContactUsHomePage})`
-          : 'none',
+          : `url('/fallback-contact.jpg')`,
       }"
       data-aos="fade-in"
     >
@@ -138,86 +142,88 @@
 
 <script>
 import AOS from "aos";
-import ContactUsHomePage from "../assets/images/ContactUsHomePage.jpg?url"; // Add ?url for Vite
-import heroSection from "../assets/images/heroSection.jpg?url"; // Add ?url for Vite
+import ContactUsHomePage from "../assets/images/ContactUsHomePage.jpg?url";
+import heroSection from "../assets/images/heroSection.jpg?url";
 import PropertyCard from "@/components/PropertyCard.vue";
 import FeatureCard from "@/components/home/FeatureCard.vue";
 import CountUp from "vue-countup-v3";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "HomeView",
   components: { PropertyCard, FeatureCard, CountUp },
-  data() {
-    return {
-      startCounting: false,
-      showBackToTop: false,
-      ImgForHeroSection: null,
-      ContactUsHomePage,
-      latestProperties: [],
-      error: null,
-      features: [
-        {
-          icon: new URL(
-            "../assets/images/icons/VerifyForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Verified & Safe Listings",
-          description:
-            "Browse properties screened for safety, with verified owners and legal documentation",
-        },
-        {
-          icon: new URL(
-            "../assets/images/icons/BudgetForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Budget-Friendly Options",
-          description:
-            "Discover shared accommodations designed for affordability without compromising comfort",
-        },
-        {
-          icon: new URL(
-            "../assets/images/icons/ContactForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Free Initial Contact",
-          description:
-            "Reach out to property owners for free—unlock unlimited access with flexible subscriptions",
-        },
-        {
-          icon: new URL(
-            "../assets/images/icons/SmartForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Smart Search Filters",
-          description:
-            "Refine your search by price, location, amenities, and room type—find your ideal match in seconds",
-        },
-        {
-          icon: new URL(
-            "../assets/images/icons/SecureForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Secure Payments",
-          description:
-            "Enjoy hassle-free transactions with trusted payment gateways like Stripe or PayPal",
-        },
-        {
-          icon: new URL(
-            "../assets/images/icons/CurvedArrowForHomePage.png",
-            import.meta.url
-          ).href,
-          title: "Flexible Subscriptions",
-          description:
-            "Owners: List your first property free for 3 days. Users: Unlock premium features with tailored plans",
-        },
-      ],
-      stats: [
-        { value: 300, duration: 2, label: "Properties Listed" },
-        { value: 1000, duration: 2.5, label: "Happy Customers" },
-        { value: 150, duration: 2, label: "Verified Owners" },
-      ],
-    };
+  data: () => ({
+    observer: null,
+    startCounting: false,
+    showBackToTop: false,
+    ImgForHeroSection: heroSection,
+    ContactUsHomePage,
+    latestProperties: [],
+    error: null,
+    features: [
+      {
+        icon: new URL(
+          "../assets/images/icons/VerifyForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Verified & Safe Listings",
+        description:
+          "Browse properties screened for safety, with verified owners and legal documentation",
+      },
+      {
+        icon: new URL(
+          "../assets/images/icons/BudgetForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Budget-Friendly Options",
+        description:
+          "Discover shared accommodations designed for affordability without compromising comfort",
+      },
+      {
+        icon: new URL(
+          "../assets/images/icons/ContactForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Free Initial Contact",
+        description:
+          "Reach out to property owners for free—unlock unlimited access with flexible subscriptions",
+      },
+      {
+        icon: new URL(
+          "../assets/images/icons/SmartForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Smart Search Filters",
+        description:
+          "Refine your search by price, location, amenities, and room type—find your ideal match in seconds",
+      },
+      {
+        icon: new URL(
+          "../assets/images/icons/SecureForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Secure Payments",
+        description:
+          "Enjoy hassle-free transactions with trusted payment gateways like Stripe or PayPal",
+      },
+      {
+        icon: new URL(
+          "../assets/images/icons/CurvedArrowForHomePage.png",
+          import.meta.url
+        ).href,
+        title: "Flexible Subscriptions",
+        description:
+          "Owners: List your first property free for 3 days. Users: Unlock premium features with tailored plans",
+      },
+    ],
+    stats: [
+      { value: 300, duration: 2, label: "Properties Listed" },
+      { value: 1000, duration: 2.5, label: "Happy Customers" },
+      { value: 150, duration: 2, label: "Verified Owners" },
+    ],
+  }),
+  computed: {
+    ...mapGetters(["isLoading"]),
   },
   mounted() {
     AOS.init({ duration: 800, once: true });
@@ -230,48 +236,18 @@ export default {
     this.observer?.disconnect();
   },
   methods: {
-    ...mapActions(["startLoading", "stopLoading"]),
+    ...mapActions("property", ["getProperties"]),
     async fetchProperties() {
-      this.startLoading();
       this.error = null;
-
       try {
-        const imagePromise = this.preloadImage(heroSection);
-
-        const propertiesPromise = fetch(
-          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json",
-          { cache: "no-store" }
-        ).then(async (response) => {
-          if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          const data = await response.json();
-          if (!data) throw new Error("No properties data received");
-          return Object.entries(data)
-            .map(([id, value]) => ({ id, ...value.data }))
-            .slice(0, 6);
-        });
-
-        const [_, properties] = await Promise.all([
-          imagePromise,
-          propertiesPromise,
-        ]);
-        this.ImgForHeroSection = heroSection;
-        this.latestProperties = properties;
+        const properties = await this.getProperties();
+        console.log(properties);
+        this.latestProperties = properties?.slice(0, 3) || [];
+        console.log(this.latestProperties);
       } catch (error) {
-        console.error("Error fetching properties:", error);
-        this.error = error.message;
-        this.latestProperties = [];
-      } finally {
-        this.stopLoading();
+        this.error = "Failed to load properties. Please try again later.";
+        console.error("Fetch properties error:", error);
       }
-    },
-    preloadImage(url) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = resolve;
-        img.onerror = () => reject(new Error("Failed to load hero image"));
-      });
     },
     observeCountupSection() {
       const countupSection = document.getElementById("countup-section");

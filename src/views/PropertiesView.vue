@@ -1,36 +1,57 @@
-<!-- src/views/PropertiesView.vue -->
 <template>
   <div class="properties">
-    <div
-      class="relative w-full mx-auto h-[300px] bg-cover bg-center"
-      :style="{ backgroundImage: bgImage ? `url(${bgImage})` : 'none' }"
+    <section
+      class="relative w-full h-[300px] bg-cover bg-center"
+      :style="{
+        backgroundImage: bgImage
+          ? `url(${bgImage})`
+          : 'url(/fallback-properties.jpg)',
+      }"
     >
       <div class="absolute inset-0 bg-black/40"></div>
       <div
         class="relative z-10 flex items-center justify-center h-full max-w-4xl mx-auto p-4"
       >
         <search-bar
+          ref="searchBar"
           :is-scrolled="isScrolled"
           :is-expanded="isExpanded"
           :is-small-screen="isSmallScreen"
           v-model:search-query="searchQuery"
-          v-model:selected-location="selectedLocation"
-          v-model:selected-check-in="selectedCheckIn"
-          v-model:selected-check-out="selectedCheckOut"
-          v-model:selected-guests="selectedGuests"
+          v-model:selected-governorate="selectedGovernorate"
+          v-model:selected-city="selectedCity"
           @toggle-search="toggleSearch"
           @search="searchProperties"
           @reset="resetFilters"
         />
       </div>
-    </div>
+    </section>
 
-    <div class="container mx-auto py-10 px-5">
-      <div v-if="error" class="text-center py-10">
-        <p class="text-red-500 text-lg">{{ error }}</p>
+    <main class="container mx-auto py-10 px-5">
+      <div
+        v-if="isLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 py-10"
+      >
+        <div
+          v-for="i in 8"
+          :key="i"
+          class="bg-gray-200 min-h-64 rounded-lg animate-pulse"
+        ></div>
       </div>
-      <template v-else>
-        <property-list :properties="paginatedProperties" />
+      <div v-else-if="error" class="text-center py-10">
+        <p class="text-red-500 text-lg">{{ error }}</p>
+        <button @click="loadData" class="mt-4 text-blue-500 underline">
+          Retry
+        </button>
+      </div>
+      <div v-else>
+        <property-list
+          v-if="filteredProperties.length"
+          :properties="paginatedProperties"
+        />
+        <p v-else class="text-center text-gray-500 py-10">
+          No properties match your filters.
+        </p>
         <pagination
           v-if="filteredProperties.length"
           v-model:current-page="currentPage"
@@ -40,8 +61,8 @@
           @next="nextPage"
           @go-to="goToPage"
         />
-      </template>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -50,69 +71,45 @@ import SearchBar from "@/components/propertiesView/SearchBar.vue";
 import PropertyList from "@/components/propertiesView/PropertyList.vue";
 import Pagination from "@/components/propertiesView/Pagination.vue";
 import propertiesBg from "@/assets/images/properties.jpg?url";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import debounce from "lodash/debounce";
 
 export default {
   name: "PropertiesView",
   components: { SearchBar, PropertyList, Pagination },
-  data() {
-    return {
-      bgImage: null,
-      properties: [],
-      currentPage: 1,
-      perPage: 8,
-      isScrolled: false,
-      isExpanded: false,
-      isSmallScreen: window.innerWidth < 860,
-      searchQuery: "",
-      selectedLocation: "",
-      selectedCheckIn: "",
-      selectedCheckOut: "",
-      selectedGuests: "",
-      error: null,
-    };
-  },
+  data: () => ({
+    bgImage: propertiesBg,
+    properties: [],
+    currentPage: 1,
+    perPage: 8,
+    isScrolled: false,
+    isExpanded: false,
+    isSmallScreen: window.innerWidth < 860,
+    searchQuery: "",
+    selectedGovernorate: "",
+    selectedCity: "",
+    error: null,
+  }),
   computed: {
+    ...mapGetters(["isLoading"]),
     filteredProperties() {
-      let filtered = [...this.properties];
-      if (this.searchQuery.trim()) {
-        const query = this.searchQuery.toLowerCase();
-        filtered = filtered.filter(
+      return this.properties
+        .filter((p) => {
+          if (!this.searchQuery.trim()) return true;
+          const query = this.searchQuery.toLowerCase();
+          return ["title", "description", "type", "status"].some((key) =>
+            p[key]?.toLowerCase().includes(query)
+          );
+        })
+        .filter(
           (p) =>
-            p.title?.toLowerCase().includes(query) ||
-            p.description?.toLowerCase().includes(query) ||
-            p.location?.toLowerCase().includes(query) ||
-            p.type?.toLowerCase().includes(query) ||
-            p.status?.toLowerCase().includes(query)
-        );
-      }
-      if (this.selectedLocation) {
-        filtered = filtered.filter((p) => p.location === this.selectedLocation);
-      }
-      if (this.selectedCheckIn) {
-        const checkInDate = this.normalizeDate(this.selectedCheckIn);
-        filtered = filtered.filter((p) =>
-          p.availability?.some(
-            (date) => this.normalizeDate(date) >= checkInDate
-          )
-        );
-      }
-      if (this.selectedCheckOut) {
-        const checkOutDate = this.normalizeDate(this.selectedCheckOut);
-        filtered = filtered.filter((p) =>
-          p.availability?.some(
-            (date) => this.normalizeDate(date) <= checkOutDate
-          )
-        );
-      }
-      if (this.selectedGuests) {
-        const guestCount = parseInt(this.selectedGuests) || 0;
-        filtered = filtered.filter((p) => p.capacity >= guestCount);
-      }
-      return filtered;
+            !this.selectedGovernorate ||
+            p.governorate === this.selectedGovernorate
+        )
+        .filter((p) => !this.selectedCity || p.city === this.selectedCity);
     },
     totalPages() {
-      return Math.ceil(this.filteredProperties.length / this.perPage);
+      return Math.ceil(this.filteredProperties.length / this.perPage) || 1;
     },
     paginatedProperties() {
       const start = (this.currentPage - 1) * this.perPage;
@@ -127,80 +124,35 @@ export default {
       );
     },
   },
+  watch: {
+    selectedGovernorate(newVal) {
+      this.selectedCity = "";
+      this.$refs.searchBar.updateCities(newVal);
+    },
+  },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, { passive: true });
     window.addEventListener("resize", this.handleResize, { passive: true });
-    this.loadAssetsAndData();
+    this.loadData();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
-    ...mapActions(["startLoading", "stopLoading"]),
-    async loadAssetsAndData() {
-      this.startLoading();
-      this.error = null;
-
+    ...mapActions("property", ["getProperties"]),
+    async loadData() {
       try {
-        const imagePromise = this.preloadImage(propertiesBg);
-        const propertiesPromise = fetch(
-          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json",
-          { cache: "no-store" }
-        ).then(async (response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          const data = await response.json();
-          if (!data) throw new Error("No properties data received");
-          return Object.entries(data).map(([key, value]) => ({
-            id: key,
-            ...value.data,
-            availability: value.data.availability || [],
-            capacity: value.data.capacity || 1,
-          }));
-        });
-
-        const [_, properties] = await Promise.all([
-          imagePromise,
-          propertiesPromise,
-        ]);
-        this.bgImage = propertiesBg;
-        this.properties = properties;
+        this.error = null;
+        this.properties = (await this.getProperties()) || [];
       } catch (error) {
-        this.error = "Failed to load resources. Please refresh the page.";
-      } finally {
-        this.stopLoading();
-      }
-    },
-    preloadImage(url) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = resolve;
-        img.onerror = () =>
-          reject(new Error("Failed to load background image"));
-      });
-    },
-    normalizeDate(dateStr) {
-      const today = new Date();
-      switch (dateStr) {
-        case "Today":
-          return today.toISOString().split("T")[0];
-        case "Tomorrow":
-          today.setDate(today.getDate() + 1);
-          return today.toISOString().split("T")[0];
-        case "This week":
-          today.setDate(today.getDate() + 7);
-          return today.toISOString().split("T")[0];
-        default:
-          return dateStr;
+        this.error = "Failed to load properties. Please try again later.";
+        console.error("Fetch properties error:", error);
       }
     },
     handleScroll() {
-      const scrolled = window.scrollY > 0;
-      if (scrolled && this.isExpanded) this.isExpanded = false;
-      this.isScrolled = scrolled;
+      this.isScrolled = window.scrollY > 0;
+      if (this.isScrolled && this.isExpanded) this.isExpanded = false;
     },
     handleResize() {
       this.isSmallScreen = window.innerWidth < 860;
@@ -208,11 +160,11 @@ export default {
     toggleSearch() {
       this.isExpanded = !this.isExpanded;
     },
-    searchProperties() {
+    searchProperties: debounce(function () {
       this.currentPage = 1;
-    },
+    }, 300),
     goToPage(page) {
-      this.currentPage = page;
+      this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
     nextPage() {
       if (this.currentPage < this.totalPages) this.currentPage++;
@@ -221,13 +173,13 @@ export default {
       if (this.currentPage > 1) this.currentPage--;
     },
     resetFilters() {
-      this.searchQuery = "";
-      this.selectedLocation = "";
-      this.selectedCheckIn = "";
-      this.selectedCheckOut = "";
-      this.selectedGuests = "";
-      this.currentPage = 1;
-      this.isExpanded = false;
+      Object.assign(this, {
+        searchQuery: "",
+        selectedGovernorate: "",
+        selectedCity: "",
+        currentPage: 1,
+        isExpanded: false,
+      });
     },
   },
 };

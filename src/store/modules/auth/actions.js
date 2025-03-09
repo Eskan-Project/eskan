@@ -41,7 +41,7 @@ export default {
       commit("setError", error.message);
       console.error(error);
     } finally {
-      commit("stopLoading", null, { root: true }); // Target root mutation
+      commit("stopLoading", null, { root: true });
     }
   },
   async updateProfile({ commit, state }) {
@@ -79,13 +79,15 @@ export default {
     }
   },
   async loginWithGoogle({ commit }) {
+    commit("setError", null);
     commit("startLoading", null, { root: true });
+
     try {
       const { user } = await signInWithPopup(auth, provider);
       const userRole = await fetchUserRole(user.uid);
 
       if (!userRole) {
-        router.push({
+        return router.push({
           name: "SelectRole",
           query: { uid: user.uid, email: user.email, name: user.displayName },
         });
@@ -94,8 +96,7 @@ export default {
         router.push("/");
       }
     } catch (error) {
-      commit("setError", error.message);
-      throw error;
+      commit("setError", "Google login failed. Please try again.");
     } finally {
       commit("stopLoading", null, { root: true });
     }

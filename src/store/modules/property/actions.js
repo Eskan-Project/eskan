@@ -1,20 +1,39 @@
 import { db } from "@/config/firebase";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
 export default {
+  async getProperties({ commit }) {
+    commit("startLoading", null, { root: true });
+    try {
+      const propertiesSnapshot = await getDocs(collection(db, "properties"));
+      const properties = propertiesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      commit("setProperties", properties);
+      return properties;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
   async createProperty(
     { commit, state, rootState, dispatch },
-    { files = [], role = "owner" } = {}
+    { files = [] } = {}
   ) {
     commit("startLoading", null, { root: true });
     try {
-      let collectionName = "requests";
-      if (role === "admin") {
-        collectionName = "properties";
+      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
+        throw new Error("User not authenticated or user details not loaded");
       }
+
+      const userRole = rootState.auth.userDetails.role || "owner";
+      const collectionName = userRole === "admin" ? "properties" : "requests";
       const propertyId = doc(collection(db, collectionName)).id;
+
       let imagesUrl = [];
       if (files.length) {
         const folderName = `requests/${propertyId}`;
@@ -29,30 +48,32 @@ export default {
           })
         );
       }
-      const { propertyDetails, propertyContact } = state;
+
       const ownerId = rootState.auth.userDetails.uid;
       const propertyData = {
-        ...propertyDetails,
-        ...propertyContact,
+        ...state.propertyDetails,
         images: imagesUrl,
         ownerId,
         createdAt: new Date(),
-        status: "pending",
+        status: userRole === "admin" ? "approved" : "pending",
       };
+
+      console.log("Property Data to Save:", propertyData);
       await setDoc(doc(db, collectionName, propertyId), propertyData);
-      if (role !== "admin") {
+
+      if (userRole !== "admin") {
         dispatch(
           "notifications/addNotification",
-          `Your property ${propertyDetails.title} is under review.`,
-          {
-            root: true,
-          }
+          `Your property ${propertyData.title} is under review.`,
+          { root: true }
         );
       }
     } catch (error) {
       console.log(error);
     } finally {
       commit("stopLoading", null, { root: true });
+      localStorage.removeItem("propertyDetails");
+      localStorage.removeItem("propertyImages");
     }
   },
   updateImages({ commit }, images) {

@@ -24,4 +24,5 @@ export default {
       phone2: "",
     },
   },
+  error: "",
 };

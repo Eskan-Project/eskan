@@ -45,7 +45,6 @@
               <h2 class="text-lg font-semibold mb-2 text-center sm:text-left">
                 Property Images
               </h2>
-
               <div class="flex flex-col items-center space-y-2 py-4">
                 <i
                   class="bi bi-images text-4xl text-gray-500"
@@ -67,7 +66,6 @@
                   />
                 </label>
               </div>
-
               <div
                 class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center mt-4 w-full"
               >
@@ -80,7 +78,6 @@
                     You can add up to 30 photos to your ad
                   </p>
                 </div>
-
                 <div
                   v-else
                   class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-2"
@@ -98,7 +95,7 @@
                       @click="removeImage(index)"
                       class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      &times;
+                      ×
                     </button>
                   </div>
                 </div>
@@ -110,11 +107,10 @@
                 {{ errorMessage }}
               </p>
             </div>
-
             <div class="col-span-full flex gap-4 justify-center">
               <button
                 type="submit"
-                class="text-white rounded-md bg-[var(--secondary-color)] px-4 py-2 text-sm/6 font-semibold border border-[var(--secondary-color)] hover:bg-white hover:text-[var(--secondary-color)] cursor-pointer"
+                class="text-white rounded-md bg-[var(--secondary-color)] px-4 py-2 text-sm/6 font-semibold border border-[var(--secondary-color)] hover:bg-white hover:text-[var(---secondary-color)] cursor-pointer"
               >
                 Add Property
               </button>
@@ -141,28 +137,28 @@ import cities from "@/assets/data/cities.json";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
-  components: {
-    InputField,
-  },
+  components: { InputField },
   data() {
     return {
-      savedData: null,
       errorMessage: "",
       initialPropertyDetails: {
         title: "",
-        governorate: "",
-        city: "",
-        neighborhood: "",
         description: "",
-        price: "",
-        area: "",
         rooms: "",
         livingRooms: "",
         bathrooms: "",
+        price: "",
         kitchens: "",
-        propertyStatus: "",
+        area: "",
         floor: "",
         furnished: "",
+        status: "",
+        governorate: "",
+        city: "",
+        neighborhood: "",
+        coordinates: null,
+        images: [],
+        createdAt: null,
         propertyContact: {
           name: "",
           email: "",
@@ -257,12 +253,7 @@ export default {
         .filter(
           (city) => city.governorate_id === this.propertyDetails.governorate
         )
-        .map((c) => {
-          return {
-            value: c.id,
-            label: c.city_name_en,
-          };
-        });
+        .map((c) => ({ value: c.id, label: c.city_name_en }));
     },
   },
   watch: {
@@ -279,17 +270,11 @@ export default {
       },
       immediate: true,
     },
-    propertyDetails: {
-      deep: true,
-      handler(newData) {
-        localStorage.setItem("propertyDetails", JSON.stringify(newData));
-      },
-    },
   },
   created() {
-    this.savedData = localStorage.getItem("propertyDetails");
-    if (this.savedData) {
-      this.$store.commit("property/updateProperty", JSON.parse(this.savedData));
+    const savedData = localStorage.getItem("propertyDetails");
+    if (savedData) {
+      this.updateProperty(JSON.parse(savedData));
     }
   },
   methods: {
@@ -331,20 +316,12 @@ export default {
 
         if (!result.isConfirmed) return;
 
-        this.updateProperty(JSON.parse(this.savedData));
-        this.createProperty({
+        await this.createProperty({
           files: this.uploadedImages,
-          role: "admin",
         });
 
         await Swal.fire("Done!", "Your property has been added.", "success");
-        this.$store.commit(
-          "property/updateProperty",
-          this.initialPropertyDetails
-        );
         this.uploadedImages = [];
-        localStorage.removeItem("propertyDetails");
-        localStorage.removeItem("propertyImages");
         this.$router.push("/admin/properties");
       } catch (error) {
         this.errorMessage = `Failed to add property: ${error.message}`;
@@ -364,13 +341,9 @@ export default {
 
         if (!result.isConfirmed) return;
 
-        this.$store.commit(
-          "property/updateProperty",
-          this.initialPropertyDetails
-        );
+        this.updateProperty(this.initialPropertyDetails);
         this.uploadedImages = [];
         localStorage.removeItem("propertyDetails");
-        localStorage.removeItem("propertyImages");
 
         await Swal.fire("Done!", "Your property has been reset.", "success");
       } catch (error) {

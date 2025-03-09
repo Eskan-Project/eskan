@@ -20,51 +20,34 @@
             class="px-2 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#364365]"
           />
           <select
-            :value="selectedLocation"
-            @change="$emit('update:selectedLocation', $event.target.value)"
-            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer"
+            :value="selectedGovernorate"
+            @change="$emit('update:selectedGovernorate', $event.target.value)"
+            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
           >
-            <option value="" disabled selected>Location</option>
-            <option v-for="loc in locations" :key="loc" :value="loc">
-              {{ loc }}
+            <option value="" disabled selected>Governorate</option>
+            <option
+              v-for="loc in governorates"
+              :key="loc.value"
+              :value="loc.value"
+            >
+              {{ loc.label }}
             </option>
           </select>
           <select
-            :value="selectedCheckIn"
-            @change="$emit('update:selectedCheckIn', $event.target.value)"
-            class="p-2 rounded-md text-sm border hover:bg-gray-100 text-[#364365] cursor-pointer"
+            :value="selectedCity"
+            @change="$emit('update:selectedCity', $event.target.value)"
+            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
           >
-            <option value="" disabled selected>Check-in</option>
-            <option v-for="opt in checkOptions" :key="opt" :value="opt">
-              {{ opt }}
+            <option value="" disabled selected>City</option>
+            <option
+              v-for="city in cities"
+              :key="city.value"
+              :value="city.value"
+            >
+              {{ city.label }}
             </option>
           </select>
-          <select
-            :value="selectedCheckOut"
-            @change="$emit('update:selectedCheckOut', $event.target.value)"
-            class="p-2 rounded-md text-sm border hover:bg-gray-100 text-[#364365] cursor-pointer"
-          >
-            <option value="" disabled selected>Check-out</option>
-            <option v-for="opt in checkOptions" :key="opt" :value="opt">
-              {{ opt }}
-            </option>
-          </select>
-          <select
-            :value="selectedGuests"
-            @change="$emit('update:selectedGuests', $event.target.value)"
-            class="p-2 rounded-md text-sm border hover:bg-gray-100 text-[#364365] cursor-pointer"
-          >
-            <option value="" disabled selected>Guests</option>
-            <option v-for="opt in guestOptions" :key="opt" :value="opt">
-              {{ opt }}
-            </option>
-          </select>
-          <button
-            class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
-            @click="handleSearch"
-          >
-            Search
-          </button>
+
           <button
             class="bg-gray-200 border border-[var(--secondary-color)] text-[var(--secondary-color)] px-4 py-2 rounded-md hover:bg-gray-300 transition cursor-pointer"
             @click="$emit('reset')"
@@ -95,51 +78,35 @@
               class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-64 z-10"
             >
               <select
-                :value="selectedLocation"
-                @change="$emit('update:selectedLocation', $event.target.value)"
-                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2"
+                :value="selectedGovernorate"
+                @change="
+                  $emit('update:selectedGovernorate', $event.target.value)
+                "
+                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
               >
-                <option value="" disabled selected>Location</option>
-                <option v-for="loc in locations" :key="loc" :value="loc">
-                  {{ loc }}
+                <option value="" disabled selected>Governorate</option>
+                <option
+                  v-for="loc in governorates"
+                  :key="loc.value"
+                  :value="loc.value"
+                >
+                  {{ loc.label }}
                 </option>
               </select>
               <select
-                :value="selectedCheckIn"
-                @change="$emit('update:selectedCheckIn', $event.target.value)"
-                class="p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2"
+                :value="selectedCity"
+                @change="$emit('update:selectedCity', $event.target.value)"
+                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
               >
-                <option value="" disabled selected>Check-in</option>
-                <option v-for="opt in checkOptions" :key="opt" :value="opt">
-                  {{ opt }}
+                <option value="" disabled selected>City</option>
+                <option
+                  v-for="city in cities"
+                  :key="city.value"
+                  :value="city.value"
+                >
+                  {{ city.label }}
                 </option>
               </select>
-              <select
-                :value="selectedCheckOut"
-                @change="$emit('update:selectedCheckOut', $event.target.value)"
-                class="p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2"
-              >
-                <option value="" disabled selected>Check-out</option>
-                <option v-for="opt in checkOptions" :key="opt" :value="opt">
-                  {{ opt }}
-                </option>
-              </select>
-              <select
-                :value="selectedGuests"
-                @change="$emit('update:selectedGuests', $event.target.value)"
-                class="p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2"
-              >
-                <option value="" disabled selected>Guests</option>
-                <option v-for="opt in guestOptions" :key="opt" :value="opt">
-                  {{ opt }}
-                </option>
-              </select>
-              <button
-                class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition w-full"
-                @click="handleSearch"
-              >
-                Search
-              </button>
               <button
                 class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition w-full"
                 @click="$emit('reset')"
@@ -158,9 +125,8 @@
         <div
           class="border rounded-full flex items-center p-2 bg-white shadow-md text-[#364365]"
         >
-          <span class="px-2">{{ selectedLocation || "Anywhere" }}</span>
-          <span class="px-2">{{ selectedCheckIn || "Any week" }}</span>
-          <span class="px-2">{{ selectedGuests || "Add guests" }}</span>
+          <span class="px-2">{{ selectedGovernorateName || "Anywhere" }}</span>
+          <span class="px-2">{{ selectedCityName || "Any City" }}</span>
           <button
             class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
             @click="$emit('toggle-search')"
@@ -168,12 +134,7 @@
             Q
           </button>
           <button
-            v-if="
-              selectedLocation ||
-              selectedCheckIn ||
-              selectedCheckOut ||
-              selectedGuests
-            "
+            v-if="selectedGovernorate"
             class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
             @click="$emit('reset')"
           >
@@ -186,75 +147,70 @@
 </template>
 
 <script>
+import governorates from "@/assets/data/governorates.json";
+import cities from "@/assets/data/cities.json";
+
 export default {
   name: "SearchBar",
   props: {
-    isScrolled: {
-      type: Boolean,
-      default: false,
-    },
-    isExpanded: {
-      type: Boolean,
-      default: false,
-    },
-    isSmallScreen: {
-      type: Boolean,
-      default: false,
-    },
-    searchQuery: {
-      type: String,
-      default: "",
-    },
-    selectedLocation: {
-      type: String,
-      default: "",
-    },
-    selectedCheckIn: {
-      type: String,
-      default: "",
-    },
-    selectedCheckOut: {
-      type: String,
-      default: "",
-    },
-    selectedGuests: {
-      type: String,
-      default: "",
-    },
+    isScrolled: Boolean,
+    isExpanded: Boolean,
+    isSmallScreen: Boolean,
+    searchQuery: String,
+    selectedGovernorate: String,
+    selectedCity: String,
   },
   emits: [
     "update:searchQuery",
-    "update:selectedLocation",
-    "update:selectedCheckIn",
-    "update:selectedCheckOut",
-    "update:selectedGuests",
+    "update:selectedGovernorate",
+    "update:selectedCity",
     "search",
     "toggle-search",
     "reset",
   ],
-  data() {
-    return {
-      showFilterOptions: false,
-      locations: [
-        "New York",
-        "Los Angeles",
-        "San Francisco",
-        "Chicago",
-        "Washington, D.C.",
-      ],
-      checkOptions: ["Today", "Tomorrow", "This week"],
-      guestOptions: ["1 guest", "2 guests", "3 guests"],
-    };
+  data: () => ({
+    showFilterOptions: false,
+    governorates: governorates.map((g) => ({
+      value: g.id,
+      label: g.governorate_name_en,
+    })),
+    cities: [],
+  }),
+  computed: {
+    selectedGovernorateName() {
+      return (
+        this.governorates.find((g) => g.value === this.selectedGovernorate)
+          ?.label || "Anywhere"
+      );
+    },
+    selectedCityName() {
+      return (
+        this.cities.find((c) => c.value === this.selectedCity)?.label || ""
+      );
+    },
+  },
+  watch: {
+    selectedGovernorate(newVal) {
+      this.updateCities(newVal);
+      if (!this.cities.some((c) => c.value === this.selectedCity)) {
+        this.$emit("update:selectedCity", "");
+      }
+    },
   },
   methods: {
+    updateCities(governorateId) {
+      this.cities = governorateId
+        ? cities
+            .filter((c) => c.governorate_id === governorateId)
+            .map((c) => ({
+              value: c.id,
+              label: c.city_name_en,
+            }))
+        : [];
+    },
     toggleFilterOptions() {
       this.showFilterOptions = !this.showFilterOptions;
       if (!this.showFilterOptions) this.$emit("search");
-    },
-    handleSearch() {
-      this.$emit("search");
-      this.showFilterOptions = false;
-      if (this.isExpanded) this.$emit("toggle-search");
     },
   },
 };

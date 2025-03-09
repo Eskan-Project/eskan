@@ -1,5 +1,5 @@
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -11,6 +11,15 @@ export default {
       showPassword: false,
     };
   },
+  computed: {
+    ...mapGetters("auth", ["isError"]),
+  },
+  watch: {
+    isError(newVal) {
+      this.errors.server = newVal;
+    },
+  },
+
   methods: {
     ...mapActions("auth", ["login", "loginWithGoogle"]),
 
@@ -30,7 +39,6 @@ export default {
 
       if (Object.keys(this.errors).length > 0) return;
 
-      this.loading = true;
       try {
         const userData = {
           email: this.email,
@@ -40,15 +48,7 @@ export default {
         await this.login(userData);
         this.$router.push({ name: "Home" });
       } catch (error) {
-        console.error("Login error:", error);
-
-        if (error.code === "auth/invalid-credential") {
-          this.errors.server = "Incorrect email or password.";
-        } else {
-          this.errors.server = "Login failed. Please try again.";
-        }
-      } finally {
-        this.loading = false;
+        this.$store.commit("auth/setError", error.message);
       }
     },
 
@@ -120,8 +120,8 @@ export default {
             </a>
           </div>
 
-          <p v-if="errors.server" class="text-red-500 text-center mb-4">
-            {{ errors.server }}
+          <p v-if="isError" class="text-red-500 text-center mb-4">
+            {{ isError }}
           </p>
 
           <div class="p-5">
