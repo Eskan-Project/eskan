@@ -4,11 +4,18 @@ import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
 export default {
-  async createProperty({ commit, state, rootState, dispatch }, files) {
+  async createProperty(
+    { commit, state, rootState, dispatch },
+    { files = [], role = "owner" } = {}
+  ) {
     commit("setLoading", true, { root: true });
     try {
-      const propertyId = doc(collection(db, "requests")).id;
-      let imagesUrl;
+      let collectionName = "requests";
+      if (role === "admin") {
+        collectionName = "properties";
+      }
+      const propertyId = doc(collection(db, collectionName)).id;
+      let imagesUrl = [];
       if (files.length) {
         const folderName = `requests/${propertyId}`;
         imagesUrl = await Promise.all(
@@ -32,14 +39,19 @@ export default {
         createdAt: new Date(),
         status: "pending",
       };
-      await setDoc(doc(db, "requests", propertyId), propertyData);
-      dispatch(
-        "notifications/addNotification",
-        `Your property ${propertyDetails.title} is under review.`,
-        {
-          root: true,
-        }
+      const propertyRef = await setDoc(
+        doc(db, collectionName, propertyId),
+        propertyData
       );
+      if (role !== "admin") {
+        dispatch(
+          "notifications/addNotification",
+          `Your property ${propertyDetails.title} is under review.`,
+          {
+            root: true,
+          }
+        );
+      }
     } catch (error) {
       console.log(error);
     } finally {

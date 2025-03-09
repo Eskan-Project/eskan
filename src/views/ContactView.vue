@@ -9,6 +9,7 @@
             <div class="relative h-full">
               <img
                 src="../assets/images/contact/contact-1.jpg"
+                loading="lazy"
                 alt="ContactUs tailwind section"
                 class="w-full h-full rounded-l-2xl object-cover md:block"
               />

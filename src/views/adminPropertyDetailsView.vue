@@ -47,6 +47,7 @@
                   "
                   :src="property.data.gallery[currentImageIndex]"
                   alt="Property Image"
+                  loading="lazy"
                   class="w-full h-96 object-cover rounded-lg"
                   @load="imageLoaded = true"
                   v-show="imageLoaded"
@@ -97,6 +98,7 @@
                   v-for="(img, index) in property.data.gallery"
                   :key="index"
                   :src="img"
+                  loading="lazy"
                   class="h-24 w-full object-cover rounded-lg cursor-pointer border-2"
                   :class="{ 'border-blue-500': currentImageIndex === index }"
                   @click="currentImageIndex = index"
@@ -110,6 +112,7 @@
                 <img
                   :src="property.owner.profilePic"
                   alt="Owner"
+                  loading="lazy"
                   class="w-24 h-24 rounded-full mx-auto mb-3 mt-5"
                 />
                 <h3 class="text-lg font-bold text-[#364365]">
@@ -134,6 +137,7 @@
                 v-if="property.data && property.data.video"
                 controls
                 class="w-full h-64 mt-2 rounded-lg"
+                loading="lazy"
               >
                 <source :src="property.data.video" type="video/mp4" />
                 Your browser does not support the video tag.

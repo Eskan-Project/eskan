@@ -7,7 +7,12 @@
   >
     <div class="container mx-auto flex items-center py-1">
       <router-link to="/">
-        <img class="h-[70px]" src="../../assets/images/logo.png" alt="Logo" />
+        <img
+          class="h-[70px]"
+          src="../../assets/images/logo.png"
+          alt="Logo"
+          loading="lazy"
+        />
       </router-link>
       <ul class="hidden md:flex flex-grow justify-center space-x-6">
         <li v-for="(item, index) in navLinks" :key="index">

@@ -172,8 +172,9 @@ export default {
 
       <div class="img-container hidden md:block">
         <img
+          loading="lazy"
           class="w-full h-full rounded-r-xl"
-          src="@/assets/images/login/login.png"
+          src="@/assets/images/login/login.jpg"
         />
       </div>
     </div>

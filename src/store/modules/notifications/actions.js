@@ -4,15 +4,12 @@ import { ref, onValue, push, remove, set } from "firebase/database";
 export default {
   async getNotifications({ commit, rootState }) {
     const userId = rootState.auth.userDetails?.uid;
-    console.log("User ID:", userId);
 
     if (!userId) {
-      console.error("User ID is not available");
       return;
     }
 
     const notifRef = ref(rtdb, `notifications/${userId}`);
-    console.log("Notification Reference:", notifRef.toString());
 
     onValue(
       notifRef,
@@ -27,7 +24,6 @@ export default {
               ...data[key],
             }))
             .sort((a, b) => b.timestamp - a.timestamp);
-          console.log("Processed Notifications:", notifications);
           commit("setNotifications", notifications);
         } else {
           console.log("No notifications found");

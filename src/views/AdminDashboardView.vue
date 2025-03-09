@@ -1,51 +1,23 @@
 <template>
-  <main class="min-h-screen bg-gray-100">
-    <div class="md:flex block">
-      <!-- Sidebar -->
-      <aside class="md:w-48 w-full bg-[#364365] md:min-h-screen p-4">
-        <nav class="space-y-2">
-          <router-link
-            to="/admin"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-person-circle mr-2"></i>Profile
-          </router-link>
-          <router-link
-            to="/admin/add-property"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-building-add"></i> Add Property
-          </router-link>
-          <router-link
-            to="/admin/properties"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-building mr-2"></i>Properties
-          </router-link>
-          <router-link
-            to="/admin/users"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-people mr-2"></i>users
-          </router-link>
-          <router-link
-            to="/admin/users"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-people mr-2"></i>Owners
-          </router-link>
-          <router-link
-            to="/admin/orders"
-            class="block text-white p-2 rounded hover:bg-[#4a5b8a]"
-          >
-            <i class="bi bi-cart mr-2"></i>Requests
-          </router-link>
-        </nav>
-      </aside>
+  <main class="min-h-screen bg-gray-100 flex">
+    <aside class="md:w-48 w-full bg-[#364365] md:min-h-screen p-4">
+      <nav class="space-y-2">
+        <router-link
+          v-for="link in links"
+          :key="link.path"
+          :to="link.path"
+          class="flex items-center text-white p-2 rounded hover:bg-[#4a5b8a] cursor-pointer"
+          active-class="bg-[#4a5b8a]"
+        >
+          <i :class="link.icon" class="mr-2"></i>
+          {{ link.label }}
+        </router-link>
+      </nav>
+    </aside>
 
-      <!-- Main Content -->
+    <section class="flex-1 p-4">
       <router-view></router-view>
-    </div>
+    </section>
   </main>
 </template>
 
@@ -53,7 +25,32 @@
 export default {
   name: "AdminDashboard",
   data() {
-    return {};
+    return {
+      links: [
+        {
+          path: "/admin/profile",
+          label: "Profile",
+          icon: "bi bi-person-circle",
+        },
+        {
+          path: "/admin/add-property",
+          label: "Add Property",
+          icon: "bi bi-building-add",
+        },
+        {
+          path: "/admin/properties",
+          label: "Properties",
+          icon: "bi bi-building",
+        },
+        { path: "/admin/users", label: "Users", icon: "bi bi-people" },
+        {
+          path: "/admin/owners",
+          label: "Owners",
+          icon: "bi bi-person-workspace",
+        },
+        { path: "/admin/orders", label: "Requests", icon: "bi bi-cart" },
+      ],
+    };
   },
 };
 </script>

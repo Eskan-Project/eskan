@@ -8,6 +8,7 @@
             :src="property.gallery[currentImageIndex]"
             alt="Property Image"
             class="w-full h-96 object-cover rounded-lg"
+            loading="lazy"
           />
           <button
             @click="prevImage"
@@ -27,19 +28,24 @@
             v-for="(img, index) in visibleGallery"
             :key="index"
             :src="img"
+            loading="lazy"
             class="h-24 w-full object-cover rounded-lg cursor-pointer border-2"
-            :class="{ 'border-blue-500': currentImageIndex === (galleryStartIndex + index) % property.gallery.length }"
-            @click="currentImageIndex = (galleryStartIndex + index) % property.gallery.length"
+            :class="{
+              'border-blue-500':
+                currentImageIndex ===
+                (galleryStartIndex + index) % property.gallery.length,
+            }"
+            @click="
+              currentImageIndex =
+                (galleryStartIndex + index) % property.gallery.length
+            "
           />
         </div>
       </div>
 
       <div class="p-5 bg-white shadow-lg rounded-lg text-center relative">
         <div class="property-item">
-         
-          
-
-          <PropertyDetails  :property="property" :id="property.id" />
+          <PropertyDetails :property="property" :id="property.id" />
         </div>
       </div>
     </div>
@@ -47,7 +53,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
       <div class="p-5 bg-white shadow-lg rounded-lg">
         <h3 class="text-lg font-bold">Property Video</h3>
-        <video v-if="property.video" controls class="w-full h-64 mt-2 rounded-lg">
+        <video
+          v-if="property.video"
+          controls
+          class="w-full h-64 mt-2 rounded-lg"
+          loading="lazy"
+        >
           <source :src="property.video" type="video/mp4" />
         </video>
         <div
@@ -63,7 +74,9 @@
         <ul class="mt-2 text-gray-600 space-y-1">
           <li><strong>Published Date:</strong> {{ property.date }}</li>
           <li><strong>Floor Location:</strong> {{ property.floor }}</li>
-          <li><strong>Furnished:</strong> {{ property.furnished ? "Yes" : "No" }}</li>
+          <li>
+            <strong>Furnished:</strong> {{ property.furnished ? "Yes" : "No" }}
+          </li>
           <li><strong>Rooms:</strong> {{ property.rooms }}</li>
           <li><strong>Size:</strong> {{ property.size }} m²</li>
         </ul>
@@ -74,7 +87,10 @@
         <div class="p-5 bg-white shadow-lg rounded-lg">
           <h3 class="text-lg font-bold text-[#364365]">Interior Features</h3>
           <ul class="mt-2 text-gray-600 space-y-1">
-            <li v-for="(feature, index) in property.interiorFeatures" :key="index">
+            <li
+              v-for="(feature, index) in property.interiorFeatures"
+              :key="index"
+            >
               ✔ {{ feature }}
             </li>
           </ul>
@@ -83,7 +99,10 @@
         <div class="p-5 bg-white shadow-lg rounded-lg mt-6">
           <h3 class="text-lg font-bold text-[#364365]">External Features</h3>
           <ul class="mt-2 text-gray-600 space-y-1">
-            <li v-for="(feature, index) in property.externalFeatures" :key="index">
+            <li
+              v-for="(feature, index) in property.externalFeatures"
+              :key="index"
+            >
               ✔ {{ feature }}
             </li>
           </ul>
@@ -184,7 +203,8 @@ export default {
       this.currentImageIndex =
         (this.currentImageIndex - 1 + this.property.gallery.length) %
         this.property.gallery.length;
-      this.galleryStartIndex =this.currentImageIndex - (this.currentImageIndex % 4);
+      this.galleryStartIndex =
+        this.currentImageIndex - (this.currentImageIndex % 4);
       this.updateVisibleGallery();
     },
     initMap() {
@@ -299,7 +319,3 @@ export default {
   border-radius: 10px;
 }
 </style>
-
-
-
-

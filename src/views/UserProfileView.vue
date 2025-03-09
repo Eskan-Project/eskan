@@ -7,6 +7,7 @@
             class="h-full w-full object-cover"
             src="../assets/images/userProfileCoverPagePhoto.jpg"
             alt="Profile Cover"
+            loading="lazy"
           />
           <div class="absolute inset-0 bg-[#053052]/80"></div>
         </div>
@@ -18,6 +19,7 @@
                 :src="userDetails?.photo || defaultPhoto"
                 alt="Profile"
                 class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
+                loading="lazy"
               />
 
               <div

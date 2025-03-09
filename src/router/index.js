@@ -16,10 +16,10 @@ import Completed from "@/components/createProperty/Completed.vue";
 import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
-import AdminPropertiesList from "@/views/AdminPropertiesList.vue";
-import AdminProfile from "@/views/AdminProfile.vue";
-import AdminPropItemCurdVue from "@/views/AdminPropItemCurd.vue";
-import AdminAddPropertyVue from "@/views/AdminAddProperty.vue";
+import AdminPropertiesList from "@/views/AdminPropertiesListView.vue";
+import AdminProfile from "@/views/AdminProfileView.vue";
+import adminPropertyDetails from "@/views/adminPropertyDetailsView.vue";
+import AdminAddProperty from "@/views/AdminAddPropertyView.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -50,7 +50,6 @@ const routes = [
         children: [
           {
             path: "",
-            name: "11",
             redirect: { name: "propertyDetails" },
           },
           {
@@ -119,28 +118,32 @@ const routes = [
 
   {
     path: "/admin",
-    name: "admin",
     component: AdminDashboardView,
+    meta: { requiresAdmin: true },
     children: [
-      { path: "", name: "adminProfile", component: AdminProfile },
+      {
+        path: "",
+        redirect: { name: "adminProfile" },
+      },
+      { path: "profile", name: "adminProfile", component: AdminProfile },
       {
         path: "add-property",
-        name: "addProperty", // Changed from "prop" to "adminProperties"
-        component: AdminAddPropertyVue,
+        name: "addProperty",
+        component: AdminAddProperty,
       },
       {
         path: "properties",
-        name: "adminProperties", // Changed from "prop" to "adminProperties"
+        name: "adminProperties",
         component: AdminPropertiesList,
       },
       {
         path: "properties/:id",
-        name: "adminPropertiesCURD", // Changed from "prop" to "adminProperties"
-        component: AdminPropItemCurdVue,
+        name: "adminPropertyDetails",
+        component: adminPropertyDetails,
       },
     ],
-    meta: { requiresAdmin: true },
   },
+
   /**
    ********************************************************************************************
    ********************************************************************************************

@@ -1,9 +1,9 @@
-
 <template>
   <div class="properties">
     <div
       class="relative w-full mx-auto h-[300px] bg-cover bg-center"
       :style="{ backgroundImage: `url(${bgImage})` }"
+      loading="lazy"
     >
       <div class="absolute inset-0 bg-black/40"></div>
       <div
@@ -60,7 +60,7 @@
                 </select>
                 <select
                   v-model="selectedGuests"
-                  class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm "
+                  class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
                 >
                   <option value="" disabled selected>Guests</option>
                   <option>1 guest</option>
@@ -74,7 +74,10 @@
                 </button>
               </div>
 
-              <div v-else class="rounded-full flex items-center bg-white p-2 relative">
+              <div
+                v-else
+                class="rounded-full flex items-center bg-white p-2 relative"
+              >
                 <div class="relative w-full">
                   <input
                     v-model="searchQuery"
@@ -98,7 +101,9 @@
                       v-model="selectedLocation"
                       class="text-[#364365] hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-[100%] overflow-hidden mb-2"
                     >
-                      <option class="w-[50%]" value="" disabled selected>Location</option>
+                      <option class="w-[50%]" value="" disabled selected>
+                        Location
+                      </option>
                       <option>New York</option>
                       <option>Los Angeles</option>
                       <option>San Francisco</option>
@@ -127,7 +132,6 @@
                       <select
                         v-model="selectedGuests"
                         class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm w-full mb-2"
-                      
                       >
                         <option value="" disabled selected>Guests</option>
                         <option v-if="!isGuestsOpen">Guests</option>
@@ -135,7 +139,7 @@
                       <div
                         v-if="isGuestsOpen"
                         class="absolute top-full left-0 bg-white rounded-md shadow-md p-2 w-full border"
-                        style="max-height: 150px; overflow-y: auto;"
+                        style="max-height: 150px; overflow-y: auto"
                       >
                         <button
                           @click="selectedGuests = '1 guest'"
@@ -171,12 +175,14 @@
               v-else
               class="flex items-center justify-center w-auto p-3 transition-all duration-300"
             >
-              <div class="border rounded-full w-full flex items-center p-2 bg-white shadow-md ">
+              <div
+                class="border rounded-full w-full flex items-center p-2 bg-white shadow-md"
+              >
                 <span class="px-2">{{ selectedLocation || "Anywhere" }}</span>
                 <span class="px-2">{{ selectedCheckIn || "Any week" }}</span>
                 <span class="px-2">{{ selectedGuests || "Add guests" }}</span>
                 <button
-                  class="bg-[#364365] text-white  w-8 h-8 ml-auto mr-3 rounded-[50%]   transition-transform duration-300 hover:scale-110"
+                  class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-[50%] transition-transform duration-300 hover:scale-110"
                   @click="toggleSearch"
                 >
                   Q
@@ -228,7 +234,7 @@
 
 <script>
 import PropertyCard from "@/components/PropertyCard.vue";
-import propertiesBg from "@/assets/images/properties.png";
+import propertiesBg from "@/assets/images/properties.jpg";
 
 export default {
   components: { PropertyCard },
@@ -237,7 +243,7 @@ export default {
       bgImage: propertiesBg,
       currentPage: 1,
       perPage: 8,
-      properties: [], 
+      properties: [],
       isScrolled: false,
       isExpanded: false,
       searchQuery: "",
@@ -249,7 +255,7 @@ export default {
       showFilterOptions: false,
       isCheckInOpen: false,
       isCheckOutOpen: false,
-      isGuestsOpen: false, 
+      isGuestsOpen: false,
     };
   },
   computed: {
@@ -274,7 +280,7 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
-    this.fetchProperties(); 
+    this.fetchProperties();
     this.fetchProperties();
   },
   beforeUnmount() {
@@ -284,7 +290,9 @@ export default {
   methods: {
     async fetchProperties() {
       try {
-        const response = await fetch("https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"); 
+        const response = await fetch(
+          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
+        );
         const data = await response.json();
 
         this.properties = Object.entries(data).map(([key, value]) => ({
@@ -302,7 +310,7 @@ export default {
         state: { property },
       });
     },
-  
+
     handleScroll() {
       this.isScrolled = window.scrollY > 0;
     },
@@ -314,7 +322,7 @@ export default {
         this.isCheckInOpen = !this.isCheckInOpen;
       } else if (filter === "checkOut") {
         this.isCheckOutOpen = !this.isCheckOutOpen;
-      } else if (filter === "guests") { 
+      } else if (filter === "guests") {
         this.isGuestsOpen = !this.isGuestsOpen;
       }
     },
@@ -371,13 +379,3 @@ export default {
   }
 }
 </style>
-
-
-
-
-
-
-
- 
-
-

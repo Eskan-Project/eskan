@@ -142,10 +142,15 @@ export default {
       class="container rounded-xl bg-[#364365] grid md:grid-cols-[1fr_1.5fr] grid-cols-1 lg:w-[75vw]"
     >
       <div class="img-container hidden md:block p-5 relative rounded-l-xl">
-        <img src="@/assets/images/logo-black.png" class="bg-white w-30" />
+        <img
+          src="@/assets/images/logo-black.png"
+          class="bg-white w-30"
+          loading="lazy"
+        />
         <img
           class="rounded-r-xl absolute bottom-0 left-0"
           src="@/assets/images/login/register.png"
+          loading="lazy"
         />
       </div>
       <div class="main-text p-8 rounded-r-xl bg-white">

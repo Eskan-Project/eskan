@@ -18,7 +18,7 @@
                 As a <span class="text-[#364365] font-bold">User</span>
               </p>
               <img
-                src="@/assets/images/login/registerMain-1.png"
+                src="@/assets/images/login/registerMain-1.jpg"
                 class="shrink block mx-auto"
               />
             </div>
@@ -38,7 +38,7 @@
                 As an <span class="text-[#364365] font-bold">Owner</span>
               </p>
               <img
-                src="@/assets/images/login/registerMain-2.png"
+                src="@/assets/images/login/registerMain-2.jpg"
                 class="shrink block mx-auto"
               />
             </div>

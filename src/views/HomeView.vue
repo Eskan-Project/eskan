@@ -34,6 +34,7 @@
           >
             <i class="fas fa-shield-alt text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/VerifyForHomePage.png"
                 alt="Verified Icon"
               />
@@ -58,6 +59,7 @@
           >
             <i class="fas fa-dollar-sign text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/BudgetForHomePage.png"
                 alt="Budget Icon"
               />
@@ -82,6 +84,7 @@
           >
             <i class="fas fa-user text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/ContactForHomePage.png"
                 alt="Contact Icon"
               />
@@ -106,6 +109,7 @@
           >
             <i class="fas fa-search text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/SmartForHomePage.png"
                 alt="Smart Search Icon"
               />
@@ -130,6 +134,7 @@
           >
             <i class="fas fa-lock text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/SecureForHomePage.png"
                 alt="Secure Payments Icon"
               />
@@ -154,6 +159,7 @@
           >
             <i class="fas fa-sync text-3xl text-[#364365]">
               <img
+                loading="lazy"
                 src="../assets/images/icons/CurvedArrowForHomePage.png"
                 alt="Flexible Subscriptions Icon"
               />
