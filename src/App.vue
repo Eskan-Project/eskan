@@ -1,16 +1,26 @@
+<!-- src/App.vue -->
 <template>
-  <LoadingSpinner v-if="loading" />
-  <router-view />
+  <div id="app">
+    <loading-spinner :loading="isLoading" />
+    <router-view />
+  </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import { mapGetters } from "vuex";
 
 export default {
+  name: "App",
   components: { LoadingSpinner },
   computed: {
-    ...mapState(["loading"]),
+    ...mapGetters(["isLoading"]),
   },
 };
 </script>
+
+<style>
+#app {
+  position: relative;
+}
+</style>

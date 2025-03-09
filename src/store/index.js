@@ -5,12 +5,26 @@ import notifications from "./modules/notifications";
 
 export default createStore({
   state: {
-    loading: false,
+    loadingCount: 0,
   },
   mutations: {
-    setLoading(state, loading) {
-      state.loading = loading;
+    startLoading(state) {
+      state.loadingCount++;
     },
+    stopLoading(state) {
+      state.loadingCount--;
+    },
+  },
+  actions: {
+    startLoading({ commit }) {
+      commit("startLoading");
+    },
+    stopLoading({ commit }) {
+      commit("stopLoading");
+    },
+  },
+  getters: {
+    isLoading: (state) => state.loadingCount > 0,
   },
   modules: {
     auth,

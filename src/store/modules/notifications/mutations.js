@@ -10,4 +10,12 @@ export default {
       (notification) => notification.id !== notificationId
     );
   },
+  updateNotification(state, notificationId) {
+    const notification = state.notifications.find(
+      (notification) => notification.id === notificationId
+    );
+    if (notification) {
+      notification.read = true;
+    }
+  },
 };

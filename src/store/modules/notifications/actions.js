@@ -1,5 +1,5 @@
 import { rtdb } from "@/config/firebase";
-import { ref, onValue, push, remove, set } from "firebase/database";
+import { ref, onValue, push, remove, set, update } from "firebase/database";
 
 export default {
   async getNotifications({ commit, rootState }) {
@@ -51,5 +51,11 @@ export default {
     const notifRef = ref(rtdb, `notifications/${userId}/${notificationId}`);
     await remove(notifRef);
     commit("removeNotification", notificationId);
+  },
+  async markAsRead({ commit, rootState }, notificationId) {
+    const userId = rootState.auth.userDetails?.uid;
+    const notifiRef = ref(rtdb, `notifications/${userId}/${notificationId}`);
+    await update(notifiRef, { read: true });
+    commit("updateNotification", notificationId);
   },
 };

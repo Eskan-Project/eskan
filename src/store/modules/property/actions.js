@@ -8,7 +8,7 @@ export default {
     { commit, state, rootState, dispatch },
     { files = [], role = "owner" } = {}
   ) {
-    commit("setLoading", true, { root: true });
+    commit("startLoading", null, { root: true });
     try {
       let collectionName = "requests";
       if (role === "admin") {
@@ -39,10 +39,7 @@ export default {
         createdAt: new Date(),
         status: "pending",
       };
-      const propertyRef = await setDoc(
-        doc(db, collectionName, propertyId),
-        propertyData
-      );
+      await setDoc(doc(db, collectionName, propertyId), propertyData);
       if (role !== "admin") {
         dispatch(
           "notifications/addNotification",
@@ -55,7 +52,7 @@ export default {
     } catch (error) {
       console.log(error);
     } finally {
-      commit("setLoading", false, { root: true });
+      commit("stopLoading", null, { root: true });
     }
   },
   updateImages({ commit }, images) {
