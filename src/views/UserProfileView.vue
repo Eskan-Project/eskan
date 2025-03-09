@@ -1,5 +1,5 @@
 <template>
-      <main class="min-h-screen bg-gray-100 text-gray-900 pt-[86px] py-8">
+  <main class="min-h-screen bg-gray-100 text-gray-900 pt-[86px] py-8">
     <div class="max-w-6xl mx-auto px-4">
       <section class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="relative h-48">
@@ -33,7 +33,7 @@
               <input
                 type="file"
                 id="fileInput"
-                class="hidden "
+                class="hidden"
                 accept="image/png, image/jpeg, image/jpg"
                 @change="handleFileChange"
                 ref="fileInput"
@@ -42,26 +42,30 @@
 
             <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
-                <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                <div
+                  class="flex flex-col md:flex-row md:items-center md:space-x-6"
+                >
                   <div class="w-full flex-grow">
-  <div v-if="isEditing">
-    <input
-      type="text"
-      v-model="userDetails.name"
-      class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-      placeholder="Enter your name"
-    />
-  </div>
-  <div v-else>
-    <h1 class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
-      {{ userDetails?.name || "No Name" }}
-    </h1>
-  </div>
-</div>
+                    <div v-if="isEditing">
+                      <input
+                        type="text"
+                        v-model="userDetails.name"
+                        class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        placeholder="Enter your name"
+                      />
+                    </div>
+                    <div v-else>
+                      <h1
+                        class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis"
+                      >
+                        {{ userDetails?.name || "No Name" }}
+                      </h1>
+                    </div>
+                  </div>
                 </div>
 
-                <p class="text-sm mt-2 text-gray-600 flex items-center mt-1">
-                  {{ userDetails?.email || 'mariamsamuel111@gmail.com' }}
+                <p class="text-sm mt-2 text-gray-600 flex items-center">
+                  {{ userDetails?.email || "mariamsamuel111@gmail.com" }}
                   <span
                     v-if="userDetails?.isActive"
                     class="ml-2 bg-green-100 text-green-700 font-semibold px-2 py-1 rounded-md shadow-sm"
@@ -82,18 +86,23 @@
         </div>
       </section>
 
-
       <div class="mt-8 grid grid-cols-1 md:grid-cols-1 gap-6">
         <section class="md:col-span-2">
-          <article class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center">
+          <article
+            class="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
+          >
+            <h2
+              class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center"
+            >
               Personal Information
             </h2>
 
             <form @submit.prevent="saveProfile">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 flex items-center mb-2">
+                  <label
+                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                  >
                     National ID
                   </label>
                   <div v-if="isEditing">
@@ -103,13 +112,18 @@
                       class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
                   </div>
-                  <div v-else class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md">
+                  <div
+                    v-else
+                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                  >
                     {{ userDetails?.nationalId || "Not specified" }}
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 flex items-center mb-2">
+                  <label
+                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                  >
                     Gender
                   </label>
                   <div v-if="isEditing">
@@ -122,13 +136,18 @@
                       <option value="Female">Female</option>
                     </select>
                   </div>
-                  <div v-else class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md">
+                  <div
+                    v-else
+                    class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                  >
                     {{ userDetails?.gender || "Not specified" }}
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 flex items-center mb-2">
+                  <label
+                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                  >
                     Location
                   </label>
                   <div v-if="isEditing">
@@ -138,13 +157,18 @@
                       class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
                   </div>
-                  <div v-else class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md">
+                  <div
+                    v-else
+                    class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                  >
                     {{ userDetails?.location || "Not specified" }}
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 flex items-center mb-2">
+                  <label
+                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                  >
                     Nickname
                   </label>
                   <div v-if="isEditing">
@@ -154,7 +178,10 @@
                       class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
                   </div>
-                  <div v-else class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md">
+                  <div
+                    v-else
+                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                  >
                     {{ userDetails?.nickName || "Not specified" }}
                   </div>
                 </div>
@@ -171,27 +198,27 @@
           </article>
         </section>
       </div>
-      <main class="min-h-screen  text-gray-900  ">
-    <div class="max-w-6xl ">
-      <article class="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mt-6">
-        <h2 class="text-2xl font-semibold mb-4 text-gray-700 border-b pb-3">
-          Paid Properties
-        </h2>
-        <div v-if="paidProperties && paidProperties.length > 0">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <property-card
-              v-for="property in paidProperties"
-              :key="property.id"
-              :property="property"
-            />
-          </div>
+      <main class="min-h-screen text-gray-900">
+        <div class="max-w-6xl">
+          <article
+            class="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mt-6"
+          >
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700 border-b pb-3">
+              Paid Properties
+            </h2>
+            <div v-if="paidProperties && paidProperties.length > 0">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <property-card
+                  v-for="property in paidProperties"
+                  :key="property.id"
+                  :property="property"
+                />
+              </div>
+            </div>
+            <div v-else class="text-gray-500">No paid properties found.</div>
+          </article>
         </div>
-        <div v-else class="text-gray-500">
-          No paid properties found.
-        </div>
-      </article>
-    </div>
-  </main>
+      </main>
     </div>
   </main>
 </template>
@@ -208,7 +235,7 @@ export default {
     },
   },
   components: {
-    PropertyCard, 
+    PropertyCard,
   },
   data() {
     return {
@@ -267,7 +294,10 @@ export default {
       this.$refs.fileInput.click();
     },
     async fetchPaidProperties() {
-      if (!this.userDetails?.paidProperties || this.userDetails.paidProperties.length === 0) {
+      if (
+        !this.userDetails?.paidProperties ||
+        this.userDetails.paidProperties.length === 0
+      ) {
         return;
       }
 
@@ -292,7 +322,6 @@ export default {
       } catch (error) {
         console.error("Error fetching paid properties:", error);
       }
-    
     },
   },
 };
