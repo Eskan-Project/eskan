@@ -72,7 +72,11 @@ export default {
       await this.dispatch("auth/fetchUserDetails", user.uid);
       router.push("/");
     } catch (error) {
-      commit("setError", error.message);
+      if (error.code === "auth/invalid-credential") {
+        commit("setError", "Invalid email or password");
+      } else {
+        commit("setError", "Login failed. Please try again");
+      }
       throw error;
     } finally {
       commit("stopLoading", null, { root: true });
@@ -176,6 +180,7 @@ export default {
     commit("startLoading", null, { root: true });
     try {
       await signOut(auth);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       commit("logout");
       router.push("/login");
     } catch (error) {

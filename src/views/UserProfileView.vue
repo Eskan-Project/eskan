@@ -56,7 +56,7 @@
                     </div>
                     <div v-else>
                       <h1
-                        class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis"
+                        class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis mt-2 capitalize"
                       >
                         {{ userDetails?.name || "No Name" }}
                       </h1>
@@ -66,12 +66,12 @@
 
                 <p class="text-sm mt-2 text-gray-600 flex items-center">
                   {{ userDetails?.email || "mariamsamuel111@gmail.com" }}
-                  <span
+                  <!-- <span
                     v-if="userDetails?.isActive"
                     class="ml-2 bg-green-100 text-green-700 font-semibold px-2 py-1 rounded-md shadow-sm"
                   >
                     ✅ Active
-                  </span>
+                  </span> -->
                 </p>
               </div>
             </div>
@@ -101,7 +101,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label
-                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
                     National ID
                   </label>
@@ -122,7 +122,7 @@
 
                 <div>
                   <label
-                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
                     Gender
                   </label>
@@ -138,7 +138,7 @@
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
                     {{ userDetails?.gender || "Not specified" }}
                   </div>
@@ -146,34 +146,34 @@
 
                 <div>
                   <label
-                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    Location
+                    Address
                   </label>
                   <div v-if="isEditing">
                     <input
-                      v-model="userDetails.location"
+                      v-model="userDetails.address"
                       type="text"
-                      class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      class="capitalize block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.location || "Not specified" }}
+                    {{ userDetails?.address || "Not specified" }}
                   </div>
                 </div>
 
                 <div>
                   <label
-                    class="text-sm font-medium text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    Nickname
+                    Phone Number
                   </label>
                   <div v-if="isEditing">
                     <input
-                      v-model="userDetails.nickName"
+                      v-model="userDetails.phone"
                       type="text"
                       class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
@@ -182,7 +182,7 @@
                     v-else
                     class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.nickName || "Not specified" }}
+                    {{ userDetails?.phone || "Not specified" }}
                   </div>
                 </div>
               </div>
@@ -190,7 +190,7 @@
               <button
                 v-if="isEditing"
                 type="submit"
-                class="mt-6 w-full md:w-auto px-6 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:shadow-lg transition-transform transform hover:scale-105"
+                class="cursor-pointer mt-6 w-full md:w-auto px-6 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:shadow-lg transition-transform transform hover:scale-105"
               >
                 Save Profile
               </button>
@@ -198,7 +198,7 @@
           </article>
         </section>
       </div>
-      <main class="min-h-screen text-gray-900">
+      <!-- <main class="min-h-screen text-gray-900">
         <div class="max-w-6xl">
           <article
             class="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mt-6"
@@ -218,7 +218,7 @@
             <div v-else class="text-gray-500">No paid properties found.</div>
           </article>
         </div>
-      </main>
+      </main> -->
     </div>
   </main>
 </template>
@@ -246,7 +246,7 @@ export default {
   },
   mounted() {
     this.fetchUserDetails();
-    this.fetchPaidProperties();
+    // this.fetchPaidProperties();
   },
   computed: {
     ...mapState("auth", ["userDetails"]),
@@ -293,36 +293,36 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
-    async fetchPaidProperties() {
-      if (
-        !this.userDetails?.paidProperties ||
-        this.userDetails.paidProperties.length === 0
-      ) {
-        return;
-      }
+    // async fetchPaidProperties() {
+    //   if (
+    //     !this.userDetails?.paidProperties ||
+    //     this.userDetails.paidProperties.length === 0
+    //   ) {
+    //     return;
+    //   }
 
-      try {
-        const response = await fetch(
-          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
-        );
-        const data = await response.json();
+    //   try {
+    //     const response = await fetch(
+    //       "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
+    //     );
+    //     const data = await response.json();
 
-        if (data) {
-          const propertiesArray = Object.entries(data).map(([key, value]) => ({
-            id: key,
-            ...value.data,
-          }));
+    //     if (data) {
+    //       const propertiesArray = Object.entries(data).map(([key, value]) => ({
+    //         id: key,
+    //         ...value.data,
+    //       }));
 
-          this.paidProperties = propertiesArray.filter((property) =>
-            this.userDetails.paidProperties.includes(property.id)
-          );
+    //       this.paidProperties = propertiesArray.filter((property) =>
+    //         this.userDetails.paidProperties.includes(property.id)
+    //       );
 
-          console.log("Paid Properties:", this.paidProperties);
-        }
-      } catch (error) {
-        console.error("Error fetching paid properties:", error);
-      }
-    },
+    //       console.log("Paid Properties:", this.paidProperties);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching paid properties:", error);
+    //   }
+    // },
   },
 };
 </script>

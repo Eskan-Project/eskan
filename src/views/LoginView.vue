@@ -44,11 +44,11 @@ export default {
           email: this.email,
           password: this.password,
         };
-
         await this.login(userData);
         this.$router.push({ name: "Home" });
       } catch (error) {
-        this.$store.commit("auth/setError", error.message);
+        console.log(error.message);
+        return;
       }
     },
 

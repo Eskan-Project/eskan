@@ -97,7 +97,7 @@
         <button
           v-else
           @click="$router.push('/login')"
-          class="flex items-center gap-1 px-4 py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all"
+          class="flex items-center gap-1 px-4 py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           Log In <i class="bi bi-box-arrow-in-right"></i>
         </button>
@@ -142,7 +142,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("auth", ["isAuth"]),
+    ...mapState("auth", ["isAuth", "userDetails"]),
     ...mapState("notifications", ["notifications"]),
     ...mapGetters("notifications", ["unreadCount"]),
   },
@@ -176,6 +176,8 @@ export default {
     },
   },
   mounted() {
+    console.log(this.isAuth);
+    console.log(this.userDetails);
     window.addEventListener("scroll", this.handleScroll, { passive: true });
     window.addEventListener("click", this.handleClickOutside, {
       passive: true,

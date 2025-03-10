@@ -1,6 +1,7 @@
 export default {
   setUser(state, userData) {
     state.userDetails = { ...state.userDetails, ...userData };
+    console.log(userData);
     state.isAuth = !!userData.uid;
     state.error = null;
   },
