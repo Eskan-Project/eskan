@@ -137,7 +137,6 @@
       </div>
     </div>
 
-    <!-- Full-Screen Image Modal -->
     <transition name="fade">
       <div
         v-if="isFullScreen"
@@ -185,29 +184,39 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropertyDetails from "../components/PropertyDetails.vue";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { mapActions, mapState } from "vuex";
+import governorates from "@/assets/data/governorates.json";
+import cities from "@/assets/data/cities.json";
 
 export default {
+  name: "PropertyDetail",
   props: ["id"],
+  components: { PropertyDetails },
   data() {
     return {
       currentImageIndex: 0,
+      galleryStartIndex: 0,
       mapInstance: null,
       mapLoading: false,
-      isFullScreen: false,
-      visibleThumbnails: 4,
       // userLocation: null,
       // distance: null,
       // duration: null,
     };
   },
   computed: {
-    ...mapState("property", ["property"]),
+    ...mapState("property", ["property", "loading"]),
     currentImage() {
       return (
         this.property?.images?.[this.currentImageIndex] ||
         "path/to/placeholder.jpg"
+      );
+    },
+    visibleGallery() {
+      return (
+        this.property?.images?.slice(
+          this.galleryStartIndex,
+          this.galleryStartIndex + 4
+        ) || []
       );
     },
     locationText() {
@@ -226,76 +235,32 @@ export default {
       this.$nextTick(() => {
         this.initMapWithFallback();
       });
-      console.log(this.property);
+      this.updateGalleryStartIndex();
     });
   },
-  beforeUnmount() {
+  beforeDestroy() {
     if (this.mapInstance) {
       this.mapInstance.remove();
     }
   },
   methods: {
-    async fetchProperty() {
-      this.loading = true;
-      try {
-        const docRef = doc(db, "properties", this.id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          this.property = { id: docSnap.id, ...docSnap.data() };
-        } else {
-          this.property = null;
-        }
-      } catch (error) {
-        console.error("Error fetching property:", error);
-        this.property = null;
-      } finally {
-        this.loading = false;
-      }
-    },
-    updateVisibleGallery() {
-      if (this.property && this.property.images) {
-        this.visibleGallery = [];
-        for (let i = 0; i < 4; i++) {
-          this.visibleGallery.push(
-            this.property.images[
-              (this.galleryStartIndex + i) % this.property.images.length
-            ]
-          );
-        }
-      }
-    },
+    ...mapActions("property", ["getProperty"]),
     nextImage() {
+      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex + 1) % this.property.images.length;
-      this.galleryStartIndex =
-        this.currentImageIndex - (this.currentImageIndex % 4);
-      this.updateVisibleGallery();
+      this.updateGalleryStartIndex();
     },
     prevImage() {
+      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex - 1 + this.property.images.length) %
         this.property.images.length;
       this.updateGalleryStartIndex();
     },
-    scrollThumbnails(direction) {
-      const container = this.$refs.thumbnailContainer;
-      if (!container) return;
-      const thumbWidth = 96;
-
-      const scrollAmount = direction * thumbWidth * 2;
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      const scrollLeft = Math.min(
-        Math.max(container.scrollLeft + scrollAmount, 0),
-        maxScroll
-      );
-      container.scrollTo({ left: scrollLeft, behavior: "smooth" });
-    },
-    openFullScreen() {
-      this.isFullScreen = true;
-    },
-    closeFullScreen() {
-      this.isFullScreen = false;
+    updateGalleryStartIndex() {
+      if (!this.property?.images?.length) return;
+      this.galleryStartIndex = Math.floor(this.currentImageIndex / 4) * 4;
     },
     async initMapWithFallback() {
       this.mapLoading = true;
@@ -435,37 +400,9 @@ export default {
   max-width: 1200px;
 }
 #map {
-  z-index: 0;
+  z-index: 0 !important;
   position: relative;
   height: 300px;
   border-radius: 10px;
-}
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-.scrollbar-thumb-gray-300 {
-  scrollbar-color: #d1d5db #f3f4f6;
-}
-::-webkit-scrollbar {
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-track {
-  background: #f3f4f6;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 </style>
