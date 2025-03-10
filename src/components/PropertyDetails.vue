@@ -1,7 +1,9 @@
 <template>
-  <div class="max-w-lg mx-auto my-auto p-6 rounded-lg">
+  <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg shadow-lg">
+    <p v-if="loading" class="text-center text-gray-600">Loading...</p>
+
     <template v-if="property">
-      <!-- <div v-if="!isOwnerDetailsVisible" class="text-center">
+      <div v-if="!isOwnerDetailsVisible" class="text-center">
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
         >
@@ -27,7 +29,7 @@
         >
           🔓 Click here to unlock information
         </button>
-      </div> -->
+      </div>
 
       <div
         v-if="showPaymentPrompt"
@@ -94,122 +96,129 @@
 </template>
 
 <script>
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+  collection,
+  query,
+  where,
+  getDocs,
+  arrayUnion,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
 export default {
   props: {
-    property: Object,
-    id: String,
+    property: {
+      type: Object,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       isOwnerDetailsVisible: false,
-      loading: true,
-      localProperty: null,
-      userViewedProperty: null,
+      loading: false, // Set loading to false initially
       showPaymentPrompt: false,
     };
   },
+  mounted() {
+    this.checkPayment();
+    this.watchUserViews();
+  },
   methods: {
-    // async handleViewOwner() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) {
-    //     this.showPaymentPrompt = true;
-    //     return;
-    //   }
+    async handleViewOwner() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        this.showPaymentPrompt = true;
+        return;
+      }
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
-    //   try {
-    //     const docSnap = await getDoc(userRef);
-    //     if (docSnap.exists() && docSnap.data().paidProperties) {
-    //       if (!docSnap.data().paidProperties.includes(this.id)) {
-
-    //         if (docSnap.data().freePropertyViewed) {
-    //           this.showPaymentPrompt = true;
-    //         } else {
-
-    //           await setDoc(
-    //             userRef,
-    //             {
-    //               freePropertyViewed: true,
-    //               paidProperties: arrayUnion(this.id),
-    //             },
-    //             { merge: true }
-    //           );
-    //           this.isOwnerDetailsVisible = true;
-    //         }
-    //       } else {
-    //         this.isOwnerDetailsVisible = true;
-    //       }
-    //     } else {
-
-    //       if (docSnap.data().freePropertyViewed) {
-    //         this.showPaymentPrompt = true;
-    //       } else {
-    //         await setDoc(
-    //           userRef,
-    //           {
-    //             freePropertyViewed: true,
-    //             paidProperties: arrayUnion(this.id),
-    //           },
-    //           { merge: true }
-    //         );
-    //         this.isOwnerDetailsVisible = true;
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error("Error handling view count:", error);
-    //   }
-    // },
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
+      try {
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists() && docSnap.data().paidProperties) {
+          if (!docSnap.data().paidProperties.includes(this.id)) {
+            if (docSnap.data().freePropertyViewed) {
+              this.showPaymentPrompt = true;
+            } else {
+              await setDoc(
+                userRef,
+                {
+                  freePropertyViewed: true,
+                  paidProperties: arrayUnion(this.id),
+                },
+                { merge: true }
+              );
+              this.isOwnerDetailsVisible = true;
+            }
+          } else {
+            this.isOwnerDetailsVisible = true;
+          }
+        } else {
+          if (docSnap.data().freePropertyViewed) {
+            this.showPaymentPrompt = true;
+          } else {
+            await setDoc(
+              userRef,
+              {
+                freePropertyViewed: true,
+                paidProperties: arrayUnion(this.id),
+              },
+              { merge: true }
+            );
+            this.isOwnerDetailsVisible = true;
+          }
+        }
+      } catch (error) {
+        console.error("Error handling view count:", error);
+      }
+    },
     redirectToPayment() {
       window.location.href = `/payment?propertyId=${this.id}`;
     },
-    // watchUserViews() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) return;
+    watchUserViews() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
 
-    //   onSnapshot(userRef, (docSnap) => {
-    //     if (docSnap.exists() && docSnap.data().paidProperties) {
-    //       this.isOwnerDetailsVisible = docSnap
-    //         .data()
-    //         .paidProperties.includes(this.id);
-    //     } else {
-    //       this.isOwnerDetailsVisible = false;
-    //     }
-    //   });
-    // },
-    // async checkPayment() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) return;
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists() && docSnap.data().paidProperties) {
+          this.isOwnerDetailsVisible = docSnap
+            .data()
+            .paidProperties.includes(this.id);
+        } else {
+          this.isOwnerDetailsVisible = false;
+        }
+      });
+    },
+    async checkPayment() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
-    //   const docSnap = await getDoc(userRef);
-
-    //   if (docSnap.exists() && docSnap.data().paidProperties) {
-    //     this.isOwnerDetailsVisible = docSnap
-    //       .data()
-    //       .paidProperties.includes(this.id);
-    //   } else {
-    //     this.isOwnerDetailsVisible = false;
-    //   }
-    // },
-  },
-  async mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const propertyId = urlParams.get("propertyId");
-
-    if (propertyId) {
-      this.id = propertyId;
-    }
-
-    // this.watchUserViews();
-    // await this.checkPayment();
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists() && docSnap.data().paidProperties) {
+        this.isOwnerDetailsVisible = docSnap
+          .data()
+          .paidProperties.includes(this.id);
+      } else {
+        this.isOwnerDetailsVisible = false;
+      }
+    },
   },
 };
 </script>

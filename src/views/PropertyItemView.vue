@@ -185,14 +185,11 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropertyDetails from "../components/PropertyDetails.vue";
-import { mapActions, mapState } from "vuex";
-import governorates from "@/assets/data/governorates.json";
-import cities from "@/assets/data/cities.json";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 export default {
-  name: "PropertyDetail",
   props: ["id"],
-  components: { PropertyDetails },
   data() {
     return {
       currentImageIndex: 0,
@@ -238,15 +235,44 @@ export default {
     }
   },
   methods: {
-    ...mapActions("property", ["getProperty"]),
+    async fetchProperty() {
+      this.loading = true;
+      try {
+        const docRef = doc(db, "properties", this.id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          this.property = { id: docSnap.id, ...docSnap.data() };
+        } else {
+          this.property = null;
+        }
+      } catch (error) {
+        console.error("Error fetching property:", error);
+        this.property = null;
+      } finally {
+        this.loading = false;
+      }
+    },
+    updateVisibleGallery() {
+      if (this.property && this.property.images) {
+        this.visibleGallery = [];
+        for (let i = 0; i < 4; i++) {
+          this.visibleGallery.push(
+            this.property.images[
+              (this.galleryStartIndex + i) % this.property.images.length
+            ]
+          );
+        }
+      }
+    },
     nextImage() {
-      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex + 1) % this.property.images.length;
-      this.updateGalleryStartIndex();
+      this.galleryStartIndex =
+        this.currentImageIndex - (this.currentImageIndex % 4);
+      this.updateVisibleGallery();
     },
     prevImage() {
-      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex - 1 + this.property.images.length) %
         this.property.images.length;
