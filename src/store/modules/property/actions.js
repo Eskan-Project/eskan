@@ -20,10 +20,7 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async createProperty(
-    { commit, state, rootState, dispatch },
-    { files = [] } = {}
-  ) {
+  async createProperty({ commit, state, rootState, dispatch }, files) {
     commit("startLoading", null, { root: true });
     try {
       if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {

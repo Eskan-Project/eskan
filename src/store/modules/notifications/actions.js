@@ -38,13 +38,16 @@ export default {
 
   async addNotification({ rootState }, message) {
     const userId = rootState.auth.userDetails?.uid;
+    console.log(userId);
     const newNotifRef = push(ref(rtdb, `notifications/${userId}`));
+    console.log(newNotifRef);
     await set(newNotifRef, {
       id: newNotifRef.key,
       message,
       timestamp: Date.now(),
       read: false,
     });
+    console.log("Notification added");
   },
   async removeNotification({ commit, rootState }, notificationId) {
     const userId = rootState.auth.userDetails?.uid;

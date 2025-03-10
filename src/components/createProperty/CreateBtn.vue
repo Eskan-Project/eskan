@@ -43,9 +43,12 @@ export default {
         storedStep++;
         localStorage.setItem("activeStep", storedStep);
         const localImages = JSON.parse(localStorage.getItem("localImages"));
+        console.log(localImages);
         const propertyDetails = localStorage.getItem("propertyDetails");
+        console.log(propertyDetails);
         this.updateProperty(JSON.parse(propertyDetails));
         this.createProperty(localImages);
+        console.log("Property created");
         this.$router.push({ name: "completed" });
       } else {
         this.$router.push({ name: this.name });
