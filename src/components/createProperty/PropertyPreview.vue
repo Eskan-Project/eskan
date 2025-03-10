@@ -35,11 +35,11 @@
         <p class="text-gray-500 flex items-center">
           <i class="bi bi-geo-alt-fill text-yellow-500 mr-2 text-2xl"></i>
           {{
-            `${propertyDetails.neighborhood} ${
+            `${
               propertyDetails.neighborhood
                 ? propertyDetails.neighborhood + ","
                 : ""
-            } `
+            }`
           }}
           <br v-if="propertyDetails.neighborhood" />
           {{ `${cityName}, ${governorateName}` }}

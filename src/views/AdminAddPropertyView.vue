@@ -110,7 +110,7 @@
             <div class="col-span-full flex gap-4 justify-center">
               <button
                 type="submit"
-                class="text-white rounded-md bg-[var(--secondary-color)] px-4 py-2 text-sm/6 font-semibold border border-[var(--secondary-color)] hover:bg-white hover:text-[var(---secondary-color)] cursor-pointer"
+                class="text-white rounded-md bg-[var(--secondary-color)] px-4 py-2 text-sm/6 font-semibold border border-[var(--secondary-color)] hover:text-[var(--secondary-color)] hover:bg-white cursor-pointer"
               >
                 Add Property
               </button>
@@ -316,9 +316,7 @@ export default {
 
         if (!result.isConfirmed) return;
 
-        await this.createProperty({
-          files: this.uploadedImages,
-        });
+        await this.createProperty(this.uploadedImages);
 
         await Swal.fire("Done!", "Your property has been added.", "success");
         this.uploadedImages = [];

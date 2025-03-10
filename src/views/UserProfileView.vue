@@ -16,6 +16,14 @@
           <article class="flex flex-col sm:flex-row items-center">
             <figure class="-mt-16 relative">
               <img
+                v-if="croppedImageSrc"
+                :src="croppedImageSrc"
+                alt="Profile"
+                class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
+                loading="lazy"
+              />
+              <img
+                v-else
                 :src="userDetails?.photo || defaultPhoto"
                 alt="Profile"
                 class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
@@ -41,26 +49,22 @@
             </figure>
 
             <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
-              <div class="mt-6 sm:mt-0 sm:ml-6 text-center sm:text-left">
-                <div
-                  class="flex flex-col md:flex-row md:items-center md:space-x-6"
-                >
-                  <div class="w-full flex-grow">
-                    <div v-if="isEditing">
-                      <input
-                        type="text"
-                        v-model="userDetails.name"
-                        class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                        placeholder="Enter your name"
-                      />
-                    </div>
-                    <div v-else>
-                      <h1
-                        class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis mt-2 capitalize"
-                      >
-                        {{ userDetails?.name || "No Name" }}
-                      </h1>
-                    </div>
+              <div class="flex flex-col md:space-x-6">
+                <div class="w-full flex-grow">
+                  <div v-if="isEditing">
+                    <input
+                      type="text"
+                      v-model="userDetails.name"
+                      class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                      placeholder="Enter your name"
+                    />
+                  </div>
+                  <div v-else>
+                    <h1
+                      class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis mt-2 capitalize"
+                    >
+                      {{ userDetails?.name || "No Name" }}
+                    </h1>
                   </div>
                 </div>
 
@@ -85,6 +89,37 @@
           </article>
         </div>
       </section>
+
+      <div
+        v-if="showCropper"
+        class="fixed inset-0 bg-[#053052]/80 flex items-center justify-center z-50"
+      >
+        <div class="bg-white p-4 rounded-lg shadow-lg w-[90%] max-w-lg">
+          <h3 class="text-xl font-semibold mb-4">Crop Image</h3>
+          <div class="cropper-container">
+            <Cropper
+              ref="cropper"
+              class="w-full h-64 bg-gray-200"
+              :src="croppedImageSrc"
+              :stencil-props="{ aspectRatio: 1 }"
+            />
+          </div>
+          <div class="flex justify-end mt-4 space-x-2">
+            <button
+              @click="applyCrop"
+              class="cursor-pointer px-4 py-2 bg-[var(--secondary-color)] text-white rounded hover:bg-white hover:text-[var(--secondary-color)] border hover:border-[var(--secondary-color)]"
+            >
+              Apply
+            </button>
+            <button
+              @click="cancelCrop"
+              class="cursor-pointer px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div class="mt-8 grid grid-cols-1 md:grid-cols-1 gap-6">
         <section class="md:col-span-2">
@@ -227,6 +262,11 @@
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "../services/uploadToCloudinary";
 import PropertyCard from "../components/PropertyCard.vue";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
+import base64ToFile from "../services/base64ToFileService";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   props: {
     paidProperties: {
@@ -236,12 +276,16 @@ export default {
   },
   components: {
     PropertyCard,
+    Cropper,
   },
   data() {
     return {
       isEditing: false,
       selectedFile: null,
       paidProperties: [],
+      showCropper: false,
+      croppedImageSrc: null,
+      croppedImageFile: null,
     };
   },
   mounted() {
@@ -253,18 +297,20 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["fetchUserDetails", "updateProfile"]),
+    ...mapActions(["startLoading", "stopLoading"]),
     toggleEdit() {
       this.isEditing = !this.isEditing;
+      this.croppedImageSrc = null;
     },
     async saveProfile() {
-      this.$store.commit("setLoading", true);
+      this.startLoading();
       try {
-        if (this.selectedFile) {
+        if (this.croppedImageFile) {
           const folderName = `${this.userDetails.name
             .toLowerCase()
             .replace(/\s+/g, "-")}-profile`;
           const uploadImgUrl = await uploadToCloudinary(
-            this.selectedFile,
+            this.croppedImageFile,
             this.userDetails.role === "owner"
               ? import.meta.env.VITE_CLOUDINARY_UPLOAD_OWNER_PRESET
               : import.meta.env.VITE_CLOUDINARY_UPLOAD_USER_PRESET,
@@ -274,10 +320,20 @@ export default {
         }
         await this.updateProfile();
         this.isEditing = false;
+        toast.success("Profile updated successfully", {
+          duration: 3000,
+          position: "top-left",
+          transition: "slide",
+        });
       } catch (error) {
         console.log(error);
+        toast.error("Failed to update profile", {
+          duration: 3000,
+          position: "top-left",
+          transition: "slide",
+        });
       } finally {
-        this.$store.commit("setLoading", false);
+        this.stopLoading();
       }
     },
     handleFileChange(event) {
@@ -286,13 +342,34 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(this.selectedFile);
         reader.onload = () => {
-          this.userDetails.photo = reader.result;
+          this.croppedImageSrc = reader.result;
+          this.showCropper = true;
         };
       }
     },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
+    cancelCrop() {
+      this.showCropper = false;
+    },
+    applyCrop() {
+      const result = this.$refs.cropper.getResult();
+      if (result?.canvas) {
+        result.canvas.toBlob((blob) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => {
+            this.croppedImageSrc = reader.result;
+            const file = base64ToFile(this.croppedImageSrc);
+            this.croppedImageFile = file;
+            console.log(file);
+            this.showCropper = false;
+          };
+        }, "image/png");
+      }
+    },
+
     // async fetchPaidProperties() {
     //   if (
     //     !this.userDetails?.paidProperties ||

@@ -1,167 +1,183 @@
 <template>
-  <div v-if="loading">Loading...</div>
-  <div v-else-if="property" class="container mx-auto py-10 px-5 mt-15">
+  <div v-if="property" class="container mx-auto py-10 px-5 mt-15">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="col-span-2 space-y-4">
-        <div class="mb-8 text-center sm:text-left flex justify-between">
-          <div class="flex flex-col items-start gap-2">
+      <div class="col-span-2 space-y-6">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start gap-4"
+        >
+          <div class="space-y-2">
             <h1 class="text-3xl font-bold text-gray-900 capitalize">
               {{ property.title || "Untitled Property" }}
             </h1>
-            <p class="text-lg text-gray-600 mt-2">
-              <i class="bi bi-geo-alt mr-1 text-gray-500"></i>
+            <p class="text-lg text-gray-600 flex items-center capitalize">
+              <i class="bi bi-geo-alt mr-2 text-gray-500"></i>
               {{ locationText }}
             </p>
           </div>
-          <p class="text-2xl font-semibold text-blue-700 mt-1">
+          <p class="text-2xl font-semibold text-blue-700 whitespace-nowrap">
             {{ property.price }} EGP
           </p>
         </div>
+
         <div
-          class="relative w-full h-80 sm:h-96 rounded-lg overflow-hidden shadow-lg"
+          class="relative w-full h-80 sm:h-96 rounded-lg overflow-hidden shadow-lg group"
         >
           <img
-            :src="property.images[currentImageIndex]"
+            :src="currentImage"
             alt="Property Image"
-            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
           <button
             @click="prevImage"
-            class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+            class="cursor-pointer absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition opacity-0 group-hover:opacity-100"
             aria-label="Previous Image"
           >
-            ❮
+            <i class="bi bi-chevron-left text-xl"></i>
           </button>
           <button
             @click="nextImage"
-            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+            class="cursor-pointer absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition opacity-0 group-hover:opacity-100"
             aria-label="Next Image"
           >
-            ❯
+            <i class="bi bi-chevron-right text-xl"></i>
+          </button>
+          <button
+            @click="openFullScreen"
+            class="cursor-pointer absolute bottom-4 right-4 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition opacity-0 group-hover:opacity-100"
+            aria-label="View Fullscreen"
+          >
+            <i class="bi bi-arrows-fullscreen text-lg"></i>
+          </button>
+          <div
+            class="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-sm"
+          >
+            {{ currentImageIndex + 1 }} / {{ property.images.length }}
+          </div>
+        </div>
+
+        <div class="relative">
+          <div
+            ref="thumbnailContainer"
+            class="flex overflow-x-auto gap-2 py-2 scroll-smooth scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+          >
+            <img
+              v-for="(img, index) in property.images"
+              :key="index"
+              :src="img"
+              loading="lazy"
+              class="h-20 w-20 sm:h-24 sm:w-37 object-cover rounded-lg cursor-pointer border-2 transition-all duration-200 hover:border-blue-600 flex-shrink-0"
+              :class="{ 'border-blue-500': currentImageIndex === index }"
+              @click="currentImageIndex = index"
+              :alt="`Thumbnail ${index + 1}`"
+            />
+          </div>
+          <button
+            v-if="property.images.length > visibleThumbnails"
+            @click="scrollThumbnails(-1)"
+            class="cursor-pointer absolute top-1/2 left-0 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+            aria-label="Scroll Left"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button
+            v-if="property.images.length > visibleThumbnails"
+            @click="scrollThumbnails(1)"
+            class="cursor-pointer absolute top-1/2 right-0 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+            aria-label="Scroll Right"
+          >
+            <i class="bi bi-chevron-right"></i>
           </button>
         </div>
-        <div class="grid grid-cols-4 gap-2">
+      </div>
+
+      <div class="bg-white rounded-lg p-6 shadow-lg">
+        <PropertyDetails :property="property" :id="id" />
+      </div>
+    </div>
+
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
+          General Information
+        </h2>
+        <div class="grid grid-cols-2 gap-4 text-gray-700">
+          <div class="space-y-4">
+            <p><strong>Published Date:</strong></p>
+            <p><strong>Floor Location:</strong></p>
+            <p><strong>Furnished:</strong></p>
+            <p><strong>Property Status:</strong></p>
+            <p><strong>Rooms:</strong></p>
+            <p><strong>Living Rooms:</strong></p>
+            <p><strong>Bathrooms:</strong></p>
+            <p><strong>Kitchens:</strong></p>
+            <p><strong>Area:</strong></p>
+          </div>
+          <div class="space-y-4 font-semibold">
+            <p>{{ formatDate(property.createdAt) }}</p>
+            <p>{{ property.floor }}</p>
+            <p>{{ property.furnished ? "Yes" : "No" }}</p>
+            <p>{{ property.propertyStatus }}</p>
+            <p>{{ property.rooms }}</p>
+            <p>{{ property.livingRooms }}</p>
+            <p>{{ property.bathrooms }}</p>
+            <p>{{ property.kitchens }}</p>
+            <p>{{ property.area }} m²</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+          Location Information
+        </h2>
+        <div id="map" class="w-full h-64 rounded-lg"></div>
+        <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
+          Loading map...
+        </p>
+      </div>
+    </div>
+
+    <transition name="fade">
+      <div
+        v-if="isFullScreen"
+        class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
+      >
+        <div class="relative w-full max-w-5xl">
           <img
-            v-for="(img, index) in visibleGallery"
-            :key="index"
-            :src="img"
-            loading="lazy"
-            class="h-20 sm:h-24 w-full object-cover rounded-lg cursor-pointer border-2 transition-all duration-200 hover:border-blue-600"
-            :class="{
-              'border-blue-500':
-                currentImageIndex ===
-                (galleryStartIndex + index) % property.images.length,
-            }"
-            @click="
-              currentImageIndex =
-                (galleryStartIndex + index) % property.images.length
-            "
-            :alt="`Thumbnail ${index + 1}`"
+            :src="currentImage"
+            class="w-full h-auto max-h-screen object-contain"
+            alt="Full-screen Property Image"
           />
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg">
-        <div class="property-item">
-          <PropertyDetails :property="property" :id="id" />
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-10 flex gap-6">
-      <div class="w-1/2">
-        <!-- <div class="p-5 bg-white shadow-lg rounded-lg">
-        <h3 class="text-lg font-bold">Property Video</h3>
-        <video
-          v-if="property.video"
-          controls
-          class="w-full h-64 mt-2 rounded-lg"
-          loading="lazy"
-        >
-          <source :src="property.video" type="video/mp4" />
-        </video>
-        <div
-          v-else
-          class="mt-2 bg-gray-200 h-64 flex items-center justify-center rounded-lg"
-        >
-          <span class="text-gray-500">No Video Available</span>
-        </div>
-      </div> -->
-
-        <div class="p-6 bg-white shadow-lg rounded-lg">
-          <h2 class="text-gray-900 text-xl font-semibold mb-6 text-center">
-            General Information
-          </h2>
-          <div class="flex gap-20">
-            <ul class="text-gray-700 space-y-4">
-              <li>
-                <strong>Published Date:</strong>
-              </li>
-              <li><strong>Floor Location:</strong></li>
-              <li>
-                <strong>Furnished:</strong>
-              </li>
-              <li><strong>Rooms:</strong></li>
-              <li><strong>Size:</strong></li>
-            </ul>
-            <ul class="text-gray-700 space-y-4">
-              <li class="font-semibold">
-                {{ formatDate(property.createdAt) }}
-              </li>
-              <li class="font-semibold">{{ property.floor }}</li>
-              <li class="font-semibold">
-                {{ property.furnished ? "Yes" : "No" }}
-              </li>
-              <li class="font-semibold">{{ property.rooms }}</li>
-              <li class="font-semibold">{{ property.area }} m²</li>
-            </ul>
+          <button
+            @click="prevImage"
+            class="cursor-pointer absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+          >
+            <i class="bi bi-chevron-left text-xl"></i>
+          </button>
+          <button
+            @click="nextImage"
+            class="cursor-pointer absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-gray-700 w-12 h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+          >
+            <i class="bi bi-chevron-right text-xl"></i>
+          </button>
+          <button
+            @click="closeFullScreen"
+            class="cursor-pointer absolute top-4 right-4 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+          >
+            <i class="bi bi-x-lg text-lg"></i>
+          </button>
+          <div
+            class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm"
+          >
+            {{ currentImageIndex + 1 }} / {{ property.images.length }}
           </div>
         </div>
       </div>
-      <div class="w-1/2">
-        <!-- <div>
-        <div class="p-5 bg-white shadow-lg rounded-lg">
-          <h3 class="text-lg font-bold text-[#364365]">Interior Features</h3>
-          <ul class="mt-2 text-gray-600 space-y-1">
-            <li
-              v-for="(feature, index) in property.interiorFeatures"
-              :key="index"
-            >
-              ✔ {{ feature }}
-            </li>
-          </ul>
-        </div>
-
-        <div class="p-5 bg-white shadow-lg rounded-lg mt-6">
-          <h3 class="text-lg font-bold text-[#364365]">External Features</h3>
-          <ul class="mt-2 text-gray-600 space-y-1">
-            <li
-              v-for="(feature, index) in property.externalFeatures"
-              :key="index"
-            >
-              ✔ {{ feature }}
-            </li>
-          </ul>
-        </div>
-      </div> -->
-        <div>
-          <div class="p-5 bg-white shadow-lg rounded-lg">
-            <h3 class="text-lg font-bold text-gray-900 mb-4 text-center">
-              Location Information
-            </h3>
-            <div id="map" class="w-full h-64 mt-2 rounded-lg"></div>
-            <p v-if="mapLoading" class="mt-3 text-gray-700">Loading map...</p>
-            <!-- <p v-if="distance && duration" class="mt-3 text-gray-700">
-            📍 Distance: {{ distance.toFixed(2) }} km | ⏳ Time:
-            {{ formatDuration(duration) }}
-          </p> -->
-          </div>
-        </div>
-      </div>
-    </div>
+    </transition>
   </div>
-  <div v-else>Property Not Found</div>
+  <div v-else class="min-h-screen flex items-center justify-center">
+    <div class="text-gray-600 text-xl">Property Not Found</div>
+  </div>
 </template>
 
 <script>

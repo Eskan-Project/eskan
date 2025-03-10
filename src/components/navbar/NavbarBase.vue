@@ -79,16 +79,35 @@
             </transition>
           </div>
           <router-link
+            v-if="userDetails.role === 'owner'"
+            to="/createProperty"
+            title="Create Property"
+            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+          >
+            <i class="bi bi-plus-circle text-2xl"></i>
+          </router-link>
+          <router-link
+            v-if="userDetails.role === 'admin'"
+            to="/admin"
+            title="Admin Dashboard"
+            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+          >
+            <i class="bi bi-person-fill-gear text-2xl"></i>
+          </router-link>
+
+          <router-link
+            v-else
             to="/userProfile"
             title="User Profile"
             class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
             <i class="bi bi-person text-2xl"></i>
           </router-link>
+
           <button
             title="Logout"
             @click="logout"
-            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+            class="cursor-pointer bg-white px-2 py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
             <i class="bi bi-box-arrow-in-right text-2xl"></i>
           </button>

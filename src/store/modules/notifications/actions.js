@@ -49,6 +49,7 @@ export default {
       timestamp: Date.now(),
       read: false,
     });
+    console.log("Notification added");
   },
   async removeNotification({ commit, rootState }, notificationId) {
     const userId = rootState.auth.userDetails?.uid;

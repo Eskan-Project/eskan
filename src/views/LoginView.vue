@@ -1,7 +1,10 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
-
+import hCaptcha from "@/components/hCaptcha.vue";
 export default {
+  components: {
+    hCaptcha,
+  },
   data() {
     return {
       email: "",
@@ -9,6 +12,7 @@ export default {
       errors: {},
       loading: false,
       showPassword: false,
+      captchaToken: null,
     };
   },
   computed: {
@@ -23,6 +27,21 @@ export default {
   methods: {
     ...mapActions("auth", ["login", "loginWithGoogle"]),
 
+    handleCaptchaVerified(token) {
+      this.captchaToken = token;
+      this.errors.captcha = null;
+    },
+
+    handleCaptchaExpired() {
+      this.captchaToken = null;
+      this.errors.captcha = "CAPTCHA expired. Please try again.";
+    },
+
+    handleCaptchaError() {
+      this.captchaToken = null;
+      this.errors.captcha = "CAPTCHA verification failed. Please try again.";
+    },
+
     async submitLogin() {
       this.errors = {};
 
@@ -36,6 +55,9 @@ export default {
       } else if (this.password.length < 6) {
         this.errors.password = "Password must be at least 6 characters";
       }
+      if (!this.captchaToken) {
+        this.errors.captcha = "Please complete the CAPTCHA";
+      }
 
       if (Object.keys(this.errors).length > 0) return;
 
@@ -47,8 +69,8 @@ export default {
         await this.login(userData);
         this.$router.push({ name: "Home" });
       } catch (error) {
-        console.log(error.message);
-        return;
+        console.error("Login failed:", error.message);
+        this.errors.server = error.message || "Login failed. Please try again.";
       }
     },
 
@@ -118,6 +140,20 @@ export default {
             >
               Forgot Your Password?
             </a>
+          </div>
+
+          <div
+            class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
+          >
+            <hCaptcha
+              @captchaVerified="handleCaptchaVerified"
+              @captchaExpired="handleCaptchaExpired"
+              @captchaError="handleCaptchaError"
+            />
+
+            <p v-if="errors.captcha" class="text-red-500 text-sm mt-1">
+              {{ errors.captcha }}
+            </p>
           </div>
 
           <p v-if="isError" class="text-red-500 text-center mb-4">

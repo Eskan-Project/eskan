@@ -1,7 +1,9 @@
 <template>
-  <div class="max-w-lg mx-auto my-auto p-6 rounded-lg">
+  <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg shadow-lg">
+    <p v-if="loading" class="text-center text-gray-600">Loading...</p>
+
     <template v-if="property">
-      <!-- <div v-if="!isOwnerDetailsVisible" class="text-center">
+      <div v-if="!isOwnerDetailsVisible" class="text-center">
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
         >
@@ -27,7 +29,7 @@
         >
           🔓 Click here to unlock information
         </button>
-      </div> -->
+      </div>
 
       <div
         v-if="showPaymentPrompt"
@@ -61,29 +63,31 @@
         </button>
       </div>
 
-      <div v-else-if="property.propertyContact" class="mt-4 text-gray-900">
-        <h2 class="text-xl font-semibold text-center mb-3">Owner Details</h2>
+      <div v-else-if="property.propertyContact" class="mt-2 text-gray-900">
+        <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
         <div class="flex flex-col items-center space-y-3">
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
             alt="Profile Picture"
             class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
           />
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Name:</span>
-            {{ property.propertyContact.name }}
+            <span class="text-sm capitalize">{{
+              property.propertyContact.name
+            }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Phone:</span>
-            {{ property.propertyContact.phone }}
+            <span class="text-sm">{{ property.propertyContact.phone }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Email:</span>
-            {{ property.propertyContact.email }}
+            <span class="text-sm">{{ property.propertyContact.email }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Address:</span>
-            {{ property.address }}
+            <span class="text-sm capitalize">{{ property.address }}</span>
           </p>
         </div>
       </div>
@@ -92,122 +96,129 @@
 </template>
 
 <script>
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+  collection,
+  query,
+  where,
+  getDocs,
+  arrayUnion,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
 export default {
   props: {
-    property: Object,
-    id: String,
+    property: {
+      type: Object,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       isOwnerDetailsVisible: false,
-      loading: true,
-      localProperty: null,
-      userViewedProperty: null,
+      loading: false, // Set loading to false initially
       showPaymentPrompt: false,
     };
   },
+  mounted() {
+    this.checkPayment();
+    this.watchUserViews();
+  },
   methods: {
-    // async handleViewOwner() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) {
-    //     this.showPaymentPrompt = true;
-    //     return;
-    //   }
+    async handleViewOwner() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        this.showPaymentPrompt = true;
+        return;
+      }
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
-    //   try {
-    //     const docSnap = await getDoc(userRef);
-    //     if (docSnap.exists() && docSnap.data().paidProperties) {
-    //       if (!docSnap.data().paidProperties.includes(this.id)) {
-
-    //         if (docSnap.data().freePropertyViewed) {
-    //           this.showPaymentPrompt = true;
-    //         } else {
-
-    //           await setDoc(
-    //             userRef,
-    //             {
-    //               freePropertyViewed: true,
-    //               paidProperties: arrayUnion(this.id),
-    //             },
-    //             { merge: true }
-    //           );
-    //           this.isOwnerDetailsVisible = true;
-    //         }
-    //       } else {
-    //         this.isOwnerDetailsVisible = true;
-    //       }
-    //     } else {
-
-    //       if (docSnap.data().freePropertyViewed) {
-    //         this.showPaymentPrompt = true;
-    //       } else {
-    //         await setDoc(
-    //           userRef,
-    //           {
-    //             freePropertyViewed: true,
-    //             paidProperties: arrayUnion(this.id),
-    //           },
-    //           { merge: true }
-    //         );
-    //         this.isOwnerDetailsVisible = true;
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error("Error handling view count:", error);
-    //   }
-    // },
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
+      try {
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists() && docSnap.data().paidProperties) {
+          if (!docSnap.data().paidProperties.includes(this.id)) {
+            if (docSnap.data().freePropertyViewed) {
+              this.showPaymentPrompt = true;
+            } else {
+              await setDoc(
+                userRef,
+                {
+                  freePropertyViewed: true,
+                  paidProperties: arrayUnion(this.id),
+                },
+                { merge: true }
+              );
+              this.isOwnerDetailsVisible = true;
+            }
+          } else {
+            this.isOwnerDetailsVisible = true;
+          }
+        } else {
+          if (docSnap.data().freePropertyViewed) {
+            this.showPaymentPrompt = true;
+          } else {
+            await setDoc(
+              userRef,
+              {
+                freePropertyViewed: true,
+                paidProperties: arrayUnion(this.id),
+              },
+              { merge: true }
+            );
+            this.isOwnerDetailsVisible = true;
+          }
+        }
+      } catch (error) {
+        console.error("Error handling view count:", error);
+      }
+    },
     redirectToPayment() {
       window.location.href = `/payment?propertyId=${this.id}`;
     },
-    // watchUserViews() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) return;
+    watchUserViews() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
 
-    //   onSnapshot(userRef, (docSnap) => {
-    //     if (docSnap.exists() && docSnap.data().paidProperties) {
-    //       this.isOwnerDetailsVisible = docSnap
-    //         .data()
-    //         .paidProperties.includes(this.id);
-    //     } else {
-    //       this.isOwnerDetailsVisible = false;
-    //     }
-    //   });
-    // },
-    // async checkPayment() {
-    //   const auth = getAuth();
-    //   const user = auth.currentUser;
-    //   if (!user) return;
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists() && docSnap.data().paidProperties) {
+          this.isOwnerDetailsVisible = docSnap
+            .data()
+            .paidProperties.includes(this.id);
+        } else {
+          this.isOwnerDetailsVisible = false;
+        }
+      });
+    },
+    async checkPayment() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
 
-    //   const db = getFirestore();
-    //   const userRef = doc(db, `users/${user.uid}`);
-    //   const docSnap = await getDoc(userRef);
-
-    //   if (docSnap.exists() && docSnap.data().paidProperties) {
-    //     this.isOwnerDetailsVisible = docSnap
-    //       .data()
-    //       .paidProperties.includes(this.id);
-    //   } else {
-    //     this.isOwnerDetailsVisible = false;
-    //   }
-    // },
-  },
-  async mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const propertyId = urlParams.get("propertyId");
-
-    if (propertyId) {
-      this.id = propertyId;
-    }
-
-    // this.watchUserViews();
-    // await this.checkPayment();
+      const db = getFirestore();
+      const userRef = doc(db, `users/${user.uid}`);
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists() && docSnap.data().paidProperties) {
+        this.isOwnerDetailsVisible = docSnap
+          .data()
+          .paidProperties.includes(this.id);
+      } else {
+        this.isOwnerDetailsVisible = false;
+      }
+    },
   },
 };
 </script>
