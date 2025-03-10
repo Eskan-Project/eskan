@@ -2,52 +2,32 @@
   <div v-if="loading">Loading...</div>
   <div v-else-if="property" class="container mx-auto py-10 px-5 mt-15">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="col-span-2 space-y-4">
-        <div class="mb-8 text-center sm:text-left flex justify-between">
-          <div class="flex flex-col items-start gap-2">
-            <h1 class="text-3xl font-bold text-gray-900 capitalize">
-              {{ property.title || "Untitled Property" }}
-            </h1>
-            <p class="text-lg text-gray-600 mt-2">
-              <i class="bi bi-geo-alt mr-1 text-gray-500"></i>
-              {{ locationText }}
-            </p>
-          </div>
-          <p class="text-2xl font-semibold text-blue-700 mt-1">
-            {{ property.price }} EGP
-          </p>
-        </div>
-        <div
-          class="relative w-full h-80 sm:h-96 rounded-lg overflow-hidden shadow-lg"
-        >
+      <div class="col-span-2 relative">
+        <div class="relative w-full h-96">
           <img
             :src="property.images[currentImageIndex]"
             alt="Property Image"
-            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            loading="lazy"
+            class="w-full h-96 object-cover rounded-lg"
           />
           <button
             @click="prevImage"
-            class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
-            aria-label="Previous Image"
+            class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
           >
             ❮
           </button>
           <button
             @click="nextImage"
-            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
-            aria-label="Next Image"
+            class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
           >
             ❯
           </button>
         </div>
-        <div class="grid grid-cols-4 gap-2">
+        <div class="grid grid-cols-4 gap-2 mt-4">
           <img
             v-for="(img, index) in visibleGallery"
             :key="index"
             :src="img"
-            loading="lazy"
-            class="h-20 sm:h-24 w-full object-cover rounded-lg cursor-pointer border-2 transition-all duration-200 hover:border-blue-600"
+            class="h-24 w-full object-cover rounded-lg cursor-pointer border-2"
             :class="{
               'border-blue-500':
                 currentImageIndex ===
@@ -57,106 +37,58 @@
               currentImageIndex =
                 (galleryStartIndex + index) % property.images.length
             "
-            :alt="`Thumbnail ${index + 1}`"
           />
         </div>
       </div>
 
-      <div class="bg-white rounded-lg">
+      <div class="p-5 bg-white shadow-lg rounded-lg text-center relative">
         <div class="property-item">
           <PropertyDetails :property="property" :id="id" />
         </div>
       </div>
     </div>
 
-    <div class="mt-10 flex gap-6">
-      <div class="w-1/2">
-        <!-- <div class="p-5 bg-white shadow-lg rounded-lg">
-        <h3 class="text-lg font-bold">Property Video</h3>
-        <video
-          v-if="property.video"
-          controls
-          class="w-full h-64 mt-2 rounded-lg"
-          loading="lazy"
-        >
-          <source :src="property.video" type="video/mp4" />
-        </video>
-        <div
-          v-else
-          class="mt-2 bg-gray-200 h-64 flex items-center justify-center rounded-lg"
-        >
-          <span class="text-gray-500">No Video Available</span>
-        </div>
-      </div> -->
-
-        <div class="p-6 bg-white shadow-lg rounded-lg">
-          <h2 class="text-gray-900 text-xl font-semibold mb-6 text-center">
-            General Information
-          </h2>
-          <div class="flex gap-20">
-            <ul class="text-gray-700 space-y-4">
-              <li>
-                <strong>Published Date:</strong>
-              </li>
-              <li><strong>Floor Location:</strong></li>
-              <li>
-                <strong>Furnished:</strong>
-              </li>
-              <li><strong>Rooms:</strong></li>
-              <li><strong>Size:</strong></li>
-            </ul>
-            <ul class="text-gray-700 space-y-4">
-              <li class="font-semibold">
-                {{ formatDate(property.createdAt) }}
-              </li>
-              <li class="font-semibold">{{ property.floor }}</li>
-              <li class="font-semibold">
-                {{ property.furnished ? "Yes" : "No" }}
-              </li>
-              <li class="font-semibold">{{ property.rooms }}</li>
-              <li class="font-semibold">{{ property.area }} m²</li>
-            </ul>
-          </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div class="p-5 bg-white shadow-lg rounded-lg">
+        <h3 class="text-lg font-bold">Property Details</h3>
+        <ul class="mt-2 text-gray-600 space-y-1">
+          <li><strong>Title:</strong> {{ property.title }}</li>
+          <li><strong>Description:</strong> {{ property.description }}</li>
+          <li><strong>Price:</strong> {{ property.price }}</li>
+          <li><strong>Area:</strong> {{ property.area }}</li>
+          <li><strong>Rooms:</strong> {{ property.rooms }}</li>
+          <li><strong>Bathrooms:</strong> {{ property.bathrooms }}</li>
+          <li><strong>Kitchens:</strong> {{ property.kitchens }}</li>
+          <li><strong>Living Rooms:</strong> {{ property.livingRooms }}</li>
+          <li><strong>Floor:</strong> {{ property.floor }}</li>
+          <li><strong>Furnished:</strong> {{ property.furnished }}</li>
+          <li><strong>Property Status:</strong> {{ property.propertyStatus }}</li>
+          <li><strong>City:</strong> {{ property.city }}</li>
+          <li><strong>Governorate:</strong> {{ property.governorate }}</li>
+          <li><strong>Neighborhood:</strong> {{ property.neighborhood }}</li>
+          <li><strong>Status:</strong> {{ property.status }}</li>
+        </ul>
       </div>
-      <div class="w-1/2">
-        <!-- <div>
-        <div class="p-5 bg-white shadow-lg rounded-lg">
-          <h3 class="text-lg font-bold text-[#364365]">Interior Features</h3>
-          <ul class="mt-2 text-gray-600 space-y-1">
-            <li
-              v-for="(feature, index) in property.interiorFeatures"
-              :key="index"
-            >
-              ✔ {{ feature }}
-            </li>
-          </ul>
-        </div>
 
-        <div class="p-5 bg-white shadow-lg rounded-lg mt-6">
-          <h3 class="text-lg font-bold text-[#364365]">External Features</h3>
-          <ul class="mt-2 text-gray-600 space-y-1">
-            <li
-              v-for="(feature, index) in property.externalFeatures"
-              :key="index"
-            >
-              ✔ {{ feature }}
-            </li>
-          </ul>
-        </div>
-      </div> -->
-        <div>
-          <div class="p-5 bg-white shadow-lg rounded-lg">
-            <h3 class="text-lg font-bold text-gray-900 mb-4 text-center">
-              Location Information
-            </h3>
-            <div id="map" class="w-full h-64 mt-2 rounded-lg"></div>
-            <p v-if="mapLoading" class="mt-3 text-gray-700">Loading map...</p>
-            <!-- <p v-if="distance && duration" class="mt-3 text-gray-700">
-            📍 Distance: {{ distance.toFixed(2) }} km | ⏳ Time:
+      <div class="p-5 bg-white shadow-lg rounded-lg">
+        <h3 class="text-lg font-bold">Contact Information</h3>
+        <ul class="mt-2 text-gray-600 space-y-1">
+          <li><strong>Name:</strong> {{ property.propertyContact.name }}</li>
+          <li><strong>Email:</strong> {{ property.propertyContact.email }}</li>
+          <li><strong>Phone:</strong> {{ property.propertyContact.phone }}</li>
+          <li v-if="property.propertyContact.phone2"><strong>Phone 2:</strong> {{ property.propertyContact.phone2 }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div>
+        <div class="p-5 bg-white shadow-lg rounded-lg">
+          <h3 class="text-lg font-bold">Location Information</h3>
+          <div id="map" class="w-full h-64 mt-2 rounded-lg"></div>
+          <p v-if="distance && duration" class="mt-3 text-gray-700">
+            Distance: {{ distance.toFixed(2) }} km | ⏳ Time:
             {{ formatDuration(duration) }}
-          </p> -->
-          </div>
+          </p>
         </div>
       </div>
     </div>
@@ -168,214 +100,160 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropertyDetails from "../components/PropertyDetails.vue";
-import { mapActions, mapState } from "vuex";
-import governorates from "@/assets/data/governorates.json";
-import cities from "@/assets/data/cities.json";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 export default {
-  name: "PropertyDetail",
   props: ["id"],
-  components: { PropertyDetails },
   data() {
     return {
       currentImageIndex: 0,
       galleryStartIndex: 0,
-      mapInstance: null,
-      mapLoading: false,
-      // userLocation: null,
-      // distance: null,
-      // duration: null,
+      visibleGallery: [],
+      userLocation: null,
+      distance: null,
+      duration: null,
+      property: null,
+      loading: true,
     };
   },
-  computed: {
-    ...mapState("property", ["property", "loading"]),
-    currentImage() {
-      return (
-        this.property?.images?.[this.currentImageIndex] ||
-        "path/to/placeholder.jpg"
-      );
-    },
-    visibleGallery() {
-      return (
-        this.property?.images?.slice(
-          this.galleryStartIndex,
-          this.galleryStartIndex + 4
-        ) || []
-      );
-    },
-    locationText() {
-      const governorateName = governorates.find(
-        (g) => g.id == this.property.governorate
-      )?.governorate_name_en;
-      const cityName = cities.find(
-        (c) => c.id == this.property.city
-      )?.city_name_en;
-      return `${governorateName}-${cityName}-${this.property?.neighborhood}`;
-    },
+  components: {
+    PropertyDetails,
   },
   mounted() {
-    this.getProperty(this.id).then(() => {
-      console.log("Fetched property:", this.property);
-      this.$nextTick(() => {
-        this.initMapWithFallback();
-      });
-      this.updateGalleryStartIndex();
+    this.fetchProperty().then(() => {
+      if (this.property && this.property.coordinates) {
+        this.$nextTick(() => {
+          this.initMap();
+        });
+      }
+      this.updateVisibleGallery();
     });
   },
-  beforeDestroy() {
-    if (this.mapInstance) {
-      this.mapInstance.remove();
-    }
-  },
   methods: {
-    ...mapActions("property", ["getProperty"]),
+    async fetchProperty() {
+      this.loading = true;
+      try {
+        const docRef = doc(db, "properties", this.id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          this.property = { id: docSnap.id, ...docSnap.data() };
+        } else {
+          this.property = null;
+        }
+      } catch (error) {
+        console.error("Error fetching property:", error);
+        this.property = null;
+      } finally {
+        this.loading = false;
+      }
+    },
+    updateVisibleGallery() {
+      if (this.property && this.property.images) {
+        this.visibleGallery = [];
+        for (let i = 0; i < 4; i++) {
+          this.visibleGallery.push(
+            this.property.images[
+              (this.galleryStartIndex + i) % this.property.images.length
+            ]
+          );
+        }
+      }
+    },
     nextImage() {
-      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex + 1) % this.property.images.length;
-      this.updateGalleryStartIndex();
+      this.galleryStartIndex =
+        this.currentImageIndex - (this.currentImageIndex % 4);
+      this.updateVisibleGallery();
     },
     prevImage() {
-      if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex - 1 + this.property.images.length) %
         this.property.images.length;
-      this.updateGalleryStartIndex();
+      this.galleryStartIndex =
+        this.currentImageIndex - (this.currentImageIndex % 4);
+      this.updateVisibleGallery();
     },
-    updateGalleryStartIndex() {
-      if (!this.property?.images?.length) return;
-      this.galleryStartIndex = Math.floor(this.currentImageIndex / 4) * 4;
-    },
-    async initMapWithFallback() {
-      this.mapLoading = true;
-      let lat, lng;
-      if (this.property.coordinates) {
-        ({ latitude: lat, longitude: lng } = this.property.coordinates);
-      } else {
-        try {
-          const coords = await this.geocodeLocation(this.locationText);
-          if (coords) {
-            lat = coords.lat;
-            lng = coords.lon;
-          } else {
-            throw new Error("Geocoding failed");
-          }
-        } catch (error) {
-          console.error("Geocoding error:", error);
-          return;
-        }
-      }
-
-      try {
-        this.mapInstance = L.map("map", { scrollWheelZoom: false }).setView(
-          [lat, lng],
-          this.property.coordinates ? 13 : 10
-        );
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "© OpenStreetMap contributors",
-        }).addTo(this.mapInstance);
-        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(this.mapInstance)
-          .bindPopup(`<b>${this.property.title}</b><br>${this.locationText}`)
-          .openPopup();
-      } catch (error) {
-        console.error("Map initialization error:", error);
-      } finally {
-        this.mapLoading = false;
-      }
-    },
-    async geocodeLocation(locationText) {
-      console.log(locationText);
-      const locationParts = locationText.split("-");
-      const filteredLocation = locationParts.slice(0, 2).join(" ");
-      const query = encodeURIComponent(filteredLocation);
-      console.log(query);
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+    initMap() {
+      if (!this.property.coordinates) return;
+      const { latitude, longitude } = this.property.coordinates;
+      const map = L.map("map", { scrollWheelZoom: false }).setView(
+        [latitude, longitude],
+        13
       );
-      const data = await response.json();
-      return data.length > 0 ? data[0] : null;
-    },
-    // getUserLocation(map, targetLat, targetLng) {
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(
-    //       (position) => {
-    //         this.userLocation = {
-    //           lat: position.coords.latitude,
-    //           lng: position.coords.longitude,
-    //         };
-    //         L.marker([this.userLocation.lat, this.userLocation.lng], {
-    //           icon: this.getCustomIcon("blue"),
-    //         })
-    //           .addTo(map)
-    //           .bindPopup("You are here");
-    //         this.calculateDistance(
-    //           targetLat,
-    //           targetLng,
-    //           this.userLocation.lat,
-    //           this.userLocation.lng
-    //         );
-    //       },
-    //       (error) => console.error("Geolocation error:", error)
-    //     );
-    //   }
-    // },
-    // calculateDistance(lat1, lng1, lat2, lng2) {
-    //   const R = 6371; // Earth's radius in km
-    //   const dLat = this.degToRad(lat2 - lat1);
-    //   const dLng = this.degToRad(lng2 - lng1);
-    //   const a =
-    //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    //     Math.cos(this.degToRad(lat1)) *
-    //       Math.cos(this.degToRad(lat2)) *
-    //       Math.sin(dLng / 2) *
-    //       Math.sin(dLng / 2);
-    //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    //   this.distance = R * c;
-    //   this.duration = (this.distance / 50) * 60; // 50 km/h average speed
-    // },
-    // formatDuration(minutes) {
-    //   const hours = Math.floor(minutes / 60);
-    //   const remainingMinutes = Math.round(minutes % 60);
-    //   return `${hours}h ${remainingMinutes}m`;
-    // },
-    // degToRad(deg) {
-    //   return deg * (Math.PI / 180);
-    // },
-    getCustomIcon(color) {
-      return L.icon({
-        iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
-    },
-    formatDate(timestamp) {
-      let date;
-      if (typeof timestamp === "number") {
-        // Handle seconds (e.g., 1741559808)
-        date = new Date(timestamp * 1000); // Convert seconds to milliseconds
-      } else if (
-        timestamp.seconds !== undefined &&
-        timestamp.nanoseconds !== undefined
-      ) {
-        // Handle Firestore Timestamp object (e.g., { seconds: 1741559808, nanoseconds: 450000000 })
-        date = new Date(
-          timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1000000)
-        );
-      } else if (timestamp instanceof Date) {
-        // Already a Date object
-        date = timestamp;
-      } else if (typeof timestamp === "string") {
-        // ISO string or other string format
-        date = new Date(timestamp);
-      } else {
-        return "Invalid Date";
-      }
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+      L.marker([latitude, longitude], { icon: this.getCustomIcon("red") })
+        .addTo(map)
+        .bindPopup(`<b><span class="math-inline">\{this\.property\.title\}</b\><br\></span>{this.property.neighborhood}`)
+        .openPopup();
 
-      return date.toLocaleDateString("en-GB", { dateStyle: "short" });
+      this.getUserLocation(map, latitude, longitude);
     },
-  },
+    getUserLocation(map, targetLat, targetLng) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+
+            L.marker([this.userLocation.lat, this.userLocation.lng], {
+icon: this.getCustomIcon("blue"),
+})
+.addTo(map)
+.bindPopup("You are here");
+this.calculateDistance(
+          targetLat,
+          targetLng,
+          this.userLocation.lat,
+          this.userLocation.lng
+        );
+      },
+      () => {
+        console.error("Could not retrieve location");
+      }
+    );
+  }
+},
+calculateDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = this.degToRad(lat2 - lat1);
+  const dLng = this.degToRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(this.degToRad(lat1)) *
+      Math.cos(this.degToRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  this.distance = R * c;
+  this.duration = (this.distance / 50) * 60;
+},
+formatDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const remainingHours = hours % 24;
+  return days > 0
+    ? `${days} days, ${remainingHours} hours`
+    : `${hours} hours`;
+},
+degToRad(deg) {
+  return deg * (Math.PI / 180);
+},
+getCustomIcon(color) {
+  return L.icon({
+    iconUrl: `https://maps.google.com/mapfiles/ms/icons/$${color}-dot.png`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  });
+},
+},
 };
 </script>
 
