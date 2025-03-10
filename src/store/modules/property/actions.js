@@ -62,6 +62,7 @@ export default {
       await setDoc(doc(db, collectionName, propertyId), propertyData);
 
       if (userRole !== "admin") {
+        console.log("this is working");
         dispatch(
           "notifications/addNotification",
           `Your property ${propertyData.title} is under review.`,
