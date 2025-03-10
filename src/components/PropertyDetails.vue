@@ -61,29 +61,31 @@
         </button>
       </div>
 
-      <div v-else-if="property.propertyContact" class="mt-4 text-gray-900">
-        <h2 class="text-xl font-semibold text-center mb-3">Owner Details</h2>
+      <div v-else-if="property.propertyContact" class="mt-2 text-gray-900">
+        <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
         <div class="flex flex-col items-center space-y-3">
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
             alt="Profile Picture"
             class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
           />
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Name:</span>
-            {{ property.propertyContact.name }}
+            <span class="text-sm capitalize">{{
+              property.propertyContact.name
+            }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Phone:</span>
-            {{ property.propertyContact.phone }}
+            <span class="text-sm">{{ property.propertyContact.phone }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Email:</span>
-            {{ property.propertyContact.email }}
+            <span class="text-sm">{{ property.propertyContact.email }}</span>
           </p>
-          <p>
+          <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Address:</span>
-            {{ property.address }}
+            <span class="text-sm capitalize">{{ property.address }}</span>
           </p>
         </div>
       </div>

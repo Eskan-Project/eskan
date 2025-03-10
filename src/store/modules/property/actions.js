@@ -26,7 +26,7 @@ export default {
       if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
         throw new Error("User not authenticated or user details not loaded");
       }
-
+      console.log(files);
       const userRole = rootState.auth.userDetails.role || "owner";
       const collectionName = userRole === "admin" ? "properties" : "requests";
       const propertyId = doc(collection(db, collectionName)).id;
@@ -45,7 +45,7 @@ export default {
           })
         );
       }
-
+      console.log(imagesUrl);
       const ownerId = rootState.auth.userDetails.uid;
       const propertyData = {
         ...state.propertyDetails,
@@ -78,7 +78,7 @@ export default {
     try {
       const propertySnapshot = await getDoc(doc(db, "properties", id));
       const property = { id: propertySnapshot.id, ...propertySnapshot.data() };
-      console.log(property);
+      console.log("property", property);
       commit("setProperty", property);
     } catch (error) {
       console.log(error);

@@ -1,7 +1,10 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
+import hCaptcha from "@/components/hCaptcha.vue";
+
 export default {
+  components: { hCaptcha },
   data() {
     return {
       name: "",
@@ -14,6 +17,7 @@ export default {
       loading: false,
       file: null,
       imagePreview: null,
+      captchaToken: null,
     };
   },
   computed: {
@@ -21,6 +25,18 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["register", "loginWithGoogle"]),
+    handleCaptchaVerified(token) {
+      this.captchaToken = token;
+      this.errors.captcha = null;
+    },
+    handleCaptchaExpired() {
+      this.captchaToken = null;
+      this.errors.captcha = "CAPTCHA expired. Please try again.";
+    },
+    handleCaptchaError() {
+      this.captchaToken = null;
+      this.errors.captcha = "CAPTCHA verification failed. Please try again.";
+    },
     async submitRegister() {
       this.errors = {};
 
@@ -41,6 +57,9 @@ export default {
         this.errors.confirmPassword = "Confirm your password";
       } else if (this.password !== this.confirmPassword) {
         this.errors.confirmPassword = "Passwords do not match";
+      }
+      if (!this.captchaToken) {
+        this.errors.captcha = "Please complete the CAPTCHA";
       }
       if (this.isOwner && !this.file) {
         this.errors.file = "Please upload your ID";
@@ -94,6 +113,10 @@ export default {
           this.imagePreview = reader.result;
         };
       }
+    },
+
+    removeImage() {
+      this.imagePreview = null;
     },
 
     togglePassword() {
@@ -245,9 +268,23 @@ export default {
             <p class="font-medium p-2" v-if="!imagePreview">
               please upload your ID
             </p>
-            <div class="border-1 border-stone-400 border-dashed p-5 mx-10">
-              <div v-if="imagePreview">
-                <img :src="imagePreview" alt="Image Preview" />
+            <div
+              :class="`border-1 border-stone-400 border-dashed p-5 mx-10 ${
+                imagePreview ? 'w-fit mx-auto' : ''
+              }`"
+            >
+              <div v-if="imagePreview" class="relative group">
+                <img
+                  :src="imagePreview"
+                  alt="Image Preview"
+                  class="w-50 h-50 object-cover"
+                />
+                <button
+                  @click="removeImage"
+                  class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  &times;
+                </button>
               </div>
               <label for="file" v-else>
                 <i
@@ -274,6 +311,19 @@ export default {
                 {{ errors.file }}
               </p>
             </div>
+          </div>
+          <div
+            class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
+          >
+            <hCaptcha
+              @captchaVerified="handleCaptchaVerified"
+              @captchaExpired="handleCaptchaExpired"
+              @captchaError="handleCaptchaError"
+            />
+
+            <p v-if="errors.captcha" class="text-red-500 text-sm mt-1">
+              {{ errors.captcha }}
+            </p>
           </div>
           <div v-if="errors.server" class="text-red-500 text-center mb-4">
             {{ errors.server }}
