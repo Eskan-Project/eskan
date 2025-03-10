@@ -1,6 +1,6 @@
 export default {
   setProperties(state, payload) {
-    state.properties = payload;
+    state.properties = { id: "", ...payload };
   },
   updateProperty(state, payload) {
     state.propertyDetails = { ...state.propertyDetails, ...payload };
@@ -8,5 +8,8 @@ export default {
       "propertyDetails",
       JSON.stringify(state.propertyDetails)
     );
+  },
+  setProperty(state, payload) {
+    state.property = payload;
   },
 };

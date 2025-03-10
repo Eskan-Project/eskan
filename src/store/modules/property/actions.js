@@ -1,5 +1,5 @@
 import { db } from "@/config/firebase";
-import { doc, setDoc, collection, getDocs } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs, getDoc } from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
@@ -74,6 +74,19 @@ export default {
       commit("stopLoading", null, { root: true });
       localStorage.removeItem("propertyDetails");
       localStorage.removeItem("propertyImages");
+    }
+  },
+  async getProperty({ commit }, id) {
+    commit("startLoading", null, { root: true });
+    try {
+      const propertySnapshot = await getDoc(doc(db, "properties", id));
+      const property = { id: propertySnapshot.id, ...propertySnapshot.data() };
+      console.log(property);
+      commit("setProperty", property);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      commit("stopLoading", null, { root: true });
     }
   },
   updateImages({ commit }, images) {

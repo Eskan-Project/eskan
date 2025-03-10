@@ -7,6 +7,7 @@
       <property-card
         v-for="property in properties"
         :key="property.id"
+        :id="property.id"
         :property="property"
       />
     </div>

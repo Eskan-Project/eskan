@@ -61,6 +61,10 @@ export default {
       required: true,
       default: () => ({}),
     },
+    id: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     governorateName() {

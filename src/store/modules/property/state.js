@@ -16,6 +16,7 @@ export default {
     neighborhood: "",
     coordinates: null,
     images: [],
+    ownerProfile: null,
     createdAt: "",
     propertyContact: {
       name: "",
@@ -24,5 +25,6 @@ export default {
       phone2: "",
     },
   },
+  property: null,
   error: "",
 };
