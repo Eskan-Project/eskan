@@ -9,7 +9,7 @@ export async function reverseGeocode(lat, lng) {
       }
     );
     const data = await response.json();
-    if (data && data.address) {
+    if (data && data.address.village) {
       return data.address.village;
     }
     return "";
