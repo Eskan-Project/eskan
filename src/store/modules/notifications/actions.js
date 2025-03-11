@@ -37,6 +37,8 @@ export default {
   },
 
   async addNotification({ rootState }, message) {
+    console.log("this is working too");
+    console.log(message);
     const userId = rootState.auth.userDetails?.uid;
     console.log(userId);
     const newNotifRef = push(ref(rtdb, `notifications/${userId}`));

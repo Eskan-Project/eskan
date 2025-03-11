@@ -1,6 +1,8 @@
 <template>
   <main class="min-h-screen bg-gray-100 flex">
-    <aside class="md:w-48 w-full bg-[#364365] md:min-h-screen p-4">
+    <aside
+      class="md:w-48 w-full bg-[#364365] md:min-h-screen p-4 flex flex-col"
+    >
       <nav class="space-y-2">
         <router-link
           v-for="link in links"
@@ -13,6 +15,9 @@
           {{ link.label }}
         </router-link>
       </nav>
+      <router-link to="/" class="mt-auto pt-4">
+        <img src="../assets/images/logo.png" alt="" class="w-full" />
+      </router-link>
     </aside>
 
     <section class="flex-1 p-4">

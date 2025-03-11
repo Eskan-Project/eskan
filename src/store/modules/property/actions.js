@@ -1,7 +1,16 @@
 import { db } from "@/config/firebase";
-import { doc, setDoc, collection, getDocs, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  getDocs,
+  getDoc,
+  updateDoc,
+  deleteDoc, // Add this import
+} from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
+import { checkPropertyPermission } from "@/services/firebaseService";
 
 export default {
   async getProperties({ commit }) {
@@ -59,6 +68,7 @@ export default {
       await setDoc(doc(db, collectionName, propertyId), propertyData);
 
       if (userRole !== "admin") {
+        console.log("this is working");
         dispatch(
           "notifications/addNotification",
           `Your property ${propertyData.title} is under review.`,
@@ -88,5 +98,146 @@ export default {
   },
   updateImages({ commit }, images) {
     commit("updateImages", images);
+  },
+  async updateProperty(
+    { commit, rootState },
+    { propertyId, updatedData, files = [] }
+  ) {
+    commit("startLoading", null, { root: true });
+    try {
+      const currentUser = rootState.auth.userDetails;
+      if (!currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      const propertyRef = doc(db, "properties", propertyId);
+      const propertyDoc = await getDoc(propertyRef);
+
+      if (!propertyDoc.exists()) {
+        throw new Error("Property not found");
+      }
+
+      // Deep clean the updatedData object
+      const initialCleanedData = {};
+      Object.entries(updatedData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (typeof value === "object" && !Array.isArray(value)) {
+            // Clean nested objects
+            const cleanedNested = {};
+            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+              if (nestedValue !== undefined && nestedValue !== null) {
+                cleanedNested[nestedKey] = nestedValue;
+              }
+            });
+            if (Object.keys(cleanedNested).length > 0) {
+              initialCleanedData[key] = cleanedNested;
+            }
+          } else {
+            initialCleanedData[key] = value;
+          }
+        }
+      });
+
+      // Handle image uploads first
+      if (files && files.length > 0) {
+        const folderName = `properties/${propertyId}`;
+        const newImages = await Promise.all(
+          files.map(async (file) => {
+            // Direct upload of File object without base64 conversion
+            return await uploadToCloudinary(
+              file,
+              import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
+              folderName
+            );
+          })
+        );
+
+        // Ensure images array exists in cleanedData
+        updatedData.images = Array.isArray(updatedData.images)
+          ? [...updatedData.images, ...newImages]
+          : newImages;
+      }
+
+      // Clean the data after handling images
+      const cleanedData = {};
+      Object.entries(updatedData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (typeof value === "object" && !Array.isArray(value)) {
+            const cleanedNested = {};
+            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+              if (nestedValue !== undefined && nestedValue !== null) {
+                cleanedNested[nestedKey] = nestedValue;
+              }
+            });
+            if (Object.keys(cleanedNested).length > 0) {
+              cleanedData[key] = cleanedNested;
+            }
+          } else {
+            cleanedData[key] = value;
+          }
+        }
+      });
+
+      // Update the document
+      await updateDoc(doc(db, "properties", propertyId), {
+        ...cleanedData,
+        lastUpdated: new Date(),
+        updatedBy: rootState.auth.userDetails.uid,
+      });
+
+      const updatedProperty = {
+        ...propertyDoc.data(),
+        ...cleanedData,
+        id: propertyId,
+      };
+
+      commit("updateFirebaseProperty", {
+        propertyId,
+        updatedData: updatedProperty,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error updating property:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
+  async deleteProperty({ commit, rootState }, propertyId) {
+    commit("startLoading", null, { root: true });
+    try {
+      const currentUser = rootState.auth.userDetails;
+      if (!currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      // Check if user is admin by role instead of collection
+      if (currentUser.role === "admin") {
+        const propertyRef = doc(db, "properties", propertyId);
+        await deleteDoc(propertyRef);
+        commit("deleteProperty", propertyId);
+        return true;
+      }
+
+      // If not admin, check if they own the property
+      const propertyRef = doc(db, "properties", propertyId);
+      const propertyDoc = await getDoc(propertyRef);
+      if (
+        propertyDoc.exists() &&
+        propertyDoc.data().ownerId === currentUser.uid
+      ) {
+        await deleteDoc(propertyRef);
+        commit("deleteProperty", propertyId);
+        return true;
+      }
+
+      throw new Error("You do not have permission to delete this property");
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
   },
 };

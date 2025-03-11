@@ -35,4 +35,28 @@ async function storeUserInCollection(uid, userDetails) {
   await setDoc(userRef, userData, { merge: true });
 }
 
-export { fetchUserRole, storeUserInCollection };
+// Add this new function
+async function checkPropertyPermission(uid, propertyId) {
+  try {
+    // Check if user is admin
+    const adminRef = doc(db, "admins", uid);
+    const adminDoc = await getDoc(adminRef);
+    if (adminDoc.exists()) {
+      return true;
+    }
+
+    // Check if user is the owner of the property
+    const propertyRef = doc(db, "properties", propertyId);
+    const propertyDoc = await getDoc(propertyRef);
+    if (propertyDoc.exists() && propertyDoc.data().ownerId === uid) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Permission check error:", error);
+    return false;
+  }
+}
+
+export { fetchUserRole, storeUserInCollection, checkPropertyPermission };
