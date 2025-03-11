@@ -265,6 +265,8 @@ export default {
 
     // Fetch data immediately
     this.loadData();
+  },
+  created() {
     this.initMapWithFallback();
   },
   // mounted() {
@@ -324,7 +326,12 @@ export default {
       }
     },
     async initMapWithFallback() {
-      console.log("this is working");
+      // Remove existing map instance if it exists
+      if (this.mapInstance) {
+        this.mapInstance.remove();
+        this.mapInstance = null;
+      }
+
       this.mapLoading = true;
       let lat, lng;
       if (this.property.coordinates) {
@@ -523,6 +530,22 @@ export default {
 
       return date.toLocaleDateString("en-GB", { dateStyle: "short" });
     },
+  },
+  beforeDestroy() {
+    // Cleanup map instance
+    if (this.mapInstance) {
+      this.mapInstance.remove();
+      this.mapInstance = null;
+    }
+  },
+
+  beforeRouteLeave(to, from, next) {
+    // Cleanup map before leaving
+    if (this.mapInstance) {
+      this.mapInstance.remove();
+      this.mapInstance = null;
+    }
+    next();
   },
 };
 </script>

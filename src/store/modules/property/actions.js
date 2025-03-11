@@ -105,13 +105,28 @@ export default {
   ) {
     commit("startLoading", null, { root: true });
     try {
-      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
+      // Check authentication and permissions
+      const currentUser = rootState.auth.userDetails;
+      if (!currentUser) {
         throw new Error("User not authenticated");
       }
 
+      // Check if user has permission (admin or property owner)
       const propertyRef = doc(db, "properties", propertyId);
+      const propertyDoc = await getDoc(propertyRef);
 
-      // Handle new images if any
+      if (!propertyDoc.exists()) {
+        throw new Error("Property not found");
+      }
+
+      if (
+        currentUser.role !== "admin" &&
+        propertyDoc.data().ownerId !== currentUser.uid
+      ) {
+        throw new Error("You don't have permission to edit this property");
+      }
+
+      // Handle image uploads
       if (files.length) {
         const folderName = `properties/${propertyId}`;
         const newImages = await Promise.all(
@@ -124,6 +139,7 @@ export default {
             );
           })
         );
+        // Combine existing and new images
         updatedData.images = [...(updatedData.images || []), ...newImages];
       }
 
@@ -131,10 +147,19 @@ export default {
       await updateDoc(propertyRef, {
         ...updatedData,
         lastUpdated: new Date(),
+        updatedBy: currentUser.uid,
       });
 
-      // Update local state
-      commit("updateFirebaseProperty", { propertyId, updatedData });
+      // Update local state with complete property data
+      const updatedProperty = {
+        ...propertyDoc.data(),
+        ...updatedData,
+        id: propertyId,
+      };
+      commit("updateFirebaseProperty", {
+        propertyId,
+        updatedData: updatedProperty,
+      });
 
       return true;
     } catch (error) {

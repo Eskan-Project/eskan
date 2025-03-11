@@ -14,9 +14,21 @@ export default {
   },
   // Add this new mutation
   updateFirebaseProperty(state, { propertyId, updatedData }) {
-    // Update the state if needed
-    if (state.properties[propertyId]) {
-      state.properties[propertyId] = updatedData;
+    // Find and update the property in the properties array
+    if (state.properties && Array.isArray(state.properties)) {
+      const index = state.properties.findIndex(
+        (prop) => prop.id === propertyId
+      );
+      if (index !== -1) {
+        state.properties[index] = {
+          ...state.properties[index],
+          ...updatedData,
+        };
+      }
+    }
+    // Also update propertyDetails if it's the same property
+    if (state.property && state.property.id === propertyId) {
+      state.property = { ...state.property, ...updatedData };
     }
   },
   deleteProperty(state, propertyId) {

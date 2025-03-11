@@ -10,48 +10,275 @@
           <p class="mt-4 text-gray-600">Loading property details...</p>
         </div>
 
-        <form v-else @submit.prevent="handleSubmit">
-          <div class="space-y-12">
+        <form v-else @submit.prevent="handleSubmit" class="max-w-4xl mx-auto">
+          <div class="space-y-8">
             <div class="border-b border-gray-900/10 pb-12">
-              <h2 class="text-base/7 font-semibold text-gray-900">
+              <h2 class="text-2xl font-semibold text-gray-900 mb-4">
                 Edit Property
               </h2>
-              <p class="mt-1 text-sm/6 text-gray-600">
-                Update the property information below
-              </p>
-            </div>
 
-            <!-- Property Details Form Fields -->
-            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <!-- Title -->
-              <div class="sm:col-span-4">
-                <label
-                  for="title"
-                  class="block text-sm/6 font-medium text-gray-900"
-                  >Property Title</label
-                >
-                <div class="mt-2">
+              <!-- Basic Information -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Title</label
+                  >
                   <input
                     v-model="propertyData.title"
                     type="text"
-                    name="title"
-                    id="title"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline-1"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Price</label
+                  >
+                  <input
+                    v-model="propertyData.price"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Floor Location</label
+                  >
+                  <input
+                    v-model="propertyData.floor"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Area (m²)</label
+                  >
+                  <input
+                    v-model="propertyData.area"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
-              <!-- Add all your other form fields here similar to AdminAddProperty.vue -->
+              <!-- Room Details -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Rooms</label
+                  >
+                  <input
+                    v-model="propertyData.rooms"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
 
-              <!-- Submit Button -->
-              <div class="col-span-full">
-                <button
-                  type="submit"
-                  class="rounded-md bg-indigo-600 px-4 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500"
-                >
-                  Save Changes
-                </button>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Living Rooms</label
+                  >
+                  <input
+                    v-model="propertyData.livingRooms"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Bathrooms</label
+                  >
+                  <input
+                    v-model="propertyData.bathrooms"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Kitchens</label
+                  >
+                  <input
+                    v-model="propertyData.kitchens"
+                    type="number"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
               </div>
+
+              <!-- Property Status and Furnishing -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Property Status</label
+                  >
+                  <select
+                    v-model="propertyData.propertyStatus"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="for-sale">For Sale</option>
+                    <option value="for-rent">For Rent</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Furnished</label
+                  >
+                  <select
+                    v-model="propertyData.furnished"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option :value="true">Yes</option>
+                    <option :value="false">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Location Information -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Governorate</label
+                  >
+                  <select
+                    v-model="propertyData.governorate"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option
+                      v-for="gov in governorates"
+                      :key="gov.id"
+                      :value="gov.id"
+                    >
+                      {{ gov.governorate_name_en }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >City</label
+                  >
+                  <select
+                    v-model="propertyData.city"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option
+                      v-for="city in filteredCities"
+                      :key="city.id"
+                      :value="city.id"
+                    >
+                      {{ city.city_name_en }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Neighborhood</label
+                  >
+                  <input
+                    v-model="propertyData.neighborhood"
+                    type="text"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Contact Name</label
+                  >
+                  <input
+                    v-model="propertyData.propertyContact.name"
+                    type="text"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Contact Phone</label
+                  >
+                  <input
+                    v-model="propertyData.propertyContact.phone"
+                    type="tel"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Contact Email</label
+                  >
+                  <input
+                    v-model="propertyData.propertyContact.email"
+                    type="email"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <!-- Images -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700"
+                  >Add New Images</label
+                >
+                <input
+                  type="file"
+                  multiple
+                  @change="handleImageChange"
+                  accept="image/*"
+                  class="mt-1 block w-full"
+                />
+
+                <!-- Existing Images Preview -->
+                <div
+                  v-if="propertyData.images && propertyData.images.length"
+                  class="grid grid-cols-4 gap-4 mt-4"
+                >
+                  <div
+                    v-for="(img, index) in propertyData.images"
+                    :key="index"
+                    class="relative"
+                  >
+                    <img
+                      :src="img"
+                      class="w-full h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      @click="removeImage(index)"
+                      class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4">
+              <button
+                type="button"
+                @click="$router.go(-1)"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         </form>
@@ -61,7 +288,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
+import governorates from "@/assets/data/governorates.json";
+import cities from "@/assets/data/cities.json";
+import Swal from "sweetalert2";
 
 export default {
   data() {
@@ -70,49 +300,108 @@ export default {
       propertyId: this.$route.params.id,
       propertyData: {
         title: "",
-        description: "",
         price: null,
-        // Add all other property fields here
+        floor: null,
+        area: null,
+        rooms: null,
+        livingRooms: null,
+        bathrooms: null,
+        kitchens: null,
+        propertyStatus: "",
+        furnished: false,
+        governorate: "",
+        city: "",
+        neighborhood: "",
+        propertyContact: {
+          name: "",
+          phone: "",
+          email: "",
+        },
+        images: [],
       },
+      governorates,
+      cities,
+      newImages: [], // For storing new image files
     };
+  },
+
+  computed: {
+    ...mapState("property", ["property"]),
+    filteredCities() {
+      return this.cities.filter(
+        (city) => city.governorate_id == this.propertyData.governorate
+      );
+    },
   },
 
   async created() {
     try {
-      await this.fetchPropertyData();
+      await this.getProperty(this.propertyId);
+      this.propertyData = { ...this.property };
+      this.loading = false;
     } catch (error) {
       console.error("Error loading property:", error);
     }
   },
 
   methods: {
-    ...mapActions(["updateProperty"]),
+    ...mapActions("property", ["getProperty", "updateProperty"]),
 
-    async fetchPropertyData() {
-      try {
-        const response = await fetch(
-          `https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties/${this.propertyId}.json`
-        );
+    handleImageChange(event) {
+      const files = Array.from(event.target.files);
+      this.newImages = files;
+    },
 
-        if (!response.ok) throw new Error("Failed to fetch property data");
-
-        const data = await response.json();
-        this.propertyData = { ...data.data };
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        this.loading = false;
-      }
+    removeImage(index) {
+      this.propertyData.images.splice(index, 1);
     },
 
     async handleSubmit() {
       try {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "Your edits will be saved",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Save it!",
+        });
+
+        if (!result.isConfirmed) return;
+
+        this.loading = true;
+        await this.editProp();
+
+        await Swal.fire(
+          "Saved!",
+          "Property has been updated successfully.",
+          "success"
+        );
+
+        this.$router.push("/admin/properties");
+      } catch (error) {
+        console.error("Delete failed:", error);
+        Swal.fire(
+          "Error!",
+          "Failed to updata property. Please try again.",
+          "error"
+        );
+      } finally {
+        this.loading = false;
+      }
+    },
+    async editProp() {
+      try {
         await this.updateProperty({
           propertyId: this.propertyId,
           updatedData: this.propertyData,
+          files: this.newImages,
         });
 
-        // Show success message and redirect
+        // Show success message
+
+        // Redirect back to property details
         this.$router.push(`/admin/properties/${this.propertyId}`);
       } catch (error) {
         console.error("Error updating property:", error);
@@ -121,3 +410,11 @@ export default {
   },
 };
 </script>
+
+<style>
+input,
+select {
+  padding: 0.5rem 0.75rem;
+  color: #111827;
+}
+</style>
