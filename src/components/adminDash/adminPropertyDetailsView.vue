@@ -235,7 +235,7 @@ import L from "leaflet";
 import { nextTick } from "vue";
 import Swal from "sweetalert2";
 import { mapActions, mapState } from "vuex";
-import PropertyDetails from "../components/PropertyDetails.vue";
+import PropertyDetails from "../PropertyDetails.vue";
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
 

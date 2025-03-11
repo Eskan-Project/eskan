@@ -16,12 +16,12 @@ import Completed from "@/components/createProperty/Completed.vue";
 import ForgetPasswordView from "@/views/ForgetPasswordView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
 import SelectRole from "@/components/SelectRole.vue";
-import AdminPropertiesList from "@/views/AdminPropertiesListView.vue";
-import AdminProfile from "@/views/AdminProfileView.vue";
-import adminPropertyDetails from "@/views/adminPropertyDetailsView.vue";
-import AdminAddProperty from "@/views/AdminAddPropertyView.vue";
-import AdminEditPropertyDetails from "@/views/AdminEditPropertyDetails.vue";
-import AdminUserListView from "@/views/AdminUserListView.vue";
+import AdminPropertiesList from "@/components/adminDash/AdminPropertiesListView.vue";
+import AdminProfile from "@/components/adminDash/AdminProfileView.vue";
+import adminPropertyDetails from "@/components/adminDash/adminPropertyDetailsView.vue";
+import AdminAddProperty from "@/components/adminDash/AdminAddPropertyView.vue";
+import AdminEditPropertyDetails from "@/components/adminDash/AdminEditPropertyDetails.vue";
+import AdminUserListView from "@/components/adminDash/AdminUserListView.vue";
 import Payment from "@/components/Payment.vue";
 
 const routes = [
