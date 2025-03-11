@@ -52,22 +52,22 @@
                 >
                   <img
                     class="w-10 h-10 rounded-full"
-                    :src="property.data.gallery[0]"
+                    :src="property.images[0]"
                     alt="Jese image"
                   />
                   <div class="ps-3">
                     <div class="text-base font-semibold">
-                      {{ property.data.title }}
+                      {{ property.title }}
                     </div>
                     <div class="font-normal text-gray-500">
-                      {{ property.data.description }}
+                      {{ property.description }}
                     </div>
                   </div>
                 </th>
-                <td class="px-6 py-4">{{ property.owner.name }}</td>
+                <td class="px-6 py-4">{{ property.propertyContact.name }}</td>
                 <td class="px-6 py-4">
                   <div class="flex items-center">
-                    {{ property.data.type }}
+                    {{ property.price }}
                   </div>
                 </td>
                 <td class="px-6 py-4">
@@ -122,6 +122,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -190,43 +191,21 @@ export default {
   },
   async created() {
     try {
-      await this.getData();
+      await this.loadData();
     } catch (error) {
       console.error("Error in created:", error);
     }
   },
   methods: {
-    async getData() {
-      this.isLoading = true;
+    ...mapActions("property", ["getProperties"]),
+    async loadData() {
       try {
-        const response = await fetch(
-          "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data) {
-          this.properties = [];
-          return;
-        }
-
-        // Transform the data and enforce a consistent structure
-        this.properties = Object.entries(data)
-          .map(([id, obj]) => ({
-            id,
-            data: obj.data || {},
-            owner: obj.owner || { name: "Unknown" },
-          }))
-          .sort((a, b) => a.id.localeCompare(b.id));
+        this.error = null;
+        this.properties = (await this.getProperties()) || [];
+        console.log(this.properties);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        this.properties = [];
-      } finally {
-        this.isLoading = false;
+        this.error = "Failed to load properties. Please try again later.";
+        console.error("Fetch properties error:", error);
       }
     },
     resetPagination() {
