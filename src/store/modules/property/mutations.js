@@ -19,4 +19,14 @@ export default {
       state.properties[propertyId] = updatedData;
     }
   },
+  deleteProperty(state, propertyId) {
+    // Convert properties object to array if it's not already
+    const propertiesArray = Array.isArray(state.properties)
+      ? state.properties
+      : Object.values(state.properties);
+
+    state.properties = propertiesArray.filter(
+      (property) => property.id !== propertyId
+    );
+  },
 };

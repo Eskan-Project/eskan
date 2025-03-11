@@ -6,9 +6,11 @@ import {
   getDocs,
   getDoc,
   updateDoc,
+  deleteDoc, // Add this import
 } from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
+import { checkPropertyPermission } from "@/services/firebaseService";
 
 export default {
   async getProperties({ commit }) {
@@ -137,6 +139,42 @@ export default {
       return true;
     } catch (error) {
       console.error("Error updating property:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
+  async deleteProperty({ commit, rootState }, propertyId) {
+    commit("startLoading", null, { root: true });
+    try {
+      const currentUser = rootState.auth.userDetails;
+      if (!currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      // Check if user is admin by role instead of collection
+      if (currentUser.role === "admin") {
+        const propertyRef = doc(db, "properties", propertyId);
+        await deleteDoc(propertyRef);
+        commit("deleteProperty", propertyId);
+        return true;
+      }
+
+      // If not admin, check if they own the property
+      const propertyRef = doc(db, "properties", propertyId);
+      const propertyDoc = await getDoc(propertyRef);
+      if (
+        propertyDoc.exists() &&
+        propertyDoc.data().ownerId === currentUser.uid
+      ) {
+        await deleteDoc(propertyRef);
+        commit("deleteProperty", propertyId);
+        return true;
+      }
+
+      throw new Error("You do not have permission to delete this property");
+    } catch (error) {
+      console.error("Error deleting property:", error);
       throw error;
     } finally {
       commit("stopLoading", null, { root: true });
