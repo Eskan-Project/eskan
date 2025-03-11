@@ -33,16 +33,16 @@
                 <th scope="col" class="p-4">
                   <div class="flex items-center"></div>
                 </th>
-                <th scope="col" class="px-6 py-3">title</th>
-                <th scope="col" class="px-6 py-3">Owner Name</th>
-                <th scope="col" class="px-6 py-3">type</th>
-                <th scope="col" class="px-6 py-3">Details</th>
+                <th scope="col" class="px-6 py-3">Name</th>
+                <th scope="col" class="px-6 py-3">Email</th>
+                <th scope="col" class="px-6 py-3">National Id</th>
+                <th scope="col" class="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="property in paginatedProperties"
-                :key="property.id"
+                v-for="user in paginatedUsers"
+                :key="user.uid"
                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <td class="w-4 p-4"></td>
@@ -52,33 +52,41 @@
                 >
                   <img
                     class="w-10 h-10 rounded-full"
-                    :src="property.images[0]"
+                    :src="user.photo"
                     alt="Jese image"
                   />
                   <div class="ps-3">
                     <div class="text-base font-semibold">
-                      {{ property.title }}
+                      {{ user.name }}
                     </div>
                     <div class="font-normal text-gray-500">
-                      {{ property.description }}
+                      NickName : {{ user.nickName }}
                     </div>
                   </div>
                 </th>
-                <td class="px-6 py-4">{{ property.propertyContact.name }}</td>
+                <td class="px-6 py-4">
+                  {{ user.email }}
+                </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center">
-                    {{ property.price }}
+                    {{ user.nationalId }}
                   </div>
                 </td>
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
-                  <router-link
-                    :to="`/admin/properties/${property.id}`"
+
+                  <button
                     type="button"
-                    data-modal-show="editUserModal"
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    >Edit</router-link
+                    class="w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                   >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    class="w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -86,7 +94,7 @@
 
           <!-- No data message -->
           <div
-            v-if="paginatedProperties.length === 0"
+            v-if="paginatedUsers.length === 0"
             class="p-4 text-center text-gray-500"
           >
             No properties found.
@@ -94,7 +102,7 @@
 
           <!-- Pagination controls -->
           <div
-            v-if="filteredProperties.length > 0"
+            v-if="filteredUsers.length > 0"
             class="flex justify-center gap-2 p-4"
           >
             <button
@@ -122,11 +130,11 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex"; // Add mapState
+
 export default {
   data() {
     return {
-      properties: [],
       currentPage: 1,
       perPage: 8,
       searchQuery: "",
@@ -134,32 +142,28 @@ export default {
     };
   },
   computed: {
-    filteredProperties() {
+    ...mapState("users", ["users"]), // Get users from state
+    filteredUsers() {
       if (!this.searchQuery) {
-        return this.properties;
+        return this.users;
       }
 
       const query = this.searchQuery.toLowerCase();
-      return this.properties.filter((prop) => {
+      return this.users.filter((user) => {
         return (
-          (prop.data.title && prop.data.title.toLowerCase().includes(query)) ||
-          (prop.data.description &&
-            prop.data.description.toLowerCase().includes(query)) ||
-          (prop.owner.name && prop.owner.name.toLowerCase().includes(query)) ||
-          (prop.data.type && prop.data.type.toLowerCase().includes(query))
+          (user.name && user.name.toLowerCase().includes(query)) ||
+          (user.email && user.email.toLowerCase().includes(query)) ||
+          (user.nationalId && user.nationalId.includes(query))
         );
       });
     },
     totalPages() {
-      return Math.max(
-        1,
-        Math.ceil(this.filteredProperties.length / this.perPage)
-      );
+      return Math.max(1, Math.ceil(this.filteredUsers.length / this.perPage));
     },
-    paginatedProperties() {
+    paginatedUsers() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
-      return this.filteredProperties.slice(start, end);
+      return this.filteredUsers.slice(start, end);
     },
     visiblePages() {
       // Create an array of page numbers to display, similar to front-end implementation
@@ -177,6 +181,12 @@ export default {
     },
   },
   watch: {
+    users: {
+      handler(newUsers) {
+        console.log("Users updated:", newUsers);
+      },
+      immediate: true,
+    },
     // Reset to page 1 when filtered data changes
     filteredProperties() {
       if (this.currentPage > this.totalPages && this.totalPages > 0) {
@@ -197,17 +207,16 @@ export default {
     }
   },
   methods: {
-    // ...mapActions("property", ["getProperties"]),
-    // async loadData() {
-    //   try {
-    //     this.error = null;
-    //     this.properties = (await this.getProperties()) || [];
-    //     console.log(this.properties);
-    //   } catch (error) {
-    //     this.error = "Failed to load properties. Please try again later.";
-    //     console.error("Fetch properties error:", error);
-    //   }
-    // },
+    ...mapActions("users", ["getUsers"]),
+    async loadData() {
+      try {
+        await this.getUsers(); // Don't reassign users here, use from state
+      } catch (error) {
+        console.error("Fetch users error:", error);
+      }
+
+      console.log(this.users);
+    },
     resetPagination() {
       this.currentPage = 1;
     },

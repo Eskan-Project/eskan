@@ -1,4 +1,4 @@
-import { db } from "@/config/firebase";
+import { auth, db } from "@/config/firebase";
 import {
   doc,
   setDoc,
@@ -16,15 +16,32 @@ export default {
   async getUsers({ commit }) {
     commit("startLoading", null, { root: true });
     try {
+      // Check if user is authenticated
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      // Check admin role in owners collection
+      const ownerDoc = await getDoc(doc(db, "owners", currentUser.uid));
+      const ownerData = ownerDoc.data();
+
+      if (ownerData?.role !== "admin") {
+        throw new Error("Insufficient permissions: Admin access required");
+      }
+
       const usersSnapshot = await getDocs(collection(db, "users"));
       const users = usersSnapshot.docs.map((doc) => ({
-        uid: doc.id,
         ...doc.data(),
+        uid: doc.id,
       }));
-      commit("setUsers", users); // Changed from setUser to setUsers
+
+      commit("setUsers", users);
       return users;
     } catch (error) {
+      console.error("Error in getUsers:", error);
       commit("setError", error.message);
+      return [];
     } finally {
       commit("stopLoading", null, { root: true });
     }

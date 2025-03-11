@@ -1,7 +1,10 @@
 export default {
-  // Add new mutation for handling multiple users
+  setUser(state, user) {
+    state.user = user; // This is setting single user
+  },
+  // Add this mutation
   setUsers(state, users) {
-    state.users = users;
+    state.users = users; // This will set the users array
   },
   setUserInfo(state, userInfo) {
     state.userInfo = {

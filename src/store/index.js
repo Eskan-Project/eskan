@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import auth from "./modules/auth";
 import property from "./modules/property";
 import notifications from "./modules/notifications";
+import users from "./modules/users";
 
 export default createStore({
   state: {
@@ -30,5 +31,6 @@ export default createStore({
     auth,
     property,
     notifications,
+    users,
   },
 });

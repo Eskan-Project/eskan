@@ -14,7 +14,7 @@ export default {
     uid: "",
     updatedAt: "",
   },
-  users: [], // Add users array to store multiple users
+  users: [], // Add this line
   user: null,
   error: "",
 };
