@@ -127,12 +127,27 @@
 </template>
 
 <script>
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+import { initializeApp } from "firebase/app";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
 import { mapActions } from "vuex";
 import {
+  getAuth,
   createUserWithEmailAndPassword,
+  signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "@/config/firebase";
+import { auth, db } from "@/config/firebase";
+import { app } from "@/config/firebase";
 import Swal from "sweetalert2";
 
 export default {
@@ -164,8 +179,10 @@ export default {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     },
-
+    // In your component's handleSubmit method
+    // In your component's handleSubmit method
     async handleSubmit() {
+      let secondaryApp = null;
       try {
         if (!this.validateEmail(this.formData.email)) {
           throw new Error("Please enter a valid email address");
@@ -177,30 +194,41 @@ export default {
 
         this.loading = true;
 
-        // Store current auth state
+        // Get current admin user
         const adminAuth = auth.currentUser;
         if (!adminAuth) {
           throw new Error("Admin not authenticated");
         }
 
-        // Create authentication account first
+        // Create a secondary app instance
+        const uniqueAppName = "secondaryApp-" + new Date().getTime();
+        secondaryApp = initializeApp(firebaseConfig, uniqueAppName);
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // Create the user with secondary app
         const userCredential = await createUserWithEmailAndPassword(
-          auth,
+          secondaryAuth,
           this.formData.email.trim(),
           this.formData.nationalId
         );
 
-        // Prepare user data
+        // Get the new user's UID
+        const newUserUid = userCredential.user.uid;
+
+        // Log out from secondary auth
+        await signOut(secondaryAuth);
+
+        // Prepare and save user data
         const userData = {
           ...this.formData,
-          uid: userCredential.user.uid,
+          uid: newUserUid,
           createdAt: new Date(),
           updatedAt: new Date(),
-          createdBy: adminAuth.uid, // Add admin's ID who created this user
+          createdBy: adminAuth.uid,
         };
 
-        // Create user document in Firestore
-        await this.createUser(userData);
+        const userRef = doc(db, "users", newUserUid);
+        await setDoc(userRef, userData);
 
         await Swal.fire({
           title: "Success",
@@ -218,9 +246,16 @@ export default {
           icon: "error",
         });
       } finally {
+        // Properly delete the secondary app
+        if (secondaryApp) {
+          await secondaryApp.delete().catch(console.error);
+        }
         this.loading = false;
       }
     },
+
+    // Add this new action in your Vuex actions.js file
+    // This is specifically for just creating the Firestore document
   },
 };
 </script>

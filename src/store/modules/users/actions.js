@@ -115,24 +115,21 @@ export default {
     commit("clearError");
   },
 
-  async createUser({ commit }, userData) {
+  async createUserDoc({ commit }, userData) {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = auth.currentUser;
       if (!currentUser) {
-        throw new Error("User not authenticated");
+        throw new Error("Admin not authenticated");
       }
 
       if (!userData || !userData.uid) {
         throw new Error("Invalid user data");
       }
 
-      // Create the user document without affecting admin session
+      // Create the user document
       const userRef = doc(db, "users", userData.uid);
-      await setDoc(userRef, {
-        ...userData,
-        createdBy: currentUser.uid,
-      });
+      await setDoc(userRef, userData);
 
       return true;
     } catch (error) {
