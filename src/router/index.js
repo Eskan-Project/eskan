@@ -20,6 +20,7 @@ import AdminPropertiesList from "@/views/AdminPropertiesListView.vue";
 import AdminProfile from "@/views/AdminProfileView.vue";
 import adminPropertyDetails from "@/views/adminPropertyDetailsView.vue";
 import AdminAddProperty from "@/views/AdminAddPropertyView.vue";
+import AdminEditPropertyDetails from "@/views/AdminEditPropertyDetails.vue";
 
 import Payment from "@/components/Payment.vue";
 
@@ -140,6 +141,11 @@ const routes = [
         path: "properties/:id",
         name: "adminPropertyDetails",
         component: adminPropertyDetails,
+      },
+      {
+        path: "properties/edit/:id",
+        name: "adminEditPropertyDetails",
+        component: AdminEditPropertyDetails,
       },
     ],
   },
