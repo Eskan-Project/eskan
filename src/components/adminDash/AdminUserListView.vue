@@ -74,13 +74,14 @@
                 </td>
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
-
-                  <button
-                    type="button"
-                    class="w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                  >
-                    Edit
-                  </button>
+                  <router-link :to="`/admin/users/edit/${user.uid}`">
+                    <button
+                      type="button"
+                      class="w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                      Edit
+                    </button>
+                  </router-link>
                   <button
                     @click="handleDeleteUser(user.uid)"
                     type="button"
