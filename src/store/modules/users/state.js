@@ -2,7 +2,7 @@ export default {
   userInfo: {
     createdAt: "",
     email: "",
-    freePropertyViewed: null,
+    freePropertyViewed: 0,
     gender: "",
     isActive: true,
     location: "",

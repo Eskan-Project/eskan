@@ -23,6 +23,7 @@ import AdminAddProperty from "@/components/adminDash/AdminAddPropertyView.vue";
 import AdminEditPropertyDetails from "@/components/adminDash/AdminEditPropertyDetails.vue";
 import AdminUserListView from "@/components/adminDash/AdminUserListView.vue";
 import AdminEditUser from "@/components/adminDash/AdminEditUser.vue";
+import AdminAddUser from "@/components/adminDash/AdminAddUser.vue";
 import Payment from "@/components/Payment.vue";
 
 const routes = [
@@ -157,6 +158,11 @@ const routes = [
         path: "users/edit/:id",
         name: "editUser",
         component: AdminEditUser,
+      },
+      {
+        path: "users/add-user",
+        name: "addUser",
+        component: AdminAddUser,
       },
     ],
   },

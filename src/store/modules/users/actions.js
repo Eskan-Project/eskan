@@ -10,6 +10,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
   // Fix: Change setUser to setUsers in getUsers action for consistency
@@ -112,5 +113,33 @@ export default {
 
   clearError({ commit }) {
     commit("clearError");
+  },
+
+  async createUser({ commit }, userData) {
+    commit("startLoading", null, { root: true });
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      if (!userData || !userData.uid) {
+        throw new Error("Invalid user data");
+      }
+
+      // Create the user document without affecting admin session
+      const userRef = doc(db, "users", userData.uid);
+      await setDoc(userRef, {
+        ...userData,
+        createdBy: currentUser.uid,
+      });
+
+      return true;
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
   },
 };
