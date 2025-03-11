@@ -151,6 +151,21 @@
             </div>
           </div>
 
+          <!-- Description Section -->
+          <div class="mt-8 w-full bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+              Property Description
+            </h2>
+            <div class="prose max-w-none text-gray-700">
+              <p v-if="property.description" class="whitespace-pre-line">
+                {{ property.description }}
+              </p>
+              <p v-else class="text-gray-500 italic text-center">
+                No description available
+              </p>
+            </div>
+          </div>
+
           <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="p-6 bg-white shadow-lg rounded-lg">
               <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">

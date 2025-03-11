@@ -64,6 +64,19 @@
                 </div>
               </div>
 
+              <!-- Description -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700"
+                  >Description</label
+                >
+                <textarea
+                  v-model="propertyData.description"
+                  rows="4"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder="Enter property description..."
+                ></textarea>
+              </div>
+
               <!-- Room Details -->
               <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
                 <div>
@@ -300,6 +313,7 @@ export default {
       propertyId: this.$route.params.id,
       propertyData: {
         title: "",
+        description: "", // Add this line
         price: null,
         floor: null,
         area: null,
@@ -388,7 +402,7 @@ export default {
           "success"
         );
 
-        this.$router.push("/admin/properties");
+        this.$router.push(`/admin/properties/${this.propertyId}`);
       } catch (error) {
         console.error("Error updating property:", error);
         Swal.fire(
@@ -427,6 +441,7 @@ export default {
 
 <style>
 input,
+textarea,
 select {
   padding: 0.5rem 0.75rem;
   color: #111827;
