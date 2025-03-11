@@ -1,5 +1,12 @@
 import { db } from "@/config/firebase";
-import { doc, setDoc, collection, getDocs, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  getDocs,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
@@ -89,5 +96,50 @@ export default {
   },
   updateImages({ commit }, images) {
     commit("updateImages", images);
+  },
+  async updateProperty(
+    { commit, rootState },
+    { propertyId, updatedData, files = [] }
+  ) {
+    commit("startLoading", null, { root: true });
+    try {
+      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
+        throw new Error("User not authenticated");
+      }
+
+      const propertyRef = doc(db, "properties", propertyId);
+
+      // Handle new images if any
+      if (files.length) {
+        const folderName = `properties/${propertyId}`;
+        const newImages = await Promise.all(
+          files.map(async (file) => {
+            const image = base64ToFile(file);
+            return await uploadToCloudinary(
+              image,
+              import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
+              folderName
+            );
+          })
+        );
+        updatedData.images = [...(updatedData.images || []), ...newImages];
+      }
+
+      // Update the document in Firestore
+      await updateDoc(propertyRef, {
+        ...updatedData,
+        lastUpdated: new Date(),
+      });
+
+      // Update local state
+      commit("updateFirebaseProperty", { propertyId, updatedData });
+
+      return true;
+    } catch (error) {
+      console.error("Error updating property:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
   },
 };
