@@ -35,17 +35,29 @@
         <!-- Content when data is loaded -->
 
         <div v-else class="container mx-auto py-10 px-5 mt-15">
+          <div class="flex sm:flex-row justify-between items-start gap-4">
+            <div class="space-y-2">
+              <h1 class="text-3xl font-bold text-gray-900 capitalize">
+                {{ property.title || "Untitled Property" }}
+              </h1>
+              <p class="text-lg text-gray-600 flex items-center capitalize">
+                <i class="bi bi-geo-alt mr-2 text-gray-500"></i>
+                {{ locationText }}
+              </p>
+            </div>
+            <p class="text-2xl font-semibold text-blue-700 whitespace-nowrap">
+              Property Price :{{ property.price }} EGP
+            </p>
+          </div>
           <div v-if="property" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Property Gallery Section -->
             <div class="col-span-2 relative">
               <div class="relative w-full h-96">
                 <img
                   v-if="
-                    property.data &&
-                    property.data.gallery &&
-                    property.data.gallery.length > 0
+                    property && property.images && property.images.length > 0
                   "
-                  :src="property.data.gallery[currentImageIndex]"
+                  :src="property.images[currentImageIndex]"
                   alt="Property Image"
                   loading="lazy"
                   class="w-full h-96 object-cover rounded-lg"
@@ -62,9 +74,7 @@
                 <!-- Gallery Navigation Buttons -->
                 <button
                   v-if="
-                    property.data &&
-                    property.data.gallery &&
-                    property.data.gallery.length > 1
+                    property && property.images && property.images.length > 1
                   "
                   @click="prevImage"
                   class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
@@ -74,9 +84,7 @@
 
                 <button
                   v-if="
-                    property.data &&
-                    property.data.gallery &&
-                    property.data.gallery.length > 1
+                    property && property.images && property.images.length > 1
                   "
                   @click="nextImage"
                   class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
@@ -87,15 +95,11 @@
 
               <!-- Thumbnail Gallery -->
               <div
-                v-if="
-                  property.data &&
-                  property.data.gallery &&
-                  property.data.gallery.length > 0
-                "
+                v-if="property && property.images && property.images.length > 0"
                 class="grid grid-cols-4 gap-2 mt-4"
               >
                 <img
-                  v-for="(img, index) in property.data.gallery"
+                  v-for="(img, index) in property.images"
                   :key="index"
                   :src="img"
                   loading="lazy"
@@ -107,136 +111,83 @@
             </div>
 
             <!-- Owner Information Section -->
-            <div class="p-5 bg-white shadow-lg rounded-lg text-center relative">
-              <div v-if="property.owner">
-                <img
-                  :src="property.owner.profilePic"
-                  alt="Owner"
-                  loading="lazy"
-                  class="w-24 h-24 rounded-full mx-auto mb-3 mt-5"
-                />
-                <h3 class="text-lg font-bold text-[#364365]">
-                  {{ property.owner.name }}
-                </h3>
-                <p class="text-gray-600">📞 {{ property.owner.phone }}</p>
-                <p class="text-gray-600">✉️ {{ property.owner.email }}</p>
-                <p class="text-gray-600">📍 {{ property.owner.address }}</p>
-              </div>
-              <div v-else class="flex items-center justify-center h-full">
-                <p class="text-gray-600">Owner information not available</p>
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+              <div class="mt-2 text-gray-900">
+                <h2 class="text-xl font-semibold text-center mb-4">
+                  Owner Details
+                </h2>
+                <div class="flex flex-col items-center space-y-3">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    alt="Profile Picture"
+                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
+                  />
+                  <p class="flex flex-col items-center space-y-1">
+                    <span class="font-semibold">Name:</span>
+                    <span class="text-sm capitalize">{{
+                      property.propertyContact.name
+                    }}</span>
+                  </p>
+                  <p class="flex flex-col items-center space-y-1">
+                    <span class="font-semibold">Phone:</span>
+                    <span class="text-sm">{{
+                      property.propertyContact.phone
+                    }}</span>
+                  </p>
+                  <p class="flex flex-col items-center space-y-1">
+                    <span class="font-semibold">Email:</span>
+                    <span class="text-sm">{{
+                      property.propertyContact.email
+                    }}</span>
+                  </p>
+                  <p class="flex flex-col items-center space-y-1">
+                    <span class="font-semibold">Address:</span>
+                    <span class="text-sm capitalize">{{
+                      property.address
+                    }}</span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Property Details Section -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <!-- Video Section -->
-            <div class="p-5 bg-white shadow-lg rounded-lg">
-              <h3 class="text-lg font-bold text-gray-500">Property Video</h3>
-              <video
-                v-if="property.data && property.data.video"
-                controls
-                class="w-full h-64 mt-2 rounded-lg"
-                loading="lazy"
-              >
-                <source :src="property.data.video" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div
-                v-else
-                class="mt-2 bg-gray-200 h-64 flex items-center justify-center rounded-lg"
-              >
-                <span class="text-gray-500">No Video Available</span>
-              </div>
-            </div>
-
-            <!-- General Information Section -->
-            <div class="p-5 bg-white shadow-lg rounded-lg">
-              <h3 class="text-lg font-bold text-gray-600">
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 bg-white shadow-lg rounded-lg">
+              <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
                 General Information
-              </h3>
-              <ul v-if="property.data" class="mt-2 text-gray-600 space-y-1">
-                <li>
-                  <strong>Published Date:</strong>
-                  {{ property.data.date || "N/A" }}
-                </li>
-                <li>
-                  <strong>BathRoom Number:</strong>
-                  {{ property.data.bathRooms || "N/A" }}
-                </li>
-                <li>
-                  <strong>Furnished:</strong>
-                  {{ property.data.Furnished ? "Yes" : "No" }}
-                </li>
-                <li>
-                  <strong>Rooms:</strong> {{ property.data.rooms || "N/A" }}
-                </li>
-                <li>
-                  <strong>Size:</strong> {{ property.data.size || "N/A" }} m²
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Features Section -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div>
-              <!-- Interior Features -->
-              <div class="p-5 bg-white shadow-lg rounded-lg">
-                <h3 class="text-lg font-bold text-[#364365]">
-                  Interior Features
-                </h3>
-                <ul
-                  v-if="property.data && property.data.interiorFeatures"
-                  class="mt-2 text-gray-600 space-y-1"
-                >
-                  <li
-                    v-for="feature in property.data.interiorFeatures"
-                    :key="feature"
-                  >
-                    ✔ {{ feature }}
-                  </li>
-                </ul>
-                <p v-else class="mt-2 text-gray-600">
-                  No interior features listed
-                </p>
-              </div>
-
-              <!-- External Features -->
-              <div class="p-5 bg-white shadow-lg rounded-lg mt-6">
-                <h3 class="text-lg font-bold text-[#364365]">
-                  External Features
-                </h3>
-                <ul
-                  v-if="property.data && property.data.externalFeatures"
-                  class="mt-2 text-gray-600 space-y-1"
-                >
-                  <li
-                    v-for="feature in property.data.externalFeatures"
-                    :key="feature"
-                  >
-                    ✔ {{ feature }}
-                  </li>
-                </ul>
-                <p v-else class="mt-2 text-gray-600">
-                  No external features listed
-                </p>
+              </h2>
+              <div class="grid grid-cols-2 gap-4 text-gray-700">
+                <div class="space-y-4">
+                  <p><strong>Published Date:</strong></p>
+                  <p><strong>Floor Location:</strong></p>
+                  <p><strong>Furnished:</strong></p>
+                  <p><strong>Property Status:</strong></p>
+                  <p><strong>Rooms:</strong></p>
+                  <p><strong>Living Rooms:</strong></p>
+                  <p><strong>Bathrooms:</strong></p>
+                  <p><strong>Kitchens:</strong></p>
+                  <p><strong>Area:</strong></p>
+                </div>
+                <div class="space-y-4 font-semibold">
+                  <p>{{ formatDate(property.createdAt) }}</p>
+                  <p>{{ property.floor }}</p>
+                  <p>{{ property.furnished ? "Yes" : "No" }}</p>
+                  <p>{{ property.propertyStatus }}</p>
+                  <p>{{ property.rooms }}</p>
+                  <p>{{ property.livingRooms }}</p>
+                  <p>{{ property.bathrooms }}</p>
+                  <p>{{ property.kitchens }}</p>
+                  <p>{{ property.area }} m²</p>
+                </div>
               </div>
             </div>
-
-            <!-- Map Section -->
-            <div class="p-5 bg-white shadow-lg rounded-lg">
-              <h3 class="text-lg font-bold text-[#364365]">
+            <div class="p-6 bg-white shadow-lg rounded-lg">
+              <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Location Information
-              </h3>
-              <div id="map" class="w-full h-70 mt-2 rounded-lg"></div>
-              <p v-if="distance && duration" class="mt-3 text-gray-700">
-                📍 Distance: {{ distance.toFixed(2) }} km | ⏳ Time:
-                {{ formatDuration(duration) }}
-              </p>
-              <p v-else-if="mapLoaded && !distance" class="mt-3 text-gray-700">
-                Location information not available or allow location access to
-                see distance
+              </h2>
+              <div id="map" class="w-full h-64 rounded-lg"></div>
+              <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
+                Loading map...
               </p>
             </div>
           </div>
@@ -267,12 +218,16 @@
 import L from "leaflet";
 import { nextTick } from "vue";
 import Swal from "sweetalert2";
+import { mapActions, mapState } from "vuex";
+import PropertyDetails from "../components/PropertyDetails.vue";
+import governorates from "@/assets/data/governorates.json";
+import cities from "@/assets/data/cities.json";
 
 export default {
+  components: { PropertyDetails },
   data() {
     return {
       id: null,
-      property: null,
       currentImageIndex: 0,
       userLocation: null,
       distance: null,
@@ -280,10 +235,25 @@ export default {
       loading: true,
       error: null,
       mapInitialized: false,
+      imageLoaded: false, // Add this
+      mapLoaded: false, // Add this
+      mapLoading: false, // Add this property
+      mapInstance: null, // Add this to store map instance
     };
   },
-
-  created() {
+  computed: {
+    ...mapState("property", ["property"]), // Add this computed property
+    locationText() {
+      const governorateName = governorates.find(
+        (g) => g.id == this.property.governorate
+      )?.governorate_name_en;
+      const cityName = cities.find(
+        (c) => c.id == this.property.city
+      )?.city_name_en;
+      return `${governorateName}-${cityName}-${this.property?.neighborhood}`;
+    },
+  },
+  mounted() {
     // Safely get the ID from route params
     this.id = this.$route?.params?.id;
 
@@ -294,7 +264,8 @@ export default {
     }
 
     // Fetch data immediately
-    this.fetchPropertyData();
+    this.loadData();
+    this.initMapWithFallback();
   },
   // mounted() {
   //   this.initMap();
@@ -306,7 +277,7 @@ export default {
       handler(newId) {
         if (newId && newId !== this.id) {
           this.id = newId;
-          this.fetchPropertyData();
+          this.loadData();
         }
       },
       immediate: true,
@@ -314,6 +285,59 @@ export default {
   },
 
   methods: {
+    ...mapActions("property", ["getProperty"]),
+    async initMapWithFallback() {
+      console.log("this is working");
+      this.mapLoading = true;
+      let lat, lng;
+      if (this.property.coordinates) {
+        ({ latitude: lat, longitude: lng } = this.property.coordinates);
+        console.log(lat, lng);
+      } else {
+        try {
+          const coords = await this.geocodeLocation(this.locationText);
+          if (coords) {
+            lat = coords.lat;
+            lng = coords.lon;
+          } else {
+            throw new Error("Geocoding failed");
+          }
+        } catch (error) {
+          console.error("Geocoding error:", error);
+          return;
+        }
+      }
+
+      try {
+        this.mapInstance = L.map("map", { scrollWheelZoom: false }).setView(
+          [lat, lng],
+          this.property.coordinates ? 13 : 10
+        );
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
+        }).addTo(this.mapInstance);
+        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
+          .addTo(this.mapInstance)
+          .bindPopup(`<b>${this.property.title}</b><br>${this.locationText}`)
+          .openPopup();
+      } catch (error) {
+        console.error("Map initialization error:", error);
+      } finally {
+        this.mapLoading = false;
+      }
+    },
+    async geocodeLocation(locationText) {
+      console.log(locationText);
+      const locationParts = locationText.split("-");
+      const filteredLocation = locationParts.slice(0, 2).join(" ");
+      const query = encodeURIComponent(filteredLocation);
+      console.log(query);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+      );
+      const data = await response.json();
+      return data.length > 0 ? data[0] : null;
+    },
     async deleteProperty() {
       try {
         const result = await Swal.fire({
@@ -356,55 +380,36 @@ export default {
       }
     },
     // Optimized data fetching
-    async fetchPropertyData() {
+    async loadData() {
       this.loading = true;
-      this.error = null;
-
       try {
-        // Use Promise.race to set a timeout for the fetch
-        const fetchPromise = fetch(
-          `https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties/${this.id}.json`
-        );
+        this.error = null;
+        await this.getProperty(this.id);
 
-        const response = await fetchPromise;
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data) {
+        if (!this.property) {
           throw new Error("Property not found");
         }
-
-        // Preload images for better performance
-
-        this.property = data;
-        this.loading = false;
-        nextTick(() => {
-          this.initMap();
-        });
-        // Init map after data is loaded
       } catch (error) {
-        console.error("Error fetching data:", error);
-        this.error = `Failed to load property: ${error.message}`;
+        this.error = "Failed to load property. Please try again later.";
+        console.error("Fetch property error:", error);
+      } finally {
         this.loading = false;
       }
     },
+
     // Image gallery controls
     nextImage() {
       this.currentImageIndex =
-        (this.currentImageIndex + 1) % this.property.data.gallery.length;
+        (this.currentImageIndex + 1) % this.property.images.length;
     },
     prevImage() {
       this.currentImageIndex =
-        (this.currentImageIndex - 1 + this.property.data.gallery.length) %
-        this.property.data.gallery.length;
+        (this.currentImageIndex - 1 + this.property.images.length) %
+        this.property.images.length;
     },
     // Map related methods
     initMap() {
-      const { latitude, longitude } = this.property.data.coordinates;
+      const [latitude, longitude] = this.property.coordinates;
       console.log(latitude, longitude);
       const map = L.map("map", { scrollWheelZoom: false }).setView(
         [latitude, longitude],
@@ -419,11 +424,12 @@ export default {
       L.marker([latitude, longitude], { icon: this.getCustomIcon("red") })
         .addTo(map)
         .bindPopup(
-          `<b>${this.property.data.title}</b><br>${this.property.data.location}`
+          `<b>${this.property.title}</b><br>${this.property.data.location}`
         )
         .openPopup();
 
       this.getUserLocation(map, latitude, longitude);
+      this.mapLoaded = true; // Add this line
     },
     getUserLocation(map, targetLat, targetLng) {
       if (!navigator.geolocation) return;
@@ -494,6 +500,31 @@ export default {
       this.isOwnerDetailsLocked = false;
       this.isOwnerDetailsVisible = true;
       this.showUnlockModal = false;
+    },
+    formatDate(timestamp) {
+      let date;
+      if (typeof timestamp === "number") {
+        // Handle seconds (e.g., 1741559808)
+        date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+      } else if (
+        timestamp.seconds !== undefined &&
+        timestamp.nanoseconds !== undefined
+      ) {
+        // Handle Firestore Timestamp object (e.g., { seconds: 1741559808, nanoseconds: 450000000 })
+        date = new Date(
+          timestamp.seconds * 1000 + Math.floor(timestamp.nanoseconds / 1000000)
+        );
+      } else if (timestamp instanceof Date) {
+        // Already a Date object
+        date = timestamp;
+      } else if (typeof timestamp === "string") {
+        // ISO string or other string format
+        date = new Date(timestamp);
+      } else {
+        return "Invalid Date";
+      }
+
+      return date.toLocaleDateString("en-GB", { dateStyle: "short" });
     },
   },
 };
