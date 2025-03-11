@@ -321,7 +321,8 @@ export default {
       },
       governorates,
       cities,
-      newImages: [], // For storing new image files
+      newImages: [],
+      uploadedNewImages: [],
     };
   },
 
@@ -347,15 +348,6 @@ export default {
   methods: {
     ...mapActions("property", ["getProperty", "updateProperty"]),
 
-    handleImageChange(event) {
-      const files = Array.from(event.target.files);
-      this.newImages = files;
-    },
-
-    removeImage(index) {
-      this.propertyData.images.splice(index, 1);
-    },
-
     async handleSubmit() {
       try {
         const result = await Swal.fire({
@@ -371,7 +363,24 @@ export default {
         if (!result.isConfirmed) return;
 
         this.loading = true;
-        await this.editProp();
+
+        // Convert numeric strings to numbers
+        const cleanedData = {
+          ...this.propertyData,
+          price: Number(this.propertyData.price),
+          floor: Number(this.propertyData.floor),
+          area: Number(this.propertyData.area),
+          rooms: Number(this.propertyData.rooms),
+          livingRooms: Number(this.propertyData.livingRooms),
+          bathrooms: Number(this.propertyData.bathrooms),
+          kitchens: Number(this.propertyData.kitchens),
+        };
+
+        await this.updateProperty({
+          propertyId: this.propertyId,
+          updatedData: cleanedData,
+          files: this.newImages,
+        });
 
         await Swal.fire(
           "Saved!",
@@ -381,31 +390,36 @@ export default {
 
         this.$router.push("/admin/properties");
       } catch (error) {
-        console.error("Delete failed:", error);
+        console.error("Error updating property:", error);
         Swal.fire(
           "Error!",
-          "Failed to updata property. Please try again.",
+          "Failed to update property. Please try again.",
           "error"
         );
       } finally {
         this.loading = false;
       }
     },
-    async editProp() {
-      try {
-        await this.updateProperty({
-          propertyId: this.propertyId,
-          updatedData: this.propertyData,
-          files: this.newImages,
-        });
 
-        // Show success message
+    async handleImageChange(event) {
+      const files = Array.from(event.target.files);
+      this.newImages = files; // Store the actual files
 
-        // Redirect back to property details
-        this.$router.push(`/admin/properties/${this.propertyId}`);
-      } catch (error) {
-        console.error("Error updating property:", error);
-      }
+      // Clear previous preview images
+      this.uploadedNewImages = [];
+
+      // Generate previews
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.uploadedNewImages.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    },
+
+    removeImage(index) {
+      this.propertyData.images.splice(index, 1);
     },
   },
 };

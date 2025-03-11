@@ -105,13 +105,11 @@ export default {
   ) {
     commit("startLoading", null, { root: true });
     try {
-      // Check authentication and permissions
       const currentUser = rootState.auth.userDetails;
       if (!currentUser) {
         throw new Error("User not authenticated");
       }
 
-      // Check if user has permission (admin or property owner)
       const propertyRef = doc(db, "properties", propertyId);
       const propertyDoc = await getDoc(propertyRef);
 
@@ -119,43 +117,80 @@ export default {
         throw new Error("Property not found");
       }
 
-      if (
-        currentUser.role !== "admin" &&
-        propertyDoc.data().ownerId !== currentUser.uid
-      ) {
-        throw new Error("You don't have permission to edit this property");
-      }
+      // Deep clean the updatedData object
+      const initialCleanedData = {};
+      Object.entries(updatedData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (typeof value === "object" && !Array.isArray(value)) {
+            // Clean nested objects
+            const cleanedNested = {};
+            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+              if (nestedValue !== undefined && nestedValue !== null) {
+                cleanedNested[nestedKey] = nestedValue;
+              }
+            });
+            if (Object.keys(cleanedNested).length > 0) {
+              initialCleanedData[key] = cleanedNested;
+            }
+          } else {
+            initialCleanedData[key] = value;
+          }
+        }
+      });
 
-      // Handle image uploads
-      if (files.length) {
+      // Handle image uploads first
+      if (files && files.length > 0) {
         const folderName = `properties/${propertyId}`;
         const newImages = await Promise.all(
           files.map(async (file) => {
-            const image = base64ToFile(file);
+            // Direct upload of File object without base64 conversion
             return await uploadToCloudinary(
-              image,
+              file,
               import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
               folderName
             );
           })
         );
-        // Combine existing and new images
-        updatedData.images = [...(updatedData.images || []), ...newImages];
+
+        // Ensure images array exists in cleanedData
+        updatedData.images = Array.isArray(updatedData.images)
+          ? [...updatedData.images, ...newImages]
+          : newImages;
       }
 
-      // Update the document in Firestore
-      await updateDoc(propertyRef, {
-        ...updatedData,
-        lastUpdated: new Date(),
-        updatedBy: currentUser.uid,
+      // Clean the data after handling images
+      const cleanedData = {};
+      Object.entries(updatedData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (typeof value === "object" && !Array.isArray(value)) {
+            const cleanedNested = {};
+            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+              if (nestedValue !== undefined && nestedValue !== null) {
+                cleanedNested[nestedKey] = nestedValue;
+              }
+            });
+            if (Object.keys(cleanedNested).length > 0) {
+              cleanedData[key] = cleanedNested;
+            }
+          } else {
+            cleanedData[key] = value;
+          }
+        }
       });
 
-      // Update local state with complete property data
+      // Update the document
+      await updateDoc(doc(db, "properties", propertyId), {
+        ...cleanedData,
+        lastUpdated: new Date(),
+        updatedBy: rootState.auth.userDetails.uid,
+      });
+
       const updatedProperty = {
         ...propertyDoc.data(),
-        ...updatedData,
+        ...cleanedData,
         id: propertyId,
       };
+
       commit("updateFirebaseProperty", {
         propertyId,
         updatedData: updatedProperty,
