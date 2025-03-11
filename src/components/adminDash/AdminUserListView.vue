@@ -82,6 +82,7 @@
                     Edit
                   </button>
                   <button
+                    @click="handleDeleteUser(user.uid)"
                     type="button"
                     class="w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                   >
@@ -131,6 +132,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex"; // Add mapState
+import Swal from "sweetalert2";
 
 export default {
   data() {
@@ -207,7 +209,42 @@ export default {
     }
   },
   methods: {
-    ...mapActions("users", ["getUsers"]),
+    ...mapActions("users", ["getUsers", "deleteUser"]),
+    async handleDeleteUser(userId) {
+      try {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        });
+
+        if (!result.isConfirmed) return;
+
+        this.loading = true;
+        await this.deleteUser(userId); // Changed from deleteOne to directly use deleteUser
+        await this.loadData(); // Reload the users list after deletion
+
+        await Swal.fire(
+          "Deleted!",
+          "User has been deleted successfully.",
+          "success"
+        );
+      } catch (error) {
+        console.error("Delete failed:", error);
+        Swal.fire(
+          "Error!",
+          "Failed to delete user. Please try again.",
+          "error"
+        );
+      } finally {
+        this.loading = false;
+      }
+    },
+    // Remove the deleteOne method as it's no longer needed
     async loadData() {
       try {
         await this.getUsers(); // Don't reassign users here, use from state
@@ -217,6 +254,7 @@ export default {
 
       console.log(this.users);
     },
+
     resetPagination() {
       this.currentPage = 1;
     },
