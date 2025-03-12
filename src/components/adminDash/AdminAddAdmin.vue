@@ -4,7 +4,7 @@
       class="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-md p-4 sm:p-6"
     >
       <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-700">
-        Add New Owner
+        Add New Admin
       </h2>
 
       <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
@@ -126,7 +126,7 @@
             :disabled="loading"
             class="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {{ loading ? "Creating..." : "Create User" }}
+            {{ loading ? "Creating..." : "Create Admin" }}
           </button>
         </div>
       </form>
@@ -175,7 +175,7 @@ export default {
         nickName: "",
         // paidProperties: [],
         photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-        role: "owner",
+        role: "admin",
         uid: "",
         updatedAt: "",
       },
@@ -242,12 +242,12 @@ export default {
 
         await Swal.fire({
           title: "Success",
-          text: "Admin created successfully. Initial password is their National ID.",
+          text: "Owner created successfully. Initial password is their National ID.",
           icon: "success",
         });
 
         await this.$store.dispatch("owners/getOwners");
-        this.$router.push("/admin");
+        this.$router.push("/admin/owners");
       } catch (error) {
         console.error("Error creating owner:", error);
         await Swal.fire({
