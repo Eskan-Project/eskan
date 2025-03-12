@@ -20,6 +20,8 @@
           v-model:search-query="searchQuery"
           v-model:selected-governorate="selectedGovernorate"
           v-model:selected-city="selectedCity"
+          v-model:selected-property-status="selectedPropertyStatus"
+          v-model:selected-rooms="selectedRooms"
           @toggle-search="toggleSearch"
           @search="searchProperties"
           @reset="resetFilters"
@@ -79,7 +81,6 @@ export default {
   components: { SearchBar, PropertyList, Pagination },
   data: () => ({
     bgImage: propertiesBg,
-    properties: [],
     currentPage: 1,
     perPage: 8,
     isScrolled: false,
@@ -88,12 +89,18 @@ export default {
     searchQuery: "",
     selectedGovernorate: "",
     selectedCity: "",
+    selectedPropertyStatus: "",
+    selectedRooms: "",
     error: null,
   }),
   computed: {
     ...mapGetters(["isLoading"]),
+    ...mapGetters("property", ["allProperties"]),
+    properties() {
+      return this.allProperties;
+    },
     filteredProperties() {
-      return this.properties
+      return (this.properties || [])
         .filter((p) => {
           if (!this.searchQuery.trim()) return true;
           const query = this.searchQuery.toLowerCase();
@@ -106,7 +113,13 @@ export default {
             !this.selectedGovernorate ||
             p.governorate === this.selectedGovernorate
         )
-        .filter((p) => !this.selectedCity || p.city === this.selectedCity);
+        .filter((p) => !this.selectedCity || p.city === this.selectedCity)
+        .filter(
+          (p) =>
+            !this.selectedPropertyStatus ||
+            p.propertyStatus === this.selectedPropertyStatus
+        )
+        .filter((p) => !this.selectedRooms || p.rooms === +this.selectedRooms);
     },
     totalPages() {
       return Math.ceil(this.filteredProperties.length / this.perPage) || 1;
@@ -144,7 +157,7 @@ export default {
     async loadData() {
       try {
         this.error = null;
-        this.properties = (await this.getProperties()) || [];
+        await this.getProperties();
       } catch (error) {
         this.error = "Failed to load properties. Please try again later.";
         console.error("Fetch properties error:", error);
@@ -177,6 +190,8 @@ export default {
         searchQuery: "",
         selectedGovernorate: "",
         selectedCity: "",
+        selectedPropertyStatus: "",
+        selectedRooms: "",
         currentPage: 1,
         isExpanded: false,
       });

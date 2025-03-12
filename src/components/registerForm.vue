@@ -2,9 +2,13 @@
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import hCaptcha from "@/components/hCaptcha.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
-  components: { hCaptcha },
+  components: {
+    hCaptcha,
+  },
   data() {
     return {
       name: "",
@@ -17,7 +21,7 @@ export default {
       loading: false,
       file: null,
       imagePreview: null,
-      captchaToken: null,
+      captchaToken: "",
     };
   },
   computed: {
@@ -88,8 +92,16 @@ export default {
           idImage: idImageUrl,
         };
 
-        await this.register(userData);
-        this.$router.push({ name: "Home" });
+        const result = await this.register(userData);
+        this.$router.push({ name: "Home" }).then(() => {
+          toast.success(result.message, {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+        });
       } catch (error) {
         if (error.code === "auth/email-already-in-use") {
           this.errors.server = "The email address is already in use.";
@@ -114,11 +126,10 @@ export default {
         };
       }
     },
-
     removeImage() {
       this.imagePreview = null;
+      this.file = null;
     },
-
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
@@ -268,23 +279,9 @@ export default {
             <p class="font-medium p-2" v-if="!imagePreview">
               please upload your ID
             </p>
-            <div
-              :class="`border-1 border-stone-400 border-dashed p-5 mx-10 ${
-                imagePreview ? 'w-fit mx-auto' : ''
-              }`"
-            >
-              <div v-if="imagePreview" class="relative group">
-                <img
-                  :src="imagePreview"
-                  alt="Image Preview"
-                  class="w-50 h-50 object-cover"
-                />
-                <button
-                  @click="removeImage"
-                  class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  &times;
-                </button>
+            <div class="border-1 border-stone-400 border-dashed p-5 mx-10">
+              <div v-if="imagePreview">
+                <img :src="imagePreview" alt="Image Preview" />
               </div>
               <label for="file" v-else>
                 <i

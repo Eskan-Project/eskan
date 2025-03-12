@@ -47,6 +47,25 @@
               {{ city.label }}
             </option>
           </select>
+          <select
+            :value="selectedPropertyStatus"
+            @change="
+              $emit('update:selectedPropertyStatus', $event.target.value)
+            "
+            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
+          >
+            <option value="" disabled selected>Property Status</option>
+            <option value="new">New</option>
+            <option value="second-hand">Second-hand</option>
+            <option value="renovated">Renovated</option>
+          </select>
+          <input
+            type="number"
+            :value="selectedRooms"
+            placeholder="Rooms Number"
+            @input="$emit('update:selectedRooms', $event.target.value)"
+            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
 
           <button
             class="bg-gray-200 border border-[var(--secondary-color)] text-[var(--secondary-color)] px-4 py-2 rounded-md hover:bg-gray-300 transition cursor-pointer"
@@ -107,6 +126,25 @@
                   {{ city.label }}
                 </option>
               </select>
+              <select
+                :value="selectedPropertyStatus"
+                @change="
+                  $emit('update:selectedPropertyStatus', $event.target.value)
+                "
+                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
+              >
+                <option value="" disabled selected>Property Status</option>
+                <option value="new">New</option>
+                <option value="second-hand">Second-hand</option>
+                <option value="renovated">Renovated</option>
+              </select>
+              <input
+                type="number"
+                :value="selectedRooms"
+                placeholder="Rooms Number"
+                @input="$emit('update:selectedRooms', $event.target.value)"
+                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
               <button
                 class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition w-full"
                 @click="$emit('reset')"
@@ -127,6 +165,8 @@
         >
           <span class="px-2">{{ selectedGovernorateName || "Anywhere" }}</span>
           <span class="px-2">{{ selectedCityName || "Any City" }}</span>
+          <span class="px-2">{{ selectedPropertyStatus || "Any Status" }}</span>
+          <span class="px-2">{{ selectedRooms || "Any Rooms" }}</span>
           <button
             class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
             @click="$emit('toggle-search')"
@@ -159,11 +199,15 @@ export default {
     searchQuery: String,
     selectedGovernorate: String,
     selectedCity: String,
+    selectedPropertyStatus: String,
+    selectedRooms: Number,
   },
   emits: [
     "update:searchQuery",
     "update:selectedGovernorate",
     "update:selectedCity",
+    "update:selectedPropertyStatus",
+    "update:selectedRooms",
     "search",
     "toggle-search",
     "reset",

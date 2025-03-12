@@ -233,27 +233,6 @@
           </article>
         </section>
       </div>
-      <!-- <main class="min-h-screen text-gray-900">
-        <div class="max-w-6xl">
-          <article
-            class="bg-white rounded-lg shadow-lg p-6 border border-gray-200 mt-6"
-          >
-            <h2 class="text-2xl font-semibold mb-4 text-gray-700 border-b pb-3">
-              Paid Properties
-            </h2>
-            <div v-if="paidProperties && paidProperties.length > 0">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <property-card
-                  v-for="property in paidProperties"
-                  :key="property.id"
-                  :property="property"
-                />
-              </div>
-            </div>
-            <div v-else class="text-gray-500">No paid properties found.</div>
-          </article>
-        </div>
-      </main> -->
     </div>
   </main>
 </template>
@@ -261,28 +240,20 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "../services/uploadToCloudinary";
-import PropertyCard from "../components/PropertyCard.vue";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 import base64ToFile from "../services/base64ToFileService";
+
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 export default {
-  props: {
-    paidProperties: {
-      type: Array,
-      default: () => [],
-    },
-  },
   components: {
-    PropertyCard,
     Cropper,
   },
   data() {
     return {
       isEditing: false,
       selectedFile: null,
-      paidProperties: [],
       showCropper: false,
       croppedImageSrc: null,
       croppedImageFile: null,
@@ -290,7 +261,6 @@ export default {
   },
   mounted() {
     this.fetchUserDetails();
-    // this.fetchPaidProperties();
   },
   computed: {
     ...mapState("auth", ["userDetails"]),
@@ -369,37 +339,6 @@ export default {
         }, "image/png");
       }
     },
-
-    // async fetchPaidProperties() {
-    //   if (
-    //     !this.userDetails?.paidProperties ||
-    //     this.userDetails.paidProperties.length === 0
-    //   ) {
-    //     return;
-    //   }
-
-    //   try {
-    //     const response = await fetch(
-    //       "https://eskan-project-14c3b-default-rtdb.europe-west1.firebasedatabase.app/properties.json"
-    //     );
-    //     const data = await response.json();
-
-    //     if (data) {
-    //       const propertiesArray = Object.entries(data).map(([key, value]) => ({
-    //         id: key,
-    //         ...value.data,
-    //       }));
-
-    //       this.paidProperties = propertiesArray.filter((property) =>
-    //         this.userDetails.paidProperties.includes(property.id)
-    //       );
-
-    //       console.log("Paid Properties:", this.paidProperties);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching paid properties:", error);
-    //   }
-    // },
   },
 };
 </script>

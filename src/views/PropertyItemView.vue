@@ -68,7 +68,10 @@
               loading="lazy"
               class="h-20 w-20 sm:h-24 sm:w-37 object-cover rounded-lg cursor-pointer border-2 transition-all duration-200 hover:border-blue-600 flex-shrink-0"
               :class="{ 'border-blue-500': currentImageIndex === index }"
-              @click="currentImageIndex = index"
+              @click="
+                currentImageIndex = index;
+                scrollToActiveThumbnail();
+              "
               :alt="`Thumbnail ${index + 1}`"
             />
           </div>
@@ -91,8 +94,14 @@
         </div>
       </div>
 
-      <div class="bg-white rounded-lg p-6 shadow-lg">
-        <PropertyDetails :property="property" :id="id" />
+      <div
+        class="bg-white rounded-lg p-6 shadow-lg flex flex-col justify-center items-center"
+      >
+        <PropertyDetails
+          :property="property"
+          :id="id"
+          @viewOwner="handleViewOwner"
+        />
       </div>
     </div>
 
@@ -187,6 +196,8 @@ import PropertyDetails from "../components/PropertyDetails.vue";
 import { mapActions, mapState } from "vuex";
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "PropertyDetail",
@@ -198,13 +209,12 @@ export default {
       galleryStartIndex: 0,
       mapInstance: null,
       mapLoading: false,
-      // userLocation: null,
-      // distance: null,
-      // duration: null,
+      visibleThumbnails: 4,
     };
   },
   computed: {
     ...mapState("property", ["property", "loading"]),
+    ...mapState("auth", ["userDetails", "isAuth"]),
     currentImage() {
       return (
         this.property?.images?.[this.currentImageIndex] ||
@@ -234,8 +244,18 @@ export default {
       console.log("Fetched property:", this.property);
       this.$nextTick(() => {
         this.initMapWithFallback();
+        this.scrollToActiveThumbnail();
       });
       this.updateGalleryStartIndex();
+      console.log("userDetails", this.userDetails);
+      if (
+        this.userDetails.paidProperties.includes(this.id) ||
+        this.userDetails.freeViewsRemaining === 0
+      ) {
+        return;
+      }
+      this.updateFreeViews(this.userDetails.uid);
+      this.addPaidProperty({ uid: this.userDetails.uid, propertyId: this.id });
     });
   },
   beforeDestroy() {
@@ -245,11 +265,13 @@ export default {
   },
   methods: {
     ...mapActions("property", ["getProperty"]),
+    ...mapActions("auth", ["updateFreeViews", "addPaidProperty"]),
     nextImage() {
       if (!this.property?.images?.length) return;
       this.currentImageIndex =
         (this.currentImageIndex + 1) % this.property.images.length;
       this.updateGalleryStartIndex();
+      this.scrollToActiveThumbnail();
     },
     prevImage() {
       if (!this.property?.images?.length) return;
@@ -257,6 +279,28 @@ export default {
         (this.currentImageIndex - 1 + this.property.images.length) %
         this.property.images.length;
       this.updateGalleryStartIndex();
+      this.scrollToActiveThumbnail();
+    },
+    scrollThumbnails(direction) {
+      const container = this.$refs.thumbnailContainer;
+      if (!container) return;
+      const thumbnailWidth = container.querySelector("img").offsetWidth + 8;
+      container.scrollBy({
+        left: direction * thumbnailWidth,
+        behavior: "smooth",
+      });
+    },
+    scrollToActiveThumbnail() {
+      const container = this.$refs.thumbnailContainer;
+      if (!container) return;
+      const thumbnailWidth = container.querySelector("img").offsetWidth + 8;
+      const scrollPosition =
+        this.currentImageIndex * thumbnailWidth -
+        (container.offsetWidth - thumbnailWidth) / 2;
+      container.scrollTo({
+        left: scrollPosition,
+        behavior: "smooth",
+      });
     },
     updateGalleryStartIndex() {
       if (!this.property?.images?.length) return;
@@ -312,52 +356,6 @@ export default {
       const data = await response.json();
       return data.length > 0 ? data[0] : null;
     },
-    // getUserLocation(map, targetLat, targetLng) {
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(
-    //       (position) => {
-    //         this.userLocation = {
-    //           lat: position.coords.latitude,
-    //           lng: position.coords.longitude,
-    //         };
-    //         L.marker([this.userLocation.lat, this.userLocation.lng], {
-    //           icon: this.getCustomIcon("blue"),
-    //         })
-    //           .addTo(map)
-    //           .bindPopup("You are here");
-    //         this.calculateDistance(
-    //           targetLat,
-    //           targetLng,
-    //           this.userLocation.lat,
-    //           this.userLocation.lng
-    //         );
-    //       },
-    //       (error) => console.error("Geolocation error:", error)
-    //     );
-    //   }
-    // },
-    // calculateDistance(lat1, lng1, lat2, lng2) {
-    //   const R = 6371; // Earth's radius in km
-    //   const dLat = this.degToRad(lat2 - lat1);
-    //   const dLng = this.degToRad(lng2 - lng1);
-    //   const a =
-    //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    //     Math.cos(this.degToRad(lat1)) *
-    //       Math.cos(this.degToRad(lat2)) *
-    //       Math.sin(dLng / 2) *
-    //       Math.sin(dLng / 2);
-    //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    //   this.distance = R * c;
-    //   this.duration = (this.distance / 50) * 60; // 50 km/h average speed
-    // },
-    // formatDuration(minutes) {
-    //   const hours = Math.floor(minutes / 60);
-    //   const remainingMinutes = Math.round(minutes % 60);
-    //   return `${hours}h ${remainingMinutes}m`;
-    // },
-    // degToRad(deg) {
-    //   return deg * (Math.PI / 180);
-    // },
     getCustomIcon(color) {
       return L.icon({
         iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,

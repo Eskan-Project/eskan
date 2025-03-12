@@ -6,11 +6,10 @@ import {
   getDocs,
   getDoc,
   updateDoc,
-  deleteDoc, // Add this import
+  deleteDoc,
 } from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
-import { checkPropertyPermission } from "@/services/firebaseService";
 
 export default {
   async getProperties({ commit }) {
@@ -235,6 +234,43 @@ export default {
       throw new Error("You do not have permission to delete this property");
     } catch (error) {
       console.error("Error deleting property:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
+  async handlePayment({ commit, dispatch, rootState }, propertyId) {
+    commit("startLoading", null, { root: true });
+    try {
+      const currentUser = rootState.auth.userDetails;
+      const propertyRef = doc(db, "properties", propertyId);
+      const propertyDoc = await getDoc(propertyRef);
+      if (!propertyDoc.exists()) {
+        throw new Error("Property not found");
+      }
+
+      const propertyData = propertyDoc.data();
+      const paymentData = {
+        propertyId,
+        amount: propertyData.price,
+        status: "completed",
+        createdAt: new Date(),
+      };
+      const paymentId = doc(collection(db, "payments")).id;
+      await setDoc(doc(db, "payments", paymentId), paymentData);
+      dispatch(
+        "auth/addPaidProperty",
+        {
+          uid: currentUser.uid,
+          propertyId,
+        },
+        { root: true }
+      );
+      console.log("paymentId", paymentId);
+
+      return paymentId;
+    } catch (error) {
+      console.error("Error handling payment:", error);
       throw error;
     } finally {
       commit("stopLoading", null, { root: true });

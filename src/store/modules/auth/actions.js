@@ -1,6 +1,6 @@
 // src/store/modules/auth.js
 import { auth, db } from "@/config/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -20,10 +20,12 @@ const provider = new GoogleAuthProvider();
 
 export default {
   async fetchUserDetails({ commit }) {
-    commit("startLoading", null, { root: true }); // Target root mutation
     try {
       const currentUser = auth.currentUser;
-      if (!currentUser) return;
+      if (!currentUser) {
+        commit("logout");
+        return;
+      }
 
       const userRole = await fetchUserRole(currentUser.uid);
       if (!userRole?.collection) return;
@@ -40,8 +42,6 @@ export default {
     } catch (error) {
       commit("setError", error.message);
       console.error(error);
-    } finally {
-      commit("stopLoading", null, { root: true });
     }
   },
   async updateProfile({ commit, state }) {
@@ -131,7 +131,7 @@ export default {
     }
   },
   async register({ commit, state }, { name, email, password, role, idImage }) {
-    commit("startLoading", null, { root: true });
+    commit("startLoading");
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -145,19 +145,25 @@ export default {
       userDetails.email = email;
       userDetails.role = role;
       userDetails.isActive = true;
+      userDetails.paidProperties = [];
+      userDetails.freeViewsRemaining = 3;
 
       if (role === "owner") {
         userDetails.idImage = idImage || null;
       }
 
       await storeUserInCollection(user.uid, userDetails);
-      await this.dispatch("auth/fetchUserDetails", user.uid);
+      commit("setUser", userDetails);
       router.push("/");
+      return {
+        success: true,
+        message: `Welcome ${name}! You have 3 free property views.`,
+      };
     } catch (error) {
       commit("setError", error.message);
       throw error;
     } finally {
-      commit("stopLoading", null, { root: true });
+      commit("stopLoading");
     }
   },
   async resetPassword({ commit }, email) {
@@ -191,7 +197,6 @@ export default {
     }
   },
   async checkAuth({ commit }) {
-    commit("startLoading", null, { root: true });
     return new Promise((resolve) => {
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
         unsubscribe();
@@ -205,9 +210,48 @@ export default {
         } else {
           commit("logout");
         }
-        commit("stopLoading", null, { root: true });
         resolve();
       });
     });
+  },
+  async updateFreeViews({ commit }, uid) {
+    commit("startLoading", null, { root: true });
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      const currentUser = userDoc.data();
+      const newFreeViews = currentUser.freeViewsRemaining - 1;
+      await updateDoc(userRef, {
+        freeViewsRemaining: newFreeViews,
+      });
+      commit("setUser", {
+        ...userDoc.data(),
+        freeViewsRemaining: newFreeViews,
+      });
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
+  async addPaidProperty({ commit }, { uid, propertyId }) {
+    commit("startLoading", null, { root: true });
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      const currentData = userDoc.data();
+      const updatedPaidProperties = [...currentData.paidProperties, propertyId];
+      await updateDoc(userRef, { paidProperties: updatedPaidProperties });
+      commit("setUser", {
+        ...currentData,
+        paidProperties: updatedPaidProperties,
+      });
+    } catch (error) {
+      commit("setError", error.message);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
   },
 };

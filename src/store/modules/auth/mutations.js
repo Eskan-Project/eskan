@@ -1,6 +1,7 @@
 export default {
   setUser(state, userData) {
     state.userDetails = { ...state.userDetails, ...userData };
+    localStorage.setItem("user", JSON.stringify(userData));
     console.log(userData);
     state.isAuth = !!userData.uid;
     state.error = null;
@@ -23,5 +24,6 @@ export default {
     };
     state.isAuth = false;
     state.loading = false;
+    localStorage.clear();
   },
 };

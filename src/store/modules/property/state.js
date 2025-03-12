@@ -26,5 +26,6 @@ export default {
     },
   },
   property: null,
+  properties: [],
   error: "",
 };

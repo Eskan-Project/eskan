@@ -230,6 +230,7 @@ export default {
     this.observeCountupSection();
     window.addEventListener("scroll", this.handleScroll, { passive: true });
     this.fetchProperties();
+    this.fetchUserDetails();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
@@ -237,6 +238,7 @@ export default {
   },
   methods: {
     ...mapActions("property", ["getProperties"]),
+    ...mapActions("auth", ["fetchUserDetails"]),
     async fetchProperties() {
       this.error = null;
       try {

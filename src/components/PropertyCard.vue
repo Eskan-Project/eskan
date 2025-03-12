@@ -25,6 +25,12 @@
         >
           <span>No Image Available</span>
         </div>
+        <span
+          v-if="property.propertyStatus"
+          class="absolute top-2 right-2 px-2 py-1 text-xs font-semibold text-white rounded-full capitalize bg-gradient-to-r from-[#124365] to-[#364365]"
+        >
+          {{ property.propertyStatus }}
+        </span>
       </div>
       <div
         class="p-4 flex-1 flex flex-col items-center justify-evenly space-y-3"
@@ -40,6 +46,10 @@
         <p class="text-gray-600 text-sm mt-1 flex items-center justify-center">
           <i class="bi bi-geo-alt mr-1 text-gray-500"></i>
           {{ locationText }}
+        </p>
+        <p class="text-gray-600 text-sm flex items-center justify-center gap-1">
+          <i class="bi bi-house-door text-gray-500"></i>
+          {{ property.rooms }} {{ property.rooms === 1 ? "Room" : "Rooms" }}
         </p>
         <p class="font-bold text-base sm:text-lg text-blue-700">
           {{ formattedPrice }} EGP
