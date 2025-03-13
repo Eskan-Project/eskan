@@ -35,17 +35,6 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Nickname</label
-            >
-            <input
-              v-model="formData.nickName"
-              type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
             <input
               v-model="formData.email"
@@ -166,22 +155,20 @@ export default {
         throw new Error("User not found");
       }
 
-      // Initialize formData with user data
       this.formData = {
         name: userData.name || "",
-        nickName: userData.nickName || "",
         email: userData.email || "",
         nationalId: userData.nationalId || "",
         location: userData.location || "",
         gender: userData.gender || "Male",
         role: userData.role || "user",
-        isActive: userData.isActive !== undefined ? userData.isActive : true,
+        isActive: userData.isActive,
         photo: userData.photo || "",
       };
     } catch (error) {
       console.error("Error fetching user:", error);
       await Swal.fire("Error", "Failed to load user data", "error");
-      this.$router.push("/admin/users"); // Redirect back to users list on error
+      this.$router.push("/admin/users");
     }
   },
 

@@ -75,8 +75,9 @@
         type="select"
         required
         :options="[
-          { value: 'zero', label: 'Zero' },
+          { value: 'new', label: 'New' },
           { value: 'second-hand', label: 'Second Hand' },
+          { value: 'renovated', label: 'Renovated' },
         ]"
       />
     </form>

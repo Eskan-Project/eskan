@@ -7,18 +7,16 @@
           <div
             class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900 p-4"
           >
-            <div class="relative">
-              <div
-                class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
-              >
-                <i class="bi bi-search"></i>
-              </div>
+            <div
+              class="relative inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3"
+            >
+              <i class="bi bi-search absolute right-2"></i>
               <input
                 type="text"
                 v-model="searchQuery"
                 id="table-search-users"
-                class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for properties"
+                class="block pt-2 ps-10 text-sm !text-gray-200 dark:text-gray-200 placeholder:text-gray-200 dark:placeholder:text-gray-200 bg-gray-700 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search for users"
                 @input="resetPagination"
               />
             </div>
@@ -26,7 +24,7 @@
               <router-link to="/admin/users/add-user">
                 <button
                   type="button"
-                  class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  class="cursor-pointer text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                 >
                   Add User
                 </button>
@@ -69,9 +67,6 @@
                     <div class="text-base font-semibold">
                       {{ user.name }}
                     </div>
-                    <div class="font-normal text-gray-500">
-                      NickName : {{ user.nickName }}
-                    </div>
                   </div>
                 </th>
                 <td class="px-6 py-4">
@@ -87,7 +82,7 @@
                   <router-link :to="`/admin/users/edit/${user.uid}`">
                     <button
                       type="button"
-                      class="w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                      class="cursor-pointer w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     >
                       Edit
                     </button>
@@ -95,7 +90,7 @@
                   <button
                     @click="handleDeleteUser(user.uid)"
                     type="button"
-                    class="w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    class="cursor-pointer w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                   >
                     Delete
                   </button>
@@ -120,7 +115,7 @@
             <button
               @click="prevPage"
               :disabled="currentPage === 1"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
+              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
             >
               Previous
             </button>
@@ -130,7 +125,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages || totalPages === 0"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
+              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
             >
               Next
             </button>

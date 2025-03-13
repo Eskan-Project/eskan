@@ -21,19 +21,6 @@
             />
           </div>
 
-          <!-- Repeat similar changes for other input fields -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Nickname</label
-            >
-            <input
-              v-model="formData.nickName"
-              type="text"
-              required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-          </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -84,28 +71,6 @@
               <option value="Female">Female</option>
             </select>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Account Status</label
-            >
-            <div class="flex items-center mt-2">
-              <button
-                type="button"
-                @click="formData.isActive = !formData.isActive"
-                class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                :class="formData.isActive ? 'bg-blue-600' : 'bg-gray-200'"
-              >
-                <span
-                  class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                  :class="formData.isActive ? 'translate-x-5' : 'translate-x-0'"
-                ></span>
-              </button>
-              <span class="ml-3 text-sm font-medium text-gray-900">
-                {{ formData.isActive ? "Active" : "Inactive" }}
-              </span>
-            </div>
-          </div>
         </div>
 
         <!-- Action Buttons -->
@@ -115,14 +80,14 @@
           <button
             type="button"
             @click="$router.push('/admin/users')"
-            class="w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            class="cursor-pointer w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Cancel
           </button>
           <button
             type="submit"
             :disabled="loading"
-            class="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="cursor-pointer w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {{ loading ? "Creating..." : "Create User" }}
           </button>
@@ -150,7 +115,6 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signOut,
-  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, db } from "@/config/firebase";
 import { app } from "@/config/firebase";
@@ -162,13 +126,12 @@ export default {
       loading: false,
       formData: {
         name: "",
-        nickName: "",
         email: "",
         nationalId: "",
         location: "",
         gender: "Male",
         role: "user",
-        isActive: true,
+        isActive: false,
         photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
         createdAt: null,
         updatedAt: null,
@@ -185,8 +148,6 @@ export default {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     },
-    // In your component's handleSubmit method
-    // In your component's handleSubmit method
     async handleSubmit() {
       let secondaryApp = null;
       try {
@@ -200,18 +161,14 @@ export default {
 
         this.loading = true;
 
-        // Get current admin user
         const adminAuth = auth.currentUser;
         if (!adminAuth) {
           throw new Error("Admin not authenticated");
         }
 
-        // Create a secondary app instance
         const uniqueAppName = "secondaryApp-" + new Date().getTime();
         secondaryApp = initializeApp(firebaseConfig, uniqueAppName);
         const secondaryAuth = getAuth(secondaryApp);
-
-        // Create the user with secondary app
         const userCredential = await createUserWithEmailAndPassword(
           secondaryAuth,
           this.formData.email.trim(),
@@ -259,9 +216,6 @@ export default {
         this.loading = false;
       }
     },
-
-    // Add this new action in your Vuex actions.js file
-    // This is specifically for just creating the Firestore document
   },
 };
 </script>
