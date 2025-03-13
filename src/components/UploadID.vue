@@ -4,7 +4,7 @@
       {{ idImage ? "ID uploaded successfully" : "Please upload your ID" }}
     </p>
     <div
-      v-if="!idImage"
+      v-if="!idImage && validating === null"
       class="border-1 border-stone-400 border-dashed p-5 mx-10"
     >
       <label for="file">
@@ -30,35 +30,75 @@
     </div>
 
     <div v-if="idImage">
-      <img :src="idImage" alt="ID" class="w-1/2 mx-auto" />
+      <div class="w-1/3 mx-auto relative">
+        <img :src="idImage" alt="Image Preview" />
+        <button
+          @click="removeImage"
+          class="cursor-pointer absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+        >
+          &times;
+        </button>
+      </div>
     </div>
 
     <p v-if="error" class="text-red-500 my-5">{{ error }}</p>
+    <p v-if="validating" class="text-stone-400 my-5">{{ validating }}</p>
   </div>
 </template>
 
 <script>
+import { validateImage } from "../services/imageValidationService";
 export default {
   data() {
     return {
       file: null,
       idImage: null,
       error: null,
+      validating: null,
+      validLabels: [
+        "card",
+        "document",
+        "paper",
+        "text",
+        "envelope",
+        "label",
+        "rectangle",
+        "dust",
+      ],
     };
   },
   methods: {
-    handleFileChange(event) {
+    async handleFileChange(event) {
       const file = event.target.files[0];
       this.file = file;
-
-      if (this.file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(this.file);
-        reader.onload = () => {
-          this.idImage = reader.result;
-        };
+      this.error = null;
+      this.idImage = null;
+      this.validating = "validating image...";
+      try {
+        const isValid = await validateImage(this.file, this.validLabels);
+        if (isValid) {
+          const reader = new FileReader();
+          reader.readAsDataURL(this.file);
+          reader.onload = () => {
+            this.idImage = reader.result;
+            this.error = null;
+            this.validating = null;
+            this.$emit("idUploaded", this.file);
+          };
+        } else {
+          this.error = "Invalid ID image. Please upload a clear ID photo.";
+          this.validating = null;
+        }
+      } catch (error) {
+        this.error = "Error validating image. Please try again.";
+        this.validating = null;
+        console.log(error);
       }
-      this.$emit("idUploaded", this.file);
+    },
+    removeImage() {
+      this.idImage = null;
+      this.error = null;
+      this.validating = null;
     },
   },
 };

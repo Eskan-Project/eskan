@@ -94,7 +94,6 @@ export default {
       this.file = file;
     },
     async registerUser() {
-      this.$store.commit("setLoading", true);
       try {
         let idImageUrl;
         if (this.role === "owner" && this.file) {
@@ -117,8 +116,6 @@ export default {
         router.push("/");
       } catch (error) {
         console.error("Error setting role:", error);
-      } finally {
-        this.$store.commit("setLoading", false);
       }
     },
   },

@@ -138,9 +138,27 @@ export default {
     },
   },
   watch: {
+    currentPage() {
+      this.updateQueryParams();
+    },
+    searchQuery() {
+      this.updateQueryParams();
+    },
     selectedGovernorate(newVal) {
       this.selectedCity = "";
       this.$refs.searchBar.updateCities(newVal);
+      this.updateQueryParams();
+    },
+    selectedCity() {
+      this.updateQueryParams();
+    },
+    selectedPropertyStatus() {
+      this.updateQueryParams();
+    },
+    selectedRooms(newVal) {
+      if (!isNaN(+newVal)) {
+        this.updateQueryParams();
+      }
     },
   },
   mounted() {
@@ -162,6 +180,18 @@ export default {
         this.error = "Failed to load properties. Please try again later.";
         console.error("Fetch properties error:", error);
       }
+    },
+    updateQueryParams() {
+      this.$router.push({
+        query: {
+          search: this.searchQuery || "",
+          governorate: this.selectedGovernorate || "",
+          city: this.selectedCity || "",
+          propertyStatus: this.selectedPropertyStatus || "",
+          rooms: this.selectedRooms || "",
+          page: this.currentPage || 1,
+        },
+      });
     },
     handleScroll() {
       this.isScrolled = window.scrollY > 0;
@@ -194,6 +224,9 @@ export default {
         selectedRooms: "",
         currentPage: 1,
         isExpanded: false,
+      });
+      this.$router.push({
+        query: {},
       });
     },
   },

@@ -9,22 +9,26 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search by keyword"
-          class="px-2 py-2 text-sm "
+          class="px-2 py-2 text-sm"
         />
 
         <select
           v-model="selectedCity"
-          class="text-[#364365] hover:bg-gray-500 hover:text-white text-gray-900 p-2 rounded-md text-sm "
+          class="text-[#364365] hover:bg-gray-500 hover:text-white text-gray-900 p-2 rounded-md text-sm"
         >
           <option value="" disabled selected>City</option>
-          <option class="text-gray-900 hover:text-white" v-for="City in uniqueCitys" :key="City">
+          <option
+            class="text-gray-900 hover:text-white"
+            v-for="City in uniqueCitys"
+            :key="City"
+          >
             {{ City }}
           </option>
         </select>
 
         <select
           v-model="selectedRooms"
-          class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm "
+          class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
         >
           <option value="" disabled selected>Rooms</option>
           <option v-for="rooms in uniqueRooms" :key="rooms">
@@ -34,7 +38,7 @@
 
         <select
           v-model="selectedPropertyStatus"
-          class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm "
+          class="hover:bg-gray-500 hover:text-white p-2 rounded-md text-sm"
         >
           <option value="" disabled selected>Property Status</option>
           <option v-for="status in uniquePropertyStatus" :key="status">
@@ -121,7 +125,9 @@
       v-else
       class="flex items-center justify-center w-auto p-3 transition-all duration-300"
     >
-      <div class="border rounded-full w-full flex items-center p-2 bg-white shadow-md">
+      <div
+        class="border rounded-full w-full flex items-center p-2 bg-white shadow-md"
+      >
         <span class="px-2">{{ selectedCity || "Anywhere" }}</span>
         <span class="px-2">{{ selectedRooms || "Any Rooms" }}</span>
         <span class="px-2">
@@ -198,8 +204,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 @media (max-width: 859px) {
   .rounded-full {
@@ -207,15 +211,3 @@ export default {
   }
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-

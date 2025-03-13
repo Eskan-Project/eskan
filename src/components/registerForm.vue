@@ -4,6 +4,7 @@ import uploadToCloudinary from "@/services/uploadToCloudinary";
 import hCaptcha from "@/components/hCaptcha.vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { validateImage } from "@/services/imageValidationService";
 
 export default {
   components: {
@@ -22,6 +23,18 @@ export default {
       file: null,
       imagePreview: null,
       captchaToken: "",
+      isValid: false,
+      validating: null,
+      validLabels: [
+        "card",
+        "document",
+        "paper",
+        "text",
+        "envelope",
+        "label",
+        "rectangle",
+        "dust",
+      ],
     };
   },
   computed: {
@@ -114,21 +127,30 @@ export default {
       }
     },
 
-    handleFileChange(event) {
+    async handleFileChange(event) {
       const file = event.target.files[0];
       this.file = file;
-
-      if (this.file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(this.file);
-        reader.onload = () => {
-          this.imagePreview = reader.result;
-        };
+      this.validating = "validating image...";
+      try {
+        const isValid = await validateImage(this.file, this.validLabels);
+        if (isValid) {
+          this.isValid = true;
+          this.imagePreview = URL.createObjectURL(this.file);
+          this.validating = null;
+        } else {
+          this.errors.file =
+            "Invalid ID image. Please upload a clear ID photo.";
+          this.validating = null;
+        }
+      } catch (error) {
+        this.errors.file = "Invalid ID image. Please upload a clear ID photo.";
+        this.validating = null;
       }
     },
     removeImage() {
       this.imagePreview = null;
       this.file = null;
+      this.isValid = false;
     },
     togglePassword() {
       this.showPassword = !this.showPassword;
@@ -275,15 +297,29 @@ export default {
               {{ errors.confirmPassword }}
             </p>
           </div>
-          <div v-if="isOwner" class="text-center text-black">
+          <div
+            v-if="isOwner && validating === null"
+            class="text-center text-black"
+          >
             <p class="font-medium p-2" v-if="!imagePreview">
               please upload your ID
             </p>
-            <div class="border-1 border-stone-400 border-dashed p-5 mx-10">
-              <div v-if="imagePreview">
+            <div v-if="imagePreview" class="p-5 mb-5">
+              <div class="w-1/3 mx-auto relative">
                 <img :src="imagePreview" alt="Image Preview" />
+                <button
+                  @click="removeImage"
+                  class="cursor-pointer absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                >
+                  &times;
+                </button>
               </div>
-              <label for="file" v-else>
+            </div>
+            <div
+              v-else
+              class="border-1 border-stone-400 border-dashed p-5 mx-10 mb-5"
+            >
+              <label for="file">
                 <i
                   class="bi bi-cloud-upload text-5xl text-stone-400 cursor-pointer"
                 ></i>
@@ -309,6 +345,12 @@ export default {
               </p>
             </div>
           </div>
+          <p
+            v-if="validating !== null"
+            class="text-stone-400 text-sm mb-5 text-center"
+          >
+            {{ validating }}
+          </p>
           <div
             class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
           >
@@ -327,11 +369,14 @@ export default {
           </div>
 
           <button
+            :disabled="!isValid"
             type="submit"
             class="border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
             :class="{
               'opacity-50 cursor-not-allowed': loading,
               'cursor-pointer': !loading,
+              'opacity-50 cursor-not-allowed': !isValid,
+              'cursor-pointer': isValid,
             }"
           >
             {{ loading ? "Loading..." : "Create Account" }}
