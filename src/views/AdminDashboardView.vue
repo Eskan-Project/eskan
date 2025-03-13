@@ -53,6 +53,11 @@ export default {
           label: "Owners",
           icon: "bi bi-person-workspace",
         },
+        {
+          path: "/admin/add-admin",
+          label: "Add Admin",
+          icon: "bi bi-person-fill-add",
+        },
         { path: "/admin/orders", label: "Requests", icon: "bi bi-cart" },
       ],
     };
