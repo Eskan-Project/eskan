@@ -130,9 +130,11 @@ export default {
     async handleFileChange(event) {
       const file = event.target.files[0];
       this.file = file;
-      this.validating = "validating image...";
+      this.validating = "Preparing image data...";
       try {
-        const isValid = await validateImage(this.file, this.validLabels);
+        const isValid = await validateImage(this.file, (message) => {
+          this.validating = message;
+        });
         if (isValid) {
           this.isValid = true;
           this.imagePreview = URL.createObjectURL(this.file);
