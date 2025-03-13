@@ -29,6 +29,8 @@
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "lodash": "^4.17.21",
+    "nodemailer": "^6.10.0",
+    "path": "^0.12.7",
     "stripe": "^17.7.0",
     "sweetalert2": "^11.17.2",
     "swiper": "^11.2.5",
