@@ -276,4 +276,39 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
+  async createPropertyFromRequest({ commit, rootState }, requestData) {
+    commit("startLoading", null, { root: true });
+    try {
+      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
+        throw new Error("User not authenticated or user details not loaded");
+      }
+
+      // Create a new property ID
+      const propertyId = doc(collection(db, "properties")).id;
+
+      // Prepare the property data from request data
+      const propertyData = {
+        ...requestData,
+        status: "approved",
+        lastUpdated: new Date(),
+        approvedBy: rootState.auth.userDetails.uid,
+        approvedAt: new Date(),
+      };
+
+      // Remove request-specific fields if needed
+      delete propertyData.id; // Remove the request ID
+
+      console.log("Property Data from Request:", propertyData);
+
+      // Add to properties collection
+      await setDoc(doc(db, "properties", propertyId), propertyData);
+
+      return propertyId;
+    } catch (error) {
+      console.error("Error creating property from request:", error);
+      throw error;
+    } finally {
+      commit("stopLoading", null, { root: true });
+    }
+  },
 };

@@ -146,6 +146,14 @@
                       request.address
                     }}</span>
                   </p>
+
+                  <router-link :to="`/admin/owners/edit/${request.ownerId}`">
+                    <button
+                      class="w-[100%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    >
+                      owner Profile
+                    </button>
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -210,13 +218,19 @@
         </div>
         <div class="text-center py-4" v-if="!loading">
           <!-- Replace the existing Edit button -->
-          <router-link :to="`/admin/properties/edit/${id}`">
-            <button
-              class="w-[25%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-            >
-              Edit Request
-            </button>
-          </router-link>
+
+          <button
+            @click="acceptRequest"
+            type="button"
+            class="w-[25%] text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-500 dark:focus:ring-green-800"
+          >
+            Accept Request
+          </button>
+          <button
+            class="w-[25%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+          >
+            Setup Meeting
+          </button>
 
           <button
             @click="handleDeleteRequest"
@@ -294,11 +308,66 @@ export default {
     }
     this.loadData();
   },
+  watch: {
+    "$route.params.id": {
+      handler(newId) {
+        if (newId && newId !== this.id) {
+          this.id = newId;
+          this.loadData();
+        }
+      },
+      immediate: true,
+    },
+  },
   created() {
     // Empty created hook
   },
   methods: {
+    // Add this to your methods section
+
     ...mapActions("requests", ["getRequestById", "deleteRequest"]),
+    ...mapActions("property", ["createPropertyFromRequest"]),
+
+    async acceptRequest() {
+      try {
+        const result = await Swal.fire({
+          title: "Accept this request?",
+          text: "This will create a new property listing and remove the request.",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, accept it!",
+        });
+
+        if (result.isConfirmed) {
+          // Create a clean copy of the request data
+          const requestData = { ...this.request };
+
+          // Create property from request
+          await this.createPropertyFromRequest(requestData);
+
+          // Delete the request
+          await this.deleteRequest(this.id);
+
+          await Swal.fire(
+            "Accepted!",
+            "The request has been converted to a property listing.",
+            "success"
+          );
+
+          // Redirect to properties list
+          this.$router.push("/admin/properties");
+        }
+      } catch (error) {
+        console.error("Error accepting request:", error);
+        Swal.fire(
+          "Error",
+          "Failed to accept the request. Please try again.",
+          "error"
+        );
+      }
+    },
 
     async loadData() {
       this.loading = true;
@@ -355,17 +424,6 @@ export default {
     },
 
     // Use watch to handle route changes
-    watch: {
-      "$route.params.id": {
-        handler(newId) {
-          if (newId && newId !== this.id) {
-            this.id = newId;
-            this.loadData();
-          }
-        },
-        immediate: true,
-      },
-    },
 
     initMap() {
       const { lat, lng } = this.request.coordinates;
