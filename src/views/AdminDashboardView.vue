@@ -58,7 +58,7 @@ export default {
           label: "Add Admin",
           icon: "bi bi-person-fill-add",
         },
-        { path: "/admin/orders", label: "Requests", icon: "bi bi-cart" },
+        { path: "/admin/requests", label: "Requests", icon: "bi bi-cart" },
       ],
     };
   },
