@@ -47,7 +47,7 @@ export default {
     }
   },
 
-  async getRequestByUid({ commit }, uid) {
+  async getRequestById({ commit }, uid) {
     commit("startLoading", null, { root: true });
     try {
       const requestDoc = await getDoc(doc(db, "requests", uid));
