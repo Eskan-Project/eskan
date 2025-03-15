@@ -371,13 +371,13 @@ export default {
           </div>
 
           <button
-            :disabled="!isValid"
+            :disabled="isOwner && !isValid"
             type="submit"
             class="border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
             :class="{
               'opacity-50 cursor-not-allowed': loading,
               'cursor-pointer': !loading,
-              'opacity-50 cursor-not-allowed': !isValid,
+              'opacity-50 cursor-not-allowed': isOwner && !isValid,
               'cursor-pointer': isValid,
             }"
           >
