@@ -93,7 +93,7 @@
         </button>
       </div>
 
-      <div v-else class="rounded-full flex items-center bg-white p-2 relative w-full">
+      <div v-else class="rounded-full search-response flex items-center bg-white p-2 relative w-full">
         <div class="relative w-full">
           <input
             :value="searchQuery"
@@ -110,109 +110,105 @@
           </button>
         </div>
         <transition name="fade-slide">
-    <div
-      v-if="showFilterOptions"
-      ref="filterContainer"
-      class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-full z-10 grid grid-cols-1 gap-4"
-    >
-      <!-- Governorate Dropdown -->
-      <div class="relative w-full">
-        <div
-          @click="toggleGovernorateDropdown"
-          class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
-        >
-          <span>{{ selectedGovernorateLabel || "Select Governorate" }}</span>
-          <span>🔽</span>
-        </div>
-
-        <ul
-          v-if="isGovernorateOpen"
-          class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
-        >
-          <li
-            v-for="loc in governorates"
-            :key="loc.value"
-            @click="selectGovernorate(loc)"
-            class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+          <div
+            v-if="showFilterOptions"
+            ref="filterContainer"
+            class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-full z-10 grid grid-cols-1 gap-4"
           >
-            <i class="bi bi-geo-alt"></i>
-            <span>{{ loc.label }}</span>
-          </li>
-        </ul>
+            <div class="relative w-full">
+              <div
+                @click="toggleGovernorateDropdown"
+                class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
+              >
+                <span>{{ selectedGovernorateLabel || "Select Governorate" }}</span>
+                <span>🔽</span>
+              </div>
+
+              <ul
+                v-if="isGovernorateOpen"
+                class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
+              >
+                <li
+                  v-for="loc in governorates"
+                  :key="loc.value"
+                  @click="selectGovernorate(loc)"
+                  class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+                >
+                  <i class="bi bi-geo-alt"></i>
+                  <span>{{ loc.label }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="relative w-full">
+              <div
+                @click="togglePropertyStatusDropdown"
+                class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
+              >
+                <span>{{ selectedPropertyStatusLabel || "Select Status" }}</span>
+                <span>🔽</span>
+              </div>
+
+              <ul
+                v-if="isPropertyStatusOpen"
+                class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
+              >
+                <li
+                  v-for="option in propertyStatusOptions"
+                  :key="option.value"
+                  @click="selectPropertyStatus(option)"
+                  class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+                >
+                  <span>{{ option.label }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <input
+                type="number"
+                :value="selectedRooms"
+                placeholder="Enter number"
+                @input="$emit('update:selectedRooms', $event.target.value)"
+                class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+              />
+            </div>
+
+            <button
+              class="bg-[#364365] text-white font-bold py-2 px-4 rounded hover:bg-[#2c3751] transition duration-300 w-full"
+              @click="resetFilters"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </transition>
       </div>
+    </div>
 
-      <!-- Property Status Dropdown -->
-      <div class="relative w-full">
-        <div
-          @click="togglePropertyStatusDropdown"
-          class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
-        >
-          <span>{{ selectedPropertyStatusLabel || "Select Status" }}</span>
-          <span>🔽</span>
-        </div>
-
-        <ul
-          v-if="isPropertyStatusOpen"
-          class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
-        >
-          <li
-            v-for="option in propertyStatusOptions"
-            :key="option.value"
-            @click="selectPropertyStatus(option)"
-            class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
-          >
-            <span>{{ option.label }}</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Rooms Number Input -->
-      <div>
-        <input
-          type="number"
-          :value="selectedRooms"
-          placeholder="Enter number"
-          @input="$emit('update:selectedRooms', $event.target.value)"
-          class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
-        />
-      </div>
-
-      <!-- Reset Filters Button -->
+    <div v-else class="flex items-center justify-center p-3 transition-all duration-300 w-full">
+      <div class="border rounded-full bg-white shadow-md text-[#364365] w-full px-4 py-2 flex items-center gap-2">
+        <div class="grid grid-cols-3 flex-grow text-center">
+<span class="px-2">{{ selectedGovernorateName || "Anywhere" }}</span>
+<span class="px-2">{{ selectedPropertyStatus || "Any Status" }}</span>
+<span class="px-2">{{ selectedRooms || "Any Rooms" }}</span>
+</div>
+<div class="flex gap-2">
       <button
-        class="bg-[#364365] text-white font-bold py-2 px-4 rounded hover:bg-[#2c3751] transition duration-300 w-full"
+        class="bg-[#364365] text-white w-[40px] h-[30px] rounded-full hover:scale-110 transition-transform cursor-pointer flex items-center justify-center"
+        @click="$emit('toggle-search')"
+      >
+        Q
+      </button>
+
+      <button
+        v-if="selectedGovernorate"
+        class="bg-[#364365] text-white w-[40px] h-[30px] rounded-full hover:scale-110 transition-transform cursor-pointer flex items-center justify-center"
         @click="resetFilters"
       >
-        Reset Filters
+        X
       </button>
     </div>
-  </transition>
-      </div>
-    </div>
-
-    <div
-      v-else
-      class="flex items-center justify-center p-3 transition-all duration-300  "
-    >
-      <div class="border  rounded-full flex items-center p-2 bg-white shadow-md text-[#364365] w-full">
-        
-        <span class="px-2 w-full ">{{ selectedGovernorateName || "Anywhere" }}</span>
-
-        <span class="px-2 w-full">{{ selectedPropertyStatus || "Any Status" }}</span>
-        <span class="px-2 w-full">{{ selectedRooms || "Any Rooms" }}</span>
-        <button
-          class="bg-[#364365] text-white w-[150px] h-10 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
-          @click="$emit('toggle-search')"
-        >
-          Q
-        </button>
-        <button
-          v-if="selectedGovernorate"
-          class="bg-[#364365] text-white w-[150px] h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
-@click="resetFilters"
->
-X
-</button>
-</div>
+  </div>
 </div>
 </div>
 </template>
@@ -265,7 +261,7 @@ roomsOptions: [
 { value: "3", label: "3 Rooms" },
 { value: "4", label: "4 Rooms" },
 { value: "5", label: "5 Rooms" },
-{ value: "6", label: "6+ Rooms"  },
+{ value: "6", label: "6+ Rooms" },
 ],
 }),
 computed: {
@@ -276,15 +272,21 @@ this.governorates.find((g) => g.value === this.selectedGovernorate)
 );
 },
 selectedGovernorateLabel() {
-const selected = this.governorates.find((loc) => loc.value === this.selectedGovernorateValue);
+const selected = this.governorates.find(
+(loc) => loc.value === this.selectedGovernorateValue
+);
 return selected ? selected.label : "";
 },
 selectedPropertyStatusLabel() {
-const selected = this.propertyStatusOptions.find((opt) => opt.value === this.selectedPropertyStatusValue);
+const selected = this.propertyStatusOptions.find(
+(opt) => opt.value === this.selectedPropertyStatusValue
+);
 return selected ? selected.label : "";
 },
 selectedRoomsLabel() {
-const selected = this.roomsOptions.find((room) => room.value === this.selectedRoomsValue);
+const selected = this.roomsOptions.find(
+(room) => room.value === this.selectedRoomsValue
+);
 return selected ? selected.label : "";
 },
 },
@@ -367,16 +369,15 @@ this.isRoomsOpen = false;
 </script>
 <style scoped>
 @media (max-width: 859px) {
-.rounded-full {
-width: 70vw !important;
+.search-response {
+width: 80vw !important; 
 }
 select option {
-  padding: 8px;
-  cursor: pointer;
-}
-
+padding: 8px;
+cursor: pointer;
+}   
 select option:hover {
-  background-color: #f3f4f6;
+background-color: #f3f4f6;
 }
 }
 </style>
