@@ -216,6 +216,59 @@
             </div>
           </div>
         </div>
+
+        <div
+          v-if="meetingInfo"
+          class="mt-8 w-full bg-white shadow-lg rounded-lg p-6"
+        >
+          <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
+            Schedule Verification Meeting
+          </h2>
+          <form @submit.prevent="scheduleMeeting" class="space-y-4">
+            <div class="flex flex-col space-y-2">
+              <label class="text-gray-700 font-medium"
+                >Meeting Date/Time:</label
+              >
+              <input
+                type="datetime-local"
+                v-model="meetingData.date"
+                required
+                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <label class="text-gray-700 font-medium"
+                >Duration (minutes):</label
+              >
+              <input
+                type="number"
+                v-model="meetingData.duration"
+                required
+                min="15"
+                max="180"
+                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <label class="text-gray-700 font-medium">Owner Email:</label>
+              <input
+                type="email"
+                v-model="request.propertyContact.email"
+                required
+                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              Schedule Meeting
+            </button>
+          </form>
+        </div>
         <div class="text-center py-4" v-if="!loading">
           <!-- Replace the existing Edit button -->
 
@@ -227,6 +280,7 @@
             Accept Request
           </button>
           <button
+            @click="showMeetingForm"
             class="w-[25%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
           >
             Setup Meeting
@@ -250,6 +304,11 @@ import L from "leaflet";
 import { nextTick } from "vue";
 import Swal from "sweetalert2";
 import { mapActions, mapState } from "vuex";
+import emailjs from "emailjs-com";
+import { createEvent } from "ics";
+
+// Initialize EmailJS
+emailjs.init(import.meta.env.VITE_EMAILJS_USER_ID);
 
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
@@ -257,6 +316,12 @@ import cities from "@/assets/data/cities.json";
 export default {
   data() {
     return {
+      meetingData: {
+        date: "",
+        duration: 30,
+        ownerEmail: "",
+        adminEmail: "mohand27m@gmail.com", // Hardcoded admin email
+      },
       id: null,
       currentImageIndex: 0,
       userLocation: null,
@@ -269,6 +334,7 @@ export default {
       mapLoaded: false,
       mapLoading: false,
       mapInstance: null,
+      meetingInfo: false,
     };
   },
   computed: {
@@ -328,6 +394,181 @@ export default {
     ...mapActions("requests", ["getRequestById", "deleteRequest"]),
     ...mapActions("property", ["createPropertyFromRequest"]),
 
+    // Replace the existing generateMeetLink method with this one
+    generateMeetLink() {
+      // Generate a unique meeting ID based on timestamp and random string
+      const timestamp = new Date().getTime();
+      const randomStr = Math.random().toString(36).substring(2, 8);
+
+      // Create a meeting ID that's URL-friendly
+      const meetingId = `eskan-meeting-${timestamp}-${randomStr}`;
+
+      // Use Jitsi Meet which is an open-source video conferencing solution
+      return `https://meet.jit.si/${meetingId}`;
+    },
+
+    // Update the scheduleMeeting method to fix the calendar issue
+    async scheduleMeeting() {
+      try {
+        // Validate meeting date
+        const meetingDate = new Date(this.meetingData.date);
+        const now = new Date();
+
+        // Check if meeting date is in the past
+        if (meetingDate < now) {
+          Swal.fire({
+            title: "Invalid Date",
+            text: "Meeting cannot be scheduled in the past. Please select a future date and time.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          return;
+        }
+
+        // Check if meeting is within 48 hours
+        const hoursDifference = (meetingDate - now) / (1000 * 60 * 60);
+        if (hoursDifference < 48) {
+          const result = await Swal.fire({
+            title: "Short Notice",
+            text: "It's recommended to schedule meetings at least 48 hours in advance. Do you want to proceed anyway?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, proceed",
+            cancelButtonText: "No, change date",
+          });
+
+          if (!result.isConfirmed) {
+            return;
+          }
+        }
+
+        // Show loading indicator
+        Swal.fire({
+          title: "Scheduling meeting...",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        // Generate meeting link
+        const meetLink = this.generateMeetLink();
+
+        // Format meeting date for display
+        const formattedDate = meetingDate.toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Set owner email from request data if not already set
+        if (
+          !this.meetingData.ownerEmail &&
+          this.request.propertyContact?.email
+        ) {
+          this.meetingData.ownerEmail = this.request.propertyContact.email;
+        }
+
+        // Generate calendar file content
+        const calendarFile = await this.generateCalendarFile(meetLink);
+
+        // Create a downloadable link for the calendar file
+        const blob = new Blob([calendarFile], { type: "text/calendar" });
+        const calendarUrl = window.URL.createObjectURL(blob);
+
+        // Create calendar details in HTML format for the email
+        const calendarDetails = `
+          <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p><strong>📅 Add to your calendar:</strong></p>
+            <p>Title: Eskan Property Verification - ${
+              this.request.title || "Property"
+            }</p>
+            <p>Date: ${formattedDate}</p>
+            <p>Duration: ${this.meetingData.duration} minutes</p>
+            <p>Location: <a href="${meetLink}" target="_blank">${meetLink}</a></p>
+            <p>Description: Property verification meeting for ${
+              this.request.title || "property"
+            } located at ${this.locationText || "address"}.</p>
+          </div>
+        `;
+
+        // Prepare EmailJS parameters with calendar details in HTML
+        const templateParams = {
+          to_name: this.request.propertyContact?.name || "Property Owner",
+          property_title: this.request.title || "Property Verification",
+          meeting_date: formattedDate,
+          meeting_duration: this.meetingData.duration + " minutes",
+          meet_link: meetLink,
+          owner_email: this.request.propertyContact?.email || "",
+          admin_email: this.meetingData.adminEmail,
+          property_address: this.locationText || "Property Location",
+          calendar_details: calendarDetails,
+        };
+
+        console.log("Sending email with params:", templateParams);
+
+        // Send email through EmailJS
+        await emailjs.send(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          templateParams
+        );
+
+        // Download calendar file for admin
+        const link = document.createElement("a");
+        link.href = calendarUrl;
+        link.setAttribute("download", "eskan_meeting.ics");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Update request status
+        try {
+          await this.updateRequestStatus(this.id, {
+            status: "Meeting Scheduled",
+            meetingDetails: {
+              date: meetingDate,
+              duration: this.meetingData.duration,
+              meetLink: meetLink,
+            },
+          });
+        } catch (error) {
+          console.error("Failed to update request status:", error);
+          // Continue with the process even if status update fails
+        }
+
+        // Show success message
+        Swal.fire({
+          title: "Meeting Scheduled!",
+          html: `
+            <p>Meeting details have been sent to ${this.request.propertyContact?.email} and ${this.meetingData.adminEmail}</p>
+         
+          `,
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+
+        // Reset form and hide it
+        this.meetingData.date = "";
+        this.meetingData.duration = 30;
+        this.meetingInfo = false;
+      } catch (error) {
+        console.error("Scheduling failed:", error);
+        Swal.fire({
+          title: "Error",
+          text: `Failed to schedule meeting: ${error.message}`,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    },
+
+    showMeetingForm() {
+      this.meetingInfo = true;
+    },
     async acceptRequest() {
       try {
         const result = await Swal.fire({
@@ -497,6 +738,69 @@ export default {
         popupAnchor: [0, -32],
       });
     },
+
+    // Add the missing generateCalendarFile method
+    async generateCalendarFile(meetLink) {
+      const startDate = new Date(this.meetingData.date);
+      const endDate = new Date(
+        startDate.getTime() + this.meetingData.duration * 60000
+      );
+
+      // Format date components for ICS
+      const start = [
+        startDate.getFullYear(),
+        startDate.getMonth() + 1,
+        startDate.getDate(),
+        startDate.getHours(),
+        startDate.getMinutes(),
+      ];
+
+      const event = {
+        start,
+        duration: { minutes: this.meetingData.duration },
+        title: `Eskan Property Verification: ${
+          this.request.title || "Property"
+        }`,
+        description: `Property verification meeting for ${
+          this.request.title || "property"
+        } located at ${
+          this.locationText || "address"
+        }.\n\nJoin the meeting: ${meetLink}`,
+        location: meetLink,
+        url: meetLink,
+        status: "CONFIRMED",
+        busyStatus: "BUSY",
+        organizer: { name: "Eskan Admin", email: this.meetingData.adminEmail },
+        attendees: [
+          {
+            name: this.request.propertyContact?.name || "Property Owner",
+            email: this.request.propertyContact?.email,
+            rsvp: true,
+            partstat: "ACCEPTED",
+            role: "REQ-PARTICIPANT",
+          },
+          {
+            name: "Eskan Admin",
+            email: this.meetingData.adminEmail,
+            rsvp: true,
+            partstat: "ACCEPTED",
+            role: "CHAIR",
+          },
+        ],
+        productId: "Eskan/Property/Verification",
+      };
+
+      return new Promise((resolve, reject) => {
+        createEvent(event, (error, value) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(value);
+          }
+        });
+      });
+    },
+
     // Owner details methods
     toggleOwnerDetails() {
       this.isOwnerDetailsVisible = !this.isOwnerDetailsVisible;
@@ -546,7 +850,24 @@ export default {
         this.mapInstance = null;
       }
     },
-
+    // Add this to your methods section in AdminRequestDetails.vue
+    async updateRequestStatus(requestId, updateData) {
+      try {
+        // Call the existing updateRequest action from your Vuex store
+        await this.$store.dispatch("requests/updateRequest", {
+          uid: requestId, // Note: using uid parameter as expected by the action
+          requestData: {
+            // Note: using requestData parameter as expected by the action
+            status: updateData.status,
+            meetingDetails: updateData.meetingDetails,
+          },
+        });
+        return true;
+      } catch (error) {
+        console.error("Error updating request status:", error);
+        throw error;
+      }
+    },
     beforeRouteLeave(to, from, next) {
       // Cleanup map before leaving
       if (this.mapInstance) {
