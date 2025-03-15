@@ -77,10 +77,6 @@ import {
   getDoc,
   setDoc,
   onSnapshot,
-  collection,
-  query,
-  where,
-  getDocs,
   arrayUnion,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -99,7 +95,7 @@ export default {
   data() {
     return {
       isOwnerDetailsVisible: false,
-      loading: false, // Set loading to false initially
+      loading: false,
       showPaymentPrompt: false,
     };
   },
@@ -116,17 +112,21 @@ export default {
         return;
       }
 
+    
+      if (this.property.propertyContact && this.property.propertyContact.userId === user.uid) {
+        this.isOwnerDetailsVisible = true;
+        return;
+      }
+
       const db = getFirestore();
       const userRef = doc(db, `users/${user.uid}`);
       try {
         const docSnap = await getDoc(userRef);
         if (docSnap.exists() && docSnap.data().paidProperties) {
           if (!docSnap.data().paidProperties.includes(this.id)) {
-
             if (docSnap.data().freePropertyViewed) {
               this.showPaymentPrompt = true;
             } else {
-
               await setDoc(
                 userRef,
                 {
@@ -141,8 +141,7 @@ export default {
             this.isOwnerDetailsVisible = true;
           }
         } else {
-
-          if (docSnap.data().freePropertyViewed) {
+          if (docSnap.data() && docSnap.data().freePropertyViewed) {
             this.showPaymentPrompt = true;
           } else {
             await setDoc(
@@ -190,22 +189,13 @@ export default {
       const userRef = doc(db, `users/${user.uid}`);
       const docSnap = await getDoc(userRef);
       if (docSnap.exists() && docSnap.data().paidProperties) {
-    this.isOwnerDetailsVisible = docSnap.data().paidProperties.includes(
-      this.id
-    );
-  } else {
-    this.isOwnerDetailsVisible = false;
-  }
-},
+        this.isOwnerDetailsVisible = docSnap.data().paidProperties.includes(
+          this.id
+        );
+      } else {
+        this.isOwnerDetailsVisible = false;
+      }
+    },
   },
-};  
+};
 </script>
-
-
-
-
-
-
-
-
-
