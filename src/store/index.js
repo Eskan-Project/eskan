@@ -4,6 +4,7 @@ import property from "./modules/property";
 import notifications from "./modules/notifications";
 import users from "./modules/users";
 import owners from "./modules/owners";
+import requests from "./modules/requests";
 
 export default createStore({
   state: {
@@ -34,5 +35,6 @@ export default createStore({
     notifications,
     users,
     owners,
+    requests,
   },
 });

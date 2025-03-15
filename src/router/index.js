@@ -28,7 +28,10 @@ import AdminOwnerList from "@/components/adminDash/AdminOwnerList.vue";
 import AdminEditOwner from "@/components/adminDash/AdminEditOwner.vue";
 import AdminAddOwner from "@/components/adminDash/AdminAddOwner.vue";
 import AdminAddAdmin from "@/components/adminDash/AdminAddAdmin.vue";
+import AdminRequestList from "@/components/adminDash/AdminRequestList.vue";
+import AdminRequestDetails from "@/components/adminDash/AdminRequestDetails.vue";
 import Payment from "@/components/Payment.vue";
+import AdminRequestDetailsVue from "@/components/adminDash/AdminRequestDetails.vue";
 
 const routes = [
   {
@@ -187,6 +190,16 @@ const routes = [
         path: "add-admin",
         name: "addAdmin",
         component: AdminAddAdmin,
+      },
+      {
+        path: "requests",
+        name: "propertyRequests",
+        component: AdminRequestList,
+      },
+      {
+        path: "requests/:id",
+        name: "requestDetails",
+        component: AdminRequestDetails,
       },
     ],
   },

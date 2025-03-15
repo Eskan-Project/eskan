@@ -35,17 +35,6 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Nickname</label
-            >
-            <input
-              v-model="formData.nickName"
-              type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
             <input
               v-model="formData.email"
@@ -183,7 +172,7 @@ export default {
         location: response.location || "",
         gender: response.gender || "Male",
         role: response.role || "owner",
-        isActive: response.isActive !== undefined ? response.isActive : true,
+        isActive: response.isActive,
         photo: response.photo || "",
       };
     } catch (error) {

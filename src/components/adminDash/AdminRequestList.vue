@@ -7,26 +7,28 @@
           <div
             class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900 p-4"
           >
-            <div
-              class="relative inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3"
-            >
-              <i class="bi bi-search absolute right-2"></i>
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+              >
+                <i class="bi bi-search"></i>
+              </div>
               <input
                 type="text"
                 v-model="searchQuery"
                 id="table-search-users"
-                class="block pt-2 ps-10 text-sm !text-gray-200 dark:text-gray-200 placeholder:text-gray-200 dark:placeholder:text-gray-200 bg-gray-700 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search for users"
+                class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search for Requests"
                 @input="resetPagination"
               />
             </div>
             <div class="ml-4">
-              <router-link to="/admin/users/add-user">
+              <router-link to="/admin/add-property">
                 <button
                   type="button"
-                  class="cursor-pointer text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                 >
-                  Add User
+                  Add Property
                 </button>
               </router-link>
             </div>
@@ -41,16 +43,16 @@
                 <th scope="col" class="p-4">
                   <div class="flex items-center"></div>
                 </th>
-                <th scope="col" class="px-6 py-3">Name</th>
-                <th scope="col" class="px-6 py-3">Email</th>
-                <th scope="col" class="px-6 py-3">National Id</th>
+                <th scope="col" class="px-6 py-3">Title</th>
+                <th scope="col" class="px-6 py-3">Status</th>
+                <th scope="col" class="px-6 py-3">Price</th>
                 <th scope="col" class="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="user in paginatedUsers"
-                :key="user.uid"
+                v-for="request in paginatedRequests"
+                :key="request.uid"
                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <td class="w-4 p-4"></td>
@@ -60,40 +62,37 @@
                 >
                   <img
                     class="w-10 h-10 rounded-full"
-                    :src="user.photo"
-                    alt="Jese image"
+                    :src="
+                      request.images?.length ? request.images[0] : noPhotoImage
+                    "
+                    alt="Default image"
                   />
+
                   <div class="ps-3">
                     <div class="text-base font-semibold">
-                      {{ user.name }}
+                      {{ request.title }}
+                    </div>
+                    <div class="font-normal text-gray-500">
+                      Owner Name : {{ request.propertyContact.name }}
                     </div>
                   </div>
                 </th>
                 <td class="px-6 py-4">
-                  {{ user.email }}
+                  {{ request.status }}
                 </td>
                 <td class="px-6 py-4">
-                  <div class="flex items-center">
-                    {{ user.nationalId }}
-                  </div>
+                  <div class="flex items-center">{{ request.price }} EGP</div>
                 </td>
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
-                  <router-link :to="`/admin/users/edit/${user.uid}`">
+                  <router-link :to="`/admin/requests/${request.uid}`">
                     <button
                       type="button"
-                      class="cursor-pointer w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                      class="w-[50%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     >
-                      Edit
+                      View Details
                     </button>
                   </router-link>
-                  <button
-                    @click="handleDeleteUser(user.uid)"
-                    type="button"
-                    class="cursor-pointer w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                  >
-                    Delete
-                  </button>
                 </td>
               </tr>
             </tbody>
@@ -101,7 +100,7 @@
 
           <!-- No data message -->
           <div
-            v-if="paginatedUsers.length === 0"
+            v-if="paginatedRequests.length === 0"
             class="p-4 text-center text-gray-500"
           >
             No properties found.
@@ -109,13 +108,13 @@
 
           <!-- Pagination controls -->
           <div
-            v-if="filteredUsers.length > 0"
+            v-if="filteredRequests.length > 0"
             class="flex justify-center gap-2 p-4"
           >
             <button
               @click="prevPage"
               :disabled="currentPage === 1"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
+              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
             >
               Previous
             </button>
@@ -125,7 +124,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages || totalPages === 0"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
+              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
             >
               Next
             </button>
@@ -137,12 +136,14 @@
 </template>
 
 <script>
+import noPhotoImage from "../../assets/images/no-photo.jpg";
 import { mapActions, mapState } from "vuex"; // Add mapState
 import Swal from "sweetalert2";
 
 export default {
   data() {
     return {
+      noPhotoImage,
       currentPage: 1,
       perPage: 8,
       searchQuery: "",
@@ -150,28 +151,31 @@ export default {
     };
   },
   computed: {
-    ...mapState("users", ["users"]), // Get users from state
-    filteredUsers() {
+    ...mapState("requests", ["requests"]), // Get requests from state
+    filteredRequests() {
       if (!this.searchQuery) {
-        return this.users;
+        return this.requests;
       }
 
       const query = this.searchQuery.toLowerCase();
-      return this.users.filter((user) => {
+      return this.requests.filter((request) => {
         return (
-          (user.name && user.name.toLowerCase().includes(query)) ||
-          (user.email && user.email.toLowerCase().includes(query)) ||
-          (user.nationalId && user.nationalId.includes(query))
+          (request.name && request.name.toLowerCase().includes(query)) ||
+          (request.email && request.email.toLowerCase().includes(query)) ||
+          (request.nationalId && request.nationalId.includes(query))
         );
       });
     },
     totalPages() {
-      return Math.max(1, Math.ceil(this.filteredUsers.length / this.perPage));
+      return Math.max(
+        1,
+        Math.ceil(this.filteredRequests.length / this.perPage)
+      );
     },
-    paginatedUsers() {
+    paginatedRequests() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
-      return this.filteredUsers.slice(start, end);
+      return this.filteredRequests.slice(start, end);
     },
     visiblePages() {
       // Create an array of page numbers to display, similar to front-end implementation
@@ -189,9 +193,9 @@ export default {
     },
   },
   watch: {
-    users: {
-      handler(newUsers) {
-        console.log("Users updated:", newUsers);
+    requests: {
+      handler(newRequests) {
+        console.log("requests updated:", newRequests);
       },
       immediate: true,
     },
@@ -215,8 +219,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions("users", ["getUsers", "deleteUser"]),
-    async handleDeleteUser(userId) {
+    ...mapActions("requests", ["getRequests", "deleteRequest"]),
+    async handleDeleteRequest(requestId) {
       try {
         const result = await Swal.fire({
           title: "Are you sure?",
@@ -231,19 +235,19 @@ export default {
         if (!result.isConfirmed) return;
 
         this.loading = true;
-        await this.deleteUser(userId); // Changed from deleteOne to directly use deleteUser
-        await this.loadData(); // Reload the users list after deletion
+        await this.deleteRequest(requestId); // Changed from deleteOne to directly use deleteRequest
+        await this.loadData(); // Reload the requests list after deletion
 
         await Swal.fire(
           "Deleted!",
-          "User has been deleted successfully.",
+          "Request has been deleted successfully.",
           "success"
         );
       } catch (error) {
         console.error("Delete failed:", error);
         Swal.fire(
           "Error!",
-          "Failed to delete user. Please try again.",
+          "Failed to delete request. Please try again.",
           "error"
         );
       } finally {
@@ -253,12 +257,12 @@ export default {
     // Remove the deleteOne method as it's no longer needed
     async loadData() {
       try {
-        await this.getUsers(); // Don't reassign users here, use from state
+        await this.getRequests(); // Don't reassign requests here, use from state
       } catch (error) {
-        console.error("Fetch users error:", error);
+        console.error("Fetch requests error:", error);
       }
 
-      console.log(this.users);
+      console.log(this.requests);
     },
 
     resetPagination() {

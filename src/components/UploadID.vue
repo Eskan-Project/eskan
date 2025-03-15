@@ -73,18 +73,16 @@ export default {
       this.file = file;
       this.error = null;
       this.idImage = null;
-      this.validating = "validating image...";
+      this.validating = "Preparing image data...";
       try {
-        const isValid = await validateImage(this.file, this.validLabels);
+        const isValid = await validateImage(file, (message) => {
+          this.validating = message;
+        });
         if (isValid) {
-          const reader = new FileReader();
-          reader.readAsDataURL(this.file);
-          reader.onload = () => {
-            this.idImage = reader.result;
-            this.error = null;
-            this.validating = null;
-            this.$emit("idUploaded", this.file);
-          };
+          this.idImage = URL.createObjectURL(this.file);
+          this.error = null;
+          this.validating = null;
+          this.$emit("idUploaded", this.file);
         } else {
           this.error = "Invalid ID image. Please upload a clear ID photo.";
           this.validating = null;

@@ -1,27 +1,38 @@
-import * as tf from "@tensorflow/tfjs";
-import * as mobilenet from "@tensorflow-models/mobilenet";
+import axios from "axios";
 
-export async function validateImage(file, validLabels) {
+export async function validateImage(file, onProgress = () => {}) {
   try {
-    const model = await mobilenet.load();
-    const image = new Image();
-    image.src = URL.createObjectURL(file);
-    await new Promise((resolve) => (image.onload = resolve));
+    onProgress("Preparing image data...");
+    const reader = new FileReader();
+    const base64Promise = new Promise((resolve) => {
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64Image = reader.result.split(",")[1];
+        resolve(base64Image);
+      };
+    });
+    const base64Image = await base64Promise;
 
-    const tensor = tf.browser.fromPixels(image);
-    const predictions = await model.classify(tensor);
+    onProgress("Validating ID...");
+    const res = await axios({
+      method: "POST",
+      url: "https://outline.roboflow.com/national-id-ltfb6/2",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        api_key: "62y8qpQFcqnvjHDDP1KW",
+      },
+      data: base64Image,
+    });
 
-    const isValid = predictions.some((pred) =>
-      validLabels.some(
-        (label) =>
-          pred.className.toLowerCase().includes(label) && pred.probability > 0.3
-      )
-    );
-    tensor.dispose();
+    console.log(res.data);
+    const isValid = res.data.predictions[0].confidence > 0.6;
+    console.log(isValid);
 
     return isValid;
   } catch (error) {
-    console.error("Error validating image:", error);
+    console.error("Error validating image with Roboflow:", error.message);
     throw new Error("Error validating image");
   }
 }
