@@ -12,6 +12,14 @@
       <div
         class="relative z-10 flex items-center justify-center h-full max-w-4xl mx-auto p-4"
       >
+      <div
+          class="shadow-lg w-full fixed left-0 z-50 transition-all duration-500 flex justify-center"
+          :class="{
+            'bg-white top-[70px] py-5': isScrolled || isExpanded,
+            'bg-transparent top-[200px] transform -translate-y-1/2':
+              !isScrolled && !isExpanded,
+          }"
+        >
         <search-bar
           ref="searchBar"
           :is-scrolled="isScrolled"
@@ -26,6 +34,7 @@
           @search="searchProperties"
           @reset="resetFilters"
         />
+      </div>
       </div>
     </section>
 

@@ -1,189 +1,220 @@
 <template>
-  <div
-    class="shadow-lg w-full fixed left-0 z-50 transition-all duration-500 flex justify-center"
-    :class="{
-      'bg-white top-[70px] py-5': isScrolled || isExpanded,
-      'bg-transparent top-[200px] -translate-y-1/2': !isScrolled && !isExpanded,
-    }"
-  >
-    <div class="flex items-center justify-center">
-      <div
-        v-if="isExpanded || !isScrolled"
-        class="inline-flex items-center gap-2 px-4 py-3 mt-5 mb-3 shadow-lg transition-all duration-300 bg-white rounded-lg"
-      >
-        <template v-if="!isSmallScreen">
+  <div class="filter-bar text-gray-900" :style="filterBarStyle">
+    <div
+      v-if="isExpanded || !isScrolled"
+      class="inline-flex items-center gap-2 px-4 py-3 mt-5 mb-3 shadow-lg transition-all duration-300 transform bg-white rounded-lg text-center flex-wrap"
+    >
+      <div v-if="!isSmallScreen" class="flex flex-wrap gap-2">
+        <input
+          :value="searchQuery"
+          @input="$emit('update:searchQuery', $event.target.value)"
+          type="text"
+          placeholder="Search by keyword"
+          class="px-2 py-1 text-sm rounded-md"
+        />
+
+        <div class="relative w-48" ref="governorateDropdown">
+          <div
+            @click="toggleGovernorateDropdown"
+            class="bg-white text-gray-700 text-sm rounded-md p-4 border-gray-300 cursor-pointer flex justify-between items-center"
+          >
+            <span>{{ selectedGovernorateLabel || "Governorate" }}</span>
+            <span>🔽</span>
+          </div>
+
+          <ul
+            v-if="isGovernorateOpen"
+            class="absolute w-full bg-white border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-52 overflow-y-auto"
+          >
+            <li
+              v-for="loc in governorates"
+              :key="loc.value"
+              @click="selectGovernorate(loc)"
+              class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+            >
+              <span>{{ loc.label }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="relative w-48" ref="propertyStatusDropdown">
+          <div
+            @click="togglePropertyStatusDropdown"
+            class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center"
+          >
+            <span>{{ selectedPropertyStatusLabel || " Property Status" }}</span>
+            <span>🔽</span>
+          </div>
+
+          <ul
+            v-if="isPropertyStatusOpen"
+            class="absolute w-full bg-white border-gray-300 rounded-md mt-1 shadow-lg z-10"
+          >
+            <li
+              v-for="option in propertyStatusOptions"
+              :key="option.value"
+              @click="selectPropertyStatus(option)"
+              class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+            >
+              <span>{{ option.label }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="relative w-48" ref="roomsDropdown">
+          <div
+            @click="toggleRoomsDropdown"
+            class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center"
+          >
+            <span>{{ selectedRoomsLabel || " Rooms Number" }}</span>
+            <span>🔽</span>
+          </div>
+
+          <ul
+            v-if="isRoomsOpen"
+            class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto"
+          >
+            <li
+              v-for="room in roomsOptions"
+              :key="room.value"
+              @click="selectRooms(room)"
+              class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+            >
+              <span>{{ room.label }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <button
+          class="bg-black text-white px-4 py-2 rounded-md m-2 transition hover:bg-gray-800"
+          @click="resetFilters"
+        >
+          Reset
+        </button>
+      </div>
+
+      <div v-else class="rounded-full flex items-center bg-white p-2 relative w-full">
+        <div class="relative w-full">
           <input
             :value="searchQuery"
             @input="$emit('update:searchQuery', $event.target.value)"
             type="text"
             placeholder="Search by keyword"
-            class="px-2 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#364365]"
+            class="px-4 py-2 rounded-md text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <select
-            :value="selectedGovernorate"
-            @change="$emit('update:selectedGovernorate', $event.target.value)"
-            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
-          >
-            <option value="" disabled selected>Governorate</option>
-            <option
-              v-for="loc in governorates"
-              :key="loc.value"
-              :value="loc.value"
-            >
-              {{ loc.label }}
-            </option>
-          </select>
-          <select
-            :value="selectedCity"
-            @change="$emit('update:selectedCity', $event.target.value)"
-            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
-          >
-            <option value="" disabled selected>City</option>
-            <option
-              v-for="city in cities"
-              :key="city.value"
-              :value="city.value"
-            >
-              {{ city.label }}
-            </option>
-          </select>
-          <select
-            :value="selectedPropertyStatus"
-            @change="
-              $emit('update:selectedPropertyStatus', $event.target.value)
-            "
-            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40"
-          >
-            <option value="" disabled selected>Property Status</option>
-            <option value="new">New</option>
-            <option value="second-hand">Second-hand</option>
-            <option value="renovated">Renovated</option>
-          </select>
-          <input
-            type="number"
-            :value="selectedRooms"
-            placeholder="Rooms Number"
-            @input="$emit('update:selectedRooms', $event.target.value)"
-            class="text-[#364365] p-2 rounded-md text-sm border hover:bg-gray-100 cursor-pointer w-40 focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-
           <button
-            class="bg-gray-200 border border-[var(--secondary-color)] text-[var(--secondary-color)] px-4 py-2 rounded-md hover:bg-gray-300 transition cursor-pointer"
-            @click="$emit('reset')"
+            class="absolute inset-y-0 bg-[#364365] p-2 text-white bold rounded-[50%] right-3 flex items-center cursor-pointer"
+            @click="toggleFilterOptions"
           >
-            Reset
-          </button>
-        </template>
-
-        <template v-else>
-          <div class="relative w-full flex items-center">
-            <input
-              :value="searchQuery"
-              @input="$emit('update:searchQuery', $event.target.value)"
-              type="text"
-              placeholder="Search by keyword"
-              class="px-4 py-2 rounded-md text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              class="absolute right-3 bg-[#364365] p-2 text-white rounded-full"
-              @click="toggleFilterOptions"
-            >
-              <i class="bi bi-filter-circle"></i>
-            </button>
-          </div>
-          <transition name="fade-slide">
-            <div
-              v-if="showFilterOptions"
-              class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-64 z-10"
-            >
-              <select
-                :value="selectedGovernorate"
-                @change="
-                  $emit('update:selectedGovernorate', $event.target.value)
-                "
-                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
-              >
-                <option value="" disabled selected>Governorate</option>
-                <option
-                  v-for="loc in governorates"
-                  :key="loc.value"
-                  :value="loc.value"
-                >
-                  {{ loc.label }}
-                </option>
-              </select>
-              <select
-                :value="selectedCity"
-                @change="$emit('update:selectedCity', $event.target.value)"
-                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
-              >
-                <option value="" disabled selected>City</option>
-                <option
-                  v-for="city in cities"
-                  :key="city.value"
-                  :value="city.value"
-                >
-                  {{ city.label }}
-                </option>
-              </select>
-              <select
-                :value="selectedPropertyStatus"
-                @change="
-                  $emit('update:selectedPropertyStatus', $event.target.value)
-                "
-                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer"
-              >
-                <option value="" disabled selected>Property Status</option>
-                <option value="new">New</option>
-                <option value="second-hand">Second-hand</option>
-                <option value="renovated">Renovated</option>
-              </select>
-              <input
-                type="number"
-                :value="selectedRooms"
-                placeholder="Rooms Number"
-                @input="$emit('update:selectedRooms', $event.target.value)"
-                class="text-[#364365] p-2 rounded-md text-sm w-full border hover:bg-gray-100 mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition w-full"
-                @click="$emit('reset')"
-              >
-                Reset
-              </button>
-            </div>
-          </transition>
-        </template>
-      </div>
-
-      <div
-        v-else
-        class="flex items-center justify-center p-3 transition-all duration-300"
-      >
-        <div
-          class="border rounded-full flex items-center p-2 bg-white shadow-md text-[#364365]"
-        >
-          <span class="px-2">{{ selectedGovernorateName || "Anywhere" }}</span>
-          <span class="px-2">{{ selectedCityName || "Any City" }}</span>
-          <span class="px-2">{{ selectedPropertyStatus || "Any Status" }}</span>
-          <span class="px-2">{{ selectedRooms || "Any Rooms" }}</span>
-          <button
-            class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
-            @click="$emit('toggle-search')"
-          >
-            Q
-          </button>
-          <button
-            v-if="selectedGovernorate"
-            class="bg-[#364365] text-white w-8 h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
-            @click="$emit('reset')"
-          >
-            X
+            <i class="bi bi-filter-circle"></i>
           </button>
         </div>
+        <transition name="fade-slide">
+    <div
+      v-if="showFilterOptions"
+      ref="filterContainer"
+      class="absolute top-full mt-2 right-0 bg-white rounded-md shadow-lg p-4 w-full z-10 grid grid-cols-1 gap-4"
+    >
+      <!-- Governorate Dropdown -->
+      <div class="relative w-full">
+        <div
+          @click="toggleGovernorateDropdown"
+          class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
+        >
+          <span>{{ selectedGovernorateLabel || "Select Governorate" }}</span>
+          <span>🔽</span>
+        </div>
+
+        <ul
+          v-if="isGovernorateOpen"
+          class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
+        >
+          <li
+            v-for="loc in governorates"
+            :key="loc.value"
+            @click="selectGovernorate(loc)"
+            class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+          >
+            <i class="bi bi-geo-alt"></i>
+            <span>{{ loc.label }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Property Status Dropdown -->
+      <div class="relative w-full">
+        <div
+          @click="togglePropertyStatusDropdown"
+          class="bg-white text-gray-700 text-sm rounded-md p-4 cursor-pointer flex justify-between items-center border border-gray-300"
+        >
+          <span>{{ selectedPropertyStatusLabel || "Select Status" }}</span>
+          <span>🔽</span>
+        </div>
+
+        <ul
+          v-if="isPropertyStatusOpen"
+          class="absolute w-full bg-white rounded-md mt-1 shadow-lg z-10 max-h-32 overflow-y-auto border border-gray-300"
+        >
+          <li
+            v-for="option in propertyStatusOptions"
+            :key="option.value"
+            @click="selectPropertyStatus(option)"
+            class="p-2 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+          >
+            <span>{{ option.label }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Rooms Number Input -->
+      <div>
+        <input
+          type="number"
+          :value="selectedRooms"
+          placeholder="Enter number"
+          @input="$emit('update:selectedRooms', $event.target.value)"
+          class="block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+        />
+      </div>
+
+      <!-- Reset Filters Button -->
+      <button
+        class="bg-[#364365] text-white font-bold py-2 px-4 rounded hover:bg-[#2c3751] transition duration-300 w-full"
+        @click="resetFilters"
+      >
+        Reset Filters
+      </button>
+    </div>
+  </transition>
       </div>
     </div>
-  </div>
+
+    <div
+      v-else
+      class="flex items-center justify-center p-3 transition-all duration-300  "
+    >
+      <div class="border  rounded-full flex items-center p-2 bg-white shadow-md text-[#364365] w-full">
+        
+        <span class="px-2 w-full ">{{ selectedGovernorateName || "Anywhere" }}</span>
+
+        <span class="px-2 w-full">{{ selectedPropertyStatus || "Any Status" }}</span>
+        <span class="px-2 w-full">{{ selectedRooms || "Any Rooms" }}</span>
+        <button
+          class="bg-[#364365] text-white w-[150px] h-10 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
+          @click="$emit('toggle-search')"
+        >
+          Q
+        </button>
+        <button
+          v-if="selectedGovernorate"
+          class="bg-[#364365] text-white w-[150px] h-8 ml-auto mr-3 rounded-full hover:scale-110 transition-transform cursor-pointer"
+@click="resetFilters"
+>
+X
+</button>
+</div>
+</div>
+</div>
 </template>
 
 <script>
@@ -191,90 +222,161 @@ import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
 
 export default {
-  name: "SearchBar",
-  props: {
-    isScrolled: Boolean,
-    isExpanded: Boolean,
-    isSmallScreen: Boolean,
-    searchQuery: String,
-    selectedGovernorate: String,
-    selectedCity: String,
-    selectedPropertyStatus: String,
-    selectedRooms: Number,
-  },
-  emits: [
-    "update:searchQuery",
-    "update:selectedGovernorate",
-    "update:selectedCity",
-    "update:selectedPropertyStatus",
-    "update:selectedRooms",
-    "search",
-    "toggle-search",
-    "reset",
-  ],
-  data: () => ({
-    showFilterOptions: false,
-    governorates: governorates.map((g) => ({
-      value: g.id,
-      label: g.governorate_name_en,
-    })),
-    cities: [],
-  }),
-  computed: {
-    selectedGovernorateName() {
-      return (
-        this.governorates.find((g) => g.value === this.selectedGovernorate)
-          ?.label || "Anywhere"
-      );
-    },
-    selectedCityName() {
-      return (
-        this.cities.find((c) => c.value === this.selectedCity)?.label || ""
-      );
-    },
-  },
-  watch: {
-    selectedGovernorate(newVal) {
-      this.updateCities(newVal);
-      if (!this.cities.some((c) => c.value === this.selectedCity)) {
-        this.$emit("update:selectedCity", "");
-      }
-    },
-  },
-  methods: {
-    updateCities(governorateId) {
-      this.cities = governorateId
-        ? cities
-            .filter((c) => c.governorate_id === governorateId)
-            .map((c) => ({
-              value: c.id,
-              label: c.city_name_en,
-            }))
-        : [];
-    },
-    toggleFilterOptions() {
-      this.showFilterOptions = !this.showFilterOptions;
-      if (!this.showFilterOptions) this.$emit("search");
-    },
-  },
+name: "SearchBar",
+props: {
+isScrolled: Boolean,
+isExpanded: Boolean,
+isSmallScreen: Boolean,
+searchQuery: String,
+selectedGovernorate: String,
+selectedPropertyStatus: String,
+selectedRooms: Number,
+},
+emits: [
+"update:searchQuery",
+"update:selectedGovernorate",
+"update:selectedPropertyStatus",
+"update:selectedRooms",
+"search",
+"toggle-search",
+"reset",
+],
+data: () => ({
+showFilterOptions: false,
+governorates: governorates.map((g) => ({
+value: g.id,
+label: g.governorate_name_en,
+})),
+cities: [],
+isGovernorateOpen: false,
+selectedGovernorateValue: "",
+isPropertyStatusOpen: false,
+selectedPropertyStatusValue: "",
+isRoomsOpen: false,
+selectedRoomsValue: "",
+propertyStatusOptions: [
+{ value: "new", label: "New" },
+{ value: "second-hand", label: "Second-hand" },
+{ value: "renovated", label: "Renovated" },
+],
+roomsOptions: [
+{ value: "1", label: "1 Room" },
+{ value: "2", label: "2 Rooms" },
+{ value: "3", label: "3 Rooms" },
+{ value: "4", label: "4 Rooms" },
+{ value: "5", label: "5 Rooms" },
+{ value: "6", label: "6+ Rooms"  },
+],
+}),
+computed: {
+selectedGovernorateName() {
+return (
+this.governorates.find((g) => g.value === this.selectedGovernorate)
+?.label || "Anywhere"
+);
+},
+selectedGovernorateLabel() {
+const selected = this.governorates.find((loc) => loc.value === this.selectedGovernorateValue);
+return selected ? selected.label : "";
+},
+selectedPropertyStatusLabel() {
+const selected = this.propertyStatusOptions.find((opt) => opt.value === this.selectedPropertyStatusValue);
+return selected ? selected.label : "";
+},
+selectedRoomsLabel() {
+const selected = this.roomsOptions.find((room) => room.value === this.selectedRoomsValue);
+return selected ? selected.label : "";
+},
+},
+watch: {
+selectedGovernorate(newVal) {
+this.updateCities(newVal);
+},
+},
+mounted() {
+document.addEventListener("click", this.handleClickOutside);
+},
+beforeUnmount() {
+document.removeEventListener("click", this.handleClickOutside); 2 
+},
+methods: {
+updateCities(governorateId) {
+this.cities = governorateId
+? cities
+.filter((c) => c.governorate_id === governorateId)
+.map((c) => ({
+value: c.id,
+}))
+: [];
+},
+toggleFilterOptions() {
+this.showFilterOptions = !this.showFilterOptions;
+if (!this.showFilterOptions) this.$emit("search");
+},
+toggleGovernorateDropdown() {
+this.isGovernorateOpen = !this.isGovernorateOpen;
+},
+selectGovernorate(loc) {
+this.selectedGovernorateValue = loc.value;
+this.isGovernorateOpen = false;
+this.$emit("update:selectedGovernorate", loc.value);
+},
+togglePropertyStatusDropdown() {
+this.isPropertyStatusOpen = !this.isPropertyStatusOpen;
+},
+selectPropertyStatus(option) {
+this.selectedPropertyStatusValue = option.value;
+this.isPropertyStatusOpen = false;
+this.$emit("update:selectedPropertyStatus", option.value);
+},
+toggleRoomsDropdown() {
+this.isRoomsOpen = !this.isRoomsOpen;
+},
+selectRooms(room) {
+this.selectedRoomsValue = room.value;
+this.isRoomsOpen = false;
+this.$emit("update:selectedRooms", room.value);
+},
+resetFilters() {
+this.selectedGovernorateValue = "";
+this.selectedPropertyStatusValue = "";
+this.selectedRoomsValue = "";
+this.$emit("update:selectedGovernorate", "");
+this.$emit("update:selectedPropertyStatus", "");
+this.$emit("update:selectedRooms", "");
+},
+handleClickOutside(event) {
+if (
+this.$refs.governorateDropdown &&
+!this.$refs.governorateDropdown.contains(event.target)
+) {
+this.isGovernorateOpen = false;
+}
+if (
+this.$refs.propertyStatusDropdown &&
+!this.$refs.propertyStatusDropdown.contains(event.target)
+) {
+this.isPropertyStatusOpen = false;
+}
+if (this.$refs.roomsDropdown && !this.$refs.roomsDropdown.contains(event.target)) {
+this.isRoomsOpen = false;
+}
+},
+},
 };
 </script>
-
 <style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
 @media (max-width: 859px) {
-  .rounded-full {
-    width: 70vw;
-  }
+.rounded-full {
+width: 70vw !important;
+}
+select option {
+  padding: 8px;
+  cursor: pointer;
+}
+
+select option:hover {
+  background-color: #f3f4f6;
+}
 }
 </style>
