@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="properties.length"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
     >
       <property-card
         v-for="property in properties"

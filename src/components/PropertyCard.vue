@@ -1,13 +1,15 @@
 <template>
   <router-link
     :to="`/property/${property.id}`"
-    class="block group focus:outline-none w-full max-w-[18rem] sm:max-w-sm mx-auto"
+    class="block group focus:outline-none w-full"
     :aria-label="`View details for ${property.title || 'property'}`"
   >
     <article
-      class="bg-white text-gray-800 shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500 flex flex-col h-full min-h-[22rem] sm:min-h-[24rem]"
+      class="bg-white text-gray-800 shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500 flex flex-col h-full"
     >
-      <div class="relative h-48 sm:h-52 w-full overflow-hidden">
+      <div
+        class="relative h-48 sm:h-56 md:h-60 lg:h-64 w-full overflow-hidden rounded-t-xl"
+      >
         <img
           v-if="property.images?.length"
           :src="property.images[0]"
@@ -21,39 +23,46 @@
         />
         <div
           v-else
-          class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm"
+          class="w-full h-full flex items-center justify-center text-gray-500 text-sm bg-gray-200"
         >
           <span>No Image Available</span>
         </div>
         <span
           v-if="property.propertyStatus"
-          class="absolute top-2 right-2 px-2 py-1 text-xs font-semibold text-white rounded-full capitalize bg-gradient-to-r from-[#124365] to-[#364365]"
+          class="absolute top-2 right-2 px-2 py-1 text-xs font-semibold text-white rounded-full capitalize bg-gradient-to-r from-[#124365] to-[#364365] shadow-sm"
         >
           {{ property.propertyStatus }}
         </span>
       </div>
+
       <div
-        class="p-4 flex-1 flex flex-col items-center justify-evenly space-y-3"
+        class="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between gap-3 sm:gap-0"
       >
-        <div class="w-full text-center">
-          <h2
-            class="font-semibold text-lg sm:text-xl text-gray-900 truncate group-hover:text-blue-600 transition-colors capitalize"
-            :title="property.title || 'Untitled Property'"
+        <h2
+          class="font-semibold text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 text-gray-900 transition-colors capitalize"
+          :title="property.title || 'Untitled Property'"
+        >
+          {{ property.title || "Untitled Property" }}
+        </h2>
+        <div class="">
+          <div
+            class="flex flex-col sm:flex-row justify-between lg:flex-row gap-2 text-xs sm:text-sm text-gray-600"
           >
-            {{ property.title || "Untitled Property" }}
-          </h2>
+            <p class="flex items-center gap-1">
+              <i class="bi bi-geo-alt text-blue-900"></i>
+              {{ locationText }}
+            </p>
+            <p class="flex items-center gap-1">
+              <i class="bi bi-house-door text-blue-900"></i>
+              {{ property.rooms }} {{ property.rooms === 1 ? "Room" : "Rooms" }}
+            </p>
+          </div>
         </div>
-        <p class="text-gray-600 text-sm mt-1 flex items-center justify-center">
-          <i class="bi bi-geo-alt mr-1 text-gray-500"></i>
-          {{ locationText }}
-        </p>
-        <p class="text-gray-600 text-sm flex items-center justify-center gap-1">
-          <i class="bi bi-house-door text-gray-500"></i>
-          {{ property.rooms }} {{ property.rooms === 1 ? "Room" : "Rooms" }}
-        </p>
-        <p class="font-bold text-base sm:text-lg text-blue-700">
-          {{ formattedPrice }} EGP
-        </p>
+        <div class="mt-3">
+          <p class="font-semibold text-sm sm:text-base md:text-lg">
+            {{ formattedPrice }} EGP
+          </p>
+        </div>
       </div>
     </article>
   </router-link>
@@ -80,13 +89,13 @@ export default {
     governorateName() {
       return (
         governorates.find((g) => g.id === this.property.governorate)
-          ?.governorate_name_en || "Unknown Governorate"
+          ?.governorate_name_en || "Unknown"
       );
     },
     cityName() {
       return (
         cities.find((c) => c.id === this.property.city)?.city_name_en ||
-        "Unknown City"
+        "Unknown"
       );
     },
     locationText() {

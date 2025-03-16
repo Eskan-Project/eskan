@@ -320,7 +320,7 @@ export default {
         date: "",
         duration: 30,
         ownerEmail: "",
-        adminEmail: "mohand27m@gmail.com", // Hardcoded admin email
+        adminEmail: "",
       },
       id: null,
       currentImageIndex: 0,
@@ -465,10 +465,7 @@ export default {
         });
 
         // Set owner email from request data if not already set
-        if (
-          !this.meetingData.ownerEmail &&
-          this.request.propertyContact?.email
-        ) {
+        if (this.request.propertyContact?.email) {
           this.meetingData.ownerEmail = this.request.propertyContact.email;
         }
 
@@ -544,7 +541,7 @@ export default {
         Swal.fire({
           title: "Meeting Scheduled!",
           html: `
-            <p>Meeting details have been sent to ${this.request.propertyContact?.email} and ${this.meetingData.adminEmail}</p>
+            <p>Meeting details have been sent to ${this.meetingData.ownermail} and ${this.meetingData.adminEmail}</p>
          
           `,
           icon: "success",

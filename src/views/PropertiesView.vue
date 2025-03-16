@@ -1,48 +1,61 @@
 <template>
   <div class="properties">
     <section
-      class="relative w-full h-[300px] bg-cover bg-center"
+      class="relative w-full h-60 sm:h-72 md:h-80 lg:h-96 bg-cover bg-center"
       :style="{
         backgroundImage: bgImage
           ? `url(${bgImage})`
           : 'url(/fallback-properties.jpg)',
       }"
     >
-      <div class="absolute inset-0 bg-black/40"></div>
+      <div class="absolute inset-0 bg-black/50"></div>
       <div
-        class="relative z-10 flex items-center justify-center h-full max-w-4xl mx-auto p-4"
+        class="relative z-10 flex items-center justify-center h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
-        <search-bar
-          ref="searchBar"
-          :is-scrolled="isScrolled"
-          :is-expanded="isExpanded"
-          :is-small-screen="isSmallScreen"
-          v-model:search-query="searchQuery"
-          v-model:selected-governorate="selectedGovernorate"
-          v-model:selected-city="selectedCity"
-          v-model:selected-property-status="selectedPropertyStatus"
-          v-model:selected-rooms="selectedRooms"
-          @toggle-search="toggleSearch"
-          @search="searchProperties"
-          @reset="resetFilters"
-        />
+        <div
+          class="w-full fixed left-0 z-50 transition-all duration-300 flex justify-center"
+          :class="{
+            'bg-white top-14 sm:top-16 md:top-20 py-4 sm:py-5 shadow-lg':
+              isScrolled || isExpanded,
+            'bg-transparent top-1/4 md:top-1/3 -translate-y-1/2':
+              !isScrolled && !isExpanded,
+          }"
+        >
+          <search-bar
+            ref="searchBar"
+            :is-scrolled="isScrolled"
+            :is-expanded="isExpanded"
+            :is-small-screen="isSmallScreen"
+            v-model:search-query="searchQuery"
+            v-model:selected-governorate="selectedGovernorate"
+            v-model:selected-city="selectedCity"
+            v-model:selected-property-status="selectedPropertyStatus"
+            v-model:selected-rooms="selectedRooms"
+            @toggle-search="toggleSearch"
+            @search="searchProperties"
+            @reset="resetFilters"
+          />
+        </div>
       </div>
     </section>
 
-    <main class="container mx-auto py-10 px-5">
+    <main class="container mx-auto py-8 lg:py-16 px-4 sm:px-6 lg:px-8">
       <div
         v-if="isLoading"
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 py-10"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 py-10"
       >
         <div
           v-for="i in 8"
           :key="i"
-          class="bg-gray-200 min-h-64 rounded-lg animate-pulse"
+          class="bg-gray-200 h-56 sm:h-64 md:h-72 rounded-lg animate-pulse"
         ></div>
       </div>
       <div v-else-if="error" class="text-center py-10">
-        <p class="text-red-500 text-lg">{{ error }}</p>
-        <button @click="loadData" class="mt-4 text-blue-500 underline">
+        <p class="text-red-500 text-sm sm:text-base md:text-lg">{{ error }}</p>
+        <button
+          @click="loadData"
+          class="mt-4 text-blue-500 underline text-sm sm:text-base"
+        >
           Retry
         </button>
       </div>
@@ -51,7 +64,10 @@
           v-if="filteredProperties.length"
           :properties="paginatedProperties"
         />
-        <p v-else class="text-center text-gray-500 py-10">
+        <p
+          v-else
+          class="text-center text-gray-500 py-10 text-sm sm:text-base md:text-lg"
+        >
           No properties match your filters.
         </p>
         <pagination
@@ -67,7 +83,6 @@
     </main>
   </div>
 </template>
-
 <script>
 import SearchBar from "@/components/propertiesView/SearchBar.vue";
 import PropertyList from "@/components/propertiesView/PropertyList.vue";
