@@ -32,6 +32,7 @@ import AdminRequestList from "@/components/adminDash/AdminRequestList.vue";
 import AdminRequestDetails from "@/components/adminDash/AdminRequestDetails.vue";
 import Payment from "@/components/Payment.vue";
 import AdminRequestDetailsVue from "@/components/adminDash/AdminRequestDetails.vue";
+import FaqView from "@/views/FaqView.vue";
 
 const routes = [
   {
@@ -40,6 +41,7 @@ const routes = [
     children: [
       { path: "", name: "Home", component: HomeView },
       { path: "about", name: "About", component: AboutView },
+      { path: "faq", name: "Faq", component: FaqView },
       { path: "properties", name: "Properties", component: PropertiesView },
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },

@@ -1,27 +1,29 @@
 <template>
   <header
     :class="[
-      'fixed top-0 w-full transition-all px-3 bg-creative z-20',
+      'fixed top-0 w-full transition-all px-2 sm:px-3 bg-creative z-20',
       { 'shadow-lg': isSticky },
     ]"
   >
     <div class="container mx-auto flex items-center py-1">
-      <router-link to="/" aria-label="Home">
+      <router-link to="/" aria-label="Home" class="flex-shrink-0">
         <img
-          class="h-[70px]"
+          class="h-[50px] sm:h-[60px] md:h-[70px]"
           src="../../assets/images/logo.png"
           alt="Eskan Logo"
           loading="lazy"
         />
       </router-link>
 
-      <nav class="hidden md:flex flex-grow justify-center space-x-6">
+      <nav
+        class="hidden md:flex flex-grow justify-center space-x-3 lg:space-x-6"
+      >
         <router-link
           v-for="item in navLinks"
           :key="item.path"
           :to="item.path"
           :class="[
-            'text-white font-bold hover:text-gray-200 transition-colors',
+            'text-white font-bold text-sm lg:text-base hover:text-gray-200 transition-colors',
             { 'border-b-2 border-white': $route.path === item.path },
           ]"
           @click="closeMenu"
@@ -30,10 +32,10 @@
         </router-link>
       </nav>
 
-      <div class="flex items-center gap-4 ml-auto">
+      <div class="flex items-center gap-2 sm:gap-4 ml-auto">
         <template v-if="isAuth">
           <div
-            class="relative text-2xl cursor-pointer"
+            class="relative text-xl sm:text-2xl cursor-pointer"
             title="Notifications"
             @click="toggleNotifications"
             ref="notificationsDropdown"
@@ -48,7 +50,7 @@
             <transition name="dropdown">
               <div
                 v-if="isNotificationsOpen"
-                class="absolute left-0 top-12 mt-2 bg-white w-72 p-3 shadow-lg rounded-md overflow-y-auto"
+                class="absolute right-0 sm:right-auto sm:left-0 top-12 mt-2 bg-white w-64 sm:w-72 p-3 shadow-lg rounded-md overflow-y-auto max-h-[80vh]"
               >
                 <div v-if="notifications.length" class="space-y-2">
                   <div
@@ -56,7 +58,7 @@
                     :key="notif.id"
                     @click="notifClicked(notif)"
                     :class="[
-                      'flex justify-between items-center p-2 rounded cursor-pointer transition-colors text-sm',
+                      'flex justify-between items-center p-2 rounded cursor-pointer transition-colors text-xs sm:text-sm',
                       notif.read
                         ? 'text-gray-600 bg-gray-50 hover:bg-gray-100'
                         : 'text-black bg-blue-50 font-semibold hover:bg-blue-100',
@@ -65,7 +67,7 @@
                     <span class="flex-1">{{ notif.message }}</span>
                     <button
                       @click.stop="removeNotification(notif.id)"
-                      class="text-red-500 hover:text-red-700 transition-colors"
+                      class="text-red-500 hover:text-red-700 transition-colors ml-1"
                       title="Dismiss"
                     >
                       ✖
@@ -82,48 +84,48 @@
             v-if="userDetails.role === 'owner'"
             to="/createProperty"
             title="Create Property"
-            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
-            <i class="bi bi-plus-circle text-2xl"></i>
+            <i class="bi bi-plus-circle text-xl sm:text-2xl"></i>
           </router-link>
           <router-link
             v-if="userDetails.role === 'admin'"
             to="/admin"
             title="Admin Dashboard"
-            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
-            <i class="bi bi-person-fill-gear text-2xl"></i>
+            <i class="bi bi-person-fill-gear text-xl sm:text-2xl"></i>
           </router-link>
 
           <router-link
             v-else
             to="/userProfile"
             title="User Profile"
-            class="bg-white px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
-            <i class="bi bi-person text-2xl"></i>
+            <i class="bi bi-person text-xl sm:text-2xl"></i>
           </router-link>
 
           <button
             title="Logout"
             @click="logout"
-            class="cursor-pointer bg-white px-2 py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+            class="cursor-pointer bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
           >
-            <i class="bi bi-box-arrow-in-right text-2xl"></i>
+            <i class="bi bi-box-arrow-in-right text-xl sm:text-2xl"></i>
           </button>
         </template>
 
         <button
           v-else
           @click="$router.push('/login')"
-          class="flex items-center gap-1 px-4 py-2 text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
+          class="flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           Log In <i class="bi bi-box-arrow-in-right"></i>
         </button>
 
         <button
           @click="toggleMenu"
-          class="md:hidden text-3xl text-white cursor-pointer"
+          class="md:hidden text-2xl sm:text-3xl text-white cursor-pointer"
           :aria-label="isMenuOpen ? 'Close Menu' : 'Open Menu'"
         >
           <i :class="isMenuOpen ? 'bi bi-x' : 'bi bi-list'"></i>
@@ -157,6 +159,7 @@ export default {
         { label: "Properties", path: "/properties" },
         { label: "About", path: "/about" },
         { label: "Contact", path: "/contact" },
+        { label: "FAQs", path: "/faq" },
       ],
     };
   },

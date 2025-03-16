@@ -1,7 +1,7 @@
 <template>
   <div>
     <navbar-base />
-    <main class="pt-[78px]">
+    <main class="pt-0 sm:pt-[78px]">
       <router-view />
     </main>
     <footer-base />

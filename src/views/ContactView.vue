@@ -1,114 +1,102 @@
 <template>
-  <section class="md:py-27 pt-20">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <section class="py-16 md:py-20 lg:py-24 min-h-screen px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
       <transition name="fade-out" appear>
         <div
           v-if="!formSubmitted && !errorMessage"
-          class="grid lg:grid-cols-2 grid-cols-1 md:bg-white bg-none rounded-2xl gap-5"
+          class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:bg-white rounded-2xl shadow-md overflow-hidden"
         >
-          <div class="lg:mb-0 mb-10 order-last md:order-first md:ps-0 px-4">
-            <div class="group w-full h-full">
-              <div class="relative h-full">
-                <img
-                  src="../assets/images/contact/contact-1.jpg"
-                  loading="lazy"
-                  alt="Contact Us"
-                  class="w-full h-full rounded-l-2xl object-cover md:block"
-                />
-                <h1
-                  class="font-manrope text-white text-4xl font-bold leading-10 absolute top-11 left-11"
+          <!-- Image and Contact Info Section -->
+          <div class="relative flex flex-col justify-between">
+            <img
+              src="../assets/images/contact/contact-1.jpg"
+              loading="lazy"
+              alt="Contact Us"
+              class="w-full h-48 sm:h-64 md:h-full object-cover rounded-t-2xl md:rounded-none md:rounded-l-2xl"
+            />
+            <div class="absolute top-4 left-4 sm:top-6 sm:left-6">
+              <h1
+                class="font-manrope text-white text-2xl sm:text-3xl md:text-4xl font-bold leading-tight"
+              >
+                Contact Us
+              </h1>
+            </div>
+            <div
+              class="p-4 sm:p-6 md:p-8 bg-white md:bg-transparent md:absolute md:bottom-0 md:w-full"
+            >
+              <div
+                class="bg-white rounded-lg p-4 sm:p-6 shadow-md md:shadow-none"
+              >
+                <a href="tel:4706011911" class="flex items-center mb-4 sm:mb-6">
+                  <i
+                    class="bi bi-telephone text-lg sm:text-xl text-gray-700"
+                  ></i>
+                  <h5 class="text-black text-sm sm:text-base font-normal ml-4">
+                    470-601-1911
+                  </h5>
+                </a>
+                <a
+                  href="mailto:EskanTeam@gmail.com"
+                  class="flex items-center mb-4 sm:mb-6"
                 >
-                  Contact us
-                </h1>
-                <div class="absolute bottom-0 w-full lg:p-11 p-5">
-                  <div class="bg-white rounded-lg p-6 block">
-                    <a href="tel:4706011911" class="flex items-center mb-6">
-                      <i class="bi bi-telephone text-xl text-gray-700"></i>
-                      <h5 class="text-black text-base font-normal leading-6 ml-5">
-                        470-601-1911
-                      </h5>
-                    </a>
-
-                    <a
-                      href="mailto:EskanTeam@gmail.com"
-                      class="flex items-center mb-6"
-                    >
-                      <i class="bi bi-envelope text-xl text-gray-700"></i>
-                      <h5 class="text-black text-base font-normal leading-6 ml-5">
-                        EskanTeam@gmail.com
-                      </h5>
-                    </a>
-
-                    <a href="#" class="flex items-center">
-                      <i class="bi bi-geo-alt text-xl text-gray-700"></i>
-                      <h5 class="text-black text-base font-normal leading-6 ml-5">
-                        Cairo, Egypt
-                      </h5>
-                    </a>
-                  </div>
-                </div>
+                  <i
+                    class="bi bi-envelope text-lg sm:text-xl text-gray-700"
+                  ></i>
+                  <h5
+                    class="text-black text-sm sm:text-base font-normal ml-4 break-all"
+                  >
+                    EskanTeam@gmail.com
+                  </h5>
+                </a>
+                <a href="#" class="flex items-center">
+                  <i class="bi bi-geo-alt text-lg sm:text-xl text-gray-700"></i>
+                  <h5 class="text-black text-sm sm:text-base font-normal ml-4">
+                    Cairo, Egypt
+                  </h5>
+                </a>
               </div>
             </div>
           </div>
-          <div class="p-5 lg:p-11 lg:rounded-r-2xl text-[#364365]">
+
+          <!-- Form Section -->
+          <div class="p-4 sm:p-6 md:p-8 lg:p-10 text-[#364365]">
             <h2
-              class="text-[#364365] font-manrope text-4xl font-semibold leading-10 mb-11 text-center md:text-left"
+              class="font-manrope text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight mb-6 text-center md:text-left"
             >
               Send Us A Message
             </h2>
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="submitForm" class="space-y-4 sm:space-y-6">
               <input
                 type="text"
                 v-model="formData.name"
-                class="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-4"
+                class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
                 placeholder="Name"
               />
               <input
                 type="email"
                 v-model="formData.email"
-                class="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-4"
+                class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
                 placeholder="Email"
               />
               <input
                 type="tel"
                 v-model="formData.phone"
-                class="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-4"
+                class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
                 placeholder="Phone"
               />
               <textarea
                 v-model="formData.message"
-                class="resize-none w-full h-24 text-gray-600 placeholder-gray-400 bg-transparent text-lg shadow-sm font-normal leading-7 rounded-xl border border-gray-200 focus:outline-none pl-4 mb-4"
+                class="resize-none w-full h-20 sm:h-24 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4 py-3"
                 placeholder="Message"
               ></textarea>
-
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="w-full h-12 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-2 hover:border-[#364365] shadow-sm"
+                class="w-full h-11 sm:h-12 text-white text-sm sm:text-base font-semibold rounded-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-2 hover:border-[#364365] transition-all duration-300 shadow-sm disabled:opacity-50"
               >
                 {{ isSubmitting ? "Sending..." : "Send" }}
               </button>
             </form>
-          </div>
-        </div>
-      </transition>
-      <transition name="fade-in" appear>
-        <div v-if="formSubmitted" class="flex justify-center mt-6">
-          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg flex items-center">
-            <i class="bi bi-check-circle text-2xl mr-3"></i>
-            <p class="text-lg font-semibold">
-              ✅ Your message has been sent successfully! Redirecting...
-            </p>
-          </div>
-        </div>
-      </transition>
-      <transition name="fade-in" appear>
-        <div v-if="errorMessage" class="flex justify-center mt-6">
-          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg flex items-center">
-            <i class="bi bi-exclamation-circle text-2xl mr-3"></i>
-            <p class="text-lg font-semibold">
-              ❌ {{ errorMessage }}
-            </p>
           </div>
         </div>
       </transition>
@@ -130,13 +118,13 @@ export default {
       },
       isSubmitting: false,
       formSubmitted: false,
-      errorMessage: null, 
+      errorMessage: null,
     };
   },
   methods: {
     async submitForm() {
       this.isSubmitting = true;
-      this.errorMessage = null; 
+      this.errorMessage = null;
 
       try {
         const response = await axios.post(
@@ -155,9 +143,8 @@ export default {
         console.error("Error:", error);
         this.errorMessage = "Failed to send message. Please try again later.";
         setTimeout(() => {
-            this.$router.push("/");
-          }, 2000);
-
+          this.$router.push("/");
+        }, 2000);
       } finally {
         this.isSubmitting = false;
       }
@@ -169,17 +156,13 @@ export default {
 };
 </script>
 
-<style>
-.fade-out-enter-active, .fade-out-leave-active {
+<style scoped>
+.fade-out-enter-active,
+.fade-out-leave-active {
   transition: opacity 0.5s ease;
 }
-.fade-out-enter, .fade-out-leave-to {
-  opacity: 0;
-}
-.fade-in-enter-active, .fade-in-leave-active {
-  transition: opacity 0.8s ease;
-}
-.fade-in-enter, .fade-in-leave-to {
+.fade-out-enter-from,
+.fade-out-leave-to {
   opacity: 0;
 }
 </style>
