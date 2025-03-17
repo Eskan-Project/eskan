@@ -127,7 +127,7 @@
             class="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
           >
             <h2
-              class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center"
+              class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center"
             >
               Personal Information
             </h2>

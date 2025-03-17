@@ -1,5 +1,7 @@
 <template>
-  <section class="py-16 md:py-20 lg:py-24 min-h-screen px-4 sm:px-6 lg:px-8">
+  <section
+    class="py-16 md:py-20 lg:py-24 min-h-screen px-4 sm:px-6 lg:px-8 mt-3 sm:mt-0"
+  >
     <div class="mx-auto max-w-7xl">
       <transition name="fade-out" appear>
         <div

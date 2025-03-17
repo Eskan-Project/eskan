@@ -33,96 +33,125 @@
       </nav>
 
       <div class="flex items-center gap-2 sm:gap-4 ml-auto">
-        <template v-if="isAuth">
+        <div
+          v-if="isAuth"
+          class="relative text-xl sm:text-2xl cursor-pointer"
+          ref="notificationsDropdown"
+          @click="toggleNotifications"
+          aria-label="Toggle notifications"
+          title="Notifications"
+        >
+          <i
+            class="bi bi-bell hover:text-gray-400 transition-colors md:text-3xl text-lg"
+          ></i>
+          <span
+            v-if="unreadCount"
+            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full"
+          >
+            {{ unreadCount }}
+          </span>
+        </div>
+        <transition :name="isMobile ? 'slide-up' : 'dropdown'">
           <div
-            class="relative text-xl sm:text-2xl cursor-pointer"
-            title="Notifications"
-            @click="toggleNotifications"
-            ref="notificationsDropdown"
+            v-if="isNotificationsOpen"
+            :class="[
+              isMobile
+                ? 'fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-lg p-4 max-h-[70vh] z-30'
+                : 'absolute top-12 w-full md:w-64 right-0 bg-white p-3 shadow-lg rounded-md max-h-[80vh]',
+              'overflow-y-auto',
+            ]"
           >
-            <i class="bi bi-bell hover:text-gray-400 transition-colors"></i>
-            <span
-              v-if="unreadCount"
-              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full"
-            >
-              {{ unreadCount }}
-            </span>
-            <transition name="dropdown">
-              <div
-                v-if="isNotificationsOpen"
-                class="absolute right-0 sm:right-auto sm:left-0 top-12 mt-2 bg-white w-64 sm:w-72 p-3 shadow-lg rounded-md overflow-y-auto max-h-[80vh]"
+            <div v-if="isMobile" class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-[var(--secondary-color)]">
+                Notifications
+              </h3>
+              <button
+                @click.stop="toggleNotifications"
+                class="text-gray-600 hover:text-gray-800"
               >
-                <div v-if="notifications.length" class="space-y-2">
-                  <div
-                    v-for="notif in notifications"
-                    :key="notif.id"
-                    @click="notifClicked(notif)"
-                    :class="[
-                      'flex justify-between items-center p-2 rounded cursor-pointer transition-colors text-xs sm:text-sm',
-                      notif.read
-                        ? 'text-gray-600 bg-gray-50 hover:bg-gray-100'
-                        : 'text-black bg-blue-50 font-semibold hover:bg-blue-100',
-                    ]"
-                  >
-                    <span class="flex-1">{{ notif.message }}</span>
-                    <button
-                      @click.stop="removeNotification(notif.id)"
-                      class="text-red-500 hover:text-red-700 transition-colors ml-1"
-                      title="Dismiss"
-                    >
-                      ✖
-                    </button>
-                  </div>
-                </div>
-                <p v-else class="p-2 text-gray-500 text-sm text-center">
-                  No new notifications
-                </p>
+                <i class="bi bi-x text-xl"></i>
+              </button>
+            </div>
+            <div v-if="notifications.length" class="space-y-2">
+              <div
+                v-for="notif in notifications"
+                :key="notif.id"
+                @click="notifClicked(notif)"
+                :class="[
+                  'flex justify-between items-center p-2 rounded cursor-pointer transition-colors text-xs sm:text-sm',
+                  notif.read
+                    ? 'text-gray-600 bg-gray-50 hover:bg-gray-100'
+                    : 'text-black bg-blue-50 font-semibold hover:bg-blue-100',
+                ]"
+              >
+                <span class="flex-1">{{ notif.message }}</span>
+                <button
+                  @click.stop="removeNotification(notif.id)"
+                  class="text-red-500 hover:text-red-700 transition-colors ml-1"
+                  title="Dismiss"
+                >
+                  ✖
+                </button>
               </div>
-            </transition>
+            </div>
+            <p v-else class="p-2 text-gray-500 text-sm text-center">
+              No new notifications
+            </p>
           </div>
-          <router-link
-            v-if="userDetails.role === 'owner'"
-            to="/createProperty"
-            title="Create Property"
-            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
-          >
-            <i class="bi bi-plus-circle text-xl sm:text-2xl"></i>
-          </router-link>
-          <router-link
-            v-if="userDetails.role === 'admin'"
-            to="/admin"
-            title="Admin Dashboard"
-            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
-          >
-            <i class="bi bi-person-fill-gear text-xl sm:text-2xl"></i>
-          </router-link>
+        </transition>
 
-          <router-link
-            v-else
-            to="/userProfile"
-            title="User Profile"
-            class="bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
-          >
-            <i class="bi bi-person text-xl sm:text-2xl"></i>
-          </router-link>
+        <!-- Overlay for mobile bottom sheet -->
+        <transition name="fade">
+          <div
+            v-if="isNotificationsOpen && isMobile"
+            class="fixed inset-0 bg-gray-900/50 z-20"
+            @click.stop="toggleNotifications"
+          ></div>
+        </transition>
 
-          <button
-            title="Logout"
-            @click="logout"
-            class="cursor-pointer bg-white px-1.5 sm:px-2 py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
-          >
-            <i class="bi bi-box-arrow-in-right text-xl sm:text-2xl"></i>
-          </button>
-        </template>
+        <!-- Mobile Menu Toggle -->
+        <router-link
+          v-if="userDetails.role === 'owner'"
+          to="/createProperty"
+          title="Create Property"
+          class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+        >
+          <i class="bi bi-plus-circle text-sm md:text-2xl"></i>
+        </router-link>
+        <router-link
+          v-if="userDetails.role === 'admin'"
+          to="/admin"
+          title="Admin Dashboard"
+          class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+        >
+          <i class="bi bi-person-fill-gear text-sm md:text-2xl"></i>
+        </router-link>
+
+        <router-link
+          v-else
+          to="/userProfile"
+          title="User Profile"
+          class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+        >
+          <i class="bi bi-person text-sm md:text-2xl"></i>
+        </router-link>
+
+        <button
+          v-if="isAuth"
+          title="Logout"
+          @click="logout"
+          class="cursor-pointer hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
+        >
+          <i class="bi bi-box-arrow-in-right text-sm md:text-2xl"></i>
+        </button>
 
         <button
           v-else
           @click="$router.push('/login')"
-          class="flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
+          class="flex items-center gap-1 px-2 md:px-4 py-1 md:py-2 text-xs md:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           Log In <i class="bi bi-box-arrow-in-right"></i>
         </button>
-
         <button
           @click="toggleMenu"
           class="md:hidden text-2xl sm:text-3xl text-white cursor-pointer"
@@ -145,6 +174,8 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import NavbarMobileVue from "./NavbarMobile.vue";
+import debounce from "lodash/debounce";
+
 export default {
   components: {
     NavbarMobileVue,
@@ -154,6 +185,7 @@ export default {
       isSticky: false,
       isMenuOpen: false,
       isNotificationsOpen: false,
+      isMobile: false,
       navLinks: [
         { label: "Home", path: "/" },
         { label: "Properties", path: "/properties" },
@@ -189,26 +221,31 @@ export default {
     },
     handleClickOutside(event) {
       const dropdown = this.$refs.notificationsDropdown;
-      if (dropdown && !dropdown.contains(event.target)) {
+      if (!this.isMobile && dropdown && !dropdown.contains(event.target)) {
         this.isNotificationsOpen = false;
       }
     },
     notifClicked(notif) {
       this.markAsRead(notif.id);
+      this.isNotificationsOpen = false; // Close on click for better UX
     },
+    checkMobile: debounce(function () {
+      this.isMobile = window.innerWidth < 768;
+    }, 100),
   },
   mounted() {
-    console.log(this.isAuth);
-    console.log(this.userDetails);
+    this.checkMobile();
     window.addEventListener("scroll", this.handleScroll, { passive: true });
     window.addEventListener("click", this.handleClickOutside, {
       passive: true,
     });
+    window.addEventListener("resize", this.checkMobile);
     this.getNotifications();
   },
   beforeUnmount() {
-    window.onscroll = null;
-    document.removeEventListener("click", this.handleClickOutside);
+    window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("click", this.handleClickOutside);
+    window.removeEventListener("resize", this.checkMobile);
   },
 };
 </script>
@@ -247,9 +284,23 @@ export default {
   transform: translateY(-10px) scale(0.95);
 }
 
-.dropdown-enter-to,
-.dropdown-leave-from {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -82,25 +82,70 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async loginWithGoogle({ commit }) {
+  async loginWithGoogle({ commit }, intendedRole) {
     commit("setError", null);
     commit("startLoading", null, { root: true });
 
     try {
       const { user } = await signInWithPopup(auth, provider);
-      const userRole = await fetchUserRole(user.uid);
+      const existingRole = await fetchUserRole(user.uid);
 
-      if (!userRole) {
+      if (!existingRole && intendedRole === "owner") {
+        const tempUserDetails = {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName,
+          role: "owner",
+          isActive: false,
+          createdAt: new Date(),
+        };
+
         return router.push({
           name: "SelectRole",
-          query: { uid: user.uid, email: user.email, name: user.displayName },
+          query: {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+            role: "owner",
+          },
+        });
+      } else if (!existingRole && intendedRole === "user") {
+        const userDetails = {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName,
+          role: "user",
+          isActive: true,
+          freeViewsRemaining: 3,
+          paidProperties: [],
+          createdAt: new Date(),
+        };
+        await storeUserInCollection(user.uid, userDetails);
+        commit("setUser", userDetails);
+        router.push("/");
+      } else if (!existingRole) {
+        return router.push({
+          name: "SelectRole",
+          query: {
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+            role: "",
+          },
         });
       } else {
         await this.dispatch("auth/fetchUserDetails", user.uid);
         router.push("/");
       }
     } catch (error) {
-      commit("setError", "Google login failed. Please try again.");
+      let errorMessage = "Google login failed. Please try again.";
+      if (error.code === "auth/popup-closed-by-user") {
+        errorMessage = "Login popup was closed. Please try again.";
+      } else if (error.code === "auth/network-request-failed") {
+        errorMessage = "Network error. Please check your connection.";
+      }
+      commit("setError", errorMessage);
+      throw error;
     } finally {
       commit("stopLoading", null, { root: true });
     }

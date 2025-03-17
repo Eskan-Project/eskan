@@ -1,18 +1,18 @@
 <template>
-  <div
-    class="flex flex-col items-center my-4"
-    :data-aos-delay="delay"
-    data-aos="flip-left"
-  >
-    <div
-      class="w-24 h-24 rounded-full border-2 border-[#364365] flex items-center justify-center mb-4"
+  <div class="flex flex-col items-center p-4">
+    <img
+      :src="feature.icon"
+      alt="Feature Icon"
+      class="w-12 sm:w-14 md:w-16 h-auto mb-3"
+    />
+    <h3
+      class="text-sm sm:text-base md:text-lg font-semibold text-[#364365] text-center"
     >
-      <img :src="feature.icon" :alt="feature.title + ' Icon'" loading="lazy" />
-    </div>
-    <h3 class="text-[#364365] text-lg font-semibold mb-2">
       {{ feature.title }}
     </h3>
-    <p class="text-[#364365] text-sm text-center">{{ feature.description }}</p>
+    <p class="text-xs sm:text-sm md:text-base text-gray-600 text-center">
+      {{ feature.description }}
+    </p>
   </div>
 </template>
 

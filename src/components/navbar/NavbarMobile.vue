@@ -19,10 +19,13 @@
           <button
             @click="closeMenu"
             class="text-gray-600 hover:text-gray-800 transition-colors"
+            aria-label="Close menu"
           >
             <i class="bi bi-x text-2xl"></i>
           </button>
         </li>
+
+        <!-- Main Navigation -->
         <li v-for="item in navLinks" :key="item.path">
           <router-link
             :to="item.path"
@@ -36,12 +39,66 @@
             {{ item.label }}
           </router-link>
         </li>
+
+        <!-- Auth Actions -->
+        <li v-if="isAuth" class="mt-auto border-t pt-4">
+          <router-link
+            v-if="userDetails.role === 'owner'"
+            to="/createProperty"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            @click="closeMenu"
+          >
+            <i class="bi bi-plus-circle"></i>
+            Add Property
+          </router-link>
+
+          <router-link
+            v-if="userDetails.role === 'admin'"
+            to="/admin"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            @click="closeMenu"
+          >
+            <i class="bi bi-person-fill-gear"></i>
+            Admin Dashboard
+          </router-link>
+
+          <!-- Profile link for all authenticated users -->
+          <router-link
+            to="/userProfile"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            @click="closeMenu"
+          >
+            <i class="bi bi-person"></i>
+            Profile
+          </router-link>
+
+          <button
+            @click="logoutAndClose"
+            class="flex items-center gap-2 py-3 px-4 text-red-600 hover:bg-gray-100 rounded-md w-full text-left"
+          >
+            <i class="bi bi-box-arrow-in-right"></i>
+            Logout
+          </button>
+        </li>
+
+        <li v-else class="mt-auto border-t pt-4">
+          <router-link
+            to="/login"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            @click="closeMenu"
+          >
+            <i class="bi bi-box-arrow-in-right"></i>
+            Log In
+          </router-link>
+        </li>
       </ul>
     </transition>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   props: {
     navLinks: {
@@ -51,19 +108,23 @@ export default {
   },
   computed: {
     isVisible() {
-      return this.$parent.isMenuOpen; // Sync with parent state
+      return this.$parent.isMenuOpen;
     },
+    ...mapState("auth", ["isAuth", "userDetails"]),
   },
   methods: {
     closeMenu() {
       this.$emit("close-menu");
+    },
+    logoutAndClose() {
+      this.$store.dispatch("auth/logout");
+      this.closeMenu();
     },
   },
 };
 </script>
 
 <style scoped>
-/* Overlay Fade Animation */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -72,12 +133,7 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-}
 
-/* Menu Slide Animation */
 .slide-enter-active,
 .slide-leave-active {
   transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
@@ -87,11 +143,5 @@ export default {
   transform: translateX(100%);
   opacity: 0;
   box-shadow: none;
-}
-.slide-enter-to,
-.slide-leave-from {
-  transform: translateX(0);
-  opacity: 1;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
 }
 </style>

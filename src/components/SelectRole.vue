@@ -1,5 +1,5 @@
 <template>
-  <div class="md:p-10 flex justify-center align-middle">
+  <div v-if="role !== 'user'" class="md:p-10 flex justify-center align-middle">
     <div class="bg-white rounded-xl w-screen text-black lg:w-[70vw] shadow-lg">
       <img src="@/assets/images/logo-black.png" class="block mx-auto" />
       <div v-if="role === ''">
@@ -56,13 +56,14 @@
           v-if="role"
           class="border shadow-xl bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
           @click="registerUser"
-          :disabled="role === 'owner' && !file"
+          :disabled="(role === 'owner' && !file) || loading"
           :class="{
-            'opacity-50 cursor-not-allowed': role === 'owner' && !file,
+            'opacity-50 cursor-not-allowed':
+              (role === 'owner' && !file) || loading,
             'opacity-100 cursor-pointer': role === 'owner' && file,
           }"
         >
-          Register
+          {{ loading ? "Registering..." : "Register" }}
         </button>
       </div>
     </div>
@@ -74,6 +75,8 @@ import router from "@/router";
 import UploadID from "@/components/UploadID.vue";
 import uploadToCloudinary from "../services/uploadToCloudinary";
 import { mapActions } from "vuex";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   components: { UploadID },
   data() {
@@ -82,18 +85,23 @@ export default {
       email: this.$route.query.email,
       name: this.$route.query.name,
       file: null,
-      role: "",
+      role: this.$route.query.role || "",
+      loading: false,
     };
   },
   methods: {
     ...mapActions("auth", ["registerWithRole"]),
     setRole(selectedRole) {
       this.role = selectedRole;
+      if (this.role === "user") {
+        this.registerUser();
+      }
     },
     handleIdUpload(file) {
       this.file = file;
     },
     async registerUser() {
+      this.loading = true;
       try {
         let idImageUrl;
         if (this.role === "owner" && this.file) {
@@ -113,9 +121,19 @@ export default {
           role: this.role,
           idImage: idImageUrl,
         });
-        router.push("/");
+        router.push("/").then(() => {
+          toast.success(`Welcome! You have 3 free property views.`, {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+        });
       } catch (error) {
         console.error("Error setting role:", error);
+      } finally {
+        this.loading = false;
       }
     },
   },

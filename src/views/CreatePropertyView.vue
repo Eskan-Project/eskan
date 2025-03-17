@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pt-6 sm:pt-8">
     <property-info />
     <router-view></router-view>
   </div>
@@ -7,6 +7,7 @@
 
 <script>
 import PropertyInfo from "@/components/createProperty/CreationProgress.vue";
+
 export default {
   components: {
     PropertyInfo,

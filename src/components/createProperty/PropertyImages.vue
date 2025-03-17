@@ -16,7 +16,7 @@
         <label
           class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
         >
-          Upload From Computer
+          Upload
           <input
             type="file"
             multiple

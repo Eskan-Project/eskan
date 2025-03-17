@@ -1,7 +1,8 @@
 <template>
   <div>
+    <!-- Hero Section -->
     <section
-      class="relative h-screen w-full bg-fixed bg-cover bg-center flex items-center justify-center text-white px-4"
+      class="relative h-screen w-full bg-fixed bg-cover bg-center flex items-center justify-center text-white px-4 sm:px-6 lg:px-8"
       :style="{
         backgroundImage: ImgForHeroSection
           ? `url(${ImgForHeroSection})`
@@ -10,13 +11,17 @@
       data-aos="fade-in"
     >
       <div
-        class="text-center bg-[#36436585] p-5 rounded-lg w-full max-w-3xl"
+        class="text-center bg-[#36436585] p-4 sm:p-6 md:p-8 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
         data-aos="zoom-in"
       >
-        <h1 class="text-4xl md:text-6xl font-bold">
+        <h1
+          class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+        >
           Your New Home Away from Home
         </h1>
-        <p class="mt-4 text-lg max-w-xl mx-auto">
+        <p
+          class="mt-3 sm:mt-4 text-xs sm:text-base md:text-lg lg:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto"
+        >
           Find your perfect shared accommodation with ease. Whether you're
           moving for work, study, or adventure, Eskan connects you with safe,
           affordable, and verified housing options tailored to your needs.
@@ -24,16 +29,19 @@
       </div>
     </section>
 
+    <!-- Features Section -->
     <section
-      class="container mx-auto my-16 px-4 bg-white rounded-lg relative"
+      class="container mx-auto my-12 sm:my-16 lg:my-20 px-4 sm:px-6 lg:px-8 bg-white rounded-lg relative"
       data-aos="fade-up"
     >
       <h2
-        class="text-4xl font-semibold text-[#364365] text-center absolute -top-5 left-1/2 -translate-x-1/2"
+        class="text-lg sm:text-3xl md:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2"
       >
         Find Everything You Need in One Place
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-10">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 pt-12 sm:pt-16"
+      >
         <feature-card
           v-for="(feature, index) in features"
           :key="feature.title"
@@ -44,15 +52,23 @@
       </div>
     </section>
 
-    <section class="py-16" data-aos="fade-up">
-      <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-6 text-[#364365]">
+    <!-- Latest Properties Section -->
+    <section class="py-12 sm:py-16 lg:py-20" data-aos="fade-up">
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2
+          class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-[#364365] text-center"
+        >
           Latest Properties for Rent
         </h2>
-        <div v-if="isLoading" class="text-gray-500">Loading properties...</div>
+        <div
+          v-if="isLoading"
+          class="text-gray-500 text-sm sm:text-base md:text-lg"
+        >
+          Loading properties...
+        </div>
         <div
           v-else-if="latestProperties.length && !error"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10"
         >
           <property-card
             v-for="property in latestProperties"
@@ -61,38 +77,45 @@
             data-aos="zoom-in"
           />
         </div>
-        <p v-else-if="error" class="text-red-500">
+        <p
+          v-else-if="error"
+          class="text-red-500 text-sm sm:text-base md:text-lg"
+        >
           {{ error }}
-          <button @click="fetchProperties" class="text-blue-500 underline">
+          <button @click="fetchProperties" class="text-blue-500 underline ml-2">
             Retry
           </button>
         </p>
-        <p v-else class="text-gray-500">No properties available.</p>
+        <p v-else class="text-gray-500 text-sm sm:text-base md:text-lg">
+          No properties available.
+        </p>
       </div>
     </section>
 
+    <!-- Stats Section -->
     <section
-      class="py-16 bg-[#DDE1EB] text-[#364365] text-center"
+      class="py-12 sm:py-16 lg:py-20 bg-[#DDE1EB] text-[#364365] text-center"
       data-aos="fade-up"
     >
       <div
         id="countup-section"
-        class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-12"
+        class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12"
       >
-        <div v-for="stat in stats" :key="stat.label" class="p-6">
+        <div v-for="stat in stats" :key="stat.label" class="p-4 sm:p-6">
           <count-up
             v-if="startCounting"
             :end-val="stat.value"
             :duration="stat.duration"
-            class="text-2xl font-bold"
+            class="text-xl sm:text-2xl md:text-3xl font-bold"
           />
-          <p class="text-lg mt-2">{{ stat.label }}</p>
+          <p class="text-base sm:text-lg md:text-xl mt-2">{{ stat.label }}</p>
         </div>
       </div>
     </section>
 
+    <!-- Contact Section -->
     <section
-      class="relative h-[508px] w-full bg-fixed bg-cover bg-center"
+      class="relative min-h-[400px] sm:min-h-[450px] md:min-h-[500px] w-full bg-fixed bg-cover bg-center"
       :style="{
         backgroundImage: ContactUsHomePage
           ? `url(${ContactUsHomePage})`
@@ -101,16 +124,18 @@
       data-aos="fade-in"
     >
       <div class="absolute inset-0 bg-[#053052]/80"></div>
-      <div class="relative h-full flex items-center justify-center">
-        <div class="max-w-4xl mx-auto text-center space-y-8 px-4">
+      <div class="relative min-h-[400px] flex items-center justify-center">
+        <div
+          class="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 px-4 sm:px-6 lg:px-8"
+        >
           <h2
-            class="text-white text-4xl font-semibold leading-tight"
+            class="text-white text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight"
             data-aos="zoom-in"
           >
             Find Your Perfect Home
           </h2>
           <p
-            class="text-[#edeff6] text-xl leading-7 max-w-3xl"
+            class="text-[#edeff6] text-sm sm:text-base md:text-lg lg:text-xl leading-6 sm:leading-7 max-w-md sm:max-w-lg md:max-w-2xl"
             data-aos="zoom-in"
             data-aos-delay="100"
           >
@@ -119,7 +144,7 @@
           </p>
           <router-link
             to="/contact"
-            class="inline-block px-8 py-4 border border-white text-white text-base font-medium rounded hover:bg-white hover:text-[#053052] transition-colors"
+            class="inline-block px-6 sm:px-8 py-3 sm:py-4 border border-white text-white text-sm sm:text-base font-medium rounded-md hover:bg-white hover:text-[#053052] transition-colors"
             data-aos="fade-up"
           >
             Contact Us
@@ -128,18 +153,18 @@
       </div>
     </section>
 
+    <!-- Back-to-Top Button -->
     <transition name="fade">
       <button
         v-if="showBackToTop"
         @click="scrollToTop"
-        class="fixed bottom-5 right-5 bg-[#1d2f5e] text-white px-5 py-4 rounded-md shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer"
+        class="fixed bottom-4 sm:bottom-5 right-2 sm:right-5 bg-[#1d2f5e] text-white px-2 sm:px-5 py-1 sm:py-4 rounded-md shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer"
       >
-        <i class="bi bi-arrow-up text-xl"></i>
+        <i class="bi bi-arrow-up text-base sm:text-xl"></i>
       </button>
     </transition>
   </div>
 </template>
-
 <script>
 import AOS from "aos";
 import ContactUsHomePage from "../assets/images/ContactUsHomePage.jpg?url";

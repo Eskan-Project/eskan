@@ -1,6 +1,6 @@
 <template>
   <div
-    class="faq-container min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8"
+    class="faq-container min-h-screen bg-gray-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 mt-10 sm:mt-0"
   >
     <div class="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
       <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">

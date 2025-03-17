@@ -39,7 +39,7 @@
         class="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between gap-3 sm:gap-0"
       >
         <h2
-          class="font-semibold text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 text-gray-900 transition-colors capitalize"
+          class="font-semibold text-sm sm:text-base md:text-lg lg:text-xl text-gray-900 transition-colors capitalize"
           :title="property.title || 'Untitled Property'"
         >
           {{ property.title || "Untitled Property" }}

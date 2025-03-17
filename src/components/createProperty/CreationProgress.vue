@@ -13,7 +13,7 @@
           <i
             :class="[
               step.icon,
-              'text-2xl py-2 px-2 rounded-full transition-all',
+              'text-base sm:text-2xl py-2 px-2 rounded-full transition-all ',
               index <= activeStep || isCompleted
                 ? 'bg-[var(--secondary-color)] text-white'
                 : 'bg-gray-300 text-gray-600',
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -59,12 +60,16 @@ export default {
       immediate: true,
     },
   },
+  computed: {
+    ...mapGetters(["isLoading"]),
+  },
   created() {
     this.loadActiveStep();
     this.loadMaxSteps();
     this.updateMaxSteps();
   },
   methods: {
+    ...mapActions(["startLoading", "stopLoading"]),
     toggleActive(index) {
       if (index > this.maxSteps) {
         return;
@@ -73,9 +78,12 @@ export default {
         this.isCompleted = true;
         return;
       }
+      this.startLoading();
       this.activeStep = index;
       this.saveActiveStep();
-      this.$router.push(this.steps[index].path);
+      this.$router.push(this.steps[index].path).then(() => {
+        this.stopLoading();
+      });
     },
     saveActiveStep() {
       localStorage.setItem("activeStep", this.activeStep);

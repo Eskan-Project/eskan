@@ -42,6 +42,20 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["register", "loginWithGoogle"]),
+    googleLogin() {
+      const role = this.isOwner ? "owner" : "user";
+      this.loginWithGoogle(role).then(() => {
+        if (!this.isOwner) {
+          toast.success(`Welcome! You have 3 free property views.`, {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+        }
+      });
+    },
     handleCaptchaVerified(token) {
       this.captchaToken = token;
       this.errors.captcha = null;
@@ -396,10 +410,11 @@ export default {
             <div class="flex justify-center align-center gap-2 p-5">
               <button
                 class="cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
-                @click="loginWithGoogle"
+                @click="googleLogin"
+                :disabled="loading"
               >
                 <i class="bi bi-google"></i>
-                Google
+                {{ loading ? "Signing in..." : "Google" }}
               </button>
             </div>
             <p class="text-black text-center">

@@ -1,125 +1,185 @@
 <template>
-  <div class="relative w-[50vw] mx-auto">
-    <swiper
-      :slides-per-view="images.length > 3 ? 3 : images.length"
-      :space-between="10"
-      :loop="true"
-      @swiper="onSwiper"
-      @slideChange="onSlideChange"
-    >
-      <swiper-slide v-for="(image, index) in images" :key="index">
-        <img :src="image" class="w-full h-80 object-cover" />
-      </swiper-slide>
-    </swiper>
-    <button
-      class="absolute border border-[var(--secondary-color)] -left-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
-      @click="swiper.slidePrev()"
-    >
-      <i class="bi bi-arrow-left"></i>
-    </button>
-    <button
-      class="absolute border border-[var(--secondary-color)] -right-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
-      @click="swiper.slideNext()"
-    >
-      <i class="bi bi-arrow-right"></i>
-    </button>
-  </div>
-  <div
-    class="relative max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-4 z-10 -top-10"
-  >
-    <div class="p-4 border-t flex justify-between">
-      <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold text-gray-800 capitalize">
-          {{ propertyDetails.title }}
-        </h2>
-        <p class="text-gray-500 flex items-center">
-          <i class="bi bi-geo-alt-fill text-yellow-500 mr-2 text-2xl"></i>
-          {{
-            `${
-              propertyDetails.neighborhood
-                ? propertyDetails.neighborhood + ","
-                : ""
-            }`
-          }}
-          <br v-if="propertyDetails.neighborhood" />
-          {{ `${cityName}, ${governorateName}` }}
-        </p>
-      </div>
-      <p class="text-2xl font-bold text-gray-800">
-        {{ propertyDetails.price }} EGP
-      </p>
+  <div class="w-full max-w-5xl mx-auto px-4 sm:px-6">
+    <!-- Swiper Carousel -->
+    <div class="relative w-full mt-6 sm:mt-10">
+      <swiper
+        :slides-per-view="slidesPerView"
+        :effect="'coverflow'"
+        :centered-slides="true"
+        :coverflowEffect="{
+          rotate: 0,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+        }"
+        :autoplay="{
+          delay: 2500,
+          disableOnInteraction: false,
+        }"
+        :pagination="{
+          clickable: true,
+        }"
+        :space-between="10"
+        :loop="images.length > 1"
+        :modules="swiperModules"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
+        class="pb-12 sm:pb-0"
+      >
+        <swiper-slide v-for="(image, index) in images" :key="index">
+          <img
+            :src="image"
+            class="w-full h-48 sm:h-64 md:h-80 object-cover rounded-lg"
+          />
+        </swiper-slide>
+      </swiper>
+      <button
+        class="cursor-pointer absolute border border-[var(--secondary-color)] -left-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
+        @click="swiper.slidePrev()"
+      >
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button
+        class="cursor-pointer absolute border border-[var(--secondary-color)] -right-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
+        @click="swiper.slideNext()"
+      >
+        <i class="bi bi-arrow-right"></i>
+      </button>
     </div>
 
-    <div class="p-4 border-t">
-      <h3 class="text-lg font-semibold text-gray-800 mb-8">
-        General Information
-      </h3>
-      <div class="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-800 ml-10">
-        <div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Published Date:</span>
-            <span class="font-semibold">{{ propertyDetails.createdAt }}</span>
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Area:</span>
-            <span class="font-semibold"
-              >{{ propertyDetails.area }} m<sup>2</sup></span
-            >
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Number of Rooms:</span>
-            <span class="font-semibold">{{ propertyDetails.rooms }}</span>
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Number of Bathrooms:</span>
-            <span class="font-semibold">{{ propertyDetails.bathrooms }}</span>
-          </div>
+    <!-- Property Info -->
+    <div
+      class="relative bg-white shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6 sm:-mt-10 z-10"
+    >
+      <div class="border-t pt-4 flex flex-row justify-between gap-4">
+        <div class="flex flex-col gap-2">
+          <h2
+            class="text-xl sm:text-2xl font-semibold text-gray-800 capitalize"
+          >
+            {{ propertyDetails.title || "Untitled" }}
+          </h2>
+          <p class="text-gray-500 flex items-center text-sm sm:text-base">
+            <i
+              class="bi bi-geo-alt-fill text-yellow-500 mr-2 text-base sm:text-xl"
+            ></i>
+            <span>
+              {{
+                `${
+                  propertyDetails.neighborhood
+                    ? propertyDetails.neighborhood + ", "
+                    : ""
+                }${cityName}, ${governorateName}`
+              }}
+            </span>
+          </p>
         </div>
-        <div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Floor Location:</span>
-            <span class="font-semibold">{{ propertyDetails.floor }}</span>
+        <p class="text-lg sm:text-xl font-bold text-gray-800">
+          {{ propertyDetails.price ? `${propertyDetails.price} EGP` : "N/A" }}
+        </p>
+      </div>
+
+      <!-- General Information -->
+      <div class="pt-4 border-t">
+        <h3
+          class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6"
+        >
+          General Information
+        </h3>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-800"
+        >
+          <div class="space-y-6">
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Published Date:</span>
+              <span class="font-semibold">{{
+                propertyDetails.createdAt || "N/A"
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Area:</span>
+              <span class="font-semibold"
+                >{{ propertyDetails.area || "N/A" }} m<sup>2</sup></span
+              >
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Number of Rooms:</span>
+              <span class="font-semibold">{{
+                propertyDetails.rooms || "N/A"
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Number of Bathrooms:</span>
+              <span class="font-semibold">{{
+                propertyDetails.bathrooms || "N/A"
+              }}</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Floor Location:</span>
+              <span class="font-semibold">{{
+                propertyDetails.floor || "N/A"
+              }}</span>
+            </div>
           </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Status:</span>
-            <span class="font-semibold">{{ propertyDetails.status }}</span>
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Furnished:</span>
-            <span class="font-semibold capitalize">{{
-              propertyDetails.furnished
-            }}</span>
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Number of Living Rooms:</span>
-            <span class="font-semibold">{{ propertyDetails.livingRooms }}</span>
-          </div>
-          <div class="flex items-center mb-5 gap-2">
-            <span class="w-50 font-normal">Number of Kitchens:</span>
-            <span class="font-semibold">{{ propertyDetails.kitchens }}</span>
+          <div class="space-y-6">
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Status:</span>
+              <span class="font-semibold">{{
+                propertyDetails.status || "N/A"
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Furnished:</span>
+              <span class="font-semibold capitalize">{{
+                propertyDetails.furnished || "N/A"
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Number of Living Rooms:</span>
+              <span class="font-semibold">{{
+                propertyDetails.livingRooms || "N/A"
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-52 font-normal">Number of Kitchens:</span>
+              <span class="font-semibold">{{
+                propertyDetails.kitchens || "N/A"
+              }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div
-    class="relative max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-4"
-  >
-    <div class="p-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Explanation</h3>
-      <p class="text-gray-600 text-sm">
-        {{ propertyDetails.description }}
-      </p>
+
+    <!-- Description -->
+    <div
+      class="relative bg-white shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6"
+    >
+      <div>
+        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4">
+          Explanation
+        </h3>
+        <p class="text-gray-600 text-sm sm:text-base">
+          {{ propertyDetails.description || "No description available" }}
+        </p>
+      </div>
     </div>
-  </div>
-  <div class="flex justify-center my-10">
-    <CreateBtn title="Next" name="propertyContact" />
+
+    <!-- Next Button -->
+    <div class="flex justify-center my-6 sm:my-10">
+      <CreateBtn title="Next" name="propertyContact" />
+    </div>
   </div>
 </template>
 
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
+import { Autoplay, Pagination, EffectCoverflow } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/pagination";
+
+import "swiper/css/effect-coverflow";
 import CreateBtn from "./CreateBtn.vue";
 import { mapState } from "vuex";
 import governorates from "@/assets/data/governorates.json";
@@ -130,19 +190,29 @@ export default {
   data() {
     return {
       swiper: null,
-      images: JSON.parse(localStorage.getItem("localImages")),
+      images: JSON.parse(localStorage.getItem("localImages")) || [],
+      swiperModules: [Autoplay, Pagination, EffectCoverflow],
     };
   },
   computed: {
     ...mapState("property", ["propertyDetails"]),
     governorateName() {
-      return governorates.find(
-        (governorate) => governorate.id === this.propertyDetails.governorate
-      )?.governorate_name_en;
+      return (
+        governorates.find(
+          (governorate) => governorate.id === this.propertyDetails.governorate
+        )?.governorate_name_en || "Unknown"
+      );
     },
     cityName() {
-      return cities.find((city) => city.id === this.propertyDetails.city)
-        ?.city_name_en;
+      return (
+        cities.find((city) => city.id === this.propertyDetails.city)
+          ?.city_name_en || "Unknown"
+      );
+    },
+    slidesPerView() {
+      if (this.images.length <= 1) return 1;
+      if (this.images.length === 2) return 2;
+      return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3;
     },
   },
   created() {
@@ -151,27 +221,50 @@ export default {
       this.$store.commit("property/updateProperty", JSON.parse(savedData));
     }
   },
+  mounted() {
+    window.addEventListener("resize", this.updateSlidesPerView);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateSlidesPerView);
+  },
   methods: {
     onSwiper(swiper) {
       this.swiper = swiper;
     },
-    onSlideChange() {
-      console.log(this.propertyDetails);
-      console.log("slide changed");
-    },
-    prevSlide() {
-      this.swiper.slidePrev();
-    },
-    nextSlide() {
-      this.swiper.slideNext();
+    updateSlidesPerView() {
+      this.swiper.update(); // Update Swiper on resize
     },
   },
 };
 </script>
 
-<style>
-.swiper-button-prev,
-.swiper-button-next {
-  color: #333;
+<style scoped>
+/* Smooth transitions for buttons */
+button {
+  transition: all 0.3s ease;
+}
+
+/* Ensure images are contained */
+img {
+  max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .grid-cols-2 {
+    grid-template-columns: 1fr; /* Stack on mobile */
+  }
+  .w-28 {
+    width: 100px; /* Smaller label width on mobile */
+  }
+  .pb-12 {
+    padding-bottom: 3rem; /* Space for buttons on mobile */
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1024px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on tablet */
+  }
 }
 </style>
