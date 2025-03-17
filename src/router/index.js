@@ -229,31 +229,29 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  await store.dispatch("auth/checkAuth");
-  const isAuth = store.getters["auth/isAuth"];
-  const role = store.getters["auth/getRole"];
+  store.dispatch("startLoading");
 
+  // Check authentication first
   if (!store.state.auth.user) {
     await store.dispatch("auth/checkAuth");
   }
 
+  const isAuth = store.getters["auth/isAuth"];
+  const role = store.getters["auth/getRole"];
+
   if (to.meta.requiresAuth && !isAuth) {
-    return next({ name: "login" });
+    next({ name: "login" });
+  } else if (to.meta.requiresAdmin && role !== "admin") {
+    next({ name: "NotFound" });
+  } else if (to.meta.requiresOwner && role !== "owner") {
+    next({ name: "NotFound" });
+  } else {
+    next();
   }
+});
 
-  if (role === "admin") {
-    return next();
-  }
-
-  if (to.meta.requiresAdmin && role !== "admin") {
-    return next({ name: "NotFound" });
-  }
-
-  if (to.meta.requiresOwner && role !== "owner") {
-    return next({ name: "NotFound" });
-  }
-
-  next();
+router.afterEach(() => {
+  store.dispatch("stopLoading");
 });
 
 export default router;

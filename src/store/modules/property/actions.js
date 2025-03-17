@@ -13,7 +13,7 @@ import base64ToFile from "@/services/base64ToFileService";
 
 export default {
   async getProperties({ commit }) {
-    commit("startLoading", null, { root: true });
+    // commit("startLoading", null, { root: true });
     try {
       const propertiesSnapshot = await getDocs(collection(db, "properties"));
       const properties = propertiesSnapshot.docs.map((doc) => ({
@@ -25,7 +25,7 @@ export default {
     } catch (error) {
       console.log(error);
     } finally {
-      commit("stopLoading", null, { root: true });
+      // commit("stopLoading", null, { root: true });
     }
   },
   async createProperty({ commit, state, rootState, dispatch }, files) {

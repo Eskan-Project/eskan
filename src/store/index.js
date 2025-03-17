@@ -15,7 +15,7 @@ export default createStore({
       state.loadingCount++;
     },
     stopLoading(state) {
-      state.loadingCount--;
+      if (state.loadingCount > 0) state.loadingCount--;
     },
   },
   actions: {
