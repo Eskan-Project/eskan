@@ -35,7 +35,7 @@
       data-aos="fade-up"
     >
       <h2
-        class="text-lg sm:text-3xl md:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2"
+        class="w-full text-center text-lg sm:text-3xl md:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2"
       >
         Find Everything You Need in One Place
       </h2>
