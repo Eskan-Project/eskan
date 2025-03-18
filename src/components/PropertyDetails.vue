@@ -32,7 +32,7 @@
       </div>
 
       <div
-        v-else-if="!paidProperties && freeViewsRemaining"
+        v-else-if="!paidProperties && freeViewsRemaining && !showPaymentPrompt"
         class="text-center"
       >
         <div
@@ -64,7 +64,10 @@
           🔓 Click here to unlock information
         </button>
       </div>
-      <div v-else class="text-gray-900 flex flex-col gap-10">
+      <div
+        v-else-if="!showPaymentPrompt"
+        class="text-gray-900 flex flex-col gap-10"
+      >
         <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
         <div class="flex flex-col items-center space-y-3">
           <img
@@ -119,7 +122,7 @@
         </div>
         <button
           @click="redirectToPayment"
-          class="mt-3 bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
+          class="cursor-pointer mt-3 bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
         >
           💳 Proceed to Payment
         </button>
