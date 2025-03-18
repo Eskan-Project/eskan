@@ -57,7 +57,7 @@
             :class="[
               isMobile
                 ? 'fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-lg p-4 max-h-[70vh] z-30'
-                : 'absolute top-12 w-full md:w-64 right-0 bg-white p-3 shadow-lg rounded-md max-h-[80vh]',
+                : 'absolute top-20 w-full md:w-64 right-30 bg-white p-3 shadow-lg rounded-md max-h-[40vh]',
               'overflow-y-auto',
             ]"
           >
