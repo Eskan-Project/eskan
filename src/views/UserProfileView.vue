@@ -70,12 +70,6 @@
 
                 <p class="text-sm mt-2 text-gray-600 flex items-center">
                   {{ userDetails?.email || "mariamsamuel111@gmail.com" }}
-                  <!-- <span
-                    v-if="userDetails?.isActive"
-                    class="ml-2 bg-green-100 text-green-700 font-semibold px-2 py-1 rounded-md shadow-sm"
-                  >
-                    ✅ Active
-                  </span> -->
                 </p>
               </div>
             </div>
@@ -234,19 +228,49 @@
         </section>
       </div>
     </div>
+
+    <div class="max-w-6xl mx-auto p-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">My Properties</h2>
+
+      <p v-if="loading" class="text-gray-600">Loading properties...</p>
+
+      <p v-else-if="allProperties && allProperties.length === 0" class="text-gray-600">You have not added any properties yet.</p>
+
+      <div v-else-if="allProperties && allProperties.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="property in allProperties" :key="property.id" class="bg-white shadow-md rounded-lg p-4">
+          <img v-if="property.images?.length" :src="property.images[0]" alt="Property Image" class="w-full h-40 object-cover rounded-md mb-3" />
+          <h4 class="text-lg font-bold">{{ property.title }}</h4>
+          <p class="text-gray-600">{{ property.city }}, {{ property.governorate }}</p>
+          <p class="text-gray-700">Price: <span class="font-semibold">${{ property.price }}</span></p>
+          <p class="text-gray-700">Rooms: <span class="font-semibold">{{ property.rooms }}</span></p>
+
+          <p class="text-sm font-medium mt-2 px-3 py-1 inline-block rounded-lg" :class="getStatusClass(property.status)">
+            {{ property.status }} ({{ property.collection }})
+          </p>
+
+          <button v-if="!property.isPaid  && property.status === 'approved' " @click="goToPaymentPage(property.id)" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Pay Now
+          </button>
+          
+        </div>
+      </div>
+    </div>
   </main>
 </template>
-
 <script>
+
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "../services/uploadToCloudinary";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 import base64ToFile from "../services/base64ToFileService";
-
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+
 export default {
+  name: 'ProfileProperties',
   components: {
     Cropper,
   },
@@ -257,10 +281,14 @@ export default {
       showCropper: false,
       croppedImageSrc: null,
       croppedImageFile: null,
+      properties: [],
+      allProperties: [],
+      loading: true,
     };
   },
   mounted() {
     this.fetchUserDetails();
+    this.fetchAllProperties();
   },
   computed: {
     ...mapState("auth", ["userDetails"]),
@@ -339,6 +367,111 @@ export default {
         }, "image/png");
       }
     },
+    async fetchRequests() {
+      try {
+        const requestsCollection = collection(db, 'requests');
+        const q = query(requestsCollection, where('ownerId', '==', this.userDetails.uid));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          collection: 'requests',
+        }));
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+        return [];
+      }
+    },
+    async fetchProperties() {
+      try {
+        const propertiesCollection = collection(db, 'properties');
+        const q = query(propertiesCollection, where('ownerId', '==', this.userDetails.uid));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          collection: 'properties',
+          isPaid: doc.data().isPaid || false,
+        }));
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+        return [];
+      }
+    },
+    async fetchAllProperties() {
+      this.startLoading();
+      try {
+        const requests = await this.fetchRequests();
+        const properties = await this.fetchProperties();
+        this.allProperties = [...requests, ...properties];
+        console.log("All properties:", this.allProperties);
+      } catch (error) {
+        console.error("Error fetching all properties:", error);
+        toast.error("Failed to fetch properties.", {
+          duration: 3000,
+          position: "top-left",
+          transition: "slide",
+        });
+      } finally {
+        this.stopLoading();
+        this.loading = false;
+      }
+    },
+    getStatusClass(status) {
+      switch (status) {
+        case 'pending':
+          return 'bg-yellow-100 text-yellow-700';
+        case 'approved':
+          return 'bg-green-100 text-green-700';
+        case 'rejected':
+          return 'bg-red-100 text-red-700';
+        default:
+          return 'bg-gray-100 text-gray-700';
+      }
+    },
+    goToPaymentPage(propertyId) {
+      
+      window.location.href = `/payment?propertyId=${propertyId}`;
+    },
+    async handlePayment(propertyId) {
+      try {
+        const propertyRef = doc(db, 'properties', propertyId);
+        await updateDoc(propertyRef, {
+          isPaid: true,
+        });
+        toast.success("Payment successful!", {
+          duration: 3000,
+          position: "top left",
+          transition: "slide",
+        });
+        this.fetchAllProperties();
+      } catch (error) {
+        console.error("Error processing payment:", error);
+        toast.error("Payment failed!", {
+          duration: 3000,
+          position: "top-left",
+          transition: "slide",
+        });
+      }
+    },
   },
 };
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

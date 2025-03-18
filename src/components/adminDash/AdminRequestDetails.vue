@@ -393,6 +393,8 @@ export default {
 
     ...mapActions("requests", ["getRequestById", "deleteRequest"]),
     ...mapActions("property", ["createPropertyFromRequest"]),
+    ...mapActions('notifications', ['addNotification']),
+
 
     // Replace the existing generateMeetLink method with this one
     generateMeetLink() {
@@ -566,47 +568,64 @@ export default {
     showMeetingForm() {
       this.meetingInfo = true;
     },
-    async acceptRequest() {
-      try {
-        const result = await Swal.fire({
-          title: "Accept this request?",
-          text: "This will create a new property listing and remove the request.",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, accept it!",
-        });
+   async acceptRequest() {
+  try {
+    const result = await Swal.fire(/* ... */);
 
-        if (result.isConfirmed) {
-          // Create a clean copy of the request data
-          const requestData = { ...this.request };
+    if (result.isConfirmed) {
+      const requestData = { ...this.request };
 
-          // Create property from request
-          await this.createPropertyFromRequest(requestData);
+      await this.createPropertyFromRequest(requestData);
+      await this.deleteRequest(this.id);
 
-          // Delete the request
-          await this.deleteRequest(this.id);
-
-          await Swal.fire(
-            "Accepted!",
-            "The request has been converted to a property listing.",
-            "success"
-          );
-
-          // Redirect to properties list
-          this.$router.push("/admin/properties");
-        }
-      } catch (error) {
-        console.error("Error accepting request:", error);
-        Swal.fire(
-          "Error",
-          "Failed to accept the request. Please try again.",
-          "error"
-        );
+     
+      if (requestData.ownerId) {
+        await this.sendAcceptanceNotification(requestData.ownerId, requestData.title);
+      } else {
+        console.warn("Owner ID not found, cannot send acceptance notification to the owner.");
       }
-    },
 
+      await Swal.fire(
+        "Accepted!",
+        "The request has been converted to a property listing.",
+        "success"
+      );
+
+      this.$router.push("/admin/properties");
+    }
+  } catch (error) {
+    console.error("Error accepting request:", error);
+    Swal.fire("Error", "Failed to accept the request. Please try again.", "error");
+  }
+},
+
+async sendAcceptanceNotification(ownerId, propertyTitle) {
+  try {
+    const notificationMessage = `"${propertyTitle}" is approved`;
+    await this.$store.dispatch('notifications/addNotification', {
+      type: 'property_accepted',
+      ownerId: ownerId, 
+      message: notificationMessage,
+    });
+    console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
+  } catch (error) {
+    console.error("Error sending acceptance notification:", error);
+  }
+},
+
+async sendAcceptanceNotification(ownerId, propertyTitle) {
+  try {
+    const notificationMessage = `"${propertyTitle} has been approved! Go to your profile to complete the payment. ✅`;
+    await this.$store.dispatch('notifications/addNotification', {
+      type: 'property_accepted',
+      ownerId: ownerId,
+      message: notificationMessage,
+    });
+    console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
+  } catch (error) {
+    console.error("Error sending acceptance notification:", error);
+  }
+},
     async loadData() {
       this.loading = true;
       try {

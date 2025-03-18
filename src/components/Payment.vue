@@ -1,42 +1,38 @@
 <template>
   <div
-    class="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#f1f5ff] via-indigo-300 to-purple-400 px-4 py-6"
+    class="flex items-center justify-center min-h-screen bg-[#f1f5ff] via-indigo-300 to-purple-400 px-4 py-6"
   >
     <div
       class="grid grid-cols-1 md:grid-cols-2 bg-white shadow-2xl rounded-3xl overflow-hidden max-w-5xl w-full"
     >
       <div
-        v-if="property"
+        v-if="propertyDetails"
         class="p-8 flex flex-col bg-[#364365] text-white w-full"
       >
         <h2 class="text-4xl font-extrabold mb-6 text-center">
-          🏡 Property Details
+           Property Details
         </h2>
 
         <div class="flex justify-center mb-6">
           <img
-            :src="property.images[0]"
+            :src="propertyDetails.images[0]"
             alt="Property"
             class="w-3/4 h-52 border border-gray-300 object-cover rounded-2xl shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
           />
         </div>
 
         <div class="text-lg space-y-2 text-center">
-          <p class="capitalize">
-            <strong class="mr-3">📌 Title:</strong>
-            {{ property.title || "No Tittle" }}
+          <p>
+            <strong> Title:</strong> {{ propertyDetails.title || "No Tittle" }}
           </p>
           <p>
-            <strong class="mr-3">💰 Price:</strong>
-            {{ property.price || "No Price" }} EGP
+            <strong> Price:</strong> {{ propertyDetails.price || "No Price" }}
           </p>
           <p>
-            <strong class="mr-3">📏 Area:</strong>
-            {{ property.area || "No Area" }} m²
+            <strong> Area:</strong> {{ propertyDetails.area || "No Area" }}
           </p>
           <p>
-            <strong class="mr-3">📍 City:</strong>
-            {{ cityName || "No City" }}
+            <strong>City:</strong> {{ propertyDetails.city || "No City" }}
           </p>
         </div>
       </div>
@@ -47,9 +43,7 @@
           class="bg-gradient-to-br from-green-400 to-green-600 text-white p-10 text-center animate-fade-in rounded-xl"
         >
           <h2 class="text-5xl font-bold mb-4">🎉 Payment Successful!</h2>
-          <p class="text-lg">
-            Thank you for your payment. Enjoy exclusive access!
-          </p>
+          <p class="text-lg ">Thank you for your payment. Enjoy exclusive access!</p>
           <div v-if="redirecting" class="flex justify-center mt-6">
             <svg
               class="animate-spin h-10 w-10 text-white"
@@ -84,72 +78,52 @@
             charged to view the owner's contact details.
           </p>
 
-          <div class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
-                >Payment Method</label
-              >
-              <div
-                id="card-element"
-                class="p-4 border rounded-xl bg-gray-50 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 transition-all"
-              ></div>
-            </div>
-
-            <button
-              @click="processPayment"
-              :disabled="!isValidCard"
-              class="cursor-pointer w-full py-3 px-6 text-white font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Card Details</label
             >
-              <svg
-                v-if="loading"
-                class="animate-spin h-5 w-5 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 0116 0h-4a4 4 0 00-8 0H4z"
-                ></path>
-              </svg>
-              {{ loading ? "Processing..." : "Pay $50 Now" }}
-            </button>
-
-            <p
-              v-if="message"
-              :class="error ? 'text-red-600' : 'text-green-600'"
-              class="text-center text-sm"
-            >
-              {{ message }}
-            </p>
+            <div
+              id="card-element"
+              class="p-4 border rounded-xl bg-gray-50 shadow-sm"
+            ></div>
           </div>
-          <div
-            class="mt-4 text-center text-xs text-gray-500 flex items-center justify-center gap-2"
+
+          <button
+            @click="handlePayment"
+            :disabled="loading"
+            class="w-full py-3 px-6 text-white font-semibold rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-blue-500 transition-all duration-300 flex items-center justify-center text-lg disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
             <svg
-              class="h-4 w-4"
-              fill="none"
+              v-if="loading"
+              class="animate-spin h-6 w-6 mr-2 text-white"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 11c0-1.1.9-2 2-2s2 .9 2 2-2 5-2 5m-8-5c0-1.1.9-2 2-2s2 .9 2 2-2 5-2 5m4-10c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4z"
-              />
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 0116 0h-4a4 4 0 00-8 0H4z"
+              ></path>
             </svg>
-            Secure payment powered by Stripe
-          </div>
+            {{ loading ? "Processing..." : "Pay Now" }}
+          </button>
+
+          <p
+            v-if="message"
+            :class="success ? 'text-green-600' : 'text-red-600'"
+            class="mt-4 text-center text-lg font-medium"
+          >
+            {{ message }}
+          </p>
         </div>
       </div>
     </div>
@@ -157,30 +131,33 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import cities from "@/assets/data/cities.json";
+import { loadStripe } from "@stripe/stripe-js";
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  collection,
+  runTransaction,
+  arrayUnion,
+  getDoc,
+} from "firebase/firestore";
 
 export default {
   data() {
     return {
       stripe: null,
-      card: false,
+      card: null,
+      loading: false,
       message: "",
       success: false,
-      error: false,
+      propertyId: null,
+      paymentAmount: 5000,
+      propertyDetails: null,
       redirecting: false,
-      property: JSON.parse(localStorage.getItem("property")),
-      isValidCard: false,
+      userType: null,
     };
   },
-  computed: {
-    cityName() {
-      return cities.find((city) => city.id === this.property.city)
-        ?.city_name_en;
-    },
-  },
   async mounted() {
-    const { loadStripe } = await import("@stripe/stripe-js");
     const urlParams = new URLSearchParams(window.location.search);
     this.propertyId = urlParams.get("propertyId");
 
@@ -199,38 +176,169 @@ export default {
         },
       });
       this.card.mount("#card-element");
-      this.card.on("change", (event) => {
-        this.isValidCard = event.complete;
-        if (event.error) {
-          this.error = true;
-          this.message = event.error.message;
-        } else {
-          this.error = false;
-          this.message = "";
-        }
-      });
     });
+
+    await this.fetchPropertyDetails();
+    await this.getUserType();
   },
   methods: {
-    ...mapActions("property", ["handlePayment"]),
-    async processPayment() {
+    async fetchPropertyDetails() {
+      if (!this.propertyId) return;
+      const db = getFirestore();
+      const propertyRef = doc(db, "properties", this.propertyId);
+      const docSnap = await getDoc(propertyRef);
+
+      if (docSnap.exists()) {
+        this.propertyDetails = { id: docSnap.id, ...docSnap.data() };
+      } else {
+        this.propertyDetails = null;
+      }
+    },
+    async getUserType() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const db = getFirestore();
+        const userRef = doc(db, "users", user.uid);
+        const ownerRef = doc(db, "owners", user.uid);
+
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          this.userType = "user";
+        } else {
+          const ownerDoc = await getDoc(ownerRef);
+          if (ownerDoc.exists()) {
+            this.userType = "owner";
+          }
+        }
+      }
+    },
+    async handlePayment() {
+      this.loading = true;
+      this.message = "";
       try {
-        const paymentId = await this.handlePayment(this.property.id);
-        console.log(paymentId);
-        if (paymentId) {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          this.message = "User not authenticated.";
+          this.success = false;
+          this.loading = false;
+          return;
+        }
+
+        const db = getFirestore();
+        await runTransaction(db, async (transaction) => {
+          let userRef;
+          if (this.userType === "owner") {
+            userRef = doc(db, `owners/${user.uid}`);
+          } else {
+            userRef = doc(db, `users/${user.uid}`);
+          }
+          const paymentRef = doc(collection(db, "payments"));
+          const propertyRef = doc(db, `properties/${this.propertyId}`);
+
+          transaction.set(paymentRef, {
+            userId: user.uid,
+            propertyId: this.propertyId,
+            amount: this.paymentAmount,
+            timestamp: new Date(),
+          });
+
+          transaction.update(userRef, {
+            paidProperties: arrayUnion(this.propertyId),
+          });
+
+          transaction.update(propertyRef, {
+            isPaid: true,
+          });
+        });
+
+        const response = await fetch(
+          "http://localhost:3001/create-payment-intent",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: this.paymentAmount }),
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok)
+          throw new Error(data.error || "Failed to create payment");
+
+        const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+          type: "card",
+          card: this.card,
+        });
+
+        if (error) throw new Error(error.message);
+        const result = await this.stripe.confirmCardPayment(
+          data.clientSecret,
+          {
+            payment_method: paymentMethod.id,
+          }
+        );
+
+        if (result.error) {
+          throw new Error(result.error.message);
+        } else {
           this.success = true;
+          this.message = "✅ Payment successful!";
 
           this.redirecting = true;
           setTimeout(() => {
-            this.redirecting = false;
-            this.$router.push(`/property/${this.property.id}`);
-          }, 3000);
+            if (this.userType === "owner") {
+              window.location.href = `/userProfile`;
+            } else {
+              window.location.href = `/property/${this.propertyId}`;
+            }
+          }, 2000);
         }
       } catch (error) {
-        this.message = error.message;
-        this.error = true;
+        this.success = false;
+        this.message = `❌ Error: ${error.message}`;
+      } finally {
+        this.loading = false;
       }
     },
   },
 };
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
