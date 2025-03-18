@@ -51,9 +51,8 @@
         </div>
 
         <p class="text-lg text-gray-700 mb-3">
-          Welcome! Would you like to view the owner's details? ({{
-            freeViewsRemaining
-          }}
+          Welcome! Would you like to view the owner's details? <br />
+          ({{ userDetails?.freeViewsRemaining }}
           free views remaining)
         </p>
 
