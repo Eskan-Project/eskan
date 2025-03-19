@@ -1,10 +1,10 @@
 <template>
   <div
     v-if="property"
-    class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-6 sm:mt-12"
+    class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-15 sm:mt-5"
   >
     <!-- Back Button -->
-    <div class="mb-5 mt-7 sm:mt-0">
+    <div class="mb-5 sm:mt-0">
       <router-link
         to="/properties"
         class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"

@@ -242,10 +242,10 @@
       <button
         v-if="showBackToTop"
         @click="scrollToTop"
-        class="fixed bottom-4 right-4 bg-[#1d2f5e] text-white p-2 rounded-full shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer z-50"
+        class="fixed bottom-4 right-4 bg-[#1d2f5e] text-white px-2 py-2 md:px-4 md:py-3 rounded-md shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer z-50"
         aria-label="Back to top"
       >
-        <i class="bi bi-arrow-up text-base"></i>
+        <i class="bi bi-arrow-up text-base md:text-xl"></i>
       </button>
     </transition>
   </div>

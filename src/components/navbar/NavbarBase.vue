@@ -15,15 +15,13 @@
         />
       </router-link>
 
-      <nav
-        class="hidden md:flex flex-grow justify-center space-x-3 lg:space-x-6"
-      >
+      <nav class="hidden md:flex flex-grow justify-center space-x-6">
         <router-link
           v-for="item in navLinks"
           :key="item.path"
           :to="item.path"
           :class="[
-            'text-white font-bold text-sm lg:text-base hover:text-gray-200 transition-colors',
+            'text-white font-bold hover:text-gray-200 transition-colors',
             { 'border-b-2 border-white': $route.path === item.path },
           ]"
           @click="closeMenu"
