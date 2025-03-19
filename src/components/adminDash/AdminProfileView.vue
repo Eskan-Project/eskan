@@ -63,7 +63,14 @@
     </section>
 
     <!-- Orders Section -->
-    <section class="mt-8">
+    <section class="mt-8" v-if="latestRequests.length === 0">
+      <div class="bg-green-100 text-green-800 p-4 rounded-lg shadow">
+        <p class="text-center font-semibold">
+          Well Done! There are no Pending Requests
+        </p>
+      </div>
+    </section>
+    <section v-else class="mt-8">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-[#364365] text-lg md:text-xl font-semibold">
           Owners Requests
