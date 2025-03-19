@@ -68,25 +68,50 @@
         <h2 class="text-[#364365] text-lg md:text-xl font-semibold">
           Owners Requests
         </h2>
-        <router-link to="/admin/orders" class="text-[#364365] hover:underline">
+        <router-link
+          to="/admin/requests"
+          class="text-[#364365] hover:underline"
+        >
           View all
         </router-link>
       </div>
       <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
         <div
-          v-for="item in properties"
-          :key="item.id"
-          class="bg-white rounded-lg shadow"
+          v-for="request in latestRequests"
+          :key="request.id"
+          @click="viewRequestDetails(request.id)"
+          class="bg-white rounded-lg shadow cursor-pointer hover:shadow-lg transition-shadow"
         >
           <img
-            :src="item.image"
+            :src="request.images?.[0] || 'default-image-url'"
             loading="lazy"
             alt="Property"
             class="w-full h-40 md:h-48 object-cover"
           />
           <div class="p-4">
-            <h3 class="font-semibold text-gray-600">{{ item.title }}</h3>
-            <p class="text-gray-600 text-sm">{{ item.location }}</p>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold text-gray-600">
+                {{ request.title }}
+              </h3>
+              <span
+                :class="{
+                  'bg-yellow-100 text-yellow-800': request.status === 'pending',
+                  'bg-green-100 text-green-800': request.status === 'approved',
+                  'bg-red-100 text-red-800': request.status === 'rejected',
+                }"
+                class="px-2 py-1 rounded-full text-xs"
+              >
+                {{ request.status }}
+              </span>
+            </div>
+            <p class="text-gray-600 text-sm">
+              {{ request.propertyContact.name }}
+            </p>
+            <p class="text-gray-500 text-xs mt-2">
+              {{
+                new Date(request.createdAt.seconds * 1000).toLocaleDateString()
+              }}
+            </p>
           </div>
         </div>
       </div>
@@ -106,17 +131,19 @@ export default {
     return {
       isEdited: false,
       originalUserInfo: {},
-      properties: [
-        { id: 1, title: "Luxury Condo", location: "New York", image: img1 },
-        { id: 2, title: "Apartment for sale", location: "London", image: img2 },
-        { id: 3, title: "Luxury Condo", location: "Times Sq.", image: img1 },
-      ],
     };
   },
   computed: {
     ...mapState({
       userInfo: (state) => state.auth.userDetails,
+      allRequests: (state) => state.requests.requests,
     }),
+    // Get latest 3 requests
+    latestRequests() {
+      return [...this.allRequests]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 3);
+    },
     editableFields() {
       return {
         name: { label: "Full Name", type: "text", disabled: false },
@@ -130,6 +157,7 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["updateProfile"]),
+    ...mapActions("requests", ["getRequests"]),
     editProfile() {
       this.isEdited = true;
     },
@@ -146,9 +174,13 @@ export default {
       this.userInfo = JSON.parse(JSON.stringify(this.originalUserInfo));
       this.isEdited = false;
     },
+    viewRequestDetails(requestId) {
+      this.$router.push(`/admin/requests/${requestId}`);
+    },
   },
-  created() {
+  async created() {
     this.originalUserInfo = JSON.parse(JSON.stringify(this.userInfo));
+    await this.getRequests(); // Fetch all requests when component mounts
   },
 };
 </script>
