@@ -5,14 +5,14 @@
       class="bg-white rounded-lg shadow p-4 mb-6 flex items-center space-x-4"
     >
       <img
-        :src="userInfo.profileImage"
+        :src="userInfo.photo"
         loading="lazy"
         alt="Profile"
         class="w-16 h-16 rounded-full object-cover"
       />
       <div>
         <h1 class="text-lg md:text-xl font-semibold text-gray-600">
-          {{ userInfo.firstName }} {{ userInfo.lastName }}
+          {{ userInfo.name }}
         </h1>
         <p class="text-sm md:text-base text-gray-600">{{ userInfo.email }}</p>
       </div>
@@ -20,7 +20,7 @@
 
     <section class="bg-white rounded-lg shadow p-4 md:p-6">
       <h2 class="text-lg md:text-xl font-semibold mb-4">Edit Profile</h2>
-      <form @submit.prevent="updateProfile">
+      <form @submit.prevent="handleUpdateProfile">
         <div class="grid md:grid-cols-2 gap-7">
           <InputField
             v-for="(field, key) in editableFields"
@@ -95,25 +95,16 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import InputField from "@/components/InputField.vue";
 import img1 from "@/assets/images/department.jpg";
 import img2 from "@/assets/images/department2.jpg";
-import profilePic from "@/assets/images/userProfilePhoto.jpg";
 
 export default {
   components: { InputField },
   data() {
     return {
       isEdited: false,
-      userInfo: {
-        profileImage: profilePic,
-        firstName: "Dina",
-        lastName: "Ahmed",
-        email: "DinaAhmed@gmail.com",
-        phone: "011154151151",
-        password: "",
-        nationality: "Egypt",
-      },
       originalUserInfo: {},
       properties: [
         { id: 1, title: "Luxury Condo", location: "New York", image: img1 },
@@ -123,30 +114,33 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      userInfo: (state) => state.auth.userDetails,
+    }),
     editableFields() {
       return {
-        firstName: { label: "First Name", type: "text", disabled: true },
-        lastName: { label: "Last Name", type: "text", disabled: true },
+        name: { label: "Full Name", type: "text", disabled: false },
         email: { label: "Email", type: "email", disabled: true },
         phone: { label: "Phone Number", type: "tel", disabled: false },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "Change Password",
-          disabled: false,
-        },
-        nationality: { label: "Nationality", type: "text", disabled: false },
+        nationalId: { label: "National ID", type: "text", disabled: false },
+        gender: { label: "Gender", type: "text", disabled: false },
+        address: { label: "Address", type: "text", disabled: false },
       };
     },
   },
   methods: {
+    ...mapActions("auth", ["updateProfile"]),
     editProfile() {
       this.isEdited = true;
     },
-    updateProfile() {
-      console.log("Profile updated:", this.userInfo);
-      this.originalUserInfo = JSON.parse(JSON.stringify(this.userInfo));
-      this.isEdited = false;
+    async handleUpdateProfile() {
+      try {
+        await this.updateProfile(this.userInfo);
+        this.originalUserInfo = JSON.parse(JSON.stringify(this.userInfo));
+        this.isEdited = false;
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
     },
     cancelEdit() {
       this.userInfo = JSON.parse(JSON.stringify(this.originalUserInfo));
