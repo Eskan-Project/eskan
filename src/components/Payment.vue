@@ -180,6 +180,7 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.property);
     const { loadStripe } = await import("@stripe/stripe-js");
     const urlParams = new URLSearchParams(window.location.search);
     this.propertyId = urlParams.get("propertyId");
@@ -210,6 +211,9 @@ export default {
         }
       });
     });
+  },
+  beforeUnmount() {
+    localStorage.removeItem("property");
   },
   methods: {
     ...mapActions("property", ["handlePayment"]),
