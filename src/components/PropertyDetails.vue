@@ -3,8 +3,41 @@
     <p v-if="loading" class="text-center text-gray-600">Loading...</p>
 
     <template v-if="property">
-      <!-- Case 1: User not authenticated -->
-      <div v-if="!isAuthenticated" class="text-center">
+      <!-- Case 1: Admin user -->
+      <div
+        v-if="isAuthenticated && userDetails?.role === 'admin'"
+        class="text-gray-900 flex flex-col gap-10"
+      >
+        <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
+        <div class="flex flex-col items-center space-y-3">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+            alt="Profile Picture"
+            class="w-24 h-24 rounded-full border-2 border-gray-300"
+          />
+          <p class="flex flex-col items-center space-y-1">
+            <span class="font-semibold">Name:</span>
+            <span class="text-sm capitalize">{{
+              property.propertyContact.name
+            }}</span>
+          </p>
+          <p class="flex flex-col items-center space-y-1">
+            <span class="font-semibold">Phone:</span>
+            <span class="text-sm">{{ property.propertyContact.phone }}</span>
+          </p>
+          <p class="flex flex-col items-center space-y-1">
+            <span class="font-semibold">Email:</span>
+            <span class="text-sm">{{ property.propertyContact.email }}</span>
+          </p>
+          <p class="flex flex-col items-center space-y-1">
+            <span class="font-semibold">Address:</span>
+            <span class="text-sm capitalize">{{ property.address }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 2: User not authenticated -->
+      <div v-else-if="!isAuthenticated" class="text-center">
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
         >
@@ -30,7 +63,7 @@
         </button>
       </div>
 
-      <!-- Case 2: Authenticated user with free views available -->
+      <!-- Case 3: Authenticated user with free views available -->
       <div
         v-else-if="!paidProperties && userDetails?.freeViewsRemaining > 0"
         class="text-center"
@@ -61,7 +94,7 @@
         </button>
       </div>
 
-      <!-- Case 3: Showing owner details (only if paid) -->
+      <!-- Case 4: Showing owner details (only if paid or unlocked) -->
       <div
         v-else-if="paidProperties"
         class="text-gray-900 flex flex-col gap-10"
@@ -69,9 +102,13 @@
         <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
         <div class="flex flex-col items-center space-y-3">
           <img
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+            :src="
+              property.propertyContact.image
+                ? property.propertyContact.image
+                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+            "
             alt="Profile Picture"
-            class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
+            class="w-24 h-24 rounded-full border-2 border-gray-300"
           />
           <p class="flex flex-col items-center space-y-1">
             <span class="font-semibold">Name:</span>
@@ -94,7 +131,7 @@
         </div>
       </div>
 
-      <!-- Case 4: Payment prompt (when free views = 0 and not paid) -->
+      <!-- Case 5: Payment prompt (when free views = 0 and not paid) -->
       <div
         v-else-if="
           isAuthenticated &&

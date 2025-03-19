@@ -152,7 +152,7 @@ export default {
         area: "",
         floor: "",
         furnished: "",
-        status: "",
+        propertyStatus: "",
         governorate: "",
         city: "",
         neighborhood: "",

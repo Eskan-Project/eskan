@@ -92,7 +92,7 @@
         class="w-full"
       />
       <InputField
-        v-model="propertyDetails.status"
+        v-model="propertyDetails.propertyStatus"
         label="Status"
         type="select"
         required

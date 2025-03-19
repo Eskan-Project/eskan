@@ -2,7 +2,7 @@
   <div>
     <!-- Hero Section -->
     <section
-      class="relative h-screen w-full bg-fixed bg-cover bg-center flex items-center justify-center text-white px-4 sm:px-6 lg:px-8"
+      class="relative h-screen md:h-screen w-full bg-fixed bg-cover bg-center flex items-center justify-center text-white px-4 sm:px-6 lg:px-8"
       :style="{
         backgroundImage: ImgForHeroSection
           ? `url(${ImgForHeroSection})`
@@ -11,16 +11,16 @@
       data-aos="fade-in"
     >
       <div
-        class="text-center bg-[#36436585] p-4 sm:p-6 md:p-8 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+        class="text-center bg-[#36436585] p-4 sm:p-6 md:p-8 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl backdrop-blur-sm"
         data-aos="zoom-in"
       >
         <h1
-          class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+          class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
         >
           Your New Home Away from Home
         </h1>
         <p
-          class="mt-3 sm:mt-4 text-xs sm:text-base md:text-lg lg:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto"
+          class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto"
         >
           Find your perfect shared accommodation with ease. Whether you're
           moving for work, study, or adventure, Eskan connects you with safe,
@@ -31,16 +31,16 @@
 
     <!-- Features Section -->
     <section
-      class="container mx-auto my-12 sm:my-16 lg:my-20 px-4 sm:px-6 lg:px-8 bg-white rounded-lg relative"
+      class="container mx-auto my-16 px-4 sm:px-6 lg:px-8 bg-white rounded-lg relative"
       data-aos="fade-up"
     >
       <h2
-        class="w-full text-center text-lg sm:text-3xl md:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2"
+        class="w-full text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2 px-4 bg-white"
       >
         Find Everything You Need in One Place
       </h2>
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 pt-12 sm:pt-16"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-14 sm:pt-16"
       >
         <feature-card
           v-for="(feature, index) in features"
@@ -48,65 +48,149 @@
           :feature="feature"
           :delay="index * 100"
           data-aos="flip-left"
+          data-aos-delay="50"
         />
       </div>
     </section>
 
     <!-- Latest Properties Section -->
-    <section class="py-12 sm:py-16 lg:py-20" data-aos="fade-up">
-      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section
+      class="py-8 sm:py-12 lg:py-20 relative overflow-hidden"
+      data-aos="fade-up"
+    >
+      <!-- Background decorative elements -->
+      <div
+        class="absolute -top-20 -left-20 w-40 h-40 bg-[#364365]/5 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute -bottom-20 -right-20 w-40 h-40 bg-[#364365]/5 rounded-full blur-3xl"
+      ></div>
+
+      <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
         <h2
-          class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-[#364365] text-center"
+          class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-[#364365] text-center relative"
         >
-          Latest Properties for Rent
+          <span class="relative inline-block">
+            Latest Properties for Rent
+          </span>
         </h2>
         <div
           v-if="isLoading"
-          class="text-gray-500 text-sm sm:text-base md:text-lg"
+          class="text-gray-500 text-sm flex justify-center items-center py-6"
         >
-          Loading properties...
+          <div class="flex flex-col items-center">
+            <div
+              class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#364365] mb-2"
+            ></div>
+            <span>Loading properties...</span>
+          </div>
         </div>
+
+        <!-- Swiper for Properties -->
         <div
           v-else-if="latestProperties.length && !error"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10"
+          class="relative swiper-container"
         >
-          <property-card
-            v-for="property in latestProperties"
-            :key="property.id"
-            :property="property"
-            data-aos="zoom-in"
-          />
+          <swiper
+            :slides-per-view="1"
+            :space-between="20"
+            :pagination="{
+              clickable: true,
+              dynamicBullets: true,
+              el: '.swiper-pagination',
+            }"
+            :navigation="{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            }"
+            :autoplay="{ delay: 3000, disableOnInteraction: false }"
+            :breakpoints="{
+              '640': { slidesPerView: 2, spaceBetween: 20 },
+              '768': { slidesPerView: 2, spaceBetween: 30 },
+              '1024': { slidesPerView: 3, spaceBetween: 30 },
+            }"
+            :modules="swiperModules"
+            @swiper="onSwiper"
+            class="pb-16"
+          >
+            <swiper-slide
+              v-for="(property, index) in latestProperties"
+              :key="property.id"
+              class="animate-slide-up"
+              :style="{ animationDelay: `${index * 150}ms` }"
+            >
+              <property-card
+                :property="property"
+                :id="property.id"
+                class="h-full transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 bg-white rounded-lg overflow-hidden shadow-md"
+              />
+            </swiper-slide>
+          </swiper>
+
+          <!-- Custom navigation and pagination elements -->
+          <div class="swiper-pagination mt-6"></div>
         </div>
+
+        <!-- Error State -->
         <p
           v-else-if="error"
-          class="text-red-500 text-sm sm:text-base md:text-lg"
+          class="text-red-500 text-sm md:text-base py-4 text-center"
         >
           {{ error }}
-          <button @click="fetchProperties" class="text-blue-500 underline ml-2">
+          <button
+            @click="fetchProperties"
+            class="text-blue-500 underline ml-2 mt-2 block sm:inline hover:text-blue-700 transition-colors duration-200"
+          >
             Retry
           </button>
         </p>
-        <p v-else class="text-gray-500 text-sm sm:text-base md:text-lg">
+
+        <!-- Empty State -->
+        <p
+          v-if="latestProperties.length === 0"
+          class="text-gray-500 text-sm md:text-base py-4 text-center"
+        >
           No properties available.
         </p>
+
+        <!-- View All Button with Animation -->
+        <div
+          v-if="latestProperties.length > 3 && !error"
+          class="mt-8 text-center"
+        >
+          <router-link
+            to="/properties"
+            class="inline-flex items-center px-5 py-2.5 bg-[#364365] text-white rounded-full hover:bg-[#4c5b87] transition-colors duration-300 text-sm group shadow-md hover:shadow-lg"
+          >
+            View All Properties
+            <span
+              class="ml-2 group-hover:translate-x-1 transition-transform duration-300"
+              >→</span
+            >
+          </router-link>
+        </div>
       </div>
     </section>
 
     <!-- Stats Section -->
     <section
-      class="py-12 sm:py-16 lg:py-20 bg-[#DDE1EB] text-[#364365] text-center"
+      class="py-8 sm:py-12 lg:py-20 bg-[#DDE1EB] text-[#364365] text-center"
       data-aos="fade-up"
     >
       <div
         id="countup-section"
-        class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12"
+        class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10"
       >
-        <div v-for="stat in stats" :key="stat.label" class="p-4 sm:p-6">
+        <div
+          v-for="stat in stats"
+          :key="stat.label"
+          class="p-4 sm:p-6 bg-white/50 rounded-lg shadow-sm"
+        >
           <count-up
             v-if="startCounting"
             :end-val="stat.value"
             :duration="stat.duration"
-            class="text-xl sm:text-2xl md:text-3xl font-bold"
+            class="text-2xl sm:text-3xl md:text-4xl font-bold"
           />
           <p class="text-base sm:text-lg md:text-xl mt-2">{{ stat.label }}</p>
         </div>
@@ -115,7 +199,7 @@
 
     <!-- Contact Section -->
     <section
-      class="relative min-h-[400px] sm:min-h-[450px] md:min-h-[500px] w-full bg-fixed bg-cover bg-center"
+      class="relative min-h-[350px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px] w-full bg-fixed bg-cover bg-center"
       :style="{
         backgroundImage: ContactUsHomePage
           ? `url(${ContactUsHomePage})`
@@ -124,18 +208,18 @@
       data-aos="fade-in"
     >
       <div class="absolute inset-0 bg-[#053052]/80"></div>
-      <div class="relative min-h-[400px] flex items-center justify-center">
-        <div
-          class="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 px-4 sm:px-6 lg:px-8"
-        >
+      <div
+        class="relative min-h-[450px] flex items-center justify-center px-4 sm:px-6 lg:px-8"
+      >
+        <div class="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 py-10">
           <h2
-            class="text-white text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight"
+            class="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-tight"
             data-aos="zoom-in"
           >
             Find Your Perfect Home
           </h2>
           <p
-            class="text-[#edeff6] text-sm sm:text-base md:text-lg lg:text-xl leading-6 sm:leading-7 max-w-md sm:max-w-lg md:max-w-2xl"
+            class="text-[#edeff6] text-xs sm:text-sm md:text-base lg:text-lg leading-5 sm:leading-6 max-w-md sm:max-w-lg md:max-w-2xl mx-auto"
             data-aos="zoom-in"
             data-aos-delay="100"
           >
@@ -144,7 +228,7 @@
           </p>
           <router-link
             to="/contact"
-            class="inline-block px-6 sm:px-8 py-3 sm:py-4 border border-white text-white text-sm sm:text-base font-medium rounded-md hover:bg-white hover:text-[#053052] transition-colors"
+            class="inline-block px-6 sm:px-8 py-3 sm:py-4 border border-white text-white text-base font-medium rounded-md hover:bg-white hover:text-[#053052] transition-colors"
             data-aos="fade-up"
           >
             Contact Us
@@ -158,9 +242,10 @@
       <button
         v-if="showBackToTop"
         @click="scrollToTop"
-        class="fixed bottom-4 sm:bottom-5 right-2 sm:right-5 bg-[#1d2f5e] text-white px-2 sm:px-5 py-1 sm:py-4 rounded-md shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer"
+        class="fixed bottom-4 right-4 bg-[#1d2f5e] text-white p-2 rounded-full shadow-lg hover:bg-[#607bbe] transition-colors cursor-pointer z-50"
+        aria-label="Back to top"
       >
-        <i class="bi bi-arrow-up text-base sm:text-xl"></i>
+        <i class="bi bi-arrow-up text-base"></i>
       </button>
     </transition>
   </div>
@@ -173,10 +258,22 @@ import PropertyCard from "@/components/PropertyCard.vue";
 import FeatureCard from "@/components/home/FeatureCard.vue";
 import CountUp from "vue-countup-v3";
 import { mapActions, mapGetters } from "vuex";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/autoplay";
 
 export default {
   name: "HomeView",
-  components: { PropertyCard, FeatureCard, CountUp },
+  components: {
+    PropertyCard,
+    FeatureCard,
+    CountUp,
+    Swiper,
+    SwiperSlide,
+  },
   data: () => ({
     observer: null,
     startCounting: false,
@@ -185,6 +282,7 @@ export default {
     ContactUsHomePage,
     latestProperties: [],
     error: null,
+    swiperModules: [Autoplay, Pagination, Navigation],
     features: [
       {
         icon: new URL(
@@ -268,12 +366,14 @@ export default {
       this.error = null;
       try {
         const properties = await this.getProperties();
-        console.log(properties);
-        this.latestProperties = properties?.slice(0, 3) || [];
-        console.log(this.latestProperties);
+        if (!Array.isArray(properties)) {
+          throw new Error("Expected an array of properties");
+        }
+        this.latestProperties = properties.slice(0, 6);
+        console.log("Fetched properties:", this.latestProperties);
       } catch (error) {
         this.error = "Failed to load properties. Please try again later.";
-        console.error("Fetch properties error:", error);
+        console.error("Fetch properties error:", error.message);
       }
     },
     observeCountupSection() {
@@ -297,6 +397,16 @@ export default {
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
+    onSwiper(swiper) {
+      this.swiper = swiper;
+      // Make sure modules are properly initialized
+      setTimeout(() => {
+        if (swiper && swiper.pagination && swiper.navigation) {
+          swiper.pagination.update();
+          swiper.navigation.update();
+        }
+      }, 100);
+    },
   },
 };
 </script>
@@ -313,5 +423,94 @@ export default {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .bg-fixed {
+    /* Fix for iOS Safari background-attachment: fixed issue */
+    background-attachment: scroll;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+@keyframes expand-line {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-expand-line {
+  animation: expand-line 1s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+/* Swiper pagination customization */
+:deep(.swiper-pagination-bullet) {
+  background-color: #364365;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+}
+
+:deep(.swiper-pagination-bullet-active) {
+  background-color: #364365;
+  opacity: 1;
+  width: 12px;
+  border-radius: 5px;
+}
+
+/* Swiper navigation buttons */
+:deep(.swiper-button-next),
+:deep(.swiper-button-prev) {
+  color: #364365;
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.swiper-button-next:after),
+:deep(.swiper-button-prev:after) {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+:deep(.swiper-button-disabled) {
+  opacity: 0.35;
+}
+
+/* Container for proper positioning */
+.swiper-container {
+  position: relative;
+  padding-bottom: 40px;
+}
+
+/* Swiper slide hover effect */
+:deep(.swiper-slide) {
+  transition: transform 0.3s ease;
+}
+
+:deep(.swiper-slide:hover) {
+  z-index: 2;
 }
 </style>

@@ -53,6 +53,10 @@ export default {
   },
   computed: {
     ...mapState("property", ["propertyDetails"]),
+    ...mapState("auth", ["userDetails"]),
+  },
+  mounted() {
+    this.propertyDetails.propertyContact.image = this.userDetails.photo;
   },
   watch: {
     propertyDetails: {
