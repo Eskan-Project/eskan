@@ -128,7 +128,7 @@
         </router-link>
 
         <router-link
-          v-else
+          v-if="isAuth"
           to="/userProfile"
           title="User Profile"
           class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"

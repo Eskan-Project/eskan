@@ -97,11 +97,7 @@
       <div
         class="bg-white rounded-lg p-6 shadow-lg flex flex-col justify-center items-center"
       >
-        <PropertyDetails
-          :property="property"
-          :id="id"
-          @viewOwner="handleViewOwner"
-        />
+        <PropertyDetails :property="property" :id="id" />
       </div>
     </div>
 
@@ -196,7 +192,6 @@ import PropertyDetails from "../components/PropertyDetails.vue";
 import { mapActions, mapState } from "vuex";
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
-import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
 export default {
@@ -248,31 +243,6 @@ export default {
       });
       this.updateGalleryStartIndex();
       console.log("userDetails", this.userDetails);
-
-      // Skip if userDetails is not available yet
-      if (!this.userDetails || !this.userDetails.uid) {
-        console.warn(
-          "User details not available yet, skipping free views update."
-        );
-        return;
-      }
-
-      // Check paidProperties safely
-      const isPaidProperty =
-        Array.isArray(this.userDetails.paidProperties) &&
-        this.userDetails.paidProperties.includes(this.id);
-      const noFreeViews = this.userDetails.freeViewsRemaining === 0;
-
-      if (isPaidProperty || noFreeViews) {
-        return;
-      }
-
-      // Proceed with updates only if userDetails is valid
-      this.updateFreeViews(this.userDetails.uid);
-      this.addPaidProperty({
-        uid: this.userDetails.uid,
-        propertyId: this.id,
-      });
     });
   },
   beforeDestroy() {
@@ -282,7 +252,6 @@ export default {
   },
   methods: {
     ...mapActions("property", ["getProperty"]),
-    ...mapActions("auth", ["updateFreeViews", "addPaidProperty"]),
     nextImage() {
       if (!this.property?.images?.length) return;
       this.currentImageIndex =

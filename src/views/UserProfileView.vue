@@ -276,8 +276,8 @@
 
           <button
             v-if="!property.isPaid && property.status === 'approved'"
-            @click="goToPaymentPage(property.id)"
-            class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            @click="goToPaymentPage(property)"
+            class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
           >
             Pay Now
           </button>
@@ -327,6 +327,9 @@ export default {
   },
   computed: {
     ...mapState("auth", ["userDetails"]),
+    isPaid() {
+      return this.userDetails?.paidProperties?.includes(this.id);
+    },
   },
   methods: {
     ...mapActions("auth", ["fetchUserDetails", "updateProfile"]),
@@ -470,8 +473,9 @@ export default {
           return "bg-gray-100 text-gray-700";
       }
     },
-    goToPaymentPage(propertyId) {
-      window.location.href = `/payment?propertyId=${propertyId}`;
+    goToPaymentPage(property) {
+      localStorage.setItem("property", JSON.stringify(property));
+      window.location.href = `/payment?propertyId=${property.id}`;
     },
     async handlePayment(propertyId) {
       try {

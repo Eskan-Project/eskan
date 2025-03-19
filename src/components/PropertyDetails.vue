@@ -3,6 +3,7 @@
     <p v-if="loading" class="text-center text-gray-600">Loading...</p>
 
     <template v-if="property">
+      <!-- Case 1: User not authenticated -->
       <div v-if="!isAuthenticated" class="text-center">
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
@@ -18,11 +19,9 @@
             />
           </svg>
         </div>
-
         <p class="text-lg text-gray-700 mb-3">
           Please register to view the owner's contact details!
         </p>
-
         <button
           @click="redirectToRegister"
           class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
@@ -31,8 +30,9 @@
         </button>
       </div>
 
+      <!-- Case 2: Authenticated user with free views available -->
       <div
-        v-else-if="!paidProperties && freeViewsRemaining && !showPaymentPrompt"
+        v-else-if="!paidProperties && userDetails?.freeViewsRemaining > 0"
         class="text-center"
       >
         <div
@@ -45,26 +45,25 @@
             fill="currentColor"
           >
             <path
-              d="M21 16.5V19a2 2 0 0 1-2 2c-8.28 0-15-6.72-15-15a2 2 0 0 1 2-2h2.5a1 1 0 0 1 1 1v3.18a1 1 0 0 1-.29.71L7.91 9.91A12.06 12.06 0 0 0 14.09 16.09l1.52-1.52a1 1 0 0 1 .71-.29H19a1 1 0 0 1 1Z"
+              d="M21 16.5V19a2 2 0 0 1-2 2c-8.28 0-15-6.72-15-15a2 2 0 0 1 2-2h2.5a1 1 0 0 0 1 1v3.18a1 1 0 0 1-.29.71L7.91 9.91A12.06 12.06 0 0 0 14.09 16.09l1.52-1.52a1 1 0 0 1 .71-.29H19a1 1 0 0 1 1Z"
             />
           </svg>
         </div>
-
         <p class="text-lg text-gray-700 mb-3">
           Welcome! Would you like to view the owner's details? <br />
-          ({{ userDetails?.freeViewsRemaining }}
-          free views remaining)
+          ({{ userDetails?.freeViewsRemaining }} free views remaining)
         </p>
-
         <button
-          @click="handleViewOwner"
+          @click="unlock"
           class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
         >
           🔓 Click here to unlock information
         </button>
       </div>
+
+      <!-- Case 3: Showing owner details (only if paid) -->
       <div
-        v-else-if="!showPaymentPrompt"
+        v-else-if="paidProperties"
         class="text-gray-900 flex flex-col gap-10"
       >
         <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
@@ -95,8 +94,13 @@
         </div>
       </div>
 
+      <!-- Case 4: Payment prompt (when free views = 0 and not paid) -->
       <div
-        v-if="isAuthenticated && showPaymentPrompt"
+        v-else-if="
+          isAuthenticated &&
+          !paidProperties &&
+          userDetails?.freeViewsRemaining === 0
+        "
         class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg text-center"
       >
         <div class="flex items-center justify-center space-x-2">
@@ -115,8 +119,8 @@
             />
           </svg>
           <p>
-            You have already viewed a property. To unlock this one, please
-            proceed with the payment.
+            You have no free views remaining. To view this property's owner
+            details, please proceed with the payment.
           </p>
         </div>
         <button
@@ -131,7 +135,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   props: {
@@ -147,8 +151,6 @@ export default {
   data() {
     return {
       loading: false,
-      showPaymentPrompt: false,
-      unLocked: false,
     };
   },
   computed: {
@@ -157,22 +159,39 @@ export default {
       return this.isAuth;
     },
     paidProperties() {
-      return this.userDetails?.paidProperties.includes(this.id);
-    },
-    freeViewsRemaining() {
-      return this.userDetails?.freeViewsRemaining === 0;
+      return this.userDetails?.paidProperties?.includes(this.id) || false;
     },
   },
   methods: {
-    handleViewOwner() {
-      this.showPaymentPrompt = true;
-    },
+    ...mapActions("auth", ["updateFreeViews", "addPaidProperty"]),
     redirectToPayment() {
       localStorage.setItem("property", JSON.stringify(this.property));
       window.location.href = `/payment?propertyId=${this.id}`;
     },
     redirectToRegister() {
       window.location.href = "/register";
+    },
+    async unlock() {
+      try {
+        this.loading = true;
+
+        if (this.userDetails?.freeViewsRemaining > 0) {
+          await this.updateFreeViews({
+            uid: this.userDetails.uid,
+            role: this.userDetails.role,
+          });
+
+          await this.addPaidProperty({
+            uid: this.userDetails.uid,
+            propertyId: this.id,
+            role: this.userDetails.role,
+          });
+        }
+      } catch (error) {
+        console.error("Error unlocking property:", error);
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };

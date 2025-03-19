@@ -259,10 +259,10 @@ export default {
       });
     });
   },
-  async updateFreeViews({ commit }, uid) {
+  async updateFreeViews({ commit }, { uid, role }) {
     commit("startLoading", null, { root: true });
     try {
-      const userRef = doc(db, "users", uid);
+      const userRef = doc(db, role === "user" ? "users" : "owners", uid);
       const userDoc = await getDoc(userRef);
       const currentUser = userDoc.data();
       const newFreeViews = currentUser.freeViewsRemaining - 1;
@@ -280,10 +280,10 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async addPaidProperty({ commit }, { uid, propertyId }) {
+  async addPaidProperty({ commit }, { uid, propertyId, role }) {
     commit("startLoading", null, { root: true });
     try {
-      const userRef = doc(db, "users", uid);
+      const userRef = doc(db, role === "user" ? "users" : "owners", uid);
       const userDoc = await getDoc(userRef);
       const currentData = userDoc.data();
       const updatedPaidProperties = [...currentData.paidProperties, propertyId];

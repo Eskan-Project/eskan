@@ -248,7 +248,6 @@ export default {
       if (!propertyDoc.exists()) {
         throw new Error("Property not found");
       }
-
       const propertyData = propertyDoc.data();
       const paymentData = {
         propertyId,
@@ -258,16 +257,23 @@ export default {
       };
       const paymentId = doc(collection(db, "payments")).id;
       await setDoc(doc(db, "payments", paymentId), paymentData);
+
+      await updateDoc(propertyRef, {
+        isPaid: true,
+        paymentId: paymentId,
+        paymentDate: new Date().toISOString(),
+      });
+
       dispatch(
         "auth/addPaidProperty",
         {
           uid: currentUser.uid,
           propertyId,
+          role: currentUser.role,
         },
         { root: true }
       );
       console.log("paymentId", paymentId);
-
       return paymentId;
     } catch (error) {
       console.error("Error handling payment:", error);
