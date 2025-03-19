@@ -569,18 +569,34 @@ export default {
     },
     async acceptRequest() {
       try {
-        const result = await Swal.fire(/* ... */);
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "Do you want to accept this request and send a payment request to the owner?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, accept it!",
+          cancelButtonText: "No, cancel!",
+        });
 
         if (result.isConfirmed) {
-          const requestData = { ...this.request };
+          // Create a new property object with isPaid set to false
+          const propertyData = {
+            ...this.request,
+            isPaid: false, // Add this property
+            status: "pending_payment", // Optionally add a status to track payment state
+            acceptedAt: new Date(), // Optionally add acceptance timestamp
+          };
 
-          await this.createPropertyFromRequest(requestData);
+          // Create the property with the modified data
+          await this.createPropertyFromRequest(propertyData);
           await this.deleteRequest(this.id);
 
-          if (requestData.ownerId) {
+          if (propertyData.ownerId) {
             await this.sendAcceptanceNotification(
-              requestData.ownerId,
-              requestData.title
+              propertyData.ownerId,
+              propertyData.title
             );
           } else {
             console.warn(
@@ -590,7 +606,7 @@ export default {
 
           await Swal.fire(
             "Accepted!",
-            "The request has been converted to a property listing.",
+            "The request has been converted to a property listing. Owner needs to complete the payment.",
             "success"
           );
 

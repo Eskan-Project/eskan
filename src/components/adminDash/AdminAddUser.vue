@@ -135,6 +135,7 @@ export default {
         photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
         createdAt: null,
         updatedAt: null,
+        freeViewsRemaining: 3,
         freePropertyViewed: 0, // Add missing required fields
         paidProperties: [], // Add missing required fields
       },
@@ -166,40 +167,46 @@ export default {
           throw new Error("Admin not authenticated");
         }
 
+        // Check admin permissions first
+        const adminDoc = await getDoc(doc(db, "owners", adminAuth.uid));
+        if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
+          throw new Error("Insufficient permissions to create users");
+        }
+
         const uniqueAppName = "secondaryApp-" + new Date().getTime();
         secondaryApp = initializeApp(firebaseConfig, uniqueAppName);
         const secondaryAuth = getAuth(secondaryApp);
+
+        // Create user account
         const userCredential = await createUserWithEmailAndPassword(
           secondaryAuth,
           this.formData.email.trim(),
           this.formData.nationalId
         );
 
-        // Get the new user's UID
-        const newUserUid = userCredential.user.uid;
-
-        // Log out from secondary auth
+        // Sign out immediately
         await signOut(secondaryAuth);
 
-        // Prepare and save user data
+        // Prepare user data
         const userData = {
           ...this.formData,
-          uid: newUserUid,
+          uid: userCredential.user.uid,
           createdAt: new Date(),
           updatedAt: new Date(),
           createdBy: adminAuth.uid,
+          role: "user", // Ensure role is set
+          isActive: true, // Set default active status
         };
 
-        const userRef = doc(db, "users", newUserUid);
-        await setDoc(userRef, userData);
+        // Create user document using admin's auth context
+        await setDoc(doc(db, "users", userCredential.user.uid), userData);
 
         await Swal.fire({
           title: "Success",
-          text: "User created successfully. Initial password is their National ID.",
+          text: "User created successfully",
           icon: "success",
         });
 
-        await this.$store.dispatch("users/getUsers");
         this.$router.push("/admin/users");
       } catch (error) {
         console.error("Error creating user:", error);
@@ -209,9 +216,12 @@ export default {
           icon: "error",
         });
       } finally {
-        // Properly delete the secondary app
         if (secondaryApp) {
-          await secondaryApp.delete().catch(console.error);
+          try {
+            await secondaryApp._delete(); // Use _delete() instead of delete()
+          } catch (e) {
+            console.error("Error deleting secondary app:", e);
+          }
         }
         this.loading = false;
       }
