@@ -1,26 +1,55 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex">
+  <main class="min-h-screen bg-gray-100 flex relative">
+    <!-- Mobile Header Bar -->
+    <div
+      class="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#364365] shadow-lg z-40 flex items-center justify-between px-4"
+    >
+      <button
+        @click="toggleSidebar"
+        class="text-white p-2 hover:bg-[#4a5b8a] rounded-md transition-colors"
+      >
+        <i class="bi text-xl" :class="isOpen ? 'bi-x-lg' : 'bi-list'"></i>
+      </button>
+      <router-link to="/" class="h-full flex items-center">
+        <img src="../assets/images/logo.png" alt="Logo" class="h-8" />
+      </router-link>
+    </div>
+
+    <!-- Sidebar/Navigation -->
     <aside
-      class="md:w-48 w-full bg-[#364365] md:min-h-screen p-4 flex flex-col"
+      :class="`${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:translate-x-0 transition-transform duration-300 fixed md:relative z-50 md:w-64 w-64 bg-[#364365] min-h-screen p-4 flex flex-col shadow-lg ${
+        isOpen ? 'mt-16' : ''
+      } md:mt-0`"
     >
       <nav class="space-y-2">
         <router-link
           v-for="link in links"
           :key="link.path"
           :to="link.path"
-          class="flex items-center text-white p-2 rounded hover:bg-[#4a5b8a] cursor-pointer"
+          class="flex items-center text-white p-3 rounded hover:bg-[#4a5b8a] transition-colors cursor-pointer text-sm"
           active-class="bg-[#4a5b8a]"
+          @click="closeSidebarOnMobile"
         >
-          <i :class="link.icon" class="mr-2"></i>
+          <i :class="link.icon" class="mr-3 text-lg"></i>
           {{ link.label }}
         </router-link>
       </nav>
-      <router-link to="/" class="mt-auto pt-4">
+      <router-link to="/" class="mt-auto pt-4" @click="closeSidebarOnMobile">
         <img src="../assets/images/logo.png" alt="" class="w-full" />
       </router-link>
     </aside>
 
-    <section class="flex-1 p-4">
+    <!-- Overlay for mobile -->
+    <div
+      v-if="isOpen"
+      class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden mt-16"
+      @click="closeSidebar"
+    ></div>
+
+    <!-- Main Content -->
+    <section class="flex-1 p-4 md:p-6 w-full overflow-x-hidden md:mt-0 mt-16">
       <router-view></router-view>
     </section>
   </main>
@@ -31,6 +60,7 @@ export default {
   name: "AdminDashboard",
   data() {
     return {
+      isOpen: false,
       links: [
         {
           path: "/admin/profile",
@@ -62,5 +92,53 @@ export default {
       ],
     };
   },
+  methods: {
+    toggleSidebar() {
+      this.isOpen = !this.isOpen;
+    },
+    closeSidebar() {
+      this.isOpen = false;
+    },
+    closeSidebarOnMobile() {
+      if (window.innerWidth < 768) {
+        this.closeSidebar();
+      }
+    },
+  },
+  mounted() {
+    // Close sidebar when route changes
+    this.$router.afterEach(() => {
+      this.closeSidebarOnMobile();
+    });
+
+    // Close sidebar when window resizes to desktop view
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768) {
+        this.closeSidebar();
+      }
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.closeSidebar);
+  },
 };
 </script>
+
+<style>
+/* Prevent body scroll when sidebar is open on mobile */
+body.sidebar-open {
+  overflow: hidden;
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Add smooth transition for sidebar */
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+</style>

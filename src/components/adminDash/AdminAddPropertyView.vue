@@ -1,23 +1,31 @@
 <template>
-  <main class="min-h-screen bg-white flex-1 p-4 md:p-8">
-    <div class="md:flex block">
-      <div class="flex-1 p-4 md:p-8">
+  <main class="min-h-screen bg-white flex-1 p-3 sm:p-4 md:p-8">
+    <div class="w-full">
+      <div class="max-w-7xl mx-auto">
         <form @submit.prevent="submitProperty">
-          <div class="space-y-12">
-            <div class="border-b border-gray-900/10 pb-12">
-              <h2 class="text-base/7 font-semibold text-gray-900">
+          <div class="space-y-8">
+            <div class="border-b border-gray-900/10 pb-8">
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-900">
                 Add Property
               </h2>
-              <p class="mt-1 text-sm/6 text-gray-600">
+              <p class="mt-2 text-sm text-gray-600">
                 This information will be displayed to users to see the details
                 about the property.
               </p>
             </div>
-            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+            <!-- Property Info Grid -->
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+            >
               <div
                 v-for="field in propertyInfo"
-                :class="field.type === 'textarea' ? 'col-span-5' : 'col-span-2'"
                 :key="field.key"
+                :class="{
+                  'col-span-1 sm:col-span-2 lg:col-span-3':
+                    field.type === 'textarea',
+                  'col-span-1': field.type !== 'textarea',
+                }"
               >
                 <InputField
                   v-if="field.type !== 'file'"
@@ -28,10 +36,12 @@
                   :options="field.options"
                 />
               </div>
+
+              <!-- Contact Info -->
               <div
                 v-for="field in propertyContact"
                 :key="field.key"
-                class="col-span-2"
+                class="col-span-1"
               >
                 <InputField
                   :label="field.label"
@@ -41,20 +51,24 @@
                 />
               </div>
             </div>
-            <div class="rounded-lg p-4 w-full mx-auto">
-              <h2 class="text-lg font-semibold mb-2 text-center sm:text-left">
+
+            <!-- Image Upload Section -->
+            <div class="rounded-lg p-4 w-full mx-auto bg-gray-50">
+              <h2
+                class="text-lg sm:text-xl font-semibold mb-4 text-center sm:text-left"
+              >
                 Property Images
               </h2>
-              <div class="flex flex-col items-center space-y-2 py-4">
+              <div class="flex flex-col items-center space-y-4 py-4">
                 <i
-                  class="bi bi-images text-4xl text-gray-500"
+                  class="bi bi-images text-3xl sm:text-4xl text-gray-500"
                   v-if="uploadedImages.length === 0"
                 ></i>
-                <p class="text-gray-500 text-center">
+                <p class="text-gray-500 text-center text-sm sm:text-base">
                   You can add up to 30 photos to your ad
                 </p>
                 <label
-                  class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
+                  class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
                 >
                   Upload From Computer
                   <input
@@ -66,58 +80,63 @@
                   />
                 </label>
               </div>
+
+              <!-- Image Preview Grid -->
               <div
-                class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center mt-4 w-full"
+                class="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4"
               >
                 <div
                   v-if="uploadedImages.length === 0"
-                  class="flex flex-col items-center text-center"
+                  class="flex flex-col items-center text-center p-8"
                 >
-                  <span class="text-4xl text-gray-400">+</span>
-                  <p class="text-gray-500">
+                  <span class="text-3xl sm:text-4xl text-gray-400">+</span>
+                  <p class="text-gray-500 text-sm sm:text-base mt-2">
                     You can add up to 30 photos to your ad
                   </p>
                 </div>
                 <div
                   v-else
-                  class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-2"
+                  class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
                 >
                   <div
                     v-for="(image, index) in uploadedImages"
                     :key="index"
-                    class="relative group"
+                    class="relative group aspect-square"
                   >
                     <img
                       :src="image"
-                      class="w-24 h-24 object-cover rounded-lg sm:w-32 sm:h-32 md:w-36 md:h-36"
+                      class="w-full h-full object-cover rounded-lg"
                     />
                     <button
                       @click="removeImage(index)"
-                      class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       ×
                     </button>
                   </div>
                 </div>
               </div>
+
               <p
                 v-if="errorMessage"
-                class="text-red-500 text-sm text-center mt-2"
+                class="text-red-500 text-sm text-center mt-4"
               >
                 {{ errorMessage }}
               </p>
             </div>
-            <div class="col-span-full flex gap-4 justify-center">
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 justify-center py-4">
               <button
                 type="submit"
-                class="text-white rounded-md bg-[var(--secondary-color)] px-4 py-2 text-sm/6 font-semibold border border-[var(--secondary-color)] hover:text-[var(--secondary-color)] hover:bg-white cursor-pointer"
+                class="text-white rounded-md bg-[var(--secondary-color)] px-6 py-2.5 text-sm sm:text-base font-semibold border border-[var(--secondary-color)] hover:text-[var(--secondary-color)] hover:bg-white transition-colors"
               >
                 Add Property
               </button>
               <button
                 @click="resetForm"
                 type="reset"
-                class="text-white rounded-md bg-red-500 px-4 py-2 text-sm/6 font-semibold border border-red-500 hover:bg-white hover:text-red-500 cursor-pointer"
+                class="text-white rounded-md bg-red-500 px-6 py-2.5 text-sm sm:text-base font-semibold border border-red-500 hover:bg-white hover:text-red-500 transition-colors"
               >
                 Reset
               </button>
