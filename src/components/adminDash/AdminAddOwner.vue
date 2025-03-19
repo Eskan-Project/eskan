@@ -242,7 +242,7 @@ export default {
 
         await Swal.fire({
           title: "Success",
-          text: "Admin created successfully. Initial password is their National ID.",
+          text: "Owner created successfully. Initial password is their National ID.",
           icon: "success",
         });
 
