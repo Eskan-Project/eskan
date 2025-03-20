@@ -26,11 +26,32 @@
           ]"
           @click="closeMenu"
         >
-          {{ item.label }}
+          {{ $t(item.label) }}
         </router-link>
       </nav>
 
       <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+        <div class="relative inline-flex items-center">
+          <div
+            class="w-20 h-8 flex items-center justify-between bg-gray-300 rounded-full p-1 cursor-pointer relative"
+            @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
+          >
+            <span
+              class="text-gray-600 text-sm z-10"
+              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-2'"
+              >EN</span
+            >
+            <span
+              class="text-gray-600 text-sm z-10"
+              :class="currentLocale === 'ar' ? 'ml-2' : 'mr-2'"
+              >ع</span
+            >
+            <div
+              class="bg-white w-10 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute"
+              :class="currentLocale === 'ar' ? 'right-1' : 'left-1'"
+            ></div>
+          </div>
+        </div>
         <div
           v-if="isAuth"
           class="relative text-xl sm:text-2xl cursor-pointer"
@@ -61,7 +82,7 @@
           >
             <div v-if="isMobile" class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-[var(--secondary-color)]">
-                Notifications
+                {{ $t("nav.notifications") }}
               </h3>
               <button
                 @click.stop="toggleNotifications"
@@ -93,7 +114,7 @@
               </div>
             </div>
             <p v-else class="p-2 text-gray-500 text-sm text-center">
-              No new notifications
+              {{ $t("nav.no_notifications") }}
             </p>
           </div>
         </transition>
@@ -111,7 +132,7 @@
         <router-link
           v-if="userDetails.role === 'owner'"
           to="/createProperty"
-          title="Create Property"
+          :title="$t('nav.create_property')"
           class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
         >
           <i class="bi bi-plus-circle text-sm md:text-2xl"></i>
@@ -119,7 +140,7 @@
         <router-link
           v-if="userDetails.role === 'admin'"
           to="/admin"
-          title="Admin Dashboard"
+          :title="$t('nav.admin_dashboard')"
           class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
         >
           <i class="bi bi-person-fill-gear text-sm md:text-2xl"></i>
@@ -128,7 +149,7 @@
         <router-link
           v-if="userDetails.role !== 'admin'"
           to="/userProfile"
-          title="User Profile"
+          :title="$t('nav.user_profile')"
           class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
         >
           <i class="bi bi-person text-sm md:text-2xl"></i>
@@ -136,7 +157,7 @@
 
         <button
           v-if="isAuth"
-          title="Logout"
+          :title="$t('nav.logout')"
           @click="logout"
           class="cursor-pointer hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
         >
@@ -148,7 +169,7 @@
           @click="$router.push('/login')"
           class="flex items-center gap-1 px-2 md:px-4 py-1 md:py-2 text-xs md:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
-          Log In <i class="bi bi-box-arrow-in-right"></i>
+          {{ $t("nav.login") }} <i class="bi bi-box-arrow-in-right"></i>
         </button>
         <button
           @click="toggleMenu"
@@ -180,16 +201,20 @@ export default {
   },
   data() {
     return {
+      languages: [
+        { code: "en", name: "English" },
+        { code: "ar", name: "العربية" },
+      ],
       isSticky: false,
       isMenuOpen: false,
       isNotificationsOpen: false,
       isMobile: false,
       navLinks: [
-        { label: "Home", path: "/" },
-        { label: "Properties", path: "/properties" },
-        { label: "About", path: "/about" },
-        { label: "Contact", path: "/contact" },
-        { label: "FAQs", path: "/faq" },
+        { label: "nav.home", path: "/" },
+        { label: "nav.properties", path: "/properties" },
+        { label: "nav.about", path: "/about" },
+        { label: "nav.contact", path: "/contact" },
+        { label: "nav.faqs", path: "/faq" },
       ],
     };
   },
@@ -197,6 +222,9 @@ export default {
     ...mapState("auth", ["isAuth", "userDetails"]),
     ...mapState("notifications", ["notifications"]),
     ...mapGetters("notifications", ["unreadCount"]),
+    currentLocale() {
+      return this.$i18n.locale;
+    },
   },
   methods: {
     ...mapActions("auth", ["logout"]),
@@ -205,6 +233,12 @@ export default {
       "removeNotification",
       "markAsRead",
     ]),
+    changeLanguage(locale) {
+      this.$i18n.locale = locale;
+      localStorage.setItem("locale", locale);
+      document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = locale;
+    },
     handleScroll() {
       this.isSticky = window.scrollY > 0;
     },
