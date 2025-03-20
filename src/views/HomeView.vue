@@ -17,14 +17,12 @@
         <h1
           class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
         >
-          Your New Home Away from Home
+          {{ $t("home.hero.title") }}
         </h1>
         <p
           class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto"
         >
-          Find your perfect shared accommodation with ease. Whether you're
-          moving for work, study, or adventure, Eskan connects you with safe,
-          affordable, and verified housing options tailored to your needs.
+          {{ $t("home.hero.description") }}
         </p>
       </div>
     </section>
@@ -37,7 +35,7 @@
       <h2
         class="w-full text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-[#364365] absolute -top-5 left-1/2 -translate-x-1/2 px-4 bg-white"
       >
-        Find Everything You Need in One Place
+        {{ $t("home.features.section_title") }}
       </h2>
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-14 sm:pt-16"
@@ -71,7 +69,7 @@
           class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-[#364365] text-center relative"
         >
           <span class="relative inline-block">
-            Latest Properties for Rent
+            {{ $t("home.properties.section_title") }}
           </span>
         </h2>
         <div
@@ -82,7 +80,7 @@
             <div
               class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#364365] mb-2"
             ></div>
-            <span>Loading properties...</span>
+            <span>{{ $t("home.properties.loading") }}</span>
           </div>
         </div>
 
@@ -136,12 +134,12 @@
           v-else-if="error"
           class="text-red-500 text-sm md:text-base py-4 text-center"
         >
-          {{ error }}
+          {{ $t("home.properties.error") }}
           <button
             @click="fetchProperties"
             class="text-blue-500 underline ml-2 mt-2 block sm:inline hover:text-blue-700 transition-colors duration-200"
           >
-            Retry
+            {{ $t("home.properties.retry") }}
           </button>
         </p>
 
@@ -150,7 +148,7 @@
           v-if="latestProperties.length === 0"
           class="text-gray-500 text-sm md:text-base py-4 text-center"
         >
-          No properties available.
+          {{ $t("home.properties.no_properties") }}
         </p>
 
         <!-- View All Button with Animation -->
@@ -162,7 +160,7 @@
             to="/properties"
             class="inline-flex items-center px-5 py-2.5 bg-[#364365] text-white rounded-full hover:bg-[#4c5b87] transition-colors duration-300 text-sm group shadow-md hover:shadow-lg"
           >
-            View All Properties
+            {{ $t("home.properties.view_all") }}
             <span
               class="ml-2 group-hover:translate-x-1 transition-transform duration-300"
               >→</span
@@ -192,7 +190,9 @@
             :duration="stat.duration"
             class="text-2xl sm:text-3xl md:text-4xl font-bold"
           />
-          <p class="text-base sm:text-lg md:text-xl mt-2">{{ stat.label }}</p>
+          <p class="text-base sm:text-lg md:text-xl mt-2">
+            {{ $t(`home.stats.${stat.key}`) }}
+          </p>
         </div>
       </div>
     </section>
@@ -216,22 +216,21 @@
             class="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-tight"
             data-aos="zoom-in"
           >
-            Find Your Perfect Home
+            {{ $t("home.contact.title") }}
           </h2>
           <p
             class="text-[#edeff6] text-xs sm:text-sm md:text-base lg:text-lg leading-5 sm:leading-6 max-w-md sm:max-w-lg md:max-w-2xl mx-auto"
             data-aos="zoom-in"
             data-aos-delay="100"
           >
-            Have questions or need assistance? Reach out to us—we're here to
-            make your housing search seamless and stress-free.
+            {{ $t("home.contact.description") }}
           </p>
           <router-link
             to="/contact"
             class="inline-block px-6 sm:px-8 py-3 sm:py-4 border border-white text-white text-base font-medium rounded-md hover:bg-white hover:text-[#053052] transition-colors"
             data-aos="fade-up"
           >
-            Contact Us
+            {{ $t("home.contact.button") }}
           </router-link>
         </div>
       </div>
@@ -289,60 +288,54 @@ export default {
           "../assets/images/icons/VerifyForHomePage.png",
           import.meta.url
         ).href,
-        title: "Verified & Safe Listings",
-        description:
-          "Browse properties screened for safety, with verified owners and legal documentation",
+        titleKey: "home.features.verified.title",
+        descriptionKey: "home.features.verified.description",
       },
       {
         icon: new URL(
           "../assets/images/icons/BudgetForHomePage.png",
           import.meta.url
         ).href,
-        title: "Budget-Friendly Options",
-        description:
-          "Discover shared accommodations designed for affordability without compromising comfort",
+        titleKey: "home.features.budget.title",
+        descriptionKey: "home.features.budget.description",
       },
       {
         icon: new URL(
           "../assets/images/icons/ContactForHomePage.png",
           import.meta.url
         ).href,
-        title: "Free Initial Contact",
-        description:
-          "Reach out to property owners for free—unlock unlimited access with flexible subscriptions",
+        titleKey: "home.features.contact.title",
+        descriptionKey: "home.features.contact.description",
       },
       {
         icon: new URL(
           "../assets/images/icons/SmartForHomePage.png",
           import.meta.url
         ).href,
-        title: "Smart Search Filters",
-        description:
-          "Refine your search by price, location, amenities, and room type—find your ideal match in seconds",
+        titleKey: "home.features.smart.title",
+        descriptionKey: "home.features.smart.description",
       },
       {
         icon: new URL(
           "../assets/images/icons/SecureForHomePage.png",
           import.meta.url
         ).href,
-        title: "Secure Payments",
-        description:
-          "Enjoy hassle-free transactions with trusted payment gateways like Stripe or PayPal",
+        titleKey: "home.features.secure.title",
+        descriptionKey: "home.features.secure.description",
       },
       {
         icon: new URL(
           "../assets/images/icons/CurvedArrowForHomePage.png",
           import.meta.url
         ).href,
-        title: "Flexible Subscriptions",
-        description:
-          "Owners: List your first property free for 3 days. Users: Unlock premium features with tailored plans",
+        titleKey: "home.features.flexible.title",
+        descriptionKey: "home.features.flexible.description",
       },
     ],
     stats: [
-      { value: 300, duration: 2, label: "Properties Listed" },
-      { value: 1000, duration: 2.5, label: "Happy Customers" },
-      { value: 150, duration: 2, label: "Verified Owners" },
+      { value: 300, duration: 2, key: "properties_listed" },
+      { value: 1000, duration: 2.5, key: "happy_customers" },
+      { value: 150, duration: 2, key: "verified_owners" },
     ],
   }),
   computed: {

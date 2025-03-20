@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About",
+    "contact": "Contact",
+    "faqs": "FAQs",
+    "login": "Login",
+    "logout": "Logout",
+    "notifications": "Notifications",
+    "no_notifications": "No new notifications",
+    "create_property": "Create Property",
+    "admin_dashboard": "Admin Dashboard",
+    "user_profile": "User Profile"
+  },
+  "home": {
+    "hero": {
+      "title": "Your New Home Away from Home",
+      "description": "Find your perfect shared accommodation with ease. Whether you're moving for work, study, or adventure, Eskan connects you with safe, affordable, and verified housing options tailored to your needs."
+    },
+    "features": {
+      "section_title": "Find Everything You Need in One Place",
+      "verified": {
+        "title": "Verified & Safe Listings",
+        "description": "Browse properties screened for safety, with verified owners and legal documentation"
+      },
+      "budget": {
+        "title": "Budget-Friendly Options",
+        "description": "Discover shared accommodations designed for affordability without compromising comfort"
+      },
+      "contact": {
+        "title": "Free Initial Contact",
+        "description": "Reach out to property owners for free—unlock unlimited access with flexible subscriptions"
+      },
+      "smart": {
+        "title": "Smart Search Filters",
+        "description": "Refine your search by price, location, amenities, and room type—find your ideal match in seconds"
+      },
+      "secure": {
+        "title": "Secure Payments",
+        "description": "Enjoy hassle-free transactions with trusted payment gateways like Stripe or PayPal"
+      },
+      "flexible": {
+        "title": "Flexible Subscriptions",
+        "description": "Owners: List your first property free for 3 days. Users: Unlock premium features with tailored plans"
+      }
+    },
+    "properties": {
+      "section_title": "Latest Properties for Rent",
+      "loading": "Loading properties...",
+      "no_properties": "No properties available.",
+      "error": "Failed to load properties. Please try again later.",
+      "retry": "Retry",
+      "view_all": "View All Properties"
+    },
+    "stats": {
+      "verified_owners": "Verified Owners",
+      "happy_customers": "Happy Customers",
+      "properties_listed": "Properties Listed"
+    },
+    "contact": {
+      "title": "Find Your Perfect Home",
+      "description": "Have questions or need assistance? Reach out to us—we're here to make your housing search seamless and stress-free.",
+      "button": "Contact Us"
+    }
+  },
+  "about": {
+    "who_we_are": {
+      "title": "Who We Are",
+      "description": "Eskan is a dedicated web platform designed to simplify the rental process. Whether you're a newcomer looking for an affordable place or a property owner wanting to list your available spaces, Eskan provides a seamless and user-friendly solution."
+    },
+    "our_mission": {
+      "title": "Our Mission",
+      "description": "We strive to make housing more accessible for expatriates moving across Egypt. Our platform connects individuals searching for shared accommodations with property owners, ensuring a smooth and secure housing experience."
+    },
+    "our_values": {
+      "title": "Our Values",
+      "cards": {
+        "people_first": {
+          "title": "People First",
+          "description": "We're dedicated to helping our members thrive. From finding the perfect home to providing 24/7 support, we put people at the center of everything we do."
+        },
+        "best_quality": {
+          "title": "Best Quality",
+          "description": "We're passionate about providing excellent service and creating a high-quality experience for our community."
+        },
+        "comprehensive": {
+          "title": "Comprehensive",
+          "description": "Easily browse and filter housing options by location, price, and amenities."
+        },
+        "verified_owners": {
+          "title": "Verified Owners",
+          "description": "We ensure safety by verifying owners through legal document submissions and online meetings."
+        }
+      }
+    }
+  }
+}
