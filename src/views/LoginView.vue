@@ -95,7 +95,7 @@ export default {
       class="bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 lg:w-[60vw]"
     >
       <div class="main-text p-8 rounded-l-xl">
-        <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
+        <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
           Welcome Back
         </h1>
 

@@ -36,7 +36,7 @@
             }"
             @click="closeMenu"
           >
-            {{ item.label }}
+            {{ $t(item.label) }}
           </router-link>
         </li>
 
@@ -49,7 +49,7 @@
             @click="closeMenu"
           >
             <i class="bi bi-plus-circle"></i>
-            Add Property
+            {{ $t("nav.create_property") }}
           </router-link>
 
           <router-link
@@ -59,7 +59,7 @@
             @click="closeMenu"
           >
             <i class="bi bi-person-fill-gear"></i>
-            Admin Dashboard
+            {{ $t("nav.admin_dashboard") }}
           </router-link>
 
           <!-- Profile link for all authenticated users -->
@@ -69,7 +69,7 @@
             @click="closeMenu"
           >
             <i class="bi bi-person"></i>
-            Profile
+            {{ $t("nav.user_profile") }}
           </router-link>
 
           <button
@@ -77,7 +77,7 @@
             class="flex items-center gap-2 py-3 px-4 text-red-600 hover:bg-gray-100 rounded-md w-full text-left"
           >
             <i class="bi bi-box-arrow-in-right"></i>
-            Logout
+            {{ $t("nav.logout") }}
           </button>
         </li>
 
@@ -88,7 +88,7 @@
             @click="closeMenu"
           >
             <i class="bi bi-box-arrow-in-right"></i>
-            Log In
+            {{ $t("nav.login") }}
           </router-link>
         </li>
       </ul>

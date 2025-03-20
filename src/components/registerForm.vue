@@ -226,7 +226,7 @@ export default {
         />
       </div>
       <div class="main-text p-8 rounded-r-xl bg-white">
-        <h1 class="text-[#364365] text-3xl text-center font-bold p-5">
+        <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
           {{ title }}
         </h1>
         <form @submit.prevent="submitRegister" novalidate>
@@ -321,7 +321,7 @@ export default {
               please upload your ID
             </p>
             <div v-if="imagePreview" class="p-5 mb-5">
-              <div class="w-1/3 mx-auto relative">
+              <div class="w-full mx-auto relative">
                 <img :src="imagePreview" alt="Image Preview" />
                 <button
                   @click="removeImage"
@@ -333,7 +333,7 @@ export default {
             </div>
             <div
               v-else
-              class="border-1 border-stone-400 border-dashed p-5 mx-10 mb-5"
+              class="border-1 border-stone-400 border-dashed p-5 mx-4 md:mx-10 mb-5"
             >
               <label for="file">
                 <i
@@ -409,7 +409,7 @@ export default {
           <div class="logs">
             <div class="flex justify-center align-center gap-2 p-5">
               <button
-                class="cursor-pointer flex flex-col md:flex-row items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+                class="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
                 @click="googleLogin"
                 :disabled="loading"
               >

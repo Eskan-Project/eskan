@@ -107,6 +107,7 @@ export default {
     selectedPropertyStatus: "",
     selectedRooms: "",
     error: null,
+    pendingUpdate: false,
   }),
   computed: {
     ...mapGetters(["isLoading"]),
@@ -154,27 +155,30 @@ export default {
   },
   watch: {
     currentPage() {
-      this.updateQueryParams();
+      this.debouncedUpdateQueryParams();
     },
     searchQuery() {
-      this.updateQueryParams();
+      this.currentPage = 1;
     },
     selectedGovernorate(newVal) {
       this.selectedCity = "";
       this.$refs.searchBar.updateCities(newVal);
-      this.updateQueryParams();
+      this.currentPage = 1;
     },
     selectedCity() {
-      this.updateQueryParams();
+      this.currentPage = 1;
     },
     selectedPropertyStatus() {
+      this.currentPage = 1;
+    },
+    selectedRooms() {
+      this.currentPage = 1;
+    },
+  },
+  created() {
+    this.debouncedUpdateQueryParams = debounce(() => {
       this.updateQueryParams();
-    },
-    selectedRooms(newVal) {
-      if (!isNaN(+newVal)) {
-        this.updateQueryParams();
-      }
-    },
+    }, 300);
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, { passive: true });
@@ -199,14 +203,15 @@ export default {
     updateQueryParams() {
       this.$router.push({
         query: {
-          search: this.searchQuery || "",
-          governorate: this.selectedGovernorate || "",
-          city: this.selectedCity || "",
-          propertyStatus: this.selectedPropertyStatus || "",
-          rooms: this.selectedRooms || "",
-          page: this.currentPage || 1,
+          search: this.searchQuery || undefined,
+          governorate: this.selectedGovernorate || undefined,
+          city: this.selectedCity || undefined,
+          propertyStatus: this.selectedPropertyStatus || undefined,
+          rooms: this.selectedRooms || undefined,
+          page: this.currentPage !== 1 ? this.currentPage : undefined,
         },
       });
+      this.pendingUpdate = false;
     },
     handleScroll() {
       this.isScrolled = window.scrollY > 0;
@@ -218,17 +223,25 @@ export default {
     toggleSearch() {
       this.isExpanded = !this.isExpanded;
     },
-    searchProperties: debounce(function () {
+    searchProperties() {
       this.currentPage = 1;
-    }, 300),
+      this.updateQueryParams();
+    },
     goToPage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
+      this.updateQueryParams();
     },
     nextPage() {
-      if (this.currentPage < this.totalPages) this.currentPage++;
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.updateQueryParams();
+      }
     },
     prevPage() {
-      if (this.currentPage > 1) this.currentPage--;
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.updateQueryParams();
+      }
     },
     resetFilters() {
       Object.assign(this, {

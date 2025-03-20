@@ -10,8 +10,8 @@
         class="flex flex-wrap gap-3 sm:gap-4 w-full justify-center"
       >
         <input
-          :value="searchQuery"
-          @input="$emit('update:searchQuery', $event.target.value)"
+          :value="localSearchQuery"
+          @input="handleSearchInput"
           type="text"
           placeholder="Search by keyword"
           class="w-full sm:w-40 px-3 sm:px-4 py-2 sm:placeholder:text-sm placeholder:text-base text-sm sm:text-base rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#364365]"
@@ -90,6 +90,12 @@
         </div>
         <button
           class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
+          @click="applyFilters"
+        >
+          Search
+        </button>
+        <button
+          class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
           @click="resetFilters"
         >
           Reset
@@ -100,8 +106,8 @@
       <div v-else class="relative w-full max-w-md mx-auto">
         <div class="flex items-center bg-white rounded-full p-2">
           <input
-            :value="searchQuery"
-            @input="$emit('update:searchQuery', $event.target.value)"
+            :value="localSearchQuery"
+            @input="handleSearchInput"
             type="text"
             placeholder="Search by keyword"
             class="w-full px-3 sm:px-4 py-2 mr-2 text-sm sm:text-base rounded-full focus:outline-none focus:ring-2 focus:ring-[#364365] border border-gray-200"
@@ -169,14 +175,35 @@
               </ul>
             </div>
             <div>
-              <input
-                type="number"
-                :value="selectedRooms"
-                placeholder="Enter number"
-                @input="$emit('update:selectedRooms', $event.target.value)"
-                class="w-full rounded-md border border-gray-300 text-sm p-3 focus:outline-none focus:ring-2 focus:ring-[#364365]"
-              />
+              <div
+                @click="toggleRoomsDropdown"
+                class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
+              >
+                <span class="truncate">{{
+                  selectedRoomsLabel || "Select Rooms"
+                }}</span>
+                <span class="text-gray-500">▼</span>
+              </div>
+              <ul
+                v-if="isRoomsOpen"
+                class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
+              >
+                <li
+                  v-for="room in roomsOptions"
+                  :key="room.value"
+                  @click="selectRooms(room)"
+                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm"
+                >
+                  <span>{{ room.label }}</span>
+                </li>
+              </ul>
             </div>
+            <button
+              class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
+              @click="applyFilters"
+            >
+              Apply Filters
+            </button>
             <button
               class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
               @click="resetFilters"
@@ -228,7 +255,6 @@
 </template>
 
 <script>
-// Assuming the script remains unchanged unless specified
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
 
@@ -265,6 +291,7 @@ export default {
     selectedPropertyStatusValue: "",
     isRoomsOpen: false,
     selectedRoomsValue: "",
+    localSearchQuery: "",
     propertyStatusOptions: [
       { value: "new", label: "New" },
       { value: "second-hand", label: "Second-hand" },
@@ -308,6 +335,16 @@ export default {
   watch: {
     selectedGovernorate(newVal) {
       this.updateCities(newVal);
+      this.selectedGovernorateValue = newVal;
+    },
+    selectedPropertyStatus(newVal) {
+      this.selectedPropertyStatusValue = newVal;
+    },
+    selectedRooms(newVal) {
+      this.selectedRoomsValue = newVal;
+    },
+    searchQuery(newVal) {
+      this.localSearchQuery = newVal;
     },
   },
   mounted() {
@@ -316,6 +353,13 @@ export default {
   beforeUnmount() {
     document.removeEventListener("click", this.handleClickOutside);
   },
+  created() {
+    // Initialize local values from props
+    this.localSearchQuery = this.searchQuery || "";
+    this.selectedGovernorateValue = this.selectedGovernorate || "";
+    this.selectedPropertyStatusValue = this.selectedPropertyStatus || "";
+    this.selectedRoomsValue = this.selectedRooms || "";
+  },
   methods: {
     updateCities(governorateId) {
       this.cities = governorateId
@@ -323,13 +367,12 @@ export default {
             .filter((c) => c.governorate_id === governorateId)
             .map((c) => ({
               value: c.id,
-              label: c.city_name_en, // Assuming city_name_en exists
+              label: c.city_name_en,
             }))
         : [];
     },
     toggleFilterOptions() {
       this.showFilterOptions = !this.showFilterOptions;
-      if (!this.showFilterOptions) this.$emit("search");
     },
     toggleGovernorateDropdown() {
       this.isGovernorateOpen = !this.isGovernorateOpen;
@@ -337,7 +380,6 @@ export default {
     selectGovernorate(loc) {
       this.selectedGovernorateValue = loc.value;
       this.isGovernorateOpen = false;
-      this.$emit("update:selectedGovernorate", loc.value);
     },
     togglePropertyStatusDropdown() {
       this.isPropertyStatusOpen = !this.isPropertyStatusOpen;
@@ -345,7 +387,6 @@ export default {
     selectPropertyStatus(option) {
       this.selectedPropertyStatusValue = option.value;
       this.isPropertyStatusOpen = false;
-      this.$emit("update:selectedPropertyStatus", option.value);
     },
     toggleRoomsDropdown() {
       this.isRoomsOpen = !this.isRoomsOpen;
@@ -353,12 +394,30 @@ export default {
     selectRooms(room) {
       this.selectedRoomsValue = room.value;
       this.isRoomsOpen = false;
-      this.$emit("update:selectedRooms", room.value);
+    },
+    applyFilters() {
+      // Emit all filter changes at once
+      this.$emit("update:searchQuery", this.localSearchQuery);
+      this.$emit("update:selectedGovernorate", this.selectedGovernorateValue);
+      this.$emit(
+        "update:selectedPropertyStatus",
+        this.selectedPropertyStatusValue
+      );
+      this.$emit("update:selectedRooms", this.selectedRoomsValue);
+      this.$emit("search");
+
+      // Close any open dropdowns
+      this.isGovernorateOpen = false;
+      this.isPropertyStatusOpen = false;
+      this.isRoomsOpen = false;
+      this.showFilterOptions = false;
     },
     resetFilters() {
+      this.localSearchQuery = "";
       this.selectedGovernorateValue = "";
       this.selectedPropertyStatusValue = "";
       this.selectedRoomsValue = "";
+      this.$emit("update:searchQuery", "");
       this.$emit("update:selectedGovernorate", "");
       this.$emit("update:selectedPropertyStatus", "");
       this.$emit("update:selectedRooms", "");
@@ -390,6 +449,9 @@ export default {
       ) {
         this.showFilterOptions = false;
       }
+    },
+    handleSearchInput(event) {
+      this.localSearchQuery = event.target.value;
     },
   },
 };
