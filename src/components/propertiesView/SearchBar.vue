@@ -34,8 +34,9 @@
               v-for="loc in governorates"
               :key="loc.value"
               @click="selectGovernorate(loc)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base"
+              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base governorate-option"
             >
+              <i class="bi bi-geo-alt"></i>
               <span>{{ loc.label }}</span>
             </li>
           </ul>
@@ -58,7 +59,7 @@
               v-for="option in propertyStatusOptions"
               :key="option.value"
               @click="selectPropertyStatus(option)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base"
+              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base property-status-option"
             >
               <span>{{ option.label }}</span>
             </li>
@@ -82,7 +83,7 @@
               v-for="room in roomsOptions"
               :key="room.value"
               @click="selectRooms(room)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base"
+              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base rooms-option"
             >
               <span>{{ room.label }}</span>
             </li>
@@ -112,6 +113,12 @@
             placeholder="Search by keyword"
             class="w-full px-3 sm:px-4 py-2 mr-2 text-sm sm:text-base rounded-full focus:outline-none focus:ring-2 focus:ring-[#364365] border border-gray-200"
           />
+          <button
+            class="bg-[#364365] text-white mr-2 p-2 sm:p-3 rounded-full hover:bg-[#2c3751] transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
+            @click="applyFilters"
+          >
+            <i class="bi bi-search text-base sm:text-lg"></i>
+          </button>
           <button
             class="bg-[#364365] text-white p-2 sm:p-3 rounded-full hover:bg-[#2c3751] transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
             @click="toggleFilterOptions"
@@ -143,7 +150,7 @@
                   v-for="loc in governorates"
                   :key="loc.value"
                   @click="selectGovernorate(loc)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm"
+                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm governorate-option"
                 >
                   <i class="bi bi-geo-alt"></i>
                   <span>{{ loc.label }}</span>
@@ -168,7 +175,7 @@
                   v-for="option in propertyStatusOptions"
                   :key="option.value"
                   @click="selectPropertyStatus(option)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm"
+                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm property-status-option"
                 >
                   <span>{{ option.label }}</span>
                 </li>
@@ -192,7 +199,7 @@
                   v-for="room in roomsOptions"
                   :key="room.value"
                   @click="selectRooms(room)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm"
+                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm rooms-option"
                 >
                   <span>{{ room.label }}</span>
                 </li>
@@ -380,6 +387,9 @@ export default {
     selectGovernorate(loc) {
       this.selectedGovernorateValue = loc.value;
       this.isGovernorateOpen = false;
+      if (this.isSmallScreen) {
+        this.showFilterOptions = true;
+      }
     },
     togglePropertyStatusDropdown() {
       this.isPropertyStatusOpen = !this.isPropertyStatusOpen;
@@ -387,6 +397,9 @@ export default {
     selectPropertyStatus(option) {
       this.selectedPropertyStatusValue = option.value;
       this.isPropertyStatusOpen = false;
+      if (this.isSmallScreen) {
+        this.showFilterOptions = true;
+      }
     },
     toggleRoomsDropdown() {
       this.isRoomsOpen = !this.isRoomsOpen;
@@ -394,6 +407,9 @@ export default {
     selectRooms(room) {
       this.selectedRoomsValue = room.value;
       this.isRoomsOpen = false;
+      if (this.isSmallScreen) {
+        this.showFilterOptions = true;
+      }
     },
     applyFilters() {
       // Emit all filter changes at once
@@ -442,10 +458,15 @@ export default {
       ) {
         this.isRoomsOpen = false;
       }
+
+      // Only close the filter container if the click is outside the filter-related elements
       if (
         this.$refs.filterContainer &&
         !this.$refs.filterContainer.contains(event.target) &&
-        !event.target.closest(".bi-filter-circle")
+        !event.target.closest(".bi-filter-circle") &&
+        !event.target.closest(".governorate-option") &&
+        !event.target.closest(".property-status-option") &&
+        !event.target.closest(".rooms-option")
       ) {
         this.showFilterOptions = false;
       }

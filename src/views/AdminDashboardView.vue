@@ -49,7 +49,7 @@
     ></div>
 
     <!-- Main Content -->
-    <section class="flex-1 p-4 md:p-6 w-full overflow-x-hidden md:mt-0 mt-16">
+    <section class="flex-1 p-4 md:p-2 w-full overflow-x-hidden md:mt-0 mt-15">
       <router-view></router-view>
     </section>
   </main>

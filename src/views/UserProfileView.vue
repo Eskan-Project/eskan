@@ -248,39 +248,83 @@
         <div
           v-for="property in allProperties"
           :key="property.id"
-          class="bg-white shadow-md rounded-lg p-4"
+          class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
         >
-          <img
-            v-if="property.images?.length"
-            :src="property.images[0]"
-            alt="Property Image"
-            class="w-full h-40 object-cover rounded-md mb-3"
-          />
-          <h4 class="text-lg font-bold">{{ property.title }}</h4>
-          <p class="text-gray-600">
-            {{ property.city }}, {{ property.governorate }}
-          </p>
-          <p class="text-gray-700">
-            Price: <span class="font-semibold">${{ property.price }}</span>
-          </p>
-          <p class="text-gray-700">
-            Rooms: <span class="font-semibold">{{ property.rooms }}</span>
-          </p>
+          <div class="relative">
+            <img
+              v-if="property.images?.length"
+              :src="property.images[0]"
+              alt="Property Image"
+              class="w-full h-48 object-cover"
+              loading="lazy"
+            />
+            <div
+              v-else
+              class="w-full h-48 bg-gray-300 flex items-center justify-center"
+            >
+              <i class="bi bi-building text-4xl text-gray-500"></i>
+            </div>
+            <div class="absolute top-2 right-2">
+              <span
+                :class="[
+                  'text-xs font-bold px-2 py-1 rounded-full shadow',
+                  property.status === 'approved'
+                    ? 'bg-green-500 text-white'
+                    : property.status === 'pending'
+                    ? 'bg-yellow-500 text-white'
+                    : property.status === 'completed'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-red-500 text-white',
+                ]"
+              >
+                {{ property.status.toUpperCase() }}
+              </span>
+            </div>
+          </div>
 
-          <p
-            class="text-sm font-medium mt-2 px-3 py-1 inline-block rounded-lg"
-            :class="getStatusClass(property.status)"
-          >
-            {{ property.status }} ({{ property.collection }})
-          </p>
+          <div class="p-4">
+            <h4 class="text-xl font-bold text-gray-800 mb-2 truncate">
+              {{ property.title }}
+            </h4>
 
-          <button
-            v-if="!property.isPaid && property.status === 'approved'"
-            @click="goToPaymentPage(property)"
-            class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-          >
-            Pay Now
-          </button>
+            <div class="flex items-center text-gray-600 mb-2">
+              <i class="bi bi-geo-alt mr-1"></i>
+              <span class="truncate"
+                >{{ getCityName(property) }},
+                {{ getGovernorateName(property) }}</span
+              >
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-3 ml-1">
+              <div class="flex items-center">
+                <span class="font-semibold">{{ property.price }} EGP </span>
+              </div>
+              <div class="flex items-center">
+                <i class="bi bi-door-open mr-1 text-blue-500"></i>
+                <span>{{ property.rooms }} Rooms</span>
+              </div>
+            </div>
+
+            <div
+              v-if="property.isPaid"
+              class="flex flex-wrap gap-2 border-t pt-3 mt-2"
+            >
+              <span
+                v-if="property.isPaid"
+                class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 text-blue-700 flex items-center"
+              >
+                <i class="bi bi-check-circle-fill mr-1"></i> Paid
+              </span>
+            </div>
+
+            <button
+              v-if="!property.isPaid && property.status === 'approved'"
+              @click="goToPaymentPage(property)"
+              class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+            >
+              <i class="bi bi-credit-card mr-2"></i> Pay Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -303,6 +347,8 @@ import {
 import { db } from "../config/firebase";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import governorates from "@/assets/data/governorates.json";
+import cities from "@/assets/data/cities.json";
 
 export default {
   name: "ProfileProperties",
@@ -497,6 +543,20 @@ export default {
           transition: "slide",
         });
       }
+    },
+    getCityName(property) {
+      const city = cities.find((c) => c.id === property.city);
+      return city?.city_name_en || property.city || "Unknown city";
+    },
+    getGovernorateName(property) {
+      const governorate = governorates.find(
+        (g) => g.id === property.governorate
+      );
+      return (
+        governorate?.governorate_name_en ||
+        property.governorate ||
+        "Unknown governorate"
+      );
     },
   },
 };

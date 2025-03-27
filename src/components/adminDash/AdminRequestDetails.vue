@@ -1,9 +1,19 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
+  <main class="min-h-screen bg-gray-100 flex-1 p-4">
     <div class="md:flex block">
       <!-- Main Content -->
 
       <div class="flex-1 p-4 md:p-8">
+        <!-- Back button -->
+        <div class="mb-6">
+          <router-link
+            to="/admin/requests"
+            class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+          >
+            <i class="bi bi-arrow-left mr-2"></i> Back to Requests
+          </router-link>
+        </div>
+
         <!-- Loading State -->
         <div v-if="loading" class="container mx-auto py-10 px-5 mt-15">
           <div class="flex items-center justify-center h-96">
@@ -24,7 +34,7 @@
             <p class="font-bold">Error</p>
             <p>{{ error }}</p>
             <button
-              @click="getData"
+              @click="loadData"
               class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               Try Again
@@ -34,8 +44,8 @@
 
         <!-- Content when data is loaded -->
 
-        <div v-else class="container mx-auto py-10 px-5 mt-15">
-          <div class="flex sm:flex-row justify-between items-start gap-4">
+        <div v-else class="container mx-auto py-10 px-5 mt-10">
+          <div class="flex sm:flex-row justify-between items-start gap-4 mb-4">
             <div class="space-y-2">
               <h1 class="text-3xl font-bold text-gray-900 capitalize">
                 {{ request.title || "Untitled request" }}
@@ -45,20 +55,36 @@
                 {{ locationText }}
               </p>
             </div>
-            <p class="text-2xl font-semibold text-blue-700 whitespace-nowrap">
-              Property Price :{{ request.price }} EGP
-            </p>
+            <div
+              class="text-xl bg-blue-50 p-3 rounded-lg border border-blue-100 shadow-sm flex items-center justify-center"
+            >
+              <p class="text-blue-600 font-medium mr-2">Property Price:</p>
+              <p class="font-semibold text-blue-700">
+                {{ Number(request.price).toLocaleString() }}
+                <span class="text-lg">EGP</span>
+              </p>
+            </div>
           </div>
           <div v-if="request" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- request Gallery Section -->
             <div class="col-span-2 relative">
               <div class="relative w-full h-96">
+                <div
+                  v-if="
+                    !imageLoaded && request.images && request.images.length > 0
+                  "
+                  class="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg"
+                >
+                  <div
+                    class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
+                  ></div>
+                </div>
                 <img
                   v-if="request && request.images && request.images.length > 0"
                   :src="request.images[currentImageIndex]"
-                  alt="request Image"
+                  alt="Property Image"
                   loading="lazy"
-                  class="w-full h-96 object-cover rounded-lg"
+                  class="w-full h-96 object-cover rounded-lg shadow-lg property-image transition"
                   @load="imageLoaded = true"
                   v-show="imageLoaded"
                 />
@@ -68,28 +94,24 @@
                 >
                   <span class="text-gray-500">No image</span>
                 </div>
-                <div
-                  v-if="!imageLoaded && request.images != 0"
-                  class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center"
-                >
-                  <span class="text-gray-500">Loading image...</span>
-                </div>
 
                 <!-- Gallery Navigation Buttons -->
                 <button
                   v-if="request && request.images && request.images.length > 1"
                   @click="prevImage"
                   class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+                  aria-label="Previous image"
                 >
-                  ❮
+                  <i class="bi bi-chevron-left"></i>
                 </button>
 
                 <button
                   v-if="request && request.images && request.images.length > 1"
                   @click="nextImage"
                   class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+                  aria-label="Next image"
                 >
-                  ❯
+                  <i class="bi bi-chevron-right"></i>
                 </button>
               </div>
 
@@ -118,9 +140,12 @@
                 </h2>
                 <div class="flex flex-col items-center space-y-3">
                   <img
-                    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    :src="
+                      request.propertyContact?.profilePicture ||
+                      'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                    "
                     alt="Profile Picture"
-                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
+                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300 object-cover"
                   />
                   <p class="flex flex-col items-center space-y-1">
                     <span class="font-semibold">Name:</span>
@@ -149,7 +174,7 @@
 
                   <router-link :to="`/admin/owners/edit/${request.ownerId}`">
                     <button
-                      class="w-[100%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                      class="cursor-pointer w-[100%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     >
                       owner Profile
                     </button>
@@ -195,7 +220,6 @@
                   <p>{{ formatDate(request.createdAt) }}</p>
                   <p>{{ request.floor }}</p>
                   <p>{{ request.furnished ? "Yes" : "No" }}</p>
-                  <p>{{ request.status }}</p>
                   <p>{{ request.propertyStatus }}</p>
                   <p>{{ request.rooms }}</p>
                   <p>{{ request.livingRooms }}</p>
@@ -209,7 +233,7 @@
               <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Location Information
               </h2>
-              <div id="map" class="w-full h-64 rounded-lg"></div>
+              <div id="map" class="w-full h-96 rounded-lg"></div>
               <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
                 Loading map...
               </p>
@@ -217,82 +241,118 @@
           </div>
         </div>
 
+        <!-- Meeting Form Modal -->
         <div
           v-if="meetingInfo"
-          class="mt-8 w-full bg-white shadow-lg rounded-lg p-6"
+          class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4"
         >
-          <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
-            Schedule Verification Meeting
-          </h2>
-          <form @submit.prevent="scheduleMeeting" class="space-y-4">
-            <div class="flex flex-col space-y-2">
-              <label class="text-gray-700 font-medium"
-                >Meeting Date/Time:</label
+          <div
+            class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-semibold text-gray-900">
+                Schedule Verification Meeting
+              </h2>
+              <button
+                @click="meetingInfo = false"
+                class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                aria-label="Close"
               >
-              <input
-                type="datetime-local"
-                v-model="meetingData.date"
-                required
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                <i class="bi bi-x-lg"></i>
+              </button>
             </div>
 
-            <div class="flex flex-col space-y-2">
-              <label class="text-gray-700 font-medium"
-                >Duration (minutes):</label
-              >
-              <input
-                type="number"
-                v-model="meetingData.duration"
-                required
-                min="15"
-                max="180"
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <form @submit.prevent="scheduleMeeting" class="space-y-4">
+              <div class="flex flex-col space-y-2">
+                <label class="text-gray-700 font-medium"
+                  >Meeting Date/Time:</label
+                >
+                <input
+                  type="datetime-local"
+                  v-model="meetingData.date"
+                  required
+                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-            <div class="flex flex-col space-y-2">
-              <label class="text-gray-700 font-medium">Owner Email:</label>
-              <input
-                type="email"
-                v-model="request.propertyContact.email"
-                required
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+              <div class="flex flex-col space-y-2">
+                <label class="text-gray-700 font-medium"
+                  >Duration (minutes):</label
+                >
+                <input
+                  type="number"
+                  v-model="meetingData.duration"
+                  required
+                  min="15"
+                  max="180"
+                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-            <button
-              type="submit"
-              class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
-              Schedule Meeting
-            </button>
-          </form>
+              <div class="flex flex-col space-y-2">
+                <label class="text-gray-700 font-medium">Owner Email:</label>
+                <input
+                  type="email"
+                  v-model="meetingData.ownerEmail"
+                  :placeholder="request.propertyContact?.email || 'Owner email'"
+                  required
+                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div class="flex flex-col space-y-2">
+                <label class="text-gray-700 font-medium">Admin Email:</label>
+                <input
+                  type="email"
+                  v-model="meetingData.adminEmail"
+                  required
+                  placeholder="Your email for meeting notifications"
+                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div class="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  @click="meetingInfo = false"
+                  class="flex-1 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="flex-1 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                  Schedule
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="text-center py-4" v-if="!loading">
-          <!-- Replace the existing Edit button -->
 
-          <button
-            @click="acceptRequest"
-            type="button"
-            class="w-[25%] text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-500 dark:focus:ring-green-800"
-          >
-            Accept Request
-          </button>
-          <button
-            @click="showMeetingForm"
-            class="w-[25%] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-          >
-            Setup Meeting
-          </button>
-
-          <button
-            @click="handleDeleteRequest"
-            type="button"
-            class="w-[25%] text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
-          >
-            Reject Request
-          </button>
+        <div class="text-center py-8 mt-4" v-if="!loading">
+          <div class="flex flex-col md:flex-row justify-center gap-4">
+            <button
+              @click="acceptRequest"
+              type="button"
+              class="cursor-pointer w-full md:w-auto px-8 text-green-700 hover:text-white border-2 border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-bold rounded-lg text-sm py-3 text-center transition-all duration-200 flex items-center justify-center"
+            >
+              <i class="bi bi-check-circle mr-2"></i> Accept Request
+            </button>
+            <button
+              @click="showMeetingForm"
+              class="cursor-pointer w-full md:w-auto px-8 text-blue-700 hover:text-white border-2 border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm py-3 text-center transition-all duration-200 flex items-center justify-center"
+            >
+              <i class="bi bi-calendar-event mr-2"></i> Setup Meeting
+            </button>
+            <button
+              @click="handleDeleteRequest"
+              type="button"
+              class="cursor-pointer w-full md:w-auto px-8 text-red-700 hover:text-white border-2 border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm py-3 text-center transition-all duration-200 flex items-center justify-center"
+            >
+              <i class="bi bi-x-circle mr-2"></i> Reject Request
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -301,11 +361,11 @@
 
 <script>
 import L from "leaflet";
-import { nextTick } from "vue";
 import Swal from "sweetalert2";
 import { mapActions, mapState } from "vuex";
 import emailjs from "emailjs-com";
 import { createEvent } from "ics";
+import { nextTick } from "vue";
 
 // Initialize EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_USER_ID);
@@ -324,9 +384,6 @@ export default {
       },
       id: null,
       currentImageIndex: 0,
-      userLocation: null,
-      distance: null,
-      duration: null,
       loading: true,
       error: null,
       mapInitialized: false,
@@ -349,8 +406,8 @@ export default {
       const cityName = cities.find(
         (c) => c.id == this.request.city
       )?.city_name_en;
-      return `${governorateName || ""}-${cityName || ""}-${
-        this.request?.neighborhood || ""
+      return `${governorateName || ""}-${cityName || ""} ${
+        this.request?.neighborhood ? `-${this.request?.neighborhood}` : ""
       }`;
     },
   },
@@ -368,34 +425,34 @@ export default {
   mounted() {
     this.id = this.$route?.params?.id;
     if (!this.id) {
-      this.error = "request ID is missing";
+      this.error = "Request ID is missing";
       this.loading = false;
       return;
     }
     this.loadData();
   },
-  watch: {
-    "$route.params.id": {
-      handler(newId) {
-        if (newId && newId !== this.id) {
-          this.id = newId;
-          this.loadData();
-        }
-      },
-      immediate: true,
-    },
-  },
-  created() {
-    // Empty created hook
-  },
   methods: {
-    // Add this to your methods section
-
     ...mapActions("requests", ["getRequestById", "deleteRequest"]),
     ...mapActions("property", ["createPropertyFromRequest"]),
     ...mapActions("notifications", ["addNotification"]),
 
-    // Replace the existing generateMeetLink method with this one
+    // Add missing gallery navigation methods
+    prevImage() {
+      if (this.request.images && this.request.images.length > 0) {
+        this.currentImageIndex =
+          (this.currentImageIndex - 1 + this.request.images.length) %
+          this.request.images.length;
+      }
+    },
+
+    nextImage() {
+      if (this.request.images && this.request.images.length > 0) {
+        this.currentImageIndex =
+          (this.currentImageIndex + 1) % this.request.images.length;
+      }
+    },
+
+    // Generate meet link
     generateMeetLink() {
       // Generate a unique meeting ID based on timestamp and random string
       const timestamp = new Date().getTime();
@@ -408,7 +465,7 @@ export default {
       return `https://meet.jit.si/${meetingId}`;
     },
 
-    // Update the scheduleMeeting method to fix the calendar issue
+    // Update the scheduleMeeting method
     async scheduleMeeting() {
       try {
         // Validate meeting date
@@ -443,6 +500,17 @@ export default {
           }
         }
 
+        // Check if admin email is provided
+        if (!this.meetingData.adminEmail) {
+          Swal.fire({
+            title: "Admin Email Required",
+            text: "Please provide your email to receive meeting notifications",
+            icon: "warning",
+            confirmButtonText: "OK",
+          });
+          return;
+        }
+
         // Show loading indicator
         Swal.fire({
           title: "Scheduling meeting...",
@@ -466,7 +534,10 @@ export default {
         });
 
         // Set owner email from request data if not already set
-        if (this.request.propertyContact?.email) {
+        if (
+          this.request.propertyContact?.email &&
+          !this.meetingData.ownerEmail
+        ) {
           this.meetingData.ownerEmail = this.request.propertyContact.email;
         }
 
@@ -500,13 +571,11 @@ export default {
           meeting_date: formattedDate,
           meeting_duration: this.meetingData.duration + " minutes",
           meet_link: meetLink,
-          owner_email: this.request.propertyContact?.email || "",
+          owner_email: this.meetingData.ownerEmail,
           admin_email: this.meetingData.adminEmail,
           property_address: this.locationText || "Property Location",
           calendar_details: calendarDetails,
         };
-
-        console.log("Sending email with params:", templateParams);
 
         // Send email through EmailJS
         await emailjs.send(
@@ -542,8 +611,7 @@ export default {
         Swal.fire({
           title: "Meeting Scheduled!",
           html: `
-            <p>Meeting details have been sent to ${this.meetingData.ownermail} and ${this.meetingData.adminEmail}</p>
-         
+            <p>Meeting details have been sent to ${this.meetingData.ownerEmail} and ${this.meetingData.adminEmail}</p>
           `,
           icon: "success",
           confirmButtonText: "OK",
@@ -552,6 +620,8 @@ export default {
         // Reset form and hide it
         this.meetingData.date = "";
         this.meetingData.duration = 30;
+        this.meetingData.ownerEmail = "";
+        this.meetingData.adminEmail = "";
         this.meetingInfo = false;
       } catch (error) {
         console.error("Scheduling failed:", error);
@@ -565,10 +635,23 @@ export default {
     },
 
     showMeetingForm() {
+      // Pre-fill owner email if available
+      if (this.request.propertyContact?.email) {
+        this.meetingData.ownerEmail = this.request.propertyContact.email;
+      }
+
+      // Set default date to now + 3 days at 10:00 AM
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 3);
+      defaultDate.setHours(10, 0, 0, 0);
+
+      this.meetingData.date = defaultDate.toISOString().slice(0, 16);
       this.meetingInfo = true;
     },
+
     async acceptRequest() {
       try {
+        await nextTick();
         const result = await Swal.fire({
           title: "Are you sure?",
           text: "Do you want to accept this request and send a payment request to the owner?",
@@ -584,9 +667,6 @@ export default {
           // Create a new property object with isPaid set to false
           const propertyData = {
             ...this.request,
-            isPaid: false, // Add this property
-            status: "pending_payment", // Optionally add a status to track payment state
-            acceptedAt: new Date(), // Optionally add acceptance timestamp
           };
 
           // Create the property with the modified data
@@ -604,27 +684,29 @@ export default {
             );
           }
 
-          await Swal.fire(
-            "Accepted!",
-            "The request has been converted to a property listing. Owner needs to complete the payment.",
-            "success"
-          );
+          await nextTick();
+          Swal.fire({
+            title: "Success!",
+            text: "Request accepted",
+            icon: "success",
+          });
 
           this.$router.push("/admin/properties");
         }
       } catch (error) {
         console.error("Error accepting request:", error);
-        Swal.fire(
-          "Error",
-          "Failed to accept the request. Please try again.",
-          "error"
-        );
+        await nextTick();
+        Swal.fire({
+          title: "Error",
+          text: "Failed to accept the request. Please try again.",
+          icon: "error",
+        });
       }
     },
 
     async sendAcceptanceNotification(ownerId, propertyTitle) {
       try {
-        const notificationMessage = `"${propertyTitle}" is approved`;
+        const notificationMessage = `"${propertyTitle}" has been approved! Go to your profile to complete the payment. ✅`;
         await this.$store.dispatch("notifications/addNotification", {
           type: "property_accepted",
           ownerId: ownerId,
@@ -636,21 +718,9 @@ export default {
       }
     },
 
-    async sendAcceptanceNotification(ownerId, propertyTitle) {
-      try {
-        const notificationMessage = `"${propertyTitle} has been approved! Go to your profile to complete the payment. ✅`;
-        await this.$store.dispatch("notifications/addNotification", {
-          type: "property_accepted",
-          ownerId: ownerId,
-          message: notificationMessage,
-        });
-        console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
-      } catch (error) {
-        console.error("Error sending acceptance notification:", error);
-      }
-    },
     async loadData() {
       this.loading = true;
+      this.imageLoaded = false;
       try {
         this.error = null;
         const result = await this.getRequestById(this.id);
@@ -660,9 +730,8 @@ export default {
         }
 
         await this.$nextTick();
-        if (!this.loading && this.request) {
-          this.initMapWithFallback();
-          console.log(this.request);
+        if (!this.loading && this.request && this.request.coordinates) {
+          this.initMap();
         }
       } catch (error) {
         this.error = "Failed to load Request. Please try again later.";
@@ -672,30 +741,39 @@ export default {
       }
     },
 
-    async initMapWithFallback() {
-      // Remove existing map instance if it exists
-      if (this.mapInstance) {
-        this.mapInstance.remove();
-        this.mapInstance = null;
-      }
-
-      this.mapLoading = true;
-
-      // Only try to initialize map if we have request data
-      if (!this.request || !this.request.governorate) {
-        this.mapLoading = false;
-        return;
-      }
-
+    initMap() {
       try {
-        // Try to get coordinates from request data
-        if (this.request.coordinates) {
-          // Initialize map with coordinates
-          this.initMap();
-        } else {
-          // Fallback to geocoding the location
-          console.log("No coordinates found, using location text");
+        this.mapLoading = true;
+
+        // Remove existing map instance if it exists
+        if (this.mapInstance) {
+          this.mapInstance.remove();
+          this.mapInstance = null;
         }
+
+        // Check if we have coordinates
+        if (!this.request.coordinates) {
+          this.mapLoading = false;
+          return;
+        }
+
+        const { lat, lng } = this.request.coordinates;
+        const map = L.map("map", { scrollWheelZoom: false }).setView(
+          [lat, lng],
+          13
+        );
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
+          .addTo(map)
+          .bindPopup(`<b>${this.request.title}</b><br>${this.locationText}`)
+          .openPopup();
+
+        this.mapLoaded = true;
+        this.mapInstance = map;
       } catch (error) {
         console.error("Map initialization error:", error);
       } finally {
@@ -703,72 +781,7 @@ export default {
       }
     },
 
-    // Use watch to handle route changes
-
-    initMap() {
-      const { lat, lng } = this.request.coordinates;
-      console.log(lat, lng);
-      const map = L.map("map", { scrollWheelZoom: false }).setView(
-        [lat, lng],
-        13
-      );
-      console.log(map);
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(map);
-
-      L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-        .addTo(map)
-        .bindPopup(`<b>${this.request.title}</b><br>${this.request.location}`)
-        .openPopup();
-
-      this.getUserLocation(map, lat, lng);
-      this.mapLoaded = true; // Add this line
-    },
-    getUserLocation(map, targetLat, targetLng) {
-      if (!navigator.geolocation) return;
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude: lat, longitude: lng } = position.coords;
-          this.userLocation = { lat, lng };
-
-          L.marker([lat, lng], { icon: this.getCustomIcon("blue") })
-            .addTo(map)
-            .bindPopup("You are here");
-
-          this.calculateDistance(targetLat, targetLng, lat, lng);
-        },
-        () => console.error("Could not retrieve location")
-      );
-    },
-    // Utility methods
-    calculateDistance(lat1, lng1, lat2, lng2) {
-      const R = 6371;
-      const dLat = this.degToRad(lat2 - lat1);
-      const dLng = this.degToRad(lng2 - lng1);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(this.degToRad(lat1)) *
-          Math.cos(this.degToRad(lat2)) *
-          Math.sin(dLng / 2) *
-          Math.sin(dLng / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      this.distance = R * c;
-      this.duration = (this.distance / 50) * 60;
-    },
-    formatDuration(minutes) {
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-      const remainingHours = hours % 24;
-      return days > 0
-        ? `${days} days, ${remainingHours} hours`
-        : `${hours} hours`;
-    },
-    degToRad(deg) {
-      return deg * (Math.PI / 180);
-    },
+    // Method to get Custom Icon
     getCustomIcon(color) {
       return L.icon({
         iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
@@ -948,3 +961,29 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.transition {
+  transition: all 0.3s ease;
+}
+
+/* Add a subtle hover effect to the property images */
+.property-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Style the action buttons */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+</style>

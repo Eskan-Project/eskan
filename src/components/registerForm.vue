@@ -321,7 +321,7 @@ export default {
               please upload your ID
             </p>
             <div v-if="imagePreview" class="p-5 mb-5">
-              <div class="w-full mx-auto relative">
+              <div class="w-1/3 mx-auto relative">
                 <img :src="imagePreview" alt="Image Preview" />
                 <button
                   @click="removeImage"

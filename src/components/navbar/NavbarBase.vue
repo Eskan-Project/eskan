@@ -147,7 +147,7 @@
         </router-link>
 
         <router-link
-          v-if="userDetails.role !== 'admin'"
+          v-if="isAuth && userDetails.role !== 'admin'"
           to="/userProfile"
           :title="$t('nav.user_profile')"
           class="hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded-full border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
@@ -239,6 +239,13 @@ export default {
       document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
       document.documentElement.lang = locale;
     },
+    async fetchNotifications() {
+      try {
+        await this.getNotifications();
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    },
     handleScroll() {
       this.isSticky = window.scrollY > 0;
     },
@@ -272,7 +279,7 @@ export default {
       passive: true,
     });
     window.addEventListener("resize", this.checkMobile);
-    this.getNotifications();
+    this.fetchNotifications();
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);

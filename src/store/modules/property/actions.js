@@ -7,97 +7,110 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  Timestamp,
 } from "firebase/firestore";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
 export default {
-  async getProperties({ commit }) {
-    // commit("startLoading", null, { root: true });
+  async getProperties({ commit, dispatch }) {
     try {
+      await dispatch("checkPropertyExpiration");
       const propertiesSnapshot = await getDocs(collection(db, "properties"));
-      const properties = propertiesSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const properties = propertiesSnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(
+          (property) => property.status === "completed" && property.isPaid
+        );
       commit("setProperties", properties);
       return properties;
     } catch (error) {
-      console.log(error);
-    } finally {
-      // commit("stopLoading", null, { root: true });
+      console.error("Error fetching properties:", error);
+      commit("setProperties", []);
+      throw error; // Changed from return [] to throw error
     }
   },
+
   async createProperty({ commit, state, rootState, dispatch }, files) {
     commit("startLoading", null, { root: true });
     try {
-      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
-        throw new Error("User not authenticated or user details not loaded");
+      const userDetails = rootState.auth.userDetails;
+      if (!userDetails?.uid) {
+        throw new Error("User not authenticated");
       }
-      console.log(files);
-      const userRole = rootState.auth.userDetails.role || "owner";
+
+      const userRole = userDetails.role || "owner";
       const collectionName = userRole === "admin" ? "properties" : "requests";
       const propertyId = doc(collection(db, collectionName)).id;
 
-      let imagesUrl = [];
-      if (files.length) {
-        const folderName = `requests/${propertyId}`;
-        imagesUrl = await Promise.all(
-          files.map(async (file) => {
-            const image = base64ToFile(file);
-            return await uploadToCloudinary(
-              image,
-              import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
-              folderName
-            );
-          })
-        );
-      }
-      console.log(imagesUrl);
-      const ownerId = rootState.auth.userDetails.uid;
+      const imagesUrl = files.length
+        ? await Promise.all(
+            files.map(async (file) => {
+              const image = base64ToFile(file);
+              return uploadToCloudinary(
+                image,
+                import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
+                `requests/${propertyId}`
+              );
+            })
+          )
+        : [];
+
       const propertyData = {
         ...state.propertyDetails,
         images: imagesUrl,
-        ownerId,
+        ownerId: userDetails.uid,
         createdAt: new Date(),
         status: userRole === "admin" ? "approved" : "pending",
+        isPaid: false,
       };
 
-      console.log("Property Data to Save:", propertyData);
       await setDoc(doc(db, collectionName, propertyId), propertyData);
 
       if (userRole !== "admin") {
-        console.log("this is working");
-        dispatch(
+        await dispatch(
           "notifications/addNotification",
-          `Your property ${propertyData.title} is under review.`,
+          {
+            message: `Your property ${propertyData.title} is under review.`,
+            type: "info",
+          },
           { root: true }
         );
       }
+
+      return propertyId;
     } catch (error) {
-      console.log(error);
+      console.error("Error creating property:", error);
+      throw error;
     } finally {
       commit("stopLoading", null, { root: true });
       localStorage.removeItem("propertyDetails");
       localStorage.removeItem("propertyImages");
     }
   },
+
   async getProperty({ commit }, id) {
     commit("startLoading", null, { root: true });
     try {
-      const propertySnapshot = await getDoc(doc(db, "properties", id));
+      const propertyRef = doc(db, "properties", id);
+      const propertySnapshot = await getDoc(propertyRef);
+      if (!propertySnapshot.exists()) {
+        throw new Error("Property not found");
+      }
       const property = { id: propertySnapshot.id, ...propertySnapshot.data() };
-      console.log("property", property);
       commit("setProperty", property);
+      return property;
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching property:", error);
+      throw error;
     } finally {
       commit("stopLoading", null, { root: true });
     }
   },
-  updateImages({ commit }, images) {
-    commit("updateImages", images);
-  },
+
   async updateProperty(
     { commit, rootState },
     { propertyId, updatedData, files = [] }
@@ -105,96 +118,59 @@ export default {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = rootState.auth.userDetails;
-      if (!currentUser) {
-        throw new Error("User not authenticated");
-      }
+      if (!currentUser?.uid) throw new Error("User not authenticated");
 
       const propertyRef = doc(db, "properties", propertyId);
       const propertyDoc = await getDoc(propertyRef);
+      if (!propertyDoc.exists()) throw new Error("Property not found");
 
-      if (!propertyDoc.exists()) {
-        throw new Error("Property not found");
+      const existingData = propertyDoc.data();
+      if (
+        existingData.ownerId !== currentUser.uid &&
+        currentUser.role !== "admin"
+      ) {
+        throw new Error("Unauthorized to update this property");
       }
 
-      // Deep clean the updatedData object
-      const initialCleanedData = {};
-      Object.entries(updatedData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (typeof value === "object" && !Array.isArray(value)) {
-            // Clean nested objects
-            const cleanedNested = {};
-            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-              if (nestedValue !== undefined && nestedValue !== null) {
-                cleanedNested[nestedKey] = nestedValue;
-              }
-            });
-            if (Object.keys(cleanedNested).length > 0) {
-              initialCleanedData[key] = cleanedNested;
-            }
-          } else {
-            initialCleanedData[key] = value;
-          }
-        }
-      });
-
-      // Handle image uploads first
-      if (files && files.length > 0) {
-        const folderName = `properties/${propertyId}`;
-        const newImages = await Promise.all(
-          files.map(async (file) => {
-            // Direct upload of File object without base64 conversion
-            return await uploadToCloudinary(
+      let newImages = [];
+      if (files.length) {
+        newImages = await Promise.all(
+          files.map((file) =>
+            uploadToCloudinary(
               file,
               import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
-              folderName
-            );
-          })
+              `properties/${propertyId}`
+            )
+          )
         );
-
-        // Ensure images array exists in cleanedData
-        updatedData.images = Array.isArray(updatedData.images)
-          ? [...updatedData.images, ...newImages]
-          : newImages;
       }
 
-      // Clean the data after handling images
-      const cleanedData = {};
-      Object.entries(updatedData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (typeof value === "object" && !Array.isArray(value)) {
-            const cleanedNested = {};
-            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-              if (nestedValue !== undefined && nestedValue !== null) {
-                cleanedNested[nestedKey] = nestedValue;
-              }
-            });
-            if (Object.keys(cleanedNested).length > 0) {
-              cleanedData[key] = cleanedNested;
-            }
-          } else {
-            cleanedData[key] = value;
-          }
-        }
-      });
+      const cleanedData = Object.fromEntries(
+        Object.entries(updatedData)
+          .filter(([_, value]) => value !== undefined && value !== null)
+          .map(([key, value]) => [
+            key,
+            typeof value === "object" && !Array.isArray(value)
+              ? Object.fromEntries(
+                  Object.entries(value).filter(
+                    ([_, v]) => v !== undefined && v !== null
+                  )
+                )
+              : value,
+          ])
+      );
 
-      // Update the document
-      await updateDoc(doc(db, "properties", propertyId), {
+      const finalData = {
         ...cleanedData,
-        lastUpdated: new Date(),
-        updatedBy: rootState.auth.userDetails.uid,
-      });
-
-      const updatedProperty = {
-        ...propertyDoc.data(),
-        ...cleanedData,
-        id: propertyId,
+        images: newImages.length
+          ? [...(existingData.images || []), ...newImages]
+          : cleanedData.images || existingData.images,
+        lastUpdated: new Date().toISOString(),
+        updatedBy: currentUser.uid,
       };
 
-      commit("updateFirebaseProperty", {
-        propertyId,
-        updatedData: updatedProperty,
-      });
-
+      await updateDoc(propertyRef, finalData);
+      commit("updateFirebaseProperty", { propertyId, updatedData: finalData });
       return true;
     } catch (error) {
       console.error("Error updating property:", error);
@@ -203,35 +179,28 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
+
   async deleteProperty({ commit, rootState }, propertyId) {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = rootState.auth.userDetails;
-      if (!currentUser) {
-        throw new Error("User not authenticated");
-      }
+      if (!currentUser?.uid) throw new Error("User not authenticated");
 
-      // Check if user is admin by role instead of collection
-      if (currentUser.role === "admin") {
-        const propertyRef = doc(db, "properties", propertyId);
-        await deleteDoc(propertyRef);
-        commit("deleteProperty", propertyId);
-        return true;
-      }
-
-      // If not admin, check if they own the property
       const propertyRef = doc(db, "properties", propertyId);
       const propertyDoc = await getDoc(propertyRef);
+      if (!propertyDoc.exists()) throw new Error("Property not found");
+
+      const propertyData = propertyDoc.data();
       if (
-        propertyDoc.exists() &&
-        propertyDoc.data().ownerId === currentUser.uid
+        propertyData.ownerId !== currentUser.uid &&
+        currentUser.role !== "admin"
       ) {
-        await deleteDoc(propertyRef);
-        commit("deleteProperty", propertyId);
-        return true;
+        throw new Error("Unauthorized to delete this property");
       }
 
-      throw new Error("You do not have permission to delete this property");
+      await deleteDoc(propertyRef);
+      commit("deleteProperty", propertyId);
+      return true;
     } catch (error) {
       console.error("Error deleting property:", error);
       throw error;
@@ -239,41 +208,46 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
+
   async handlePayment({ commit, dispatch, rootState }, propertyId) {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = rootState.auth.userDetails;
+      if (!currentUser?.uid) throw new Error("User not authenticated");
+
       const propertyRef = doc(db, "properties", propertyId);
       const propertyDoc = await getDoc(propertyRef);
-      if (!propertyDoc.exists()) {
-        throw new Error("Property not found");
-      }
+      if (!propertyDoc.exists()) throw new Error("Property not found");
+
       const propertyData = propertyDoc.data();
+      if (propertyData.ownerId !== currentUser.uid) {
+        throw new Error("Unauthorized to pay for this property");
+      }
+
+      const paymentId = doc(collection(db, "payments")).id;
       const paymentData = {
         propertyId,
         amount: propertyData.price,
-        status: "completed",
+        userId: currentUser.uid,
         createdAt: new Date(),
       };
-      const paymentId = doc(collection(db, "payments")).id;
-      await setDoc(doc(db, "payments", paymentId), paymentData);
+      await Promise.all([
+        setDoc(doc(db, "payments", paymentId), paymentData),
+        updateDoc(propertyRef, {
+          isPaid: true,
+          paymentId,
+          paymentDate: new Date(),
+          status: "completed",
+          expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        }),
+      ]);
 
-      await updateDoc(propertyRef, {
-        isPaid: true,
-        paymentId: paymentId,
-        paymentDate: new Date().toISOString(),
-      });
-
-      dispatch(
+      await dispatch(
         "auth/addPaidProperty",
-        {
-          uid: currentUser.uid,
-          propertyId,
-          role: currentUser.role,
-        },
+        { uid: currentUser.uid, propertyId, role: currentUser.role },
         { root: true }
       );
-      console.log("paymentId", paymentId);
+
       return paymentId;
     } catch (error) {
       console.error("Error handling payment:", error);
@@ -282,39 +256,109 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
+
   async createPropertyFromRequest({ commit, rootState }, requestData) {
     commit("startLoading", null, { root: true });
     try {
-      if (!rootState.auth.userDetails || !rootState.auth.userDetails.uid) {
-        throw new Error("User not authenticated or user details not loaded");
-      }
+      const userDetails = rootState.auth.userDetails;
+      if (!userDetails?.uid) throw new Error("User not authenticated");
+      if (userDetails.role !== "admin")
+        throw new Error("Admin access required");
 
-      // Create a new property ID
       const propertyId = doc(collection(db, "properties")).id;
-
-      // Prepare the property data from request data
       const propertyData = {
         ...requestData,
         status: "approved",
         lastUpdated: new Date(),
-        approvedBy: rootState.auth.userDetails.uid,
+        approvedBy: userDetails.uid,
         approvedAt: new Date(),
+        isPaid: false,
       };
 
-      // Remove request-specific fields if needed
-      delete propertyData.id; // Remove the request ID
-
-      console.log("Property Data from Request:", propertyData);
-
-      // Add to properties collection
+      delete propertyData.id; // Remove request ID
       await setDoc(doc(db, "properties", propertyId), propertyData);
-
       return propertyId;
     } catch (error) {
       console.error("Error creating property from request:", error);
       throw error;
     } finally {
       commit("stopLoading", null, { root: true });
+    }
+  },
+
+  async checkPropertyExpiration() {
+    try {
+      console.log("Running property expiration check...");
+      const propertiesSnapshot = await getDocs(collection(db, "properties"));
+      const currentTime = Date.now();
+
+      let updateCount = 0;
+      await Promise.all(
+        propertiesSnapshot.docs.map(async (docSnap) => {
+          try {
+            const property = docSnap.data();
+            const propertyId = docSnap.id;
+
+            if (property.status === "expired") {
+              return;
+            }
+
+            let expirationDate = null;
+
+            if (property.expiresAt) {
+              if (property.expiresAt instanceof Timestamp) {
+                expirationDate = property.expiresAt.toDate();
+              } else if (property.expiresAt instanceof Date) {
+                expirationDate = property.expiresAt;
+              } else if (
+                property.expiresAt.seconds &&
+                property.expiresAt.nanoseconds
+              ) {
+                expirationDate = new Timestamp(
+                  property.expiresAt.seconds,
+                  property.expiresAt.nanoseconds
+                ).toDate();
+              } else if (typeof property.expiresAt === "string") {
+                expirationDate = new Date(property.expiresAt);
+              } else if (typeof property.expiresAt.toDate === "function") {
+                expirationDate = property.expiresAt.toDate();
+              }
+
+              console.log(
+                `Property ${propertyId}: Expiration date is ${expirationDate}, Type: ${typeof property.expiresAt}`
+              );
+
+              if (expirationDate && expirationDate.getTime() < currentTime) {
+                console.log(
+                  `Property ${propertyId}: Expired! Updating status...`
+                );
+                await updateDoc(docSnap.ref, {
+                  status: "expired",
+                  lastUpdated: new Date(),
+                });
+                updateCount++;
+                console.log(
+                  `Property ${propertyId}: Successfully marked as expired.`
+                );
+              }
+            } else {
+              console.log(`Property ${propertyId}: No expiration date found.`);
+            }
+          } catch (error) {
+            console.error(
+              `Error checking expiration for property ${docSnap.id}:`,
+              error
+            );
+          }
+        })
+      );
+
+      console.log(
+        `Expiration check completed. ${updateCount} properties were marked as expired.`
+      );
+      return updateCount;
+    } catch (error) {
+      console.error("Error in checkPropertyExpiration:", error);
     }
   },
 };

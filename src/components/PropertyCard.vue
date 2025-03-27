@@ -122,15 +122,6 @@
           </span>
         </div>
       </div>
-
-      <!-- New Label for recently added properties -->
-      <div v-if="isNewProperty" class="absolute top-0 left-0">
-        <div
-          class="bg-[#f59e0b] text-white px-3 py-1 text-xs font-bold rounded-br-lg shadow-md"
-        >
-          NEW
-        </div>
-      </div>
     </article>
   </router-link>
 </template>
