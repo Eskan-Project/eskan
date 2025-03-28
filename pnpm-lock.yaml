@@ -110,6 +110,9 @@ importers:
       vue-router:
         specifier: ^4.5.0
         version: 4.5.0(vue@3.5.13)
+      vue-turnstile:
+        specifier: ^1.0.11
+        version: 1.0.11(vue@3.5.13)
       vue3-toastify:
         specifier: ^0.2.8
         version: 0.2.8(vue@3.5.13)
@@ -2350,6 +2353,11 @@ packages:
     resolution: {integrity: sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w==}
     peerDependencies:
       vue: ^3.2.0
+
+  vue-turnstile@1.0.11:
+    resolution: {integrity: sha512-iaTBoZ5oUqtNRto6bmbn6FQvW0h/sK7mPUJc1Qn4em+cELXN59U2FQTcpWfKssV3OY6lEZzmCpcn/zrb7htK3A==}
+    peerDependencies:
+      vue: ^3.2.45
 
   vue3-toastify@0.2.8:
     resolution: {integrity: sha512-8jDOqsJaBZEbGpCbhWDETJc11D1lZefvgFPq/IPdM+U7+qyXoVPDvK6uq/FIgyV7qV0NcNzvGBMEzjsLQqGROw==}
@@ -4810,6 +4818,10 @@ snapshots:
   vue-router@4.5.0(vue@3.5.13):
     dependencies:
       '@vue/devtools-api': 6.6.4
+      vue: 3.5.13
+
+  vue-turnstile@1.0.11(vue@3.5.13):
+    dependencies:
       vue: 3.5.13
 
   vue3-toastify@0.2.8(vue@3.5.13):

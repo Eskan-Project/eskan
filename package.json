@@ -43,6 +43,7 @@
     "vue-i18n": "^10.0.6",
     "vue-recaptcha": "3.0.0-alpha.6",
     "vue-router": "^4.5.0",
+    "vue-turnstile": "^1.0.11",
     "vue3-toastify": "^0.2.8",
     "vuex": "^4.1.0"
   },

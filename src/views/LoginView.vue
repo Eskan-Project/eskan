@@ -1,9 +1,9 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
-import hCaptcha from "@/components/hCaptcha.vue";
+import Turnstile from "@/components/Turnstile.vue";
 export default {
   components: {
-    hCaptcha,
+    Turnstile,
   },
   data() {
     return {
@@ -12,7 +12,7 @@ export default {
       errors: {},
       loading: false,
       showPassword: false,
-      captchaToken: null,
+      turnstileToken: null,
     };
   },
   computed: {
@@ -22,24 +22,30 @@ export default {
     isError(newVal) {
       this.errors.server = newVal;
     },
+    email() {
+      this.errors.email = null;
+    },
+    password() {
+      this.errors.password = null;
+    },
   },
 
   methods: {
     ...mapActions("auth", ["login", "loginWithGoogle"]),
 
-    handleCaptchaVerified(token) {
-      this.captchaToken = token;
-      this.errors.captcha = null;
+    handleTurnstileVerified(token) {
+      this.turnstileToken = token;
+      this.errors.turnstile = null;
     },
 
-    handleCaptchaExpired() {
-      this.captchaToken = null;
-      this.errors.captcha = "CAPTCHA expired. Please try again.";
+    handleTurnstileExpired() {
+      this.turnstileToken = null;
+      this.errors.turnstile = "Security check expired. Please try again.";
     },
 
-    handleCaptchaError() {
-      this.captchaToken = null;
-      this.errors.captcha = "CAPTCHA verification failed. Please try again.";
+    handleTurnstileError() {
+      this.turnstileToken = null;
+      this.errors.turnstile = "Security check failed. Please try again.";
     },
 
     async submitLogin() {
@@ -55,8 +61,8 @@ export default {
       } else if (this.password.length < 6) {
         this.errors.password = "Password must be at least 6 characters";
       }
-      if (!this.captchaToken) {
-        this.errors.captcha = "Please complete the CAPTCHA";
+      if (!this.turnstileToken) {
+        this.errors.turnstile = "Please complete the security check";
       }
 
       if (Object.keys(this.errors).length > 0) return;
@@ -65,6 +71,7 @@ export default {
         const userData = {
           email: this.email,
           password: this.password,
+          turnstileToken: this.turnstileToken,
         };
         await this.login(userData);
         this.$router.push({ name: "Home" });
@@ -76,14 +83,6 @@ export default {
 
     togglePassword() {
       this.showPassword = !this.showPassword;
-    },
-  },
-  watch: {
-    email() {
-      this.errors.email = null;
-    },
-    password() {
-      this.errors.password = null;
     },
   },
 };
@@ -145,14 +144,14 @@ export default {
           <div
             class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
           >
-            <hCaptcha
-              @captchaVerified="handleCaptchaVerified"
-              @captchaExpired="handleCaptchaExpired"
-              @captchaError="handleCaptchaError"
+            <Turnstile
+              @turnstileVerified="handleTurnstileVerified"
+              @turnstileExpired="handleTurnstileExpired"
+              @turnstileError="handleTurnstileError"
             />
 
-            <p v-if="errors.captcha" class="text-red-500 text-sm mt-1">
-              {{ errors.captcha }}
+            <p v-if="errors.turnstile" class="text-red-500 text-sm mt-1">
+              {{ errors.turnstile }}
             </p>
           </div>
 

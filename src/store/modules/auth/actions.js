@@ -65,7 +65,7 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async login({ commit }, { email, password }) {
+  async login({ commit }, { email, password, turnstileToken }) {
     commit("startLoading", null, { root: true });
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
@@ -175,7 +175,10 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async register({ commit, state }, { name, email, password, role, idImage }) {
+  async register(
+    { commit, state },
+    { name, email, password, role, idImage, turnstileToken }
+  ) {
     commit("startLoading");
     try {
       const { user } = await createUserWithEmailAndPassword(

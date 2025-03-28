@@ -12,7 +12,9 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "App",
-  components: { LoadingSpinner },
+  components: {
+    LoadingSpinner,
+  },
   computed: {
     ...mapGetters(["isLoading"]),
   },
