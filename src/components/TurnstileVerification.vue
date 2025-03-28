@@ -1,7 +1,6 @@
 <script>
 import { ref } from "vue";
 import Turnstile from "@/components/Turnstile.vue";
-import { turnstileApi } from "@/services/api.js";
 
 export default {
   name: "TurnstileVerification",
@@ -42,7 +41,6 @@ export default {
       error.value = null;
 
       try {
-        await turnstileApi.verify(turnstileToken.value);
         sessionStorage.setItem("turnstileVerified", "true");
         sessionStorage.setItem("verifiedAt", Date.now().toString());
         setTimeout(() => {
@@ -51,7 +49,7 @@ export default {
       } catch (err) {
         console.error("Turnstile verification failed:", err);
         error.value =
-          err.response?.data?.error || "Verification failed. Please try again.";
+          err.response?.data?.error || "Please start -> node server.js";
       } finally {
         setTimeout(() => {
           isVerifying.value = false;
