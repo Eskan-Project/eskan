@@ -13,6 +13,40 @@
     "admin_dashboard": "Admin Dashboard",
     "user_profile": "User Profile"
   },
+  "profile": {
+    "title": "Profile",
+    "edit_profile": "Edit Profile",
+    "cancel": "Cancel",
+    "save_profile": "Save Profile",
+    "personal_information": "Personal Information",
+    "name": "Name",
+    "email": "Email",
+    "national_id": "National ID",
+    "gender": "Gender",
+    "address": "Address",
+    "phone": "Phone Number",
+    "male": "Male",
+    "female": "Female",
+    "not_specified": "Not specified",
+    "my_properties": "My Properties",
+    "loading_properties": "Loading properties...",
+    "no_properties": "You have not added any properties yet",
+    "select_room": "One Room",
+    "select_rooms": "Rooms",
+    "currency": "EGP",
+    "property_status": {
+      "approved": "Approved",
+      "pending": "Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "expired": "Expired"
+    },
+    "pay_now": "Pay Now",
+    "paid": "Paid",
+    "crop_image": "Crop Image",
+    "apply": "Apply",
+    "cancel_crop": "Cancel Crop"
+  },
   "home": {
     "hero": {
       "title": "Your New Home Away from Home",
@@ -94,5 +128,166 @@
         }
       }
     }
+  },
+  "search": {
+    "placeholder": "Search by keyword",
+    "button": "Search",
+    "reset": "Reset",
+    "apply_filters": "Apply Filters",
+    "anywhere": "Anywhere",
+    "any_status": "Any Status",
+    "any_rooms": "Any Rooms",
+    "select_governorate": "Governorate",
+    "select_city": "City",
+    "select_status": "Property Status",
+    "select_rooms": "Rooms Number"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "properties": {
+    "title": "Properties",
+    "filters": "Filters",
+    "no_properties": "No properties match your filters."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "send_message": "Send Us A Message",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "error": "Failed to send message. Please try again later."
+  },
+  "createProperty": {
+    "progress": {
+      "general": "General Information",
+      "preview": "Preview",
+      "contact": "Contact Information",
+      "completed": "Completed"
+    },
+    "form": {
+      "generalInfo": "General Information",
+      "title": "Title",
+      "description": "Description",
+      "rooms": "Number of Rooms",
+      "livingRooms": "Number of Living Rooms",
+      "bathrooms": "Number of Bathrooms",
+      "price": "Price",
+      "kitchens": "Number of Kitchens",
+      "area": "Area (M²)",
+      "floor": "Floor Location",
+      "furnished": "Furnished",
+      "yes": "Yes",
+      "no": "No",
+      "propertyStatus": "Status",
+      "new": "New",
+      "secondHand": "Second Hand",
+      "renovated": "Renovated"
+    },
+    "location": {
+      "title": "Property Location",
+      "address": "Address",
+      "governorate": "Governorate",
+      "city": "City",
+      "neighborhood": "Neighborhood",
+      "selectLocation": "Select Location on Map",
+      "propertyType": "Property Type",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "house": "House",
+      "studio": "Studio"
+    },
+    "images": {
+      "title": "Property Images",
+      "dragAndDrop": "Drag and drop images here, or click to select files",
+      "orClick": "Or click to select files",
+      "imagesRequired": "Property images are required",
+      "maxImages": "Maximum 10 images allowed",
+      "fileSize": "File size should be less than 5MB",
+      "supportedFormats": "Supported formats: JPG, PNG, JPEG"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "description": "How can potential renters contact you?",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "alternateName": "Alternate Contact Name",
+      "alternatePhone": "Alternate Phone Number"
+    },
+    "preview": {
+      "title": "Property Preview",
+      "description": "Review your property details before submitting",
+      "basicInfo": "Basic Information",
+      "features": "Features",
+      "amenities": "Amenities",
+      "location": "Location",
+      "contact": "Contact Information"
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "submit": "Submit Property",
+      "saveAndContinue": "Save and Continue",
+      "loading": "Loading..."
+    },
+    "completed": {
+      "title": "Property Submitted Successfully!",
+      "description": "Your property has been submitted and is pending review.",
+      "returnHome": "Return to Home"
+    },
+    "validation": {
+      "fillAllFields": "Please fill all the fields",
+      "selectLocation": "Please select property location on map",
+      "uploadImages": "Please upload at least one image"
+    }
+  },
+  "footer": {
+    "tagline": "Your Gateway to Safe and Affordable Shared Housing",
+    "copyright": "© Copyright",
+    "all_rights_reserved": "All Rights Reserved",
+    "social": {
+      "facebook": "Facebook",
+      "dribbble": "Dribbble",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "behance": "Behance"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about using Eskan for your housing needs",
+    "still_questions": "Still have questions? We're here to help!",
+    "contact_support": "Contact Support",
+    "no_faqs": "No FAQs available. Please check back later or contact support for assistance.",
+    "questions": [
+      {
+        "question": "How do I search for housing on Eskan?",
+        "answer": "Simply log in as a regular user, select your target governorate, and use the search and filter options to find shared housing that matches your preferences like price, location, and amenities."
+      },
+      {
+        "question": "How can I list my property?",
+        "answer": "Register as a property owner, submit your legal documents for verification, attend an online verification meeting, and then create your listing. Your first listing is free for three days!"
+      },
+      {
+        "question": "What does the verification process entail?",
+        "answer": "Property owners must submit legal documents and attend an online meeting via Zoom or Microsoft Teams. Our admins will review everything to ensure safety and authenticity."
+      },
+      {
+        "question": "How does the subscription work for property owners?",
+        "answer": "After the free 3-day period for your first listing, you can choose a per-listing subscription or an annual plan to continue posting and managing your properties."
+      },
+      {
+        "question": "How can I contact a property owner?",
+        "answer": "Regular users get 1-2 free contacts. For unlimited access to owner details, you can subscribe monthly or purchase a package with a set number of unlocks."
+      }
+    ]
   }
 }

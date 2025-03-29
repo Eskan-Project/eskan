@@ -10,7 +10,7 @@
             class="w-[150px] mb-2"
           />
           <p class="mb-2 text-sm text-center">
-            Your Gateway to Safe and Affordable Shared Housing
+            {{ $t("footer.tagline") }}
           </p>
         </div>
 
@@ -23,7 +23,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="w-10 h-10 flex items-center justify-center bg-white rounded-lg text-[var(--secondary-color)] hover:bg-[var(--secondary-color)] hover:border hover:text-white hover:bg-opacity-80 transition-all"
-            :aria-label="icon.name"
+            :aria-label="$t(`footer.social.${icon.name.toLowerCase()}`)"
           >
             <i :class="`bi bi-${icon.icon} text-xl`"></i>
           </a>
@@ -33,7 +33,10 @@
   </footer>
   <!-- Copyright -->
   <div class="bg-[#001c3ac9] text-center text-white py-3 w-full">
-    <h3>© Copyright <strong>Eskan</strong>. All Rights Reserved</h3>
+    <h3>
+      {{ $t("footer.copyright") }} <strong>Eskan</strong>.
+      {{ $t("footer.all_rights_reserved") }}
+    </h3>
   </div>
 </template>
 

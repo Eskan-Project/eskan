@@ -38,17 +38,16 @@
           >
             <span
               class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-2'"
+              :class="currentLocale === 'ar' ? 'mr-2 ' : 'ml-2 font-bold'"
               >EN</span
             >
             <span
-              class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'ml-2' : 'mr-2'"
+              class="text-gray-600 text-base z-10"
+              :class="currentLocale === 'ar' ? 'ml-3 font-bold' : 'mr-2'"
               >ع</span
             >
             <div
-              class="bg-white w-10 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute"
-              :class="currentLocale === 'ar' ? 'right-1' : 'left-1'"
+              class="bg-white w-10 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
             ></div>
           </div>
         </div>
