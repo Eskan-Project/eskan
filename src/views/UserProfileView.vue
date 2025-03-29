@@ -6,7 +6,7 @@
           <img
             class="h-full w-full object-cover"
             src="../assets/images/userProfileCoverPagePhoto.jpg"
-            alt="Profile Cover"
+            :alt="$t('profile.title') + ' Cover'"
             loading="lazy"
           />
           <div class="absolute inset-0 bg-[#053052]/80"></div>
@@ -18,14 +18,14 @@
               <img
                 v-if="croppedImageSrc"
                 :src="croppedImageSrc"
-                alt="Profile"
+                :alt="$t('profile.title')"
                 class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
                 loading="lazy"
               />
               <img
                 v-else
                 :src="userDetails?.photo || defaultPhoto"
-                alt="Profile"
+                :alt="$t('profile.title')"
                 class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
                 loading="lazy"
               />
@@ -56,7 +56,7 @@
                       type="text"
                       v-model="userDetails.name"
                       class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                      placeholder="Enter your name"
+                      :placeholder="$t('profile.name')"
                     />
                   </div>
                   <div v-else>
@@ -78,7 +78,9 @@
               @click="toggleEdit"
               class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e] shadow-md cursor-pointer"
             >
-              {{ isEditing ? "Cancel" : "Edit Profile" }}
+              {{
+                isEditing ? $t("profile.cancel") : $t("profile.edit_profile")
+              }}
             </button>
           </article>
         </div>
@@ -89,7 +91,9 @@
         class="fixed inset-0 bg-[#053052]/80 flex items-center justify-center z-50"
       >
         <div class="bg-white p-4 rounded-lg shadow-lg w-[90%] max-w-lg">
-          <h3 class="text-xl font-semibold mb-4">Crop Image</h3>
+          <h3 class="text-xl font-semibold mb-4">
+            {{ $t("profile.crop_image") }}
+          </h3>
           <div class="cropper-container">
             <Cropper
               ref="cropper"
@@ -103,13 +107,13 @@
               @click="applyCrop"
               class="cursor-pointer px-4 py-2 bg-[var(--secondary-color)] text-white rounded hover:bg-white hover:text-[var(--secondary-color)] border hover:border-[var(--secondary-color)]"
             >
-              Apply
+              {{ $t("profile.apply") }}
             </button>
             <button
               @click="cancelCrop"
               class="cursor-pointer px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
             >
-              Cancel
+              {{ $t("profile.cancel_crop") }}
             </button>
           </div>
         </div>
@@ -123,7 +127,7 @@
             <h2
               class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center"
             >
-              Personal Information
+              {{ $t("profile.personal_information") }}
             </h2>
 
             <form @submit.prevent="saveProfile">
@@ -132,7 +136,7 @@
                   <label
                     class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    National ID
+                    {{ $t("profile.national_id") }}
                   </label>
                   <div v-if="isEditing">
                     <input
@@ -145,7 +149,7 @@
                     v-else
                     class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.nationalId || "Not specified" }}
+                    {{ userDetails?.nationalId || $t("profile.not_specified") }}
                   </div>
                 </div>
 
@@ -153,23 +157,25 @@
                   <label
                     class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    Gender
+                    {{ $t("profile.gender") }}
                   </label>
                   <div v-if="isEditing">
                     <select
                       v-model="userDetails.gender"
                       class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     >
-                      <option disabled value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
+                      <option disabled value="">
+                        {{ $t("profile.not_specified") }}
+                      </option>
+                      <option value="Male">{{ $t("profile.male") }}</option>
+                      <option value="Female">{{ $t("profile.female") }}</option>
                     </select>
                   </div>
                   <div
                     v-else
                     class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.gender || "Not specified" }}
+                    {{ userDetails?.gender || $t("profile.not_specified") }}
                   </div>
                 </div>
 
@@ -177,7 +183,7 @@
                   <label
                     class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    Address
+                    {{ $t("profile.address") }}
                   </label>
                   <div v-if="isEditing">
                     <input
@@ -190,7 +196,7 @@
                     v-else
                     class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.address || "Not specified" }}
+                    {{ userDetails?.address || $t("profile.not_specified") }}
                   </div>
                 </div>
 
@@ -198,7 +204,7 @@
                   <label
                     class="text-sm font-semibold text-gray-700 flex items-center mb-2"
                   >
-                    Phone Number
+                    {{ $t("profile.phone") }}
                   </label>
                   <div v-if="isEditing">
                     <input
@@ -211,7 +217,7 @@
                     v-else
                     class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
                   >
-                    {{ userDetails?.phone || "Not specified" }}
+                    {{ userDetails?.phone || $t("profile.not_specified") }}
                   </div>
                 </div>
               </div>
@@ -221,7 +227,7 @@
                 type="submit"
                 class="cursor-pointer mt-6 w-full md:w-auto px-6 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:shadow-lg transition-transform transform hover:scale-105"
               >
-                Save Profile
+                {{ $t("profile.save_profile") }}
               </button>
             </form>
           </article>
@@ -230,15 +236,19 @@
     </div>
 
     <div class="max-w-6xl mx-auto p-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">My Properties</h2>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">
+        {{ $t("profile.my_properties") }}
+      </h2>
 
-      <p v-if="loading" class="text-gray-600">Loading properties...</p>
+      <p v-if="loading" class="text-gray-600">
+        {{ $t("profile.loading_properties") }}
+      </p>
 
       <p
         v-else-if="allProperties && allProperties.length === 0"
         class="text-gray-600"
       >
-        You have not added any properties yet.
+        {{ $t("profile.no_properties") }}
       </p>
 
       <div
@@ -277,13 +287,15 @@
                     : 'bg-red-500 text-white',
                 ]"
               >
-                {{ property.status.toUpperCase() }}
+                {{ $t(`profile.property_status.${property.status}`) }}
               </span>
             </div>
           </div>
 
           <div class="p-4">
-            <h4 class="text-xl font-bold text-gray-800 mb-2 truncate">
+            <h4
+              class="text-xl font-bold text-gray-800 truncate capitalize text-center mb-4"
+            >
               {{ property.title }}
             </h4>
 
@@ -297,11 +309,20 @@
 
             <div class="grid grid-cols-2 gap-2 mb-3 ml-1">
               <div class="flex items-center">
-                <span class="font-semibold">{{ property.price }} EGP </span>
+                <span class="font-semibold"
+                  >{{ formattedPrice(property.price) }}
+                  {{ $t("profile.currency") }}</span
+                >
               </div>
               <div class="flex items-center">
                 <i class="bi bi-door-open mr-1 text-blue-500"></i>
-                <span>{{ property.rooms }} Rooms</span>
+                <span>
+                  {{
+                    property.rooms.length > 1
+                      ? property.rooms + " " + $t("profile.select_rooms")
+                      : $t("profile.select_room")
+                  }}</span
+                >
               </div>
             </div>
 
@@ -313,7 +334,8 @@
                 v-if="property.isPaid"
                 class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 text-blue-700 flex items-center"
               >
-                <i class="bi bi-check-circle-fill mr-1"></i> Paid
+                <i class="bi bi-check-circle-fill mr-1"></i>
+                {{ $t("profile.paid") }}
               </span>
             </div>
 
@@ -322,7 +344,7 @@
               @click="goToPaymentPage(property)"
               class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
             >
-              <i class="bi bi-credit-card mr-2"></i> Pay Now
+              <i class="bi bi-credit-card mr-2"></i> {{ $t("profile.pay_now") }}
             </button>
           </div>
         </div>
@@ -330,6 +352,7 @@
     </div>
   </main>
 </template>
+
 <script>
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "../services/uploadToCloudinary";
@@ -365,6 +388,8 @@ export default {
       properties: [],
       allProperties: [],
       loading: true,
+      defaultPhoto: "path/to/default-photo.jpg",
+      language: this.$i18n.locale,
     };
   },
   mounted() {
@@ -402,14 +427,14 @@ export default {
         }
         await this.updateProfile();
         this.isEditing = false;
-        toast.success("Profile updated successfully", {
+        toast.success(this.$t("profile.success"), {
           duration: 3000,
           position: "top-left",
           transition: "slide",
         });
       } catch (error) {
         console.log(error);
-        toast.error("Failed to update profile", {
+        toast.error(this.$t("profile.error"), {
           duration: 3000,
           position: "top-left",
           transition: "slide",
@@ -497,7 +522,7 @@ export default {
         console.log("All properties:", this.allProperties);
       } catch (error) {
         console.error("Error fetching all properties:", error);
-        toast.error("Failed to fetch properties.", {
+        toast.error(this.$t("profile.error_properties"), {
           duration: 3000,
           position: "top-left",
           transition: "slide",
@@ -505,18 +530,6 @@ export default {
       } finally {
         this.stopLoading();
         this.loading = false;
-      }
-    },
-    getStatusClass(status) {
-      switch (status) {
-        case "pending":
-          return "bg-yellow-100 text-yellow-700";
-        case "approved":
-          return "bg-green-100 text-green-700";
-        case "rejected":
-          return "bg-red-100 text-red-700";
-        default:
-          return "bg-gray-100 text-gray-700";
       }
     },
     goToPaymentPage(property) {
@@ -529,31 +542,53 @@ export default {
         await updateDoc(propertyRef, {
           isPaid: true,
         });
-        toast.success("Payment successful!", {
+        toast.success(this.$t("profile.payment_success"), {
           duration: 3000,
-          position: "top left",
+          position: "top-left",
           transition: "slide",
         });
         this.fetchAllProperties();
       } catch (error) {
         console.error("Error processing payment:", error);
-        toast.error("Payment failed!", {
+        toast.error(this.$t("profile.payment_error"), {
           duration: 3000,
           position: "top-left",
           transition: "slide",
         });
       }
     },
+    formattedPrice(price) {
+      if (typeof price !== "number" && isNaN(Number(price))) {
+        return price; // Return as-is if price isn’t a valid number
+      }
+      const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
+      return new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 0, // No decimals unless needed
+        maximumFractionDigits: 2, // Up to 2 decimals if present
+      }).format(price);
+    },
     getCityName(property) {
       const city = cities.find((c) => c.id === property.city);
-      return city?.city_name_en || property.city || "Unknown city";
+      return (
+        (city
+          ? this.$i18n.locale === "ar"
+            ? city.city_name_ar
+            : city.city_name_en
+          : null) ||
+        property.city ||
+        "Unknown city"
+      );
     },
     getGovernorateName(property) {
       const governorate = governorates.find(
         (g) => g.id === property.governorate
       );
       return (
-        governorate?.governorate_name_en ||
+        (governorate
+          ? this.$i18n.locale === "ar"
+            ? governorate.governorate_name_ar
+            : governorate.governorate_name_en
+          : null) ||
         property.governorate ||
         "Unknown governorate"
       );

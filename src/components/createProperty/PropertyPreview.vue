@@ -84,39 +84,49 @@
         <h3
           class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6"
         >
-          General Information
+          {{ $t("createProperty.preview.basicInfo") }}
         </h3>
         <div
           class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-800"
         >
           <div class="space-y-6">
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Published Date:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.propertyStatus") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.createdAt || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Area:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.area") }}:</span
+              >
               <span class="font-semibold"
                 >{{ propertyDetails.area || "N/A" }} m<sup>2</sup></span
               >
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Number of Rooms:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.rooms") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.rooms || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Number of Bathrooms:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.bathrooms") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.bathrooms || "N/A"
               }}</span>
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Floor Location:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.floor") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.floor || "N/A"
               }}</span>
@@ -124,25 +134,33 @@
           </div>
           <div class="space-y-6">
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Status:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.propertyStatus") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.status || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Furnished:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.furnished") }}:</span
+              >
               <span class="font-semibold capitalize">{{
                 propertyDetails.furnished || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Number of Living Rooms:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.livingRooms") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.livingRooms || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-52 font-normal">Number of Kitchens:</span>
+              <span class="w-52 font-normal"
+                >{{ $t("createProperty.form.kitchens") }}:</span
+              >
               <span class="font-semibold">{{
                 propertyDetails.kitchens || "N/A"
               }}</span>
@@ -158,7 +176,7 @@
     >
       <div>
         <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4">
-          Explanation
+          {{ $t("createProperty.form.description") }}
         </h3>
         <p class="text-gray-600 text-sm sm:text-base">
           {{ propertyDetails.description || "No description available" }}
@@ -168,7 +186,10 @@
 
     <!-- Next Button -->
     <div class="flex justify-center my-6 sm:my-10">
-      <CreateBtn title="Next" name="propertyContact" />
+      <CreateBtn
+        :title="$t('createProperty.buttons.next')"
+        name="propertyContact"
+      />
     </div>
   </div>
 </template>

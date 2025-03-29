@@ -40,10 +40,26 @@ export default {
   data() {
     return {
       steps: [
-        { path: "/createProperty", icon: "bi bi-pencil" },
-        { path: "/createProperty/propertyPreview", icon: "bi bi-eye" },
-        { path: "/createProperty/propertyContact", icon: "bi bi-telephone" },
-        { path: "/createProperty/completed", icon: "bi bi-check-lg" },
+        {
+          path: "/createProperty",
+          icon: "bi bi-pencil",
+          label: "createProperty.progress.general",
+        },
+        {
+          path: "/createProperty/propertyPreview",
+          icon: "bi bi-eye",
+          label: "createProperty.progress.preview",
+        },
+        {
+          path: "/createProperty/propertyContact",
+          icon: "bi bi-telephone",
+          label: "createProperty.progress.contact",
+        },
+        {
+          path: "/createProperty/completed",
+          icon: "bi bi-check-lg",
+          label: "createProperty.progress.completed",
+        },
       ],
       activeStep: 0,
       maxSteps: 0,

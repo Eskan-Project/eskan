@@ -56,7 +56,7 @@
           @click="loadData"
           class="mt-4 text-blue-500 underline text-sm sm:text-base"
         >
-          Retry
+          {{ $t("pagination.retry") }}
         </button>
       </div>
       <div v-else>
@@ -68,7 +68,7 @@
           v-else
           class="text-center text-gray-500 py-10 text-sm sm:text-base md:text-lg"
         >
-          No properties match your filters.
+          {{ $t("properties.no_properties") }}
         </p>
         <pagination
           v-if="filteredProperties.length"
@@ -196,7 +196,7 @@ export default {
         this.error = null;
         await this.getProperties();
       } catch (error) {
-        this.error = "Failed to load properties. Please try again later.";
+        this.error = this.$t("properties.error");
         console.error("Fetch properties error:", error);
       }
     },

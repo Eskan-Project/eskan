@@ -2,7 +2,6 @@
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import TurnstileVerification from "@/components/TurnstileVerification.vue";
-import { turnstileApi } from "@/services/api";
 import { useStore } from "vuex";
 
 export default {
@@ -15,7 +14,7 @@ export default {
     const store = useStore();
     onMounted(() => {
       store.dispatch("stopLoading");
-      if (turnstileApi.isVerified()) {
+      if (sessionStorage.getItem("turnstileVerified")) {
         const redirectPath =
           sessionStorage.getItem("turnstileRedirectPath") || "/";
         sessionStorage.removeItem("turnstileRedirectPath");

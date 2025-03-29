@@ -9,7 +9,7 @@
       {{ errorMessage }}
     </p>
     <CreateBtn
-      title="Next"
+      :title="$t('createProperty.buttons.next')"
       name="propertyPreview"
       @validateAndProceed="validateForm"
     />
@@ -64,10 +64,10 @@ export default {
       ) {
         callback(true);
       } else if (this.propertyDetails.neighborhood === "") {
-        this.errorMessage = "Please select property location on map";
+        this.errorMessage = this.$t("createProperty.validation.selectLocation");
         callback(false);
       } else {
-        this.errorMessage = "Please fill all the fields";
+        this.errorMessage = this.$t("createProperty.validation.fillAllFields");
         callback(false);
       }
     },

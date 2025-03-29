@@ -13,21 +13,6 @@ export const turnstileApi = {
   verify(token) {
     return api.post("/verify-turnstile", { turnstileToken: token });
   },
-
-  // Check if user is verified
-  isVerified() {
-    return sessionStorage.getItem("turnstileVerified") === "true";
-  },
-
-  // Set verified status
-  setVerified(status = true) {
-    sessionStorage.setItem("turnstileVerified", status.toString());
-  },
-
-  // Clear verified status (useful for testing)
-  clearVerification() {
-    sessionStorage.removeItem("turnstileVerified");
-  },
 };
 
 export default api;

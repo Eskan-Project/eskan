@@ -4,7 +4,7 @@
   >
     <div class="px-3 py-6 bg-white shadow-sm rounded-lg">
       <h2 class="text-xl font-semibold mb-10 text-gray-700 text-center">
-        Contact Information
+        {{ $t("createProperty.contact.title") }}
       </h2>
 
       <form
@@ -13,32 +13,32 @@
       >
         <InputField
           v-model="propertyDetails.propertyContact.name"
-          label="Name"
+          :label="$t('createProperty.contact.name')"
           required
           class="w-full md:w-[70%] mx-auto"
         />
 
         <InputField
           v-model="propertyDetails.propertyContact.email"
-          label="Email"
+          :label="$t('createProperty.contact.email')"
           required
           class="w-full md:w-[70%]"
         />
 
         <InputField
           v-model="propertyDetails.propertyContact.phone"
-          label="Phone Number 1"
+          :label="$t('createProperty.contact.phone')"
           required
           class="w-full md:w-[70%] mx-auto"
         />
         <InputField
           v-model="propertyDetails.propertyContact.phone2"
-          label="Phone Number 2"
+          :label="$t('createProperty.contact.alternatePhone')"
           class="w-full md:w-[70%]"
         />
       </form>
     </div>
-    <CreateBtn title="Complete" name="completed" />
+    <CreateBtn :title="$t('createProperty.buttons.submit')" name="completed" />
   </div>
 </template>
 

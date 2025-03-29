@@ -13,7 +13,7 @@
           :value="localSearchQuery"
           @input="handleSearchInput"
           type="text"
-          placeholder="Search by keyword"
+          :placeholder="$t('search.placeholder')"
           class="w-full sm:w-40 px-3 sm:px-4 py-2 sm:placeholder:text-sm placeholder:text-base text-sm sm:text-base rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#364365]"
         />
         <div class="relative w-full sm:w-40" ref="governorateDropdown">
@@ -22,7 +22,7 @@
             class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
-              selectedGovernorateLabel || "Governorate"
+              selectedGovernorateLabel || $t("search.select_governorate")
             }}</span>
             <span class="text-gray-500">▼</span>
           </div>
@@ -47,7 +47,7 @@
             class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
-              selectedPropertyStatusLabel || "Property Status"
+              selectedPropertyStatusLabel || $t("search.select_status")
             }}</span>
             <span class="text-gray-500">▼</span>
           </div>
@@ -71,7 +71,7 @@
             class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
-              selectedRoomsLabel || "Rooms Number"
+              selectedRoomsLabel || $t("search.select_rooms")
             }}</span>
             <span class="text-gray-500">▼</span>
           </div>
@@ -93,13 +93,13 @@
           class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
           @click="applyFilters"
         >
-          Search
+          {{ $t("search.button") }}
         </button>
         <button
           class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
           @click="resetFilters"
         >
-          Reset
+          {{ $t("search.reset") }}
         </button>
       </div>
 
@@ -110,7 +110,7 @@
             :value="localSearchQuery"
             @input="handleSearchInput"
             type="text"
-            placeholder="Search by keyword"
+            :placeholder="$t('search.placeholder')"
             class="w-full px-3 sm:px-4 py-2 mr-2 text-sm sm:text-base rounded-full focus:outline-none focus:ring-2 focus:ring-[#364365] border border-gray-200"
           />
           <button
@@ -138,7 +138,7 @@
                 class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
-                  selectedGovernorateLabel || "Select Governorate"
+                  selectedGovernorateLabel || $t("search.select_governorate")
                 }}</span>
                 <span class="text-gray-500">▼</span>
               </div>
@@ -163,7 +163,7 @@
                 class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
-                  selectedPropertyStatusLabel || "Select Status"
+                  selectedPropertyStatusLabel || $t("search.select_status")
                 }}</span>
                 <span class="text-gray-500">▼</span>
               </div>
@@ -187,7 +187,7 @@
                 class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
-                  selectedRoomsLabel || "Select Rooms"
+                  selectedRoomsLabel || $t("search.select_rooms")
                 }}</span>
                 <span class="text-gray-500">▼</span>
               </div>
@@ -209,13 +209,13 @@
               class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
               @click="applyFilters"
             >
-              Apply Filters
+              {{ $t("search.apply_filters") }}
             </button>
             <button
               class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
               @click="resetFilters"
             >
-              Reset Filters
+              {{ $t("search.reset") }}
             </button>
           </div>
         </transition>
@@ -234,12 +234,14 @@
           class="grid grid-cols-3 flex-grow text-center text-xs sm:text-sm md:text-base"
         >
           <span class="px-2 truncate">{{
-            selectedGovernorateName || "Anywhere"
+            selectedGovernorateName || $t("search.anywhere")
           }}</span>
           <span class="px-2 truncate">{{
-            selectedPropertyStatus || "Any Status"
+            selectedPropertyStatus || $t("search.any_status")
           }}</span>
-          <span class="px-2 truncate">{{ selectedRooms || "Any Rooms" }}</span>
+          <span class="px-2 truncate">{{
+            selectedRooms || $t("search.any_rooms")
+          }}</span>
         </div>
         <div class="flex gap-2 sm:gap-3 flex-shrink-0">
           <button
@@ -317,7 +319,7 @@ export default {
     selectedGovernorateName() {
       return (
         this.governorates.find((g) => g.value === this.selectedGovernorate)
-          ?.label || "Anywhere"
+          ?.label || $t("search.anywhere")
       );
     },
     selectedGovernorateLabel() {

@@ -20,7 +20,7 @@
               <h1
                 class="font-manrope text-white text-2xl sm:text-3xl md:text-4xl font-bold leading-tight"
               >
-                Contact Us
+                {{ $t("contact.title") }}
               </h1>
             </div>
             <div
@@ -28,6 +28,7 @@
             >
               <div
                 class="bg-white rounded-lg p-4 sm:p-6 shadow-md md:shadow-none"
+                dir="ltr"
               >
                 <a href="tel:4706011911" class="flex items-center mb-4 sm:mb-6">
                   <i
@@ -63,40 +64,41 @@
           <!-- Form Section -->
           <div class="p-4 sm:p-6 md:p-8 lg:p-10 text-[#364365]">
             <h2
-              class="font-manrope text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight mb-6 text-center md:text-left"
+              class="text-center font-manrope text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight mb-6"
             >
-              Send Us A Message
+              {{ $t("contact.send_message") }}
             </h2>
             <form @submit.prevent="submitForm" class="space-y-4 sm:space-y-6">
               <input
                 type="text"
                 v-model="formData.name"
                 class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
-                placeholder="Name"
+                :placeholder="$t('contact.name')"
               />
               <input
                 type="email"
                 v-model="formData.email"
                 class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
-                placeholder="Email"
+                :placeholder="$t('contact.email')"
               />
               <input
                 type="tel"
                 v-model="formData.phone"
                 class="w-full h-11 sm:h-12 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4"
-                placeholder="Phone"
+                :placeholder="$t('contact.phone')"
+                :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
               />
               <textarea
                 v-model="formData.message"
                 class="resize-none w-full h-20 sm:h-24 text-gray-600 placeholder-gray-400 bg-transparent text-sm sm:text-base font-normal rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#364365] px-4 py-3"
-                placeholder="Message"
+                :placeholder="$t('contact.message')"
               ></textarea>
               <button
                 type="submit"
                 :disabled="isSubmitting"
                 class="w-full h-11 sm:h-12 text-white text-sm sm:text-base font-semibold rounded-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-2 hover:border-[#364365] transition-all duration-300 shadow-sm disabled:opacity-50"
               >
-                {{ isSubmitting ? "Sending..." : "Send" }}
+                {{ isSubmitting ? $t("contact.sending") : $t("contact.send") }}
               </button>
             </form>
           </div>
@@ -121,6 +123,7 @@ export default {
       isSubmitting: false,
       formSubmitted: false,
       errorMessage: null,
+      searchQuery: "",
     };
   },
   methods: {
@@ -143,7 +146,7 @@ export default {
         }
       } catch (error) {
         console.error("Error:", error);
-        this.errorMessage = "Failed to send message. Please try again later.";
+        this.errorMessage = this.$t("contact.error");
         setTimeout(() => {
           this.$router.push("/");
         }, 2000);
@@ -153,6 +156,15 @@ export default {
     },
     resetForm() {
       this.formData = { name: "", email: "", phone: "", message: "" };
+    },
+    performSearch() {
+      if (this.searchQuery.trim()) {
+        // Navigate to properties page with search query
+        this.$router.push({
+          path: "/properties",
+          query: { search: this.searchQuery },
+        });
+      }
     },
   },
 };

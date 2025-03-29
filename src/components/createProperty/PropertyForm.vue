@@ -3,7 +3,7 @@
     <h2
       class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10 text-gray-700 text-center"
     >
-      General Information
+      {{ $t("createProperty.form.generalInfo") }}
     </h2>
 
     <form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -11,7 +11,7 @@
       <div class="sm:col-span-2 lg:col-span-3">
         <InputField
           v-model="propertyDetails.title"
-          label="Title"
+          :label="$t('createProperty.form.title')"
           required
           class="w-full"
         />
@@ -21,7 +21,7 @@
       <div class="sm:col-span-2 lg:col-span-3">
         <InputField
           v-model="propertyDetails.description"
-          label="Description"
+          :label="$t('createProperty.form.description')"
           required
           type="textarea"
           class="w-full"
@@ -31,21 +31,21 @@
       <!-- Single-column fields -->
       <InputField
         v-model="propertyDetails.rooms"
-        label="Number of Rooms"
+        :label="$t('createProperty.form.rooms')"
         type="number"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.livingRooms"
-        label="Number of Living Rooms"
+        :label="$t('createProperty.form.livingRooms')"
         type="number"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.bathrooms"
-        label="Number of Bathrooms"
+        :label="$t('createProperty.form.bathrooms')"
         type="select"
         required
         :options="[
@@ -57,49 +57,49 @@
       />
       <InputField
         v-model="propertyDetails.price"
-        label="Price"
+        :label="$t('createProperty.form.price')"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.kitchens"
-        label="Number of Kitchens"
+        :label="$t('createProperty.form.kitchens')"
         type="number"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.area"
-        label="Area (M²)"
+        :label="$t('createProperty.form.area')"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.floor"
-        label="Floor Location"
+        :label="$t('createProperty.form.floor')"
         required
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.furnished"
-        label="Furnished"
+        :label="$t('createProperty.form.furnished')"
         type="select"
         required
         :options="[
-          { value: 'yes', label: 'Yes' },
-          { value: 'no', label: 'No' },
+          { value: 'yes', label: $t('createProperty.form.yes') },
+          { value: 'no', label: $t('createProperty.form.no') },
         ]"
         class="w-full"
       />
       <InputField
         v-model="propertyDetails.propertyStatus"
-        label="Status"
+        :label="$t('createProperty.form.propertyStatus')"
         type="select"
         required
         :options="[
-          { value: 'new', label: 'New' },
-          { value: 'second-hand', label: 'Second Hand' },
-          { value: 'renovated', label: 'Renovated' },
+          { value: 'new', label: $t('createProperty.form.new') },
+          { value: 'second-hand', label: $t('createProperty.form.secondHand') },
+          { value: 'renovated', label: $t('createProperty.form.renovated') },
         ]"
         class="w-full"
       />

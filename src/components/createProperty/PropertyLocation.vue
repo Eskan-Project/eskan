@@ -1,12 +1,12 @@
 <template>
   <div class="p-6 bg-white shadow-sm rounded-lg">
     <h2 class="text-xl font-bold text-[#364365] mb-10 text-center">
-      Location Information
+      {{ $t("createProperty.location.title") }}
     </h2>
     <form class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 mb-10">
       <InputField
         v-model="propertyDetails.governorate"
-        label="Governorate"
+        :label="$t('createProperty.location.governorate')"
         type="select"
         required
         :options="governorates"
@@ -15,7 +15,7 @@
       />
       <InputField
         v-model="propertyDetails.city"
-        label="City"
+        :label="$t('createProperty.location.city')"
         type="select"
         required
         :options="cities"
@@ -25,13 +25,13 @@
         @click.prevent="getUserLocation"
         class="px-4 py-2 border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors duration-300"
       >
-        Locate Me
+        {{ $t("createProperty.location.selectLocation") }}
       </button>
     </form>
 
     <div id="map" class="w-full h-64 mt-2 rounded-lg z-10"></div>
     <p class="text-sm text-gray-500 text-center mt-3">
-      You can move the marker to the correct location
+      {{ $t("createProperty.location.selectLocation") }}
     </p>
   </div>
 </template>
@@ -147,9 +147,7 @@ export default {
           (error) => {
             console.error("Geolocation error:", error);
             if (error.code === error.PERMISSION_DENIED) {
-              alert(
-                "You have denied location access. Please refresh the page and enable location access."
-              );
+              alert(this.$t("createProperty.validation.selectLocation"));
             }
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }

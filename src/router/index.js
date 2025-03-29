@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
-import { turnstileApi } from "@/services/api";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import AboutView from "@/views/AboutView.vue";
 import ContactView from "@/views/ContactView.vue";
@@ -248,7 +247,8 @@ router.beforeEach(async (to, from, next) => {
   store.dispatch("startLoading");
 
   // Check if user is verified and verification hasn't expired
-  const isVerified = turnstileApi.isVerified() && !isVerificationExpired();
+  const isVerified =
+    !isVerificationExpired() && sessionStorage.getItem("turnstileVerified");
 
   // If verified, proceed directly
   if (isVerified) {

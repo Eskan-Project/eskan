@@ -9,7 +9,7 @@
       @click="$emit('prev')"
       :disabled="currentPage === 1"
     >
-      Previous
+      {{ $t("pagination.previous") }}
     </button>
     <button
       v-for="page in visiblePages"
@@ -19,7 +19,7 @@
         { 'bg-gray-300': page === currentPage },
       ]"
       @click="$emit('go-to', page)"
-      :aria-label="`Go to page ${page}`"
+      :aria-label="`${$t('pagination.page')} ${page}`"
       :aria-current="page === currentPage ? 'page' : null"
     >
       {{ page }}
@@ -33,7 +33,7 @@
       @click="$emit('next')"
       :disabled="currentPage === totalPages"
     >
-      Next
+      {{ $t("pagination.next") }}
     </button>
   </div>
 </template>
