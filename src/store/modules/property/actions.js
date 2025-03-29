@@ -13,18 +13,29 @@ import uploadToCloudinary from "@/services/uploadToCloudinary";
 import base64ToFile from "@/services/base64ToFileService";
 
 export default {
-  async getProperties({ commit, dispatch }) {
+  async getProperties({ commit, dispatch, rootState }) {
     try {
       await dispatch("checkPropertyExpiration");
       const propertiesSnapshot = await getDocs(collection(db, "properties"));
-      const properties = propertiesSnapshot.docs
-        .map((doc) => ({
+      const userDetails = rootState.auth.userDetails;
+      const userRole = userDetails.role;
+      let properties;
+      if (userRole != "admin") {
+        properties = propertiesSnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter(
+            (property) => property.status === "completed" && property.isPaid
+          );
+      } else {
+        properties = propertiesSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
-        .filter(
-          (property) => property.status === "completed" && property.isPaid
-        );
+        }));
+      }
+
       commit("setProperties", properties);
       return properties;
     } catch (error) {

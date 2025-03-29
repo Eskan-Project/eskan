@@ -5,7 +5,7 @@
     :disabled="isLoading"
     class="w-fit py-2 mx-auto border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
   >
-    {{ isLoading ? $t("createProperty.buttons.loading") : title }}
+    {{ isLoading ? "Loading..." : title }}
   </button>
 </template>
 
@@ -35,39 +35,45 @@ export default {
       this.startLoading();
       try {
         let storedStep = localStorage.getItem("activeStep");
-        let activeStep = Number(storedStep);
-        if (activeStep === 0) {
-          let callback = this.$emit(
-            "validateAndProceed",
-            this.proceed.bind(this)
-          );
-        } else if (activeStep === 1) {
-          if (this.name === "propertyPreview") {
-            this.$router.push(`/createProperty/${this.name}`);
-          } else {
-            this.$router.push(`/createProperty/${this.name}`);
-          }
-        } else if (activeStep === 2) {
-          const storedImages = localStorage.getItem("localImages");
-          if (storedImages) {
-            const files = JSON.parse(storedImages);
-            await this.createProperty(files);
-            this.$router.push(`/createProperty/completed`);
-          } else {
-            this.$router.push(`/createProperty/completed`);
-          }
+
+        if (this.name === "propertyPreview") {
+          this.$emit("validateAndProceed", (valid) => {
+            if (valid) {
+              storedStep++;
+              localStorage.setItem("activeStep", storedStep);
+              this.$router.push({ name: this.name }).then(() => {
+                this.stopLoading();
+              });
+            } else {
+              this.stopLoading();
+            }
+          });
+        } else if (this.name === "propertyContact") {
+          storedStep++;
+          localStorage.setItem("activeStep", storedStep);
+          await this.$router.push({ name: this.name });
+          this.stopLoading();
+        } else if (this.name === "completed") {
+          storedStep++;
+          localStorage.setItem("activeStep", storedStep);
+          const localImages = JSON.parse(localStorage.getItem("localImages"));
+          const propertyDetails = localStorage.getItem("propertyDetails");
+          this.updateProperty(JSON.parse(propertyDetails));
+          await this.createProperty(localImages);
+          await this.$router.push({ name: "completed" });
+          this.stopLoading();
+        } else {
+          await this.$router.push({ name: this.name });
+          setTimeout(() => {
+            localStorage.removeItem("localImages");
+            localStorage.removeItem("propertyDetails");
+            localStorage.removeItem("activeStep");
+            localStorage.removeItem("maxSteps");
+          }, 0);
+          this.stopLoading();
         }
       } catch (error) {
-        console.log("Error:", error);
-      } finally {
-        this.stopLoading();
-      }
-    },
-    proceed(isValid) {
-      if (isValid) {
-        this.$router.push(`/createProperty/${this.name}`);
-        localStorage.setItem("activeStep", 1);
-      } else {
+        console.error("Error in nextStep:", error);
         this.stopLoading();
       }
     },
