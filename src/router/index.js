@@ -37,12 +37,12 @@ import FaqView from "@/views/FaqView.vue";
 import TurnstileVerificationView from "@/views/TurnstileVerificationView.vue";
 
 const routes = [
-  {
-    path: "/verification",
-    name: "verification",
-    component: TurnstileVerificationView,
-    meta: { exemptFromVerification: true },
-  },
+  // {
+  //   path: "/verification",
+  //   name: "verification",
+  //   component: TurnstileVerificationView,
+  //   meta: { exemptFromVerification: true },
+  // },
   {
     path: "/",
     component: DefaultLayout,
@@ -236,36 +236,36 @@ const router = createRouter({
   },
 });
 
-const isVerificationExpired = () => {
-  const verifiedAt = sessionStorage.getItem("verifiedAt");
-  if (!verifiedAt) return true;
-  const expirationTime = 24 * 60 * 60 * 1000; // 24 hours
-  return Date.now() - parseInt(verifiedAt) > expirationTime;
-};
+// const isVerificationExpired = () => {
+//   const verifiedAt = sessionStorage.getItem("verifiedAt");
+//   if (!verifiedAt) return true;
+//   const expirationTime = 24 * 60 * 60 * 1000; // 24 hours
+//   return Date.now() - parseInt(verifiedAt) > expirationTime;
+// };
 
-// Combined navigation guard
-router.beforeEach(async (to, from, next) => {
-  store.dispatch("startLoading");
+// // Combined navigation guard
+// router.beforeEach(async (to, from, next) => {
+//   store.dispatch("startLoading");
 
-  // Check if user is verified and verification hasn't expired
-  const isVerified = turnstileApi.isVerified() && !isVerificationExpired();
+//   // Check if user is verified and verification hasn't expired
+//   const isVerified = turnstileApi.isVerified() && !isVerificationExpired();
 
-  // If verified, proceed directly
-  if (isVerified) {
-    await handleAuthAndRole(to, next);
-    return;
-  }
+//   // If verified, proceed directly
+//   if (isVerified) {
+//     await handleAuthAndRole(to, next);
+//     return;
+//   }
 
-  // If not verified and not already on verification page, redirect
-  if (!isVerified && to.path !== "/verification") {
-    sessionStorage.setItem("turnstileRedirectPath", to.fullPath);
-    next({ name: "verification" });
-    return;
-  }
+//   // If not verified and not already on verification page, redirect
+//   if (!isVerified && to.path !== "/verification") {
+//     sessionStorage.setItem("turnstileRedirectPath", to.fullPath);
+//     next({ name: "verification" });
+//     return;
+//   }
 
-  // If on verification page, just proceed (no auth check needed)
-  next();
-});
+//   // If on verification page, just proceed (no auth check needed)
+//   next();
+// });
 
 // Handle authentication and role-based access
 async function handleAuthAndRole(to, next) {

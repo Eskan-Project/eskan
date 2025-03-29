@@ -1,115 +1,128 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
-    <div class="md:flex block">
+  <main class="min-h-screen bg-gray-100 flex-1 p-2 sm:p-4 md:p-8">
+    <div class="w-full">
       <!-- Main Content -->
-      <div class="flex-1 p-4 md:p-8">
+      <div class="w-full">
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <div
-            class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900 p-4"
-          >
-            <div class="relative">
-              <div
-                class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
-              >
-                <i class="bi bi-search"></i>
+          <!-- Search and Add Section -->
+          <div class="bg-white dark:bg-gray-900 p-3 sm:p-4">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+            >
+              <div class="w-full sm:w-auto relative">
+                <i
+                  class="bi bi-search absolute left-3 top-1/2 transform -translate-y-1/2"
+                ></i>
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  class="w-full sm:w-80 pl-10 pr-4 py-2 text-sm text-gray-200 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Search for Requests"
+                  @input="resetPagination"
+                />
               </div>
-              <input
-                type="text"
-                v-model="searchQuery"
-                id="table-search-users"
-                class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search for Requests"
-                @input="resetPagination"
-              />
-            </div>
-            <div class="ml-4">
-              <router-link to="/admin/add-property">
+              <router-link to="/admin/add-property" class="w-full sm:w-auto">
                 <button
                   type="button"
-                  class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  class="w-full sm:w-auto text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                 >
                   Add Property
                 </button>
               </router-link>
             </div>
           </div>
-          <table
-            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
-          >
-            <thead
-              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-            >
-              <tr>
-                <th scope="col" class="p-4">
-                  <div class="flex items-center"></div>
-                </th>
-                <th scope="col" class="px-6 py-3">Title</th>
-                <th scope="col" class="px-6 py-3">Status</th>
-                <th scope="col" class="px-6 py-3">Price</th>
-                <th scope="col" class="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="request in paginatedRequests"
-                :key="request.uid"
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <td class="w-4 p-4"></td>
-                <th
-                  scope="row"
-                  class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  <img
-                    class="w-10 h-10 rounded-full"
-                    :src="
-                      request.images?.length ? request.images[0] : noPhotoImage
-                    "
-                    alt="Default image"
-                  />
 
-                  <div class="ps-3">
-                    <div class="text-base font-semibold">
-                      {{ request.title }}
+          <!-- Table Section -->
+          <div class="overflow-x-auto">
+            <table
+              class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+            >
+              <thead
+                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              >
+                <tr>
+                  <th scope="col" class="px-3 sm:px-6 py-3">Title</th>
+                  <th
+                    scope="col"
+                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
+                  >
+                    Price
+                  </th>
+                  <th scope="col" class="px-3 sm:px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="request in paginatedRequests"
+                  :key="request.uid"
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th class="flex items-center px-3 sm:px-6 py-4">
+                    <img
+                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                      :src="
+                        request.images?.length
+                          ? request.images[0]
+                          : noPhotoImage
+                      "
+                      alt="Default image"
+                    />
+                    <div class="ps-3">
+                      <div
+                        class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white"
+                      >
+                        {{ request.title }}
+                      </div>
+                      <div class="font-normal text-gray-500">
+                        {{ request.propertyContact.name }}
+                      </div>
+                      <div class="text-xs text-gray-500 sm:hidden">
+                        Status: {{ request.status }} | Price:
+                        {{ request.price }} EGP
+                      </div>
                     </div>
-                    <div class="font-normal text-gray-500">
-                      Owner Name : {{ request.propertyContact.name }}
-                    </div>
-                  </div>
-                </th>
-                <td class="px-6 py-4">
-                  {{ request.status }}
-                </td>
-                <td class="px-6 py-4">
-                  <div class="flex items-center">{{ request.price }} EGP</div>
-                </td>
-                <td class="px-6 py-4">
-                  <!-- Modal toggle -->
-                  <router-link :to="`/admin/requests/${request.uid}`">
-                    <button
-                      type="button"
-                      class="w-[50%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  </th>
+                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                    {{ request.status }}
+                  </td>
+                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                    {{ request.price }} EGP
+                  </td>
+                  <td class="px-3 sm:px-6 py-4">
+                    <router-link
+                      :to="`/admin/requests/${request.uid}`"
+                      class="w-full sm:w-auto"
                     >
-                      View Details
-                    </button>
-                  </router-link>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <button
+                        class="w-full text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-3 sm:px-5 py-2"
+                      >
+                        View Details
+                      </button>
+                    </router-link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- No data message -->
           <div
             v-if="paginatedRequests.length === 0"
             class="p-4 text-center text-gray-500"
           >
-            No properties found.
+            No requests found.
           </div>
 
           <!-- Pagination controls -->
           <div
             v-if="filteredRequests.length > 0"
-            class="flex justify-center gap-2 p-4"
+            class="flex justify-center items-center gap-2 p-4"
           >
             <button
               @click="prevPage"
