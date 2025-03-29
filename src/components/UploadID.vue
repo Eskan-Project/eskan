@@ -75,9 +75,13 @@ export default {
       this.idImage = null;
       this.validating = "Preparing image data...";
       try {
-        const isValid = await validateImage(file, (message) => {
-          this.validating = message;
-        });
+        const isValid = await validateImage(
+          file,
+          this.$t("auth.validation.validating_id"),
+          (message) => {
+            this.validating = message;
+          }
+        );
         if (isValid) {
           this.idImage = URL.createObjectURL(this.file);
           this.error = null;

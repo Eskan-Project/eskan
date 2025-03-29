@@ -1,8 +1,11 @@
 import axios from "axios";
 
-export async function validateImage(file, onProgress = () => {}) {
+export async function validateImage(
+  file,
+  validationMessage,
+  onProgress = () => {}
+) {
   try {
-    onProgress("Preparing image data...");
     const reader = new FileReader();
     const base64Promise = new Promise((resolve) => {
       reader.readAsDataURL(file);
@@ -13,7 +16,7 @@ export async function validateImage(file, onProgress = () => {}) {
     });
     const base64Image = await base64Promise;
 
-    onProgress("Validating ID...");
+    onProgress(validationMessage);
     const res = await axios({
       method: "POST",
       url: "https://outline.roboflow.com/national-id-ltfb6/2",

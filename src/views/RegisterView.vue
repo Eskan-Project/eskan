@@ -7,8 +7,8 @@
         loading="lazy"
       />
       <p class="md:text-3xl text-lg text-stone-500 text-center">
-        Welcome to ESKAN! <br />
-        Choose your role and start your journey with us
+        {{ $t("auth.select_role.welcome") }} <br />
+        {{ $t("auth.select_role.subtitle") }}
       </p>
       <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:p-20 p-5">
         <button
@@ -17,8 +17,7 @@
         >
           <div class="grid md:grid-cols-2 grid-cols-1 p-5 gap-5">
             <p class="text-2xl font-medium">
-              Register <br />
-              As an <span class="text-[#364365] font-bold">User</span>
+              {{ $t("auth.select_role.user") }}
             </p>
             <img
               src="@\assets\images\login\registerMain-1.jpg"
@@ -27,8 +26,7 @@
             />
           </div>
           <p>
-            Manage your properties, track tenants,and streamline your business
-            operations efficiently
+            {{ $t("auth.select_role.user_description") }}
           </p>
         </button>
 
@@ -38,8 +36,7 @@
         >
           <div class="grid md:grid-cols-2 grid-cols-1 p-5 gap-5">
             <p class="text-2xl font-medium">
-              Register <br />
-              As an <span class="text-[#364365] font-bold">Owner</span>
+              {{ $t("auth.select_role.owner") }}
             </p>
             <img
               src="@\assets\images\login\registerMain-2.jpg"
@@ -48,8 +45,7 @@
             />
           </div>
           <p>
-            Manage your properties, track tenants,and streamline your business
-            operations efficiently
+            {{ $t("auth.select_role.owner_description") }}
           </p>
         </button>
       </div>

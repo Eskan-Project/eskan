@@ -40,29 +40,31 @@ export default {
 
     handleTurnstileExpired() {
       this.turnstileToken = null;
-      this.errors.turnstile = "Security check expired. Please try again.";
+      this.errors.turnstile = this.$t("auth.login.validation.security_expired");
     },
 
     handleTurnstileError() {
       this.turnstileToken = null;
-      this.errors.turnstile = "Security check failed. Please try again.";
+      this.errors.turnstile = this.$t("auth.login.validation.security_failed");
     },
 
     async submitLogin() {
       this.errors = {};
 
       if (!this.email) {
-        this.errors.email = "Email is required";
+        this.errors.email = this.$t("auth.login.validation.email_required");
       } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
-        this.errors.email = "Invalid email format";
+        this.errors.email = this.$t("auth.login.validation.email_invalid");
       }
       if (!this.password) {
-        this.errors.password = "Password is required";
+        this.errors.password = this.$t(
+          "auth.login.validation.password_required"
+        );
       } else if (this.password.length < 6) {
-        this.errors.password = "Password must be at least 6 characters";
+        this.errors.password = this.$t("auth.login.validation.password_length");
       }
       if (!this.turnstileToken) {
-        this.errors.turnstile = "Please complete the security check";
+        this.errors.turnstile = this.$t("auth.login.validation.security_check");
       }
 
       if (Object.keys(this.errors).length > 0) return;
@@ -77,7 +79,8 @@ export default {
         this.$router.push({ name: "Home" });
       } catch (error) {
         console.error("Login failed:", error.message);
-        this.errors.server = error.message || "Login failed. Please try again.";
+        this.errors.server =
+          error.message || this.$t("auth.login.validation.registration_failed");
       }
     },
 
@@ -95,12 +98,14 @@ export default {
     >
       <div class="main-text p-8 rounded-l-xl">
         <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
-          Welcome Back
+          {{ $t("auth.login.title") }}
         </h1>
 
         <form @submit.prevent="submitLogin">
           <div class="mb-6">
-            <label class="block mb-1 text-[#364365]">Email</label>
+            <label class="block mb-1 text-[#364365]">{{
+              $t("auth.login.email")
+            }}</label>
             <input
               v-model="email"
               type="email"
@@ -115,7 +120,9 @@ export default {
             </p>
           </div>
           <div class="mb-6 relative">
-            <label class="block mb-1 text-[#364365]">Password</label>
+            <label class="block mb-1 text-[#364365]">{{
+              $t("auth.login.password")
+            }}</label>
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
@@ -126,8 +133,11 @@ export default {
               }"
             />
             <i
-              :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'"
-              class="text-black absolute right-2 cursor-pointer"
+              :class="[
+                showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash',
+                'text-black absolute cursor-pointer',
+                $i18n.locale === 'ar' ? 'left-2 top-1/3' : 'right-2 top-1/3',
+              ]"
               @click="togglePassword"
             ></i>
             <p v-if="errors.password" class="text-red-500 text-sm">
@@ -137,7 +147,7 @@ export default {
               class="text-[#364365] text-sm text-right pt-4 cursor-pointer block underline w-fit"
               @click.prevent="$router.push({ name: 'forgetPassword' })"
             >
-              Forgot Your Password?
+              {{ $t("auth.login.forgot_password") }}
             </a>
           </div>
 
@@ -169,7 +179,9 @@ export default {
                 'cursor-pointer': !loading,
               }"
             >
-              {{ loading ? "Signing In..." : "Sign In" }}
+              {{
+                loading ? $t("auth.login.signing_in") : $t("auth.login.sign_in")
+              }}
             </button>
           </div>
         </form>
@@ -179,7 +191,7 @@ export default {
             class="text-[#364365] font-medium text-sm flex justify-center gap-2 my-4 text-center"
           >
             <span class="border-b-1 w-20 self-center"></span>
-            <p>Or sign in with</p>
+            <p>{{ $t("auth.login.or_sign_in_with") }}</p>
             <span class="border-b-1 w-20 self-center"></span>
           </div>
 
@@ -189,17 +201,17 @@ export default {
               @click="loginWithGoogle"
             >
               <i class="bi bi-google"></i>
-              Google
+              {{ $t("auth.login.google") }}
             </button>
           </div>
 
           <p class="text-black text-center">
-            Don't have an account?
+            {{ $t("auth.login.no_account") }}
             <a
               class="text-blue-500 hover:text-blue-700 cursor-pointer"
               @click.prevent="$router.push({ name: 'register' })"
             >
-              Sign Up
+              {{ $t("auth.login.sign_up") }}
             </a>
           </p>
         </div>

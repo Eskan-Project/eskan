@@ -290,5 +290,105 @@
         "answer": "Regular users get 1-2 free contacts. For unlimited access to owner details, you can subscribe monthly or purchase a package with a set number of unlocks."
       }
     ]
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgot Your Password?",
+      "sign_in": "Sign In",
+      "signing_in": "Signing In...",
+      "or_sign_in_with": "Or sign in with",
+      "google": "Google",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign Up",
+      "validation": {
+        "email_required": "Email is required",
+        "email_invalid": "Invalid email format",
+        "password_required": "Password is required",
+        "password_length": "Password must be at least 6 characters",
+        "security_check": "Please complete the security check",
+        "security_expired": "Security check expired. Please try again.",
+        "security_failed": "Security check failed. Please try again.",
+        "validating_id": "Validating ID..."
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "create_account": "Create Account",
+      "loading": "Loading...",
+      "or_sign_up_with": "Or sign Up with",
+      "google": "Google",
+      "have_account": "Already have an account?",
+      "log_in": "Log In",
+      "validation": {
+        "name_required": "Name is required",
+        "email_required": "Email is required",
+        "email_invalid": "Invalid email format",
+        "password_required": "Password is required",
+        "password_length": "Password must be at least 6 characters",
+        "confirm_required": "Confirm your password",
+        "password_match": "Passwords do not match",
+        "captcha_required": "Please complete the CAPTCHA",
+        "id_required": "Please upload your ID",
+        "captcha_expired": "CAPTCHA expired. Please try again.",
+        "captcha_failed": "CAPTCHA verification failed. Please try again.",
+        "email_in_use": "The email address is already in use.",
+        "registration_failed": "Registration failed. Please try again."
+      }
+    },
+    "upload_id": {
+      "title": "Please upload your ID",
+      "success": "ID uploaded successfully",
+      "drag_drop": "Drag & drop files or",
+      "browse": "Browse",
+      "supported_formats": "Supports JPEG, PNG, JPG",
+      "validation": {
+        "validating_id": "Validating ID card...",
+        "invalid_id": "Invalid ID card. Please upload a valid national ID.",
+        "error": "Error validating ID card. Please try again."
+      }
+    },
+    "select_role": {
+      "welcome": "Welcome to ESKAN!",
+      "subtitle": "Choose your role and start your journey with us",
+      "register_as": "Register As a",
+      "user": "User",
+      "owner": "Owner",
+      "user_description": "Manage your properties, track tenants, and streamline your business operations efficiently.",
+      "owner_description": "Manage your properties, track tenants, and streamline your business operations efficiently.",
+      "register": "Register",
+      "registering": "Registering...",
+      "welcome_message": "Welcome! You have 3 free property views."
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "description": "Enter your new password below.",
+      "new_password": "New Password",
+      "reset": "Reset Password",
+      "processing": "Processing...",
+      "success": "Password successfully reset! Redirecting...",
+      "validation": {
+        "password_length": "Password must be at least 6 characters.",
+        "invalid_code": "Invalid reset code."
+      }
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "description": "Enter your email to receive a password reset link.",
+      "email": "Email",
+      "send_link": "Send Reset Link",
+      "sending": "Sending...",
+      "back_to_login": "Back to Login",
+      "validation": {
+        "email_required": "Please enter a valid email.",
+        "failed": "Failed to send reset email. Please try again."
+      }
+    }
   }
 }

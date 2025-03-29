@@ -2,15 +2,17 @@
   <div class="flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       <h2 class="text-2xl font-bold text-center text-gray-700 mb-4">
-        Reset Password
+        {{ $t("auth.reset_password.title") }}
       </h2>
       <p class="text-sm text-gray-500 text-center mb-6">
-        Enter your new password below.
+        {{ $t("auth.reset_password.description") }}
       </p>
 
       <form @submit.prevent="handleResetPassword">
         <div class="mb-4 relative">
-          <label class="block text-gray-700">New Password</label>
+          <label class="block text-gray-700">{{
+            $t("auth.reset_password.new_password")
+          }}</label>
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
@@ -37,8 +39,8 @@
           :class="loading ? 'opacity-50 cursor-not-allowed' : ''"
           :disabled="loading"
         >
-          <span v-if="!loading">Reset Password</span>
-          <span v-else>Processing...</span>
+          <span v-if="!loading">{{ $t("auth.reset_password.reset") }}</span>
+          <span v-else>{{ $t("auth.reset_password.processing") }}</span>
         </button>
       </form>
     </div>
@@ -77,16 +79,19 @@ export default {
       this.error = "";
 
       if (this.password.length < 6) {
-        this.error = "Password must be at least 6 characters.";
+        this.error = this.$t("auth.reset_password.validation.password_length");
         return;
       }
 
       try {
         const oobCode = this.route.query.oobCode;
-        if (!oobCode) throw new Error("Invalid reset code.");
+        if (!oobCode)
+          throw new Error(
+            this.$t("auth.reset_password.validation.invalid_code")
+          );
 
         await confirmPasswordReset(auth, oobCode, this.password);
-        this.message = "Password successfully reset! Redirecting...";
+        this.message = this.$t("auth.reset_password.success");
 
         setTimeout(() => {
           this.router.push("/login");

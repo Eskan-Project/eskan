@@ -1,14 +1,14 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
-import hCaptcha from "@/components/hCaptcha.vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { validateImage } from "@/services/imageValidationService";
+import Turnstile from "./Turnstile.vue";
 
 export default {
   components: {
-    hCaptcha,
+    Turnstile,
   },
   data() {
     return {
@@ -39,6 +39,34 @@ export default {
   },
   computed: {
     ...mapState("auth", ["error"]),
+    validationMessage() {
+      return this.$t("auth.upload_id.validation.validating_id");
+    },
+  },
+  mounted() {
+    // Load Cloudflare Turnstile script
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    // Initialize Turnstile widget
+    script.onload = () => {
+      window.turnstile.render(this.$refs.turnstileWidget, {
+        sitekey: "0x4AAAAAAABkMYinukS8Ncow",
+        callback: (token) => {
+          this.captchaToken = token;
+          this.errors.captcha = null;
+        },
+        "expired-callback": () => {
+          this.captchaToken = null;
+          this.errors.captcha = this.$t(
+            "auth.register.validation.captcha_expired"
+          );
+        },
+      });
+    };
   },
   methods: {
     ...mapActions("auth", ["register", "loginWithGoogle"]),
@@ -56,44 +84,54 @@ export default {
         }
       });
     },
-    handleCaptchaVerified(token) {
+    handleTurnstileVerified(token) {
       this.captchaToken = token;
       this.errors.captcha = null;
     },
-    handleCaptchaExpired() {
+    handleTurnstileExpired() {
       this.captchaToken = null;
-      this.errors.captcha = "CAPTCHA expired. Please try again.";
+      this.errors.captcha = this.$t("auth.register.validation.captcha_expired");
     },
-    handleCaptchaError() {
+    handleTurnstileError() {
       this.captchaToken = null;
-      this.errors.captcha = "CAPTCHA verification failed. Please try again.";
+      this.errors.captcha = this.$t("auth.register.validation.captcha_failed");
     },
     async submitRegister() {
       this.errors = {};
 
       if (!this.name) {
-        this.errors.name = "Name is required";
+        this.errors.name = this.$t("auth.register.validation.name_required");
       }
       if (!this.email) {
-        this.errors.email = "Email is required";
+        this.errors.email = this.$t("auth.register.validation.email_required");
       } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
-        this.errors.email = "Invalid email format";
+        this.errors.email = this.$t("auth.register.validation.email_invalid");
       }
       if (!this.password) {
-        this.errors.password = "Password is required";
+        this.errors.password = this.$t(
+          "auth.register.validation.password_required"
+        );
       } else if (this.password.length < 6) {
-        this.errors.password = "Password must be at least 6 characters";
+        this.errors.password = this.$t(
+          "auth.register.validation.password_length"
+        );
       }
       if (!this.confirmPassword) {
-        this.errors.confirmPassword = "Confirm your password";
+        this.errors.confirmPassword = this.$t(
+          "auth.register.validation.confirm_required"
+        );
       } else if (this.password !== this.confirmPassword) {
-        this.errors.confirmPassword = "Passwords do not match";
+        this.errors.confirmPassword = this.$t(
+          "auth.register.validation.password_match"
+        );
       }
       if (!this.captchaToken) {
-        this.errors.captcha = "Please complete the CAPTCHA";
+        this.errors.captcha = this.$t(
+          "auth.register.validation.captcha_required"
+        );
       }
       if (this.isOwner && !this.file) {
-        this.errors.file = "Please upload your ID";
+        this.errors.file = this.$t("auth.register.validation.id_required");
       }
 
       if (Object.keys(this.errors).length > 0) return;
@@ -131,10 +169,11 @@ export default {
         });
       } catch (error) {
         if (error.code === "auth/email-already-in-use") {
-          this.errors.server = "The email address is already in use.";
+          this.errors.server = this.$t("auth.register.validation.email_in_use");
         } else {
           this.errors.server =
-            error.message || "Registration failed. Please try again.";
+            error.message ||
+            this.$t("auth.register.validation.registration_failed");
         }
       } finally {
         this.loading = false;
@@ -146,20 +185,23 @@ export default {
       this.file = file;
       this.validating = "Preparing image data...";
       try {
-        const isValid = await validateImage(this.file, (message) => {
-          this.validating = message;
-        });
+        const isValid = await validateImage(
+          file,
+          this.validationMessage,
+          (message) => {
+            this.validating = message;
+          }
+        );
         if (isValid) {
           this.isValid = true;
           this.imagePreview = URL.createObjectURL(this.file);
           this.validating = null;
         } else {
-          this.errors.file =
-            "Invalid ID image. Please upload a clear ID photo.";
+          this.errors.file = this.$t("auth.upload_id.validation.invalid_id");
           this.validating = null;
         }
       } catch (error) {
-        this.errors.file = "Invalid ID image. Please upload a clear ID photo.";
+        this.errors.file = this.$t("auth.upload_id.validation.error");
         this.validating = null;
       }
     },
@@ -227,11 +269,13 @@ export default {
       </div>
       <div class="main-text p-8 rounded-r-xl bg-white">
         <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
-          {{ title }}
+          {{ $t("auth.register.title") }}
         </h1>
         <form @submit.prevent="submitRegister" novalidate>
           <div class="mb-6">
-            <label for="username" class="block mb-1 text-[#364365]">Name</label>
+            <label for="username" class="block mb-1 text-[#364365]">{{
+              $t("auth.register.name")
+            }}</label>
             <input
               v-model="name"
               type="text"
@@ -248,7 +292,9 @@ export default {
             </p>
           </div>
           <div class="mb-6">
-            <label for="email" class="block mb-1 text-[#364365]">Email</label>
+            <label for="email" class="block mb-1 text-[#364365]">{{
+              $t("auth.register.email")
+            }}</label>
             <input
               v-model="email"
               type="email"
@@ -265,9 +311,9 @@ export default {
             </p>
           </div>
           <div class="mb-6 relative">
-            <label for="password" class="block mb-1 text-[#364365]"
-              >Password</label
-            >
+            <label for="password" class="block mb-1 text-[#364365]">{{
+              $t("auth.register.password")
+            }}</label>
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
@@ -280,8 +326,11 @@ export default {
               }"
             />
             <i
-              :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'"
-              class="text-black absolute right-2 cursor-pointer"
+              :class="[
+                showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash',
+                'text-black absolute cursor-pointer',
+                $i18n.locale === 'ar' ? 'left-2 top-1/2' : 'right-2 top-1/2',
+              ]"
               @click="togglePassword"
             ></i>
             <p v-if="errors.password" class="text-red-500 text-sm">
@@ -289,9 +338,9 @@ export default {
             </p>
           </div>
           <div class="mb-6 relative">
-            <label for="password" class="text-sm text-[#364365]"
-              >Confirm Password</label
-            >
+            <label for="password" class="text-sm text-[#364365]">{{
+              $t("auth.register.confirm_password")
+            }}</label>
             <input
               v-model="confirmPassword"
               :type="showConfirmPassword ? 'text' : 'password'"
@@ -303,10 +352,11 @@ export default {
               }"
             />
             <i
-              :class="
-                showConfirmPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'
-              "
-              class="text-black absolute right-2 cursor-pointer"
+              :class="[
+                showConfirmPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash',
+                'text-black absolute cursor-pointer',
+                $i18n.locale === 'ar' ? 'left-2 top-1/2' : 'right-2 top-1/2',
+              ]"
               @click="toggleConfirmPassword"
             ></i>
             <p v-if="errors.confirmPassword" class="text-red-500 text-sm">
@@ -318,7 +368,7 @@ export default {
             class="text-center text-black"
           >
             <p class="font-medium p-2" v-if="!imagePreview">
-              please upload your ID
+              {{ $t("auth.upload_id.title") }}
             </p>
             <div v-if="imagePreview" class="p-5 mb-5">
               <div class="w-1/3 mx-auto relative">
@@ -340,10 +390,10 @@ export default {
                   class="bi bi-cloud-upload text-5xl text-stone-400 cursor-pointer"
                 ></i>
                 <p>
-                  Drag &amp; drop files or
+                  {{ $t("auth.upload_id.drag_drop") }}
                   <span
                     class="font-bold text-[#364365] cursor-pointer underline decoration-2"
-                    >Browse</span
+                    >{{ $t("auth.upload_id.browse") }}</span
                   >
                 </p>
               </label>
@@ -354,7 +404,7 @@ export default {
                 @change="handleFileChange"
               />
               <p class="p-5 text-sm text-stone-400" v-if="!imagePreview">
-                support JPEG, PNG, JPG
+                {{ $t("auth.upload_id.supported_formats") }}
               </p>
               <p v-if="errors.file" class="text-red-500 text-sm">
                 {{ errors.file }}
@@ -370,10 +420,10 @@ export default {
           <div
             class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
           >
-            <hCaptcha
-              @captchaVerified="handleCaptchaVerified"
-              @captchaExpired="handleCaptchaExpired"
-              @captchaError="handleCaptchaError"
+            <Turnstile
+              @turnstileVerified="handleTurnstileVerified"
+              @turnstileExpired="handleTurnstileExpired"
+              @turnstileError="handleTurnstileError"
             />
 
             <p v-if="errors.captcha" class="text-red-500 text-sm mt-1">
@@ -387,15 +437,18 @@ export default {
           <button
             :disabled="isOwner && !isValid"
             type="submit"
-            class="border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
+            class="cursor-pointer border shadow-xl w-full bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
             :class="{
               'opacity-50 cursor-not-allowed': loading,
               'cursor-pointer': !loading,
-              'opacity-50 cursor-not-allowed': isOwner && !isValid,
-              'cursor-pointer': isValid,
+              'opacity-50 !cursor-not-allowed': isOwner && !isValid,
             }"
           >
-            {{ loading ? "Loading..." : "Create Account" }}
+            {{
+              loading
+                ? $t("auth.register.loading")
+                : $t("auth.register.create_account")
+            }}
           </button>
         </form>
         <div>
@@ -403,7 +456,7 @@ export default {
             class="text-[#364365] font-medium text-sm flex justify-center align-baseline gap-2 my-4 text-center"
           >
             <span class="border-b-1 w-20 self-center"></span>
-            <p>Or sign Up with</p>
+            <p>{{ $t("auth.register.or_sign_up_with") }}</p>
             <span class="border-b-1 w-20 self-center"></span>
           </div>
           <div class="logs">
@@ -414,11 +467,15 @@ export default {
                 :disabled="loading"
               >
                 <i class="bi bi-google"></i>
-                {{ loading ? "Signing in..." : "Google" }}
+                {{
+                  loading
+                    ? $t("auth.login.signing_in")
+                    : $t("auth.login.google")
+                }}
               </button>
             </div>
             <p class="text-black text-center">
-              Already have an accoun?
+              {{ $t("auth.register.have_account") }}
               <a
                 class="text-blue-500 hover:text-blue-600 cursor-pointer"
                 @click.prevent="
@@ -426,7 +483,7 @@ export default {
                     name: 'login',
                   })
                 "
-                >Log In</a
+                >{{ $t("auth.register.log_in") }}</a
               >
             </p>
           </div>
