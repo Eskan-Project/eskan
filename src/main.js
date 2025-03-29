@@ -13,7 +13,7 @@ import store from "./store";
 
 const app = createApp(App);
 const i18n = createI18n({
-  locale: localStorage.getItem("locale") || "en",
+  locale: sessionStorage.getItem("locale") || "en",
   fallbackLocale: "en",
   messages: {
     en: En,

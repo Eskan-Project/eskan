@@ -6,10 +6,10 @@
     ]"
   >
     <div class="container mx-auto flex items-center py-1">
-      <router-link to="/" aria-label="Home" class="flex-shrink-0">
+      <router-link to="/" :aria-label="$t('home')" class="flex-shrink-0">
         <img
           class="h-[50px] sm:h-[60px] md:h-[70px]"
-          src="../../assets/images/logo.png"
+          :src="logoSrc"
           alt="Eskan Logo"
           loading="lazy"
         />
@@ -36,21 +36,21 @@
       >
         <div class="relative inline-flex items-center">
           <div
-            class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full cursor-pointer"
+            class="w-18 h-8 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
             <span
               class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'mr-2 ' : 'ml-2 font-bold'"
+              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-2 font-bold'"
               >EN</span
             >
             <span
               class="text-gray-600 text-base z-10"
-              :class="currentLocale === 'ar' ? 'ml-3 font-bold' : 'mr-2'"
+              :class="currentLocale === 'ar' ? 'ml-4 font-bold' : 'mr-2'"
               >ع</span
             >
             <div
-              class="bg-white w-10 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+              class="bg-white w-8 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
             ></div>
           </div>
         </div>
@@ -197,6 +197,8 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import NavbarMobileVue from "./NavbarMobile.vue";
 import debounce from "lodash/debounce";
+import arLogo from "@/assets/images/logo_ar.png";
+import enLogo from "@/assets/images/logo.png";
 
 export default {
   components: {
@@ -227,6 +229,10 @@ export default {
     ...mapGetters("notifications", ["unreadCount"]),
     currentLocale() {
       return this.$i18n.locale;
+    },
+    logoSrc() {
+      const logoPath = this.$t("nav.logo");
+      return logoPath.includes("logo_ar") ? arLogo : enLogo;
     },
   },
   methods: {

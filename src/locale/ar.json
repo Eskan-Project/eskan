@@ -11,7 +11,8 @@
     "no_notifications": "لا توجد إشعارات جديدة",
     "create_property": "إضافة عقار",
     "admin_dashboard": "لوحة التحكم",
-    "user_profile": "الملف الشخصي"
+    "user_profile": "الملف الشخصي",
+    "logo": "../assets/images/logo_ar.png"
   },
   "profile": {
     "title": "الملف الشخصي",

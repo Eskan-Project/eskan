@@ -11,7 +11,8 @@
     "no_notifications": "No new notifications",
     "create_property": "Create Property",
     "admin_dashboard": "Admin Dashboard",
-    "user_profile": "User Profile"
+    "user_profile": "User Profile",
+    "logo": "../assets/images/logo.png"
   },
   "profile": {
     "title": "Profile",

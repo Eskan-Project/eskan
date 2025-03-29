@@ -19,10 +19,16 @@ export default {
     ...mapGetters(["isLoading"]),
   },
   created() {
-    const savedLocale = localStorage.getItem("locale") || "en";
-    this.$i18n.locale = savedLocale;
+    const savedLocale = sessionStorage.getItem("locale") || "en";
     document.documentElement.dir = savedLocale === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = savedLocale;
+  },
+  watch: {
+    "$i18n.locale"(newLocale) {
+      sessionStorage.setItem("locale", newLocale);
+      document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = newLocale;
+    },
   },
 };
 </script>
