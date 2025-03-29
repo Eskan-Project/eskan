@@ -6,12 +6,24 @@
       <!-- Who We Are Section -->
       <section class="max-w-6xl mx-auto mb-12 sm:mb-16 lg:mb-20">
         <h1
-          class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#364365] mb-4 sm:mb-6 lg:mb-8 text-center md:text-left"
+          :class="[
+            'text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#364365] mb-4 sm:mb-6 lg:mb-8',
+            {
+              'text-right': $i18n.locale === 'ar',
+              'text-left': $i18n.locale === 'en',
+            },
+          ]"
         >
           {{ $t("about.who_we_are.title") }}
         </h1>
         <p
-          class="text-center sm:text-left text-gray-700 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto md:mx-0"
+          :class="[
+            'text-gray-700 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl',
+            {
+              'text-right mr-0': $i18n.locale === 'ar',
+              'text-left ml-0': $i18n.locale === 'en',
+            },
+          ]"
         >
           {{ $t("about.who_we_are.description") }}
         </p>
@@ -20,12 +32,24 @@
       <!-- Our Mission Section -->
       <section class="max-w-6xl mx-auto mb-12 sm:mb-16 lg:mb-20">
         <h2
-          class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#364365] mb-4 sm:mb-6 lg:mb-8 text-center md:text-left"
+          :class="[
+            'text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#364365] mb-4 sm:mb-6 lg:mb-8',
+            {
+              'text-right': $i18n.locale === 'ar',
+              'text-left': $i18n.locale === 'en',
+            },
+          ]"
         >
           {{ $t("about.our_mission.title") }}
         </h2>
         <p
-          class="text-center sm:text-left text-gray-700 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto md:mx-0"
+          :class="[
+            'text-gray-700 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl',
+            {
+              'text-right mr-0': $i18n.locale === 'ar',
+              'text-left ml-0': $i18n.locale === 'en',
+            },
+          ]"
         >
           {{ $t("about.our_mission.description") }}
         </p>
@@ -34,7 +58,13 @@
       <!-- Our Values Section -->
       <section class="max-w-6xl mx-auto">
         <h2
-          class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#364365] mb-8 sm:mb-12 lg:mb-16 text-center md:text-left"
+          :class="[
+            'text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#364365] mb-8 sm:mb-12 lg:mb-16',
+            {
+              'text-right': $i18n.locale === 'ar',
+              'text-left': $i18n.locale === 'en',
+            },
+          ]"
         >
           {{ $t("about.our_values.title") }}
         </h2>

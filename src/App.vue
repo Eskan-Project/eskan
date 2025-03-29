@@ -1,6 +1,6 @@
 <!-- src/App.vue -->
 <template>
-  <div id="app">
+  <div id="app" :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
     <loading-spinner :loading="isLoading" />
     <router-view />
   </div>
@@ -17,6 +17,12 @@ export default {
   },
   computed: {
     ...mapGetters(["isLoading"]),
+  },
+  created() {
+    const savedLocale = localStorage.getItem("locale") || "en";
+    this.$i18n.locale = savedLocale;
+    document.documentElement.dir = savedLocale === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = savedLocale;
   },
 };
 </script>
