@@ -30,26 +30,18 @@
         </router-link>
       </nav>
 
-      <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+      <div
+        class="flex items-center gap-2 sm:gap-4"
+        :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
+      >
         <div class="relative inline-flex items-center">
           <div
-            class="w-20 h-8 flex items-center justify-between bg-gray-300 rounded-full p-1 cursor-pointer relative"
+            class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
-            <span
-              class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-2'"
-              >EN</span
-            >
-            <span
-              class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'ml-2' : 'mr-2'"
-              >ع</span
-            >
-            <div
-              class="bg-white w-10 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute"
-              :class="currentLocale === 'ar' ? 'right-1' : 'left-1'"
-            ></div>
+            <span class="text-gray-600 text-sm font-bold">
+              {{ currentLocale === "ar" ? "En" : "ع" }}
+            </span>
           </div>
         </div>
         <div
@@ -174,6 +166,7 @@
         <button
           @click="toggleMenu"
           class="md:hidden text-2xl sm:text-3xl text-white cursor-pointer"
+          :class="currentLocale === 'ar' ? 'order-last' : 'order-first'"
           :aria-label="isMenuOpen ? 'Close Menu' : 'Open Menu'"
         >
           <i :class="isMenuOpen ? 'bi bi-x' : 'bi bi-list'"></i>

@@ -10,7 +10,7 @@
             class="w-[150px] mb-2"
           />
           <p class="mb-2 text-sm text-center">
-            Your Gateway to Safe and Affordable Shared Housing
+            {{ $t("footer.tagline") }}
           </p>
         </div>
 
@@ -33,7 +33,10 @@
   </footer>
   <!-- Copyright -->
   <div class="bg-[#001c3ac9] text-center text-white py-3 w-full">
-    <h3>© Copyright <strong>Eskan</strong>. All Rights Reserved</h3>
+    <h3>
+      {{ $t("footer.copyright") }} <strong>Eskan</strong>.
+      {{ $t("footer.rights") }}
+    </h3>
   </div>
 </template>
 

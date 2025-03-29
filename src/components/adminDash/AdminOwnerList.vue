@@ -1,131 +1,143 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
-    <div class="md:flex block">
+  <main class="min-h-screen bg-gray-100 flex-1 p-2 sm:p-4 md:p-8">
+    <div class="w-full">
       <!-- Main Content -->
-      <div class="flex-1 p-4 md:p-8">
+      <div class="w-full">
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <div
-            class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900 p-4"
-          >
+          <!-- Search and Add Section -->
+          <div class="bg-white dark:bg-gray-900 p-3 sm:p-4">
             <div
-              class="relative inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3"
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
             >
-              <i class="bi bi-search absolute right-2"></i>
-              <input
-                type="text"
-                v-model="searchQuery"
-                id="table-search-users"
-                class="block pt-2 ps-10 text-sm !text-gray-200 dark:text-gray-200 placeholder:text-gray-200 dark:placeholder:text-gray-200 bg-gray-700 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search for owners"
-                @input="resetPagination"
-              />
-            </div>
-            <div class="ml-4">
-              <router-link to="/admin/owners/add-owner">
+              <div class="w-full sm:w-auto relative">
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  class="block w-full pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Search for properties"
+                  @input="resetPagination"
+                />
+              </div>
+              <router-link
+                to="/admin/owners/add-owner"
+                class="w-full sm:w-auto"
+              >
                 <button
                   type="button"
-                  class="cursor-pointer text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  class="w-full sm:w-auto text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                 >
                   Add Owner
                 </button>
               </router-link>
             </div>
           </div>
-          <table
-            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
-          >
-            <thead
-              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+
+          <!-- Table Section -->
+          <div class="overflow-x-auto">
+            <table
+              class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
             >
-              <tr>
-                <th scope="col" class="p-4">
-                  <div class="flex items-center"></div>
-                </th>
-                <th scope="col" class="px-6 py-3">Name</th>
-                <th scope="col" class="px-6 py-3">Email</th>
-                <th scope="col" class="px-6 py-3">National Id</th>
-                <th scope="col" class="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="owner in paginatedOwners"
-                :key="owner.uid"
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+              <thead
+                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
               >
-                <td class="w-4 p-4"></td>
-                <th
-                  scope="row"
-                  class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  <img
-                    class="w-10 h-10 rounded-full"
-                    :src="owner.photo"
-                    alt="Jese image"
-                  />
-                  <div class="ps-3">
-                    <div class="text-base font-semibold">
-                      {{ owner.name }}
-                    </div>
-                  </div>
-                </th>
-                <td class="px-6 py-4">
-                  {{ owner.email }}
-                </td>
-                <td class="px-6 py-4">
-                  <div class="flex items-center">
-                    {{ owner.nationalId }}
-                  </div>
-                </td>
-                <td class="px-6 py-4">
-                  <!-- Modal toggle -->
-                  <router-link :to="`/admin/owners/edit/${owner.uid}`">
-                    <button
-                      type="button"
-                      class="cursor-pointer w-[25%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    >
-                      Edit
-                    </button>
-                  </router-link>
-                  <button
-                    @click="handleDeleteOwner(owner.uid)"
-                    type="button"
-                    class="cursor-pointer w-[25%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                <tr>
+                  <th scope="col" class="px-3 sm:px-6 py-3">Name</th>
+                  <th
+                    scope="col"
+                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
                   >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    Email
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
+                  >
+                    National Id
+                  </th>
+                  <th scope="col" class="px-3 sm:px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="owner in paginatedOwners"
+                  :key="owner.uid"
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th class="flex items-center px-3 sm:px-6 py-4">
+                    <img
+                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                      :src="owner.photo"
+                      alt="Owner photo"
+                    />
+                    <div class="ps-3">
+                      <div
+                        class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white"
+                      >
+                        {{ owner.name }}
+                      </div>
+                      <div class="text-xs text-gray-500 sm:hidden">
+                        {{ owner.email }}
+                      </div>
+                    </div>
+                  </th>
+                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                    {{ owner.email }}
+                  </td>
+                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                    {{ owner.nationalId }}
+                  </td>
+                  <td class="px-3 sm:px-6 py-4">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                      <router-link
+                        :to="`/admin/owners/edit/${owner.uid}`"
+                        class="w-full sm:w-auto"
+                      >
+                        <button
+                          class="w-full text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-3 sm:px-5 py-2"
+                        >
+                          Edit
+                        </button>
+                      </router-link>
+                      <button
+                        @click="handleDeleteOwner(owner.uid)"
+                        class="w-full sm:w-auto text-white bg-red-700 hover:bg-red-800 rounded-lg text-sm px-3 sm:px-5 py-2"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- No data message -->
           <div
             v-if="paginatedOwners.length === 0"
             class="p-4 text-center text-gray-500"
           >
-            No properties found.
+            No owners found.
           </div>
 
           <!-- Pagination controls -->
           <div
             v-if="filteredOwners.length > 0"
-            class="flex justify-center gap-2 p-4"
+            class="flex justify-center items-center gap-2 p-4"
           >
             <button
               @click="prevPage"
               :disabled="currentPage === 1"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
+              class="px-3 sm:px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
             >
               Previous
             </button>
-            <span class="px-4 py-2 text-sm font-medium text-gray-700">
+            <span class="px-2 sm:px-4 py-2 text-sm font-medium text-gray-700">
               Page {{ currentPage }} of {{ totalPages }}
             </span>
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages || totalPages === 0"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50 cursor-pointer"
+              class="px-3 sm:px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
             >
               Next
             </button>

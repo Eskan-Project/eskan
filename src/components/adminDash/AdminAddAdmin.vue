@@ -234,7 +234,7 @@ export default {
         });
 
         await this.$store.dispatch("owners/getOwners");
-        this.$router.push("/admin/owners");
+        this.$router.push("/admin");
       } catch (error) {
         console.error("Error creating owner:", error);
         await Swal.fire({

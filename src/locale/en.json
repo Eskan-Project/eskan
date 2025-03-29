@@ -94,5 +94,10 @@
         }
       }
     }
+  },
+  "footer": {
+    "tagline": "Your Gateway to Safe and Affordable Shared Housing",
+    "copyright": "© Copyright",
+    "rights": "All Rights Reserved"
   }
 }
