@@ -10,9 +10,7 @@
               <div class="relative">
                 <div
                   class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-                >
-                  <i class="bi bi-search"></i>
-                </div>
+                ></div>
                 <input
                   type="text"
                   v-model="searchQuery"

@@ -30,10 +30,13 @@
         </router-link>
       </nav>
 
-      <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+      <div
+        class="flex items-center gap-2 sm:gap-4"
+        :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
+      >
         <div class="relative inline-flex items-center">
           <div
-            class="w-20 h-8 flex items-center justify-between bg-gray-300 rounded-full p-1 cursor-pointer relative"
+            class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
             <span
@@ -173,6 +176,7 @@
         <button
           @click="toggleMenu"
           class="md:hidden text-2xl sm:text-3xl text-white cursor-pointer"
+          :class="currentLocale === 'ar' ? 'order-last' : 'order-first'"
           :aria-label="isMenuOpen ? 'Close Menu' : 'Open Menu'"
         >
           <i :class="isMenuOpen ? 'bi bi-x' : 'bi bi-list'"></i>

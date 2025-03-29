@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :dir="currentLocale === 'ar' ? 'rtl' : 'ltr'">
     <!-- Overlay -->
     <transition name="fade">
       <div
@@ -13,9 +13,15 @@
     <transition name="slide">
       <ul
         v-if="isVisible"
-        class="md:hidden flex flex-col bg-white w-64 sm:w-72 fixed top-0 right-0 h-full shadow-lg p-4 z-200"
+        class="md:hidden flex flex-col bg-white w-64 sm:w-72 fixed top-0 h-full shadow-lg p-4 z-200"
+        :class="[currentLocale === 'ar' ? 'left-0' : 'right-0']"
       >
-        <li class="flex justify-end mb-4">
+        <li
+          :class="[
+            'flex mb-4',
+            currentLocale === 'ar' ? 'justify-start' : 'justify-end',
+          ]"
+        >
           <button
             @click="closeMenu"
             class="text-gray-600 hover:text-gray-800 transition-colors"
@@ -31,13 +37,29 @@
             :to="item.path"
             class="block py-3 px-4 text-[var(--secondary-color)] font-medium text-base hover:bg-gray-100 rounded-md transition-colors"
             :class="{
-              'bg-gray-100 border-l-4 border-[var(--secondary-color)]':
-                $route.path === item.path,
+              'bg-gray-100': $route.path === item.path,
+              'border-r-4 border-[var(--secondary-color)]':
+                $route.path === item.path && currentLocale === 'ar',
+              'border-l-4 border-[var(--secondary-color)]':
+                $route.path === item.path && currentLocale === 'en',
             }"
             @click="closeMenu"
           >
             {{ $t(item.label) }}
           </router-link>
+        </li>
+
+        <!-- Language Switcher -->
+        <li class="py-3 px-4">
+          <div class="flex items-center gap-2 text-[var(--secondary-color)]">
+            <i class="bi bi-globe"></i>
+            <button
+              class="flex items-center gap-2 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
+            >
+              {{ currentLocale === "ar" ? "English" : "العربية" }}
+            </button>
+          </div>
         </li>
 
         <!-- Auth Actions -->
@@ -106,9 +128,23 @@ export default {
       required: true,
     },
   },
+  watch: {
+    currentLocale: {
+      immediate: true,
+      handler(locale) {
+        document.documentElement.style.setProperty(
+          "--slide-direction",
+          locale === "ar" ? "100%" : "-100%"
+        );
+      },
+    },
+  },
   computed: {
     isVisible() {
       return this.$parent.isMenuOpen;
+    },
+    currentLocale() {
+      return this.$i18n.locale;
     },
     ...mapState("auth", ["isAuth", "userDetails"]),
   },
@@ -120,18 +156,24 @@ export default {
       this.$store.dispatch("auth/logout");
       this.closeMenu();
     },
+    changeLanguage(locale) {
+      this.$i18n.locale = locale;
+      localStorage.setItem("locale", locale);
+      document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = locale;
+    },
   },
 };
 </script>
 
 <style scoped>
 .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
+.fade-leave-active,
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(var(--slide-direction));
   opacity: 0;
+  box-shadow: none;
 }
 
 .slide-enter-active,
@@ -140,7 +182,7 @@ export default {
 }
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateX(100%);
+  transform: translateX(var(--slide-direction));
   opacity: 0;
   box-shadow: none;
 }

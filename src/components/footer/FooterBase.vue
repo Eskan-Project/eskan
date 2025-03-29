@@ -11,6 +11,7 @@
           />
           <p class="mb-2 text-sm text-center">
             {{ $t("footer.tagline") }}
+            {{ $t("footer.tagline") }}
           </p>
         </div>
 
