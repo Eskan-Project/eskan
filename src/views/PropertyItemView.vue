@@ -10,7 +10,7 @@
         class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
       >
         <i class="bi bi-arrow-left"></i>
-        <span>Back to Properties</span>
+        <span>{{ $t("propertyItemView.back_to_properties") }}</span>
       </router-link>
     </div>
 
@@ -25,7 +25,7 @@
             <h1
               class="text-2xl sm:text-3xl font-bold text-gray-900 capitalize break-words"
             >
-              {{ property.title || "Untitled Property" }}
+              {{ property.title || $t("propertyItemView.untitled_property") }}
             </h1>
             <p
               class="text-base sm:text-lg text-gray-600 flex items-center capitalize break-words"
@@ -38,7 +38,8 @@
             class="flex flex-col items-start sm:items-end justify-between gap-2 sm:gap-4 w-full sm:w-auto"
           >
             <p class="text-xl sm:text-2xl font-bold text-blue-700">
-              {{ property.price.toLocaleString() }} EGP
+              {{ formattedPrice(property.price) }}
+              {{ $t("propertyCard.currency") }}
             </p>
             <div class="flex items-center text-sm text-gray-500 gap-3">
               <p>
@@ -156,7 +157,7 @@
           <h2
             class="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4"
           >
-            Description
+            {{ $t("propertyItemView.description") }}
           </h2>
           <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
             {{ property.description }}
@@ -166,7 +167,11 @@
               @click="showFullDescription = !showFullDescription"
               class="text-blue-600 hover:text-blue-800 text-sm font-medium transition flex items-center gap-1"
             >
-              <span>{{ showFullDescription ? "Show Less" : "Read More" }}</span>
+              <span>{{
+                showFullDescription
+                  ? $t("propertyItemView.show_less")
+                  : $t("propertyItemView.read_more")
+              }}</span>
               <i
                 class="bi"
                 :class="
@@ -186,7 +191,7 @@
         </div>
         <div class="bg-white rounded-lg max-w-md w-full p-4 shadow-lg">
           <h3 class="text-xl font-semibold mb-4 text-gray-900">
-            Share this property
+            {{ $t("propertyItemView.share_property") }}
           </h3>
           <div class="grid grid-cols-3 gap-4 mb-2">
             <button
@@ -198,7 +203,7 @@
               >
                 <i class="bi bi-facebook text-xl"></i>
               </div>
-              <span class="text-xs">Facebook</span>
+              <span class="text-xs">{{ $t("propertyItemView.facebook") }}</span>
             </button>
             <button
               @click="shareVia('twitter')"
@@ -209,7 +214,7 @@
               >
                 <i class="bi bi-twitter text-xl"></i>
               </div>
-              <span class="text-xs">Twitter</span>
+              <span class="text-xs">{{ $t("propertyItemView.twitter") }}</span>
             </button>
             <button
               @click="shareVia('whatsapp')"
@@ -220,7 +225,7 @@
               >
                 <i class="bi bi-whatsapp text-xl"></i>
               </div>
-              <span class="text-xs">WhatsApp</span>
+              <span class="text-xs">{{ $t("propertyItemView.whatsapp") }}</span>
             </button>
           </div>
           <div class="relative">
@@ -232,13 +237,20 @@
                   ? shareUrl.substring(0, 35) + '...'
                   : shareUrl
               "
-              class="w-full p-3 pr-10 border border-gray-300 rounded-lg text-sm"
+              :class="[
+                $i18n.locale === 'ar' ? 'ml-10 text-right' : 'mr-10 text-left',
+                'w-full p-3 border border-gray-300 rounded-lg text-sm ',
+              ]"
+              dir="ltr"
               ref="shareUrlInput"
               @click="copyShareUrl"
             />
             <button
               @click="copyShareUrl"
-              class="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 absolute right-0 top-1/2 transform -translate-y-1/2 hover:text-gray-300"
+              :class="[
+                $i18n.locale === 'ar' ? 'left-0' : 'right-0',
+                'cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 absolute top-1/2 transform -translate-y-1/2 hover:text-gray-300',
+              ]"
             >
               <i
                 class="bi"
@@ -257,31 +269,67 @@
         <h2
           class="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center"
         >
-          <i class="bi bi-info-circle mr-2 text-blue-500"></i>
-          Property Information
+          <i
+            :class="[
+              $i18n.locale === 'ar'
+                ? 'bi bi-info-circle ml-2 text-blue-500'
+                : 'bi bi-info-circle mr-2 text-blue-500',
+            ]"
+          ></i>
+          {{ $t("propertyItemView.property_info") }}
         </h2>
         <div
           class="grid grid-cols-2 gap-3 sm:gap-4 text-gray-700 text-sm sm:text-base"
         >
           <div class="space-y-3 sm:space-y-4">
-            <p><strong>Floor Location:</strong></p>
-            <p><strong>Furnished:</strong></p>
-            <p><strong>Property Status:</strong></p>
-            <p><strong>Rooms:</strong></p>
-            <p><strong>Living Rooms:</strong></p>
-            <p><strong>Bathrooms:</strong></p>
-            <p><strong>Kitchens:</strong></p>
-            <p><strong>Area:</strong></p>
+            <p>
+              <strong>{{ $t("propertyItemView.floor_location") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.furnished") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.property_status") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.rooms") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.living_rooms") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.bathrooms") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.kitchens") }}:</strong>
+            </p>
+            <p>
+              <strong>{{ $t("propertyItemView.area") }}:</strong>
+            </p>
           </div>
           <div class="space-y-3 sm:space-y-4 font-semibold">
             <p>{{ property.floor }}</p>
-            <p>{{ property.furnished ? "Yes" : "No" }}</p>
-            <p class="capitalize">{{ property.propertyStatus }}</p>
-            <p>{{ property.rooms }}</p>
-            <p>{{ property.livingRooms }}</p>
-            <p>{{ property.bathrooms }}</p>
-            <p>{{ property.kitchens }}</p>
-            <p>{{ property.area }} m²</p>
+            <p>
+              {{
+                property.furnished
+                  ? $t("propertyItemView.yes")
+                  : $t("propertyItemView.no")
+              }}
+            </p>
+            <p class="capitalize">
+              {{
+                $t(
+                  `propertyItemView.property_status_${property.propertyStatus}`
+                )
+              }}
+            </p>
+            <p>{{ formattedPrice(property.rooms) }}</p>
+            <p>{{ formattedPrice(property.livingRooms) }}</p>
+            <p>{{ formattedPrice(property.bathrooms) }}</p>
+            <p>{{ formattedPrice(property.kitchens) }}</p>
+            <p>
+              {{ formattedPrice(property.area) }} {{ $t("propertyCard.area") }}
+            </p>
           </div>
         </div>
       </div>
@@ -291,15 +339,21 @@
         <h2
           class="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center"
         >
-          <i class="bi bi-geo-alt mr-2 text-blue-500"></i>
-          Location Information
+          <i
+            :class="[
+              $i18n.locale === 'ar'
+                ? 'bi bi-geo-alt ml-2 text-blue-500'
+                : 'bi bi-geo-alt mr-2 text-blue-500',
+            ]"
+          ></i>
+          {{ $t("propertyItemView.location_info") }}
         </h2>
         <div id="map" class="w-full h-48 sm:h-64 rounded-lg"></div>
         <p
           v-if="mapLoading"
           class="mt-3 text-gray-700 text-center text-sm sm:text-base"
         >
-          Loading map...
+          {{ $t("propertyItemView.loading_map") }}
         </p>
         <div class="mt-3 flex justify-end">
           <a
@@ -307,22 +361,15 @@
             target="_blank"
             class="text-sm text-blue-600 hover:text-blue-800 transition flex items-center gap-1"
           >
-            <span>View on Google Maps</span>
-            <i class="bi bi-box-arrow-up-right"></i>
+            <span>{{ $t("propertyItemView.view_on_google_maps") }}</span>
+            <i
+              :class="[
+                $i18n.locale === 'ar'
+                  ? 'bi bi-box-arrow-up-left'
+                  : 'bi bi-box-arrow-up-right',
+              ]"
+            ></i>
           </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Similar Properties Section -->
-    <div class="mt-8 mb-10" v-if="similarProperties.length > 0">
-      <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
-        Similar Properties
-      </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Will be populated with similar property cards -->
-        <div class="text-center text-gray-500">
-          No similar properties found yet.
         </div>
       </div>
     </div>
@@ -372,17 +419,16 @@
     >
       <i class="bi bi-house-x text-4xl sm:text-5xl text-gray-400 mb-4"></i>
       <div class="text-gray-600 text-lg sm:text-xl font-medium mb-2">
-        Property Not Found
+        {{ $t("propertyItemView.property_not_found") }}
       </div>
       <p class="text-gray-500 mb-4 text-sm sm:text-base">
-        The property you're looking for might have been removed or is
-        unavailable.
+        {{ $t("propertyItemView.not_found_message") }}
       </p>
       <router-link
         to="/"
         class="inline-block bg-blue-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
       >
-        Back to Home
+        {{ $t("propertyItemView.back_to_home") }}
       </router-link>
     </div>
   </div>
@@ -437,14 +483,24 @@ export default {
         ) || []
       );
     },
+    governorateName() {
+      const governorate = governorates.find(
+        (g) => g.id === this.property.governorate
+      );
+      return this.$i18n.locale === "ar"
+        ? governorate?.governorate_name_ar || this.$t("propertyCard.unknown")
+        : governorate?.governorate_name_en || this.$t("propertyCard.unknown");
+    },
+    cityName() {
+      const city = cities.find((c) => c.id === this.property.city);
+      return this.$i18n.locale === "ar"
+        ? city?.city_name_ar || this.$t("propertyCard.unknown")
+        : city?.city_name_en || this.$t("propertyCard.unknown");
+    },
     locationText() {
-      const governorateName = governorates.find(
-        (g) => g.id == this.property.governorate
-      )?.governorate_name_en;
-      const cityName = cities.find(
-        (c) => c.id == this.property.city
-      )?.city_name_en;
-      return `${governorateName}-${cityName}-${this.property?.neighborhood}`;
+      return `${this.governorateName} - ${this.cityName}${
+        this.property.neighborhood ? ` - ${this.property.neighborhood}` : ""
+      }`;
     },
     isMobile() {
       return this.windowWidth < 640;
@@ -515,7 +571,7 @@ export default {
     toggleWishlist() {
       if (!this.isAuth) {
         // Redirect to login or show login modal
-        toast.info("Please log in to save properties to your wishlist", {
+        toast.info(this.$t("wishlist.login_required"), {
           autoClose: 3000,
           position: toast.POSITION.TOP_CENTER,
         });
@@ -527,12 +583,12 @@ export default {
       // Here you would implement the actual wishlist functionality with Firestore
       // For now, just show a toast notification
       if (this.isWishlisted) {
-        toast.success("Property added to your wishlist", {
+        toast.success(this.$t("wishlist.added"), {
           autoClose: 2000,
           position: toast.POSITION.TOP_RIGHT,
         });
       } else {
-        toast.info("Property removed from your wishlist", {
+        toast.info(this.$t("wishlist.removed"), {
           autoClose: 2000,
           position: toast.POSITION.TOP_RIGHT,
         });
@@ -592,7 +648,7 @@ export default {
         this.copied = false;
       }, 2000);
 
-      toast.success("Link copied to clipboard!", {
+      toast.success(this.$t("propertyItemView.copy_link"), {
         autoClose: 2000,
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -807,7 +863,22 @@ export default {
         return "Invalid Date";
       }
 
-      return date.toLocaleDateString("en-GB", { dateStyle: "short" });
+      return date.toLocaleDateString(
+        this.$i18n.locale === "ar" ? "ar-EG" : "en-US",
+        {
+          dateStyle: "short",
+        }
+      );
+    },
+    formattedPrice(price) {
+      if (typeof price !== "number" && isNaN(Number(price))) {
+        return price; // Return as-is if price isn’t a valid number
+      }
+      const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
+      return new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 0, // No decimals unless needed
+        maximumFractionDigits: 2, // Up to 2 decimals if present
+      }).format(price);
     },
   },
 };

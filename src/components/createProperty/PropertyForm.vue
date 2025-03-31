@@ -98,7 +98,10 @@
         required
         :options="[
           { value: 'new', label: $t('createProperty.form.new') },
-          { value: 'second-hand', label: $t('createProperty.form.secondHand') },
+          {
+            value: 'second-hand',
+            label: $t('createProperty.form.second-hand'),
+          },
           { value: 'renovated', label: $t('createProperty.form.renovated') },
         ]"
         class="w-full"

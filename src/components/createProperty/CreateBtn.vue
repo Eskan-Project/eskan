@@ -5,7 +5,7 @@
     :disabled="isLoading"
     class="w-fit py-2 mx-auto border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
   >
-    {{ isLoading ? "Loading..." : title }}
+    {{ isLoading ? $t("createProperty.buttons.loading") : title }}
   </button>
 </template>
 

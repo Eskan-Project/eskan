@@ -10,7 +10,7 @@
         class="p-8 flex flex-col bg-[#364365] text-white w-full"
       >
         <h2 class="text-4xl font-extrabold mb-6 text-center">
-          🏡 Property Details
+          🏡 {{ $t("payment.property_details") }}
         </h2>
 
         <div class="flex justify-center mb-6">
@@ -23,20 +23,21 @@
 
         <div class="text-lg space-y-2 text-center">
           <p class="capitalize">
-            <strong class="mr-3">📌 Title:</strong>
-            {{ property.title || "No Tittle" }}
+            <strong class="mr-3">📌 {{ $t("payment.title") }}:</strong>
+            {{ property.title || $t("payment.no_title") }}
           </p>
           <p>
-            <strong class="mr-3">💰 Price:</strong>
-            {{ property.price || "No Price" }} EGP
+            <strong class="mr-3">💰 {{ $t("payment.price") }}:</strong>
+            {{ formattedPrice() || $t("payment.no_price") }}
+            {{ $t("payment.currency") }}
           </p>
           <p>
-            <strong class="mr-3">📏 Area:</strong>
-            {{ property.area || "No Area" }} m²
+            <strong class="mr-3">📏 {{ $t("payment.area") }}:</strong>
+            {{ formattedPrice(property.area) || $t("payment.no_area") }} m²
           </p>
           <p>
-            <strong class="mr-3">📍 City:</strong>
-            {{ cityName || "No City" }}
+            <strong class="mr-3">📍 {{ $t("payment.city") }}:</strong>
+            {{ cityName || $t("payment.no_city") }}
           </p>
         </div>
       </div>
@@ -46,9 +47,11 @@
           v-if="success"
           class="bg-gradient-to-br from-green-400 to-green-600 text-white p-10 text-center animate-fade-in rounded-xl"
         >
-          <h2 class="text-5xl font-bold mb-4">🎉 Payment Successful!</h2>
+          <h2 class="text-5xl font-bold mb-4">
+            🎉 {{ $t("payment.success") }}
+          </h2>
           <p class="text-lg">
-            Thank you for your payment. Enjoy exclusive access!
+            {{ $t("payment.thank_you") }}
           </p>
           <div v-if="redirecting" class="flex justify-center mt-6">
             <svg
@@ -76,19 +79,18 @@
 
         <div v-else>
           <h2 class="text-4xl font-extrabold text-gray-900 mb-4 text-center">
-            Confirm Payment
+            {{ $t("payment.confirm_payment") }}
           </h2>
           <h4></h4>
           <p class="text-lg text-gray-700 mb-6 text-center">
-            A <span class="text-indigo-600 font-bold">$50</span> fee will be
-            charged to view the owner's contact details.
+            {{ $t("payment.fee_description", { fee: "$50" }) }}
           </p>
 
           <div class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
-                >Payment Method</label
-              >
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{
+                $t("payment.payment_method")
+              }}</label>
               <div
                 id="card-element"
                 class="p-4 border rounded-xl bg-gray-50 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 transition-all"
@@ -121,7 +123,11 @@
                   d="M4 12a8 8 0 0116 0h-4a4 4 0 00-8 0H4z"
                 ></path>
               </svg>
-              {{ loading ? "Processing..." : "Pay $50 Now" }}
+              {{
+                loading
+                  ? $t("payment.processing")
+                  : $t("payment.pay_button", { fee: "$50" })
+              }}
             </button>
 
             <p
@@ -148,7 +154,7 @@
                 d="M12 11c0-1.1.9-2 2-2s2 .9 2 2-2 5-2 5m-8-5c0-1.1.9-2 2-2s2 .9 2 2-2 5-2 5m4-10c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4z"
               />
             </svg>
-            Secure payment powered by Stripe
+            {{ $t("payment.secure_payment") }}
           </div>
         </div>
       </div>
@@ -171,6 +177,7 @@ export default {
       redirecting: false,
       property: JSON.parse(localStorage.getItem("property")),
       isValidCard: false,
+      loading: false,
     };
   },
   computed: {
@@ -217,13 +224,28 @@ export default {
   },
   methods: {
     ...mapActions("property", ["handlePayment"]),
+    formattedPrice() {
+      if (!this.property.price) return this.$t("propertyCard.not_available");
+
+      // Format number based on locale
+      const options = {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      };
+
+      return Number(this.property.price).toLocaleString(
+        this.$i18n.locale === "ar" ? "ar-EG" : "en-US",
+        options
+      );
+    },
     async processPayment() {
+      this.loading = true;
       try {
         const paymentId = await this.handlePayment(this.property.id);
         console.log(paymentId);
         if (paymentId) {
           this.success = true;
-
+          this.loading = false;
           this.redirecting = true;
           setTimeout(() => {
             this.redirecting = false;
@@ -233,6 +255,7 @@ export default {
       } catch (error) {
         this.message = error.message;
         this.error = true;
+        this.loading = false;
       }
     },
   },

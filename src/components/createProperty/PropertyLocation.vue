@@ -23,7 +23,7 @@
       />
       <button
         @click.prevent="getUserLocation"
-        class="px-4 py-2 border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors duration-300"
+        class="h-12 px-4 py-2 border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors duration-300"
       >
         {{ $t("createProperty.location.selectLocation") }}
       </button>
@@ -59,7 +59,10 @@ export default {
       },
       governorates: governoratesData.map((g) => ({
         value: g.id,
-        label: g.governorate_name_en,
+        label:
+          sessionStorage.getItem("locale") === "ar"
+            ? g.governorate_name_ar
+            : g.governorate_name_en,
       })),
       cities: [],
       map: null,
@@ -79,6 +82,19 @@ export default {
         localStorage.setItem("propertyDetails", JSON.stringify(newData));
       },
     },
+    "$i18n.locale": {
+      handler() {
+        this.updateCities();
+        this.governorates = governoratesData.map((g) => ({
+          value: g.id,
+          label:
+            sessionStorage.getItem("locale") === "ar"
+              ? g.governorate_name_ar
+              : g.governorate_name_en,
+        }));
+      },
+      immediate: true,
+    },
   },
   created() {
     const savedData = localStorage.getItem("propertyDetails");
@@ -96,7 +112,10 @@ export default {
             .filter((c) => c.governorate_id === selectedGov.value)
             .map((c) => ({
               value: c.id,
-              label: c.city_name_en,
+              label:
+                sessionStorage.getItem("locale") === "ar"
+                  ? c.city_name_ar
+                  : c.city_name_en,
             }))
         : [];
     },

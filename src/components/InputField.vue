@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <label
-      :class="`absolute -top-3 left-3 bg-white px-2 text-sm text-gray-700 rounded-full z-10`"
+      :class="`absolute -top-3 start-3 bg-white px-2 text-sm text-gray-700 rounded-full z-10`"
     >
       {{ label }} <span v-if="required" class="text-red-500">*</span>
     </label>
@@ -23,21 +23,24 @@
       <div class="relative">
         <select
           v-model="inputValue"
-          class="text-gray-700 cursor-pointer w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+          class="text-gray-700 cursor-pointer w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-start"
           :required="required"
           @blur="validateInput"
         >
-          <option value="" disabled selected>Select option</option>
+          <option value="" disabled selected class="text-start">
+            {{ $t("createProperty.form.select") }}
+          </option>
           <option
             v-for="option in options"
             :key="option.value"
             :value="option.value"
+            class="text-start"
           >
             {{ option.label }}
           </option>
         </select>
         <i
-          class="bi bi-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+          class="bi bi-chevron-down absolute end-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
         ></i>
       </div>
     </template>
@@ -45,7 +48,7 @@
       <div
         v-for="option in options"
         :key="option"
-        class="flex items-center gap-2 ml-40 my-5"
+        class="flex items-center gap-2 ms-40 my-5"
       >
         <input
           type="checkbox"
@@ -118,7 +121,7 @@ export default {
   methods: {
     validateInput() {
       if (this.required && !String(this.inputValue).trim()) {
-        this.errorMessage = `${this.label} is required`;
+        this.errorMessage = `${this.$t("createProperty.form.required")}`;
       } else {
         this.errorMessage = "";
       }

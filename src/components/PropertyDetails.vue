@@ -1,6 +1,8 @@
 <template>
   <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg">
-    <p v-if="loading" class="text-center text-gray-600">Loading...</p>
+    <p v-if="loading" class="text-center text-gray-600">
+      {{ $t("propertyDetails.loading") }}
+    </p>
 
     <template v-if="property">
       <!-- Case 1: Admin user -->
@@ -8,7 +10,9 @@
         v-if="isAuthenticated && userDetails?.role === 'admin'"
         class="text-gray-900 flex flex-col gap-10"
       >
-        <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
+        <h2 class="text-xl font-semibold text-center mb-4">
+          {{ $t("propertyDetails.owner_details") }}
+        </h2>
         <div class="flex flex-col items-center space-y-3">
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
@@ -16,21 +20,27 @@
             class="w-24 h-24 rounded-full border-2 border-gray-300"
           />
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Name:</span>
+            <span class="font-semibold">{{ $t("propertyDetails.name") }}:</span>
             <span class="text-sm capitalize">{{
               property.propertyContact.name
             }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Phone:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.phone") }}:</span
+            >
             <span class="text-sm">{{ property.propertyContact.phone }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Email:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.email") }}:</span
+            >
             <span class="text-sm">{{ property.propertyContact.email }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Address:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.address") }}:</span
+            >
             <span class="text-sm capitalize">{{ property.address }}</span>
           </p>
         </div>
@@ -53,13 +63,13 @@
           </svg>
         </div>
         <p class="text-lg text-gray-700 mb-3">
-          Please register to view the owner's contact details!
+          {{ $t("propertyDetails.register_prompt") }}
         </p>
         <button
           @click="redirectToRegister"
           class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
         >
-          📝 Register Now
+          📝 {{ $t("propertyDetails.register_button") }}
         </button>
       </div>
 
@@ -83,14 +93,15 @@
           </svg>
         </div>
         <p class="text-lg text-gray-700 mb-3">
-          Welcome! Would you like to view the owner's details? <br />
-          ({{ userDetails?.freeViewsRemaining }} free views remaining)
+          {{ $t("propertyDetails.unlock_prompt") }} <br />
+          ({{ userDetails?.freeViewsRemaining }}
+          {{ $t("propertyDetails.free_views_remaining") }})
         </p>
         <button
           @click="unlock"
           class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
         >
-          🔓 Click here to unlock information
+          🔓 {{ $t("propertyDetails.unlock_button") }}
         </button>
       </div>
 
@@ -99,7 +110,9 @@
         v-else-if="paidProperties"
         class="text-gray-900 flex flex-col gap-10"
       >
-        <h2 class="text-xl font-semibold text-center mb-4">Owner Details</h2>
+        <h2 class="text-xl font-semibold text-center mb-4">
+          {{ $t("propertyDetails.owner_details") }}
+        </h2>
         <div class="flex flex-col items-center space-y-3">
           <img
             :src="
@@ -111,21 +124,27 @@
             class="w-24 h-24 rounded-full border-2 border-gray-300"
           />
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Name:</span>
+            <span class="font-semibold">{{ $t("propertyDetails.name") }}:</span>
             <span class="text-sm capitalize">{{
               property.propertyContact.name
             }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Phone:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.phone") }}:</span
+            >
             <span class="text-sm">{{ property.propertyContact.phone }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Email:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.email") }}:</span
+            >
             <span class="text-sm">{{ property.propertyContact.email }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">Address:</span>
+            <span class="font-semibold"
+              >{{ $t("propertyDetails.address") }}:</span
+            >
             <span class="text-sm capitalize">{{ property.address }}</span>
           </p>
         </div>
@@ -156,15 +175,14 @@
             />
           </svg>
           <p>
-            You have no free views remaining. To view this property's owner
-            details, please proceed with the payment.
+            {{ $t("propertyDetails.no_views_remaining") }}
           </p>
         </div>
         <button
           @click="redirectToPayment"
           class="cursor-pointer mt-3 bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
         >
-          💳 Proceed to Payment
+          💳 {{ $t("propertyDetails.proceed_to_payment") }}
         </button>
       </div>
     </template>

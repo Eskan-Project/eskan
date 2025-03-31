@@ -234,13 +234,13 @@
           class="grid grid-cols-3 flex-grow text-center text-xs sm:text-sm md:text-base"
         >
           <span class="px-2 truncate">{{
-            selectedGovernorateName || $t("search.anywhere")
+            selectedGovernorateName || this.$t("search.anywhere")
           }}</span>
           <span class="px-2 truncate">{{
-            selectedPropertyStatus || $t("search.any_status")
+            selectedPropertyStatus || this.$t("search.any_status")
           }}</span>
           <span class="px-2 truncate">{{
-            selectedRooms || $t("search.any_rooms")
+            selectedRooms || this.$t("search.any_rooms")
           }}</span>
         </div>
         <div class="flex gap-2 sm:gap-3 flex-shrink-0">
@@ -316,10 +316,15 @@ export default {
     ],
   }),
   computed: {
+    filterBarStyle() {
+      return {
+        transition: "all 0.3s ease",
+      };
+    },
     selectedGovernorateName() {
       return (
         this.governorates.find((g) => g.value === this.selectedGovernorate)
-          ?.label || $t("search.anywhere")
+          ?.label || this.$t("search.anywhere")
       );
     },
     selectedGovernorateLabel() {

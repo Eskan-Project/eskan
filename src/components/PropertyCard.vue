@@ -29,30 +29,44 @@
           v-else
           class="w-full h-full flex items-center justify-center text-gray-500 text-sm bg-gray-200"
         >
-          <span>No Image Available</span>
+          <span>{{ $t("propertyCard.no_image") }}</span>
         </div>
 
         <!-- Property Status Badge -->
         <span
           v-if="property.propertyStatus"
-          class="absolute top-2 right-2 px-2 py-1 text-xs font-semibold text-white rounded-full capitalize bg-gradient-to-r from-[#124365] to-[#364365] shadow-md"
+          class="absolute top-2 px-2 py-1 text-xs font-semibold text-white rounded-full capitalize bg-gradient-to-r from-[#124365] to-[#364365] shadow-md"
+          :class="[$i18n.locale === 'ar' ? 'left-2' : 'right-2']"
         >
-          {{ property.propertyStatus }}
+          {{ $t(`propertyCard.status.${property.propertyStatus}`) }}
         </span>
 
         <!-- Price Badge -->
         <div
-          class="absolute bottom-0 right-0 bg-[#364365]/90 text-white px-3 py-1 rounded-tl-lg font-bold text-sm"
+          class="absolute bottom-0 text-white px-3 py-1 font-bold text-sm"
+          :class="[
+            $i18n.locale === 'ar'
+              ? 'left-0 rounded-tr-lg bg-[#364365]/90'
+              : 'right-0 rounded-tl-lg bg-[#364365]/90',
+          ]"
         >
-          {{ formattedPrice }} EGP
+          {{ formattedPrice }} {{ $t("propertyCard.currency") }}
         </div>
 
         <!-- Image Gallery Indicator -->
         <div
           v-if="property.images?.length > 1"
-          class="absolute bottom-0 left-0 px-2 py-1 bg-black/50 text-white text-xs rounded-tr-lg flex items-center"
+          class="absolute bottom-0 px-2 py-1 bg-black/50 text-white text-xs flex items-center"
+          :class="[
+            $i18n.locale === 'ar'
+              ? 'right-0 rounded-tl-lg'
+              : 'left-0 rounded-tr-lg',
+          ]"
         >
-          <i class="bi bi-images mr-1"></i>
+          <i
+            class="bi bi-images"
+            :class="[$i18n.locale === 'ar' ? 'ml-1' : 'mr-1']"
+          ></i>
           <span>{{ property.images.length }}</span>
         </div>
       </div>
@@ -61,9 +75,9 @@
         <!-- Property Title -->
         <h2
           class="font-semibold text-sm sm:text-base md:text-lg text-gray-900 transition-colors capitalize line-clamp-2"
-          :title="property.title || 'Untitled Property'"
+          :title="property.title || $t('propertyCard.untitled_property')"
         >
-          {{ property.title || "Untitled Property" }}
+          {{ property.title || $t("propertyCard.untitled_property") }}
         </h2>
 
         <!-- Property Details -->
@@ -86,7 +100,11 @@
               <i class="bi bi-house-door text-[#364365]"></i>
               <span
                 >{{ property.rooms }}
-                {{ property.rooms === 1 ? "Room" : "Rooms" }}</span
+                {{
+                  property.rooms === 1
+                    ? $t("propertyCard.rooms")
+                    : $t("propertyCard.rooms_plural")
+                }}</span
               >
             </div>
 
@@ -95,7 +113,7 @@
               class="flex items-center gap-1 text-xs bg-gray-100 rounded-md p-1.5 hover:bg-gray-200 transition-colors"
             >
               <i class="bi bi-rulers text-[#364365]"></i>
-              <span>{{ property.area }} m²</span>
+              <span>{{ property.area }} {{ $t("propertyCard.area") }}</span>
             </div>
 
             <div
@@ -104,7 +122,9 @@
             >
               <i class="bi bi-lamp text-[#364365]"></i>
               <span>{{
-                property.furnished ? "Furnished" : "Unfurnished"
+                property.furnished
+                  ? $t("propertyCard.furnished")
+                  : $t("propertyCard.unfurnished")
               }}</span>
             </div>
           </div>
@@ -115,9 +135,14 @@
           <span
             class="inline-block text-xs sm:text-sm font-medium text-white bg-[#364365] px-3 py-1.5 rounded-full group-hover:bg-[#4c5b87] transition-all duration-200"
           >
-            View Details
+            {{ $t("propertyCard.view_details") }}
             <i
-              class="bi bi-arrow-right text-xs ml-1 group-hover:translate-x-1 transition-transform"
+              :class="[
+                $i18n.locale === 'ar'
+                  ? 'bi-arrow-left mr-1 group-hover:-translate-x-1'
+                  : 'bi-arrow-right ml-1 group-hover:translate-x-1',
+              ]"
+              class="bi text-xs transition-transform"
             ></i>
           </span>
         </div>
@@ -150,27 +175,35 @@ export default {
   },
   computed: {
     governorateName() {
-      return (
-        governorates.find((g) => g.id === this.property.governorate)
-          ?.governorate_name_en || "Unknown"
+      const governorate = governorates.find(
+        (g) => g.id === this.property.governorate
       );
+      return this.$i18n.locale === "ar"
+        ? governorate?.governorate_name_ar || this.$t("propertyCard.unknown")
+        : governorate?.governorate_name_en || this.$t("propertyCard.unknown");
     },
     cityName() {
-      return (
-        cities.find((c) => c.id === this.property.city)?.city_name_en ||
-        "Unknown"
-      );
+      const city = cities.find((c) => c.id === this.property.city);
+      return this.$i18n.locale === "ar"
+        ? city?.city_name_ar || this.$t("propertyCard.unknown")
+        : city?.city_name_en || this.$t("propertyCard.unknown");
     },
     locationText() {
       return `${this.governorateName} - ${this.cityName}`;
     },
     formattedPrice() {
-      return this.property.price
-        ? Number(this.property.price).toLocaleString("en-US", {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-          })
-        : "N/A";
+      if (!this.property.price) return this.$t("propertyCard.not_available");
+
+      // Format number based on locale
+      const options = {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      };
+
+      return Number(this.property.price).toLocaleString(
+        this.$i18n.locale === "ar" ? "ar-EG" : "en-US",
+        options
+      );
     },
     isNewProperty() {
       // Check if property was added in the last 7 days

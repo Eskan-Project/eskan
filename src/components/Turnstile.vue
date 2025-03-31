@@ -8,10 +8,12 @@ export default {
     const siteKey = ref(import.meta.env.VITE_TURNSTILE_SITE_KEY);
     const widgetId = ref(null);
     const turnstileContainer = ref(null);
+    const isLoading = ref(true);
 
     const loadTurnstile = () => {
       // Check if script is already loaded
       if (window.turnstile) {
+        isLoading.value = false;
         renderWidget();
         return;
       }
@@ -23,10 +25,12 @@ export default {
       script.defer = true;
 
       script.onload = () => {
+        isLoading.value = false;
         renderWidget();
       };
 
       script.onerror = () => {
+        isLoading.value = false;
         emit("turnstileError", "Failed to load Turnstile script");
       };
 
@@ -83,6 +87,7 @@ export default {
 
 <template>
   <div>
+    <p v-if="isLoading">{{ $t("createProperty.buttons.loading") }}</p>
     <div ref="turnstileContainer" class="cf-turnstile-container"></div>
   </div>
 </template>

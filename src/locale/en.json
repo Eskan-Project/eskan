@@ -189,8 +189,10 @@
       "no": "No",
       "propertyStatus": "Status",
       "new": "New",
-      "secondHand": "Second Hand",
-      "renovated": "Renovated"
+      "second-hand": "Second Hand",
+      "renovated": "Renovated",
+      "select": "Select Option",
+      "required": "Required"
     },
     "location": {
       "title": "Property Location",
@@ -230,7 +232,8 @@
       "features": "Features",
       "amenities": "Amenities",
       "location": "Location",
-      "contact": "Contact Information"
+      "contact": "Contact Information",
+      "m2": "m²"
     },
     "buttons": {
       "next": "Next",
@@ -390,5 +393,92 @@
         "failed": "Failed to send reset email. Please try again."
       }
     }
+  },
+  "propertyCard": {
+    "no_image": "No Image Available",
+    "rooms": "Room",
+    "rooms_plural": "Rooms",
+    "area": "m²",
+    "furnished": "Furnished",
+    "unfurnished": "Unfurnished",
+    "view_details": "View Details",
+    "currency": "EGP",
+    "untitled_property": "Untitled Property",
+    "unknown": "Unknown",
+    "not_available": "N/A",
+    "status": {
+      "new": "New",
+      "second-hand": "Second Hand",
+      "renovated": "Renovated"
+    }
+  },
+  "propertyDetails": {
+    "owner_details": "Owner Details",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "register_prompt": "Please register to view the owner's contact details!",
+    "register_button": "Register Now",
+    "unlock_prompt": "Welcome! Would you like to view the owner's details?",
+    "free_views_remaining": "free views remaining",
+    "unlock_button": "Click here to unlock information",
+    "no_views_remaining": "You have no free views remaining. To view this property's owner details, please proceed with the payment.",
+    "proceed_to_payment": "Proceed to Payment",
+    "loading": "Loading..."
+  },
+  "propertyItemView": {
+    "back_to_properties": "Back to Properties",
+    "untitled_property": "Untitled Property",
+    "description": "Description",
+    "show_less": "Show Less",
+    "read_more": "Read More",
+    "share_property": "Share this property",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "whatsapp": "WhatsApp",
+    "copy_link": "Link copied to clipboard!",
+    "property_info": "Property Information",
+    "floor_location": "Floor Location",
+    "furnished": "Furnished",
+    "property_status": "Property Status",
+    "property_status_new": "New",
+    "property_status_second-hand": "Second Hand",
+    "property_status_renovated": "Renovated",
+    "rooms": "Rooms",
+    "living_rooms": "Living Rooms",
+    "bathrooms": "Bathrooms",
+    "kitchens": "Kitchens",
+    "area": "Area",
+    "location_info": "Location Information",
+    "loading_map": "Loading map...",
+    "view_on_google_maps": "View on Google Maps",
+    "similar_properties": "Similar Properties",
+    "no_similar_properties": "No similar properties found yet.",
+    "property_not_found": "Property Not Found",
+    "not_found_message": "The property you're looking for might have been removed or is unavailable.",
+    "back_to_home": "Back to Home",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "payment": {
+    "property_details": "Property Details",
+    "title": "Title",
+    "no_title": "No Title",
+    "price": "Price",
+    "no_price": "No Price",
+    "area": "Area",
+    "no_area": "No Area",
+    "city": "City",
+    "no_city": "No City",
+    "currency": "EGP",
+    "success": "Payment Successful!",
+    "thank_you": "Thank you for your payment. Enjoy exclusive access!",
+    "confirm_payment": "Confirm Payment",
+    "fee_description": "A <span class=\"text-indigo-600 font-bold\">{fee}</span> fee will be charged to view the owner's contact details.",
+    "payment_method": "Payment Method",
+    "processing": "Processing...",
+    "pay_button": "Pay {fee} Now",
+    "secure_payment": "Secure payment powered by Stripe"
   }
 }

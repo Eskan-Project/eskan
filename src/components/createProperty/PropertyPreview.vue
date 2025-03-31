@@ -61,7 +61,9 @@
           </h2>
           <p class="text-gray-500 flex items-center text-sm sm:text-base">
             <i
-              class="bi bi-geo-alt-fill text-yellow-500 mr-2 text-base sm:text-xl"
+              :class="`bi bi-geo-alt-fill text-yellow-500 ${
+                this.$i18n.locale === 'ar' ? 'ml-2' : 'mr-2'
+              } text-base sm:text-xl`"
             ></i>
             <span>
               {{
@@ -75,7 +77,13 @@
           </p>
         </div>
         <p class="text-lg sm:text-xl font-bold text-gray-800">
-          {{ propertyDetails.price ? `${propertyDetails.price} EGP` : "N/A" }}
+          {{
+            propertyDetails.price
+              ? `${formattedPrice(propertyDetails.price)} ${$t(
+                  "profile.currency"
+                )}`
+              : "N/A"
+          }}
         </p>
       </div>
 
@@ -95,7 +103,8 @@
                 >{{ $t("createProperty.form.propertyStatus") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.createdAt || "N/A"
+                $t(`createProperty.form.${propertyDetails.propertyStatus}`) ||
+                "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
@@ -103,7 +112,8 @@
                 >{{ $t("createProperty.form.area") }}:</span
               >
               <span class="font-semibold"
-                >{{ propertyDetails.area || "N/A" }} m<sup>2</sup></span
+                >{{ formattedPrice(propertyDetails.area) || "N/A" }}
+                {{ $t("createProperty.preview.m2") }}</span
               >
             </div>
             <div class="flex items-center gap-2">
@@ -111,7 +121,7 @@
                 >{{ $t("createProperty.form.rooms") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.rooms || "N/A"
+                formattedPrice(propertyDetails.rooms) || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
@@ -119,7 +129,7 @@
                 >{{ $t("createProperty.form.bathrooms") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.bathrooms || "N/A"
+                formattedPrice(propertyDetails.bathrooms) || "N/A"
               }}</span>
             </div>
 
@@ -128,25 +138,17 @@
                 >{{ $t("createProperty.form.floor") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.floor || "N/A"
+                formattedPrice(propertyDetails.floor) || "N/A"
               }}</span>
             </div>
           </div>
           <div class="space-y-6">
             <div class="flex items-center gap-2">
               <span class="w-52 font-normal"
-                >{{ $t("createProperty.form.propertyStatus") }}:</span
-              >
-              <span class="font-semibold">{{
-                propertyDetails.status || "N/A"
-              }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-52 font-normal"
                 >{{ $t("createProperty.form.furnished") }}:</span
               >
               <span class="font-semibold capitalize">{{
-                propertyDetails.furnished || "N/A"
+                $t(`createProperty.form.${propertyDetails.furnished}`) || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
@@ -154,7 +156,7 @@
                 >{{ $t("createProperty.form.livingRooms") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.livingRooms || "N/A"
+                formattedPrice(propertyDetails.livingRooms) || "N/A"
               }}</span>
             </div>
             <div class="flex items-center gap-2">
@@ -162,7 +164,7 @@
                 >{{ $t("createProperty.form.kitchens") }}:</span
               >
               <span class="font-semibold">{{
-                propertyDetails.kitchens || "N/A"
+                formattedPrice(propertyDetails.kitchens) || "N/A"
               }}</span>
             </div>
           </div>
@@ -218,17 +220,22 @@ export default {
   computed: {
     ...mapState("property", ["propertyDetails"]),
     governorateName() {
-      return (
-        governorates.find(
-          (governorate) => governorate.id === this.propertyDetails.governorate
-        )?.governorate_name_en || "Unknown"
+      const governorate = governorates.find(
+        (governorate) => governorate.id === this.propertyDetails.governorate
       );
+      return governorate
+        ? this.$i18n.locale === "ar"
+          ? governorate.governorate_name_ar
+          : governorate.governorate_name_en
+        : "Unknown";
     },
     cityName() {
-      return (
-        cities.find((city) => city.id === this.propertyDetails.city)
-          ?.city_name_en || "Unknown"
-      );
+      const city = cities.find((city) => city.id === this.propertyDetails.city);
+      return city
+        ? this.$i18n.locale === "ar"
+          ? city.city_name_ar
+          : city.city_name_en
+        : "Unknown";
     },
     slidesPerView() {
       if (this.images.length <= 1) return 1;
@@ -254,6 +261,16 @@ export default {
     },
     updateSlidesPerView() {
       this.swiper.update(); // Update Swiper on resize
+    },
+    formattedPrice(price) {
+      if (typeof price !== "number" && isNaN(Number(price))) {
+        return price; // Return as-is if price isn’t a valid number
+      }
+      const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
+      return new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 0, // No decimals unless needed
+        maximumFractionDigits: 2, // Up to 2 decimals if present
+      }).format(price);
     },
   },
 };

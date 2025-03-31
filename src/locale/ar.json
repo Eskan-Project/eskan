@@ -135,9 +135,9 @@
     "button": "بحث",
     "reset": "إعادة ضبط",
     "apply_filters": "تطبيق الفلاتر",
-    "anywhere": "أي مكان",
-    "any_status": "أي حالة",
-    "any_rooms": "أي عدد غرف",
+    "anywhere": " مكان",
+    "any_status": " حالة",
+    "any_rooms": " عدد غرف",
     "select_governorate": "المحافظة",
     "select_city": "المدينة",
     "select_status": "حالة العقار",
@@ -189,8 +189,10 @@
       "no": "لا",
       "propertyStatus": "الحالة",
       "new": "جديد",
-      "secondHand": "مستعمل",
-      "renovated": "مجدد"
+      "second-hand": "مستعمل",
+      "renovated": "مجدد",
+      "select": "حدد اختيار",
+      "required": "مطلوب"
     },
     "location": {
       "title": "موقع العقار",
@@ -230,18 +232,19 @@
       "features": "المميزات",
       "amenities": "المرافق",
       "location": "الموقع",
-      "contact": "معلومات الاتصال"
+      "contact": "معلومات الاتصال",
+      "m2": "م²"
     },
     "buttons": {
       "next": "التالي",
       "back": "السابق",
-      "submit": "إرسال العقار",
+      "submit": "انشاء",
       "saveAndContinue": "حفظ ومتابعة",
       "loading": "جاري التحميل..."
     },
     "completed": {
-      "title": "تم إرسال العقار بنجاح!",
-      "description": "تم إرسال العقار الخاص بك وهو قيد المراجعة.",
+      "title": "! تم الانشاء بنجاح",
+      "description": "تم انشاء العقار الخاص بك وهو قيد المراجعة.",
       "returnHome": "العودة إلى الرئيسية"
     },
     "validation": {
@@ -388,5 +391,92 @@
         "failed": "فشل في إرسال بريد إعادة التعيين. يرجى المحاولة مرة أخرى."
       }
     }
+  },
+  "propertyCard": {
+    "no_image": "لا توجد صورة متاحة",
+    "rooms": "غرفة",
+    "rooms_plural": "غرف",
+    "area": "م²",
+    "furnished": "مفروش",
+    "unfurnished": "غير مفروش",
+    "view_details": "عرض التفاصيل",
+    "currency": "ج.م",
+    "untitled_property": "عقار بدون عنوان",
+    "unknown": "غير معروف",
+    "not_available": "غير متاح",
+    "status": {
+      "new": "جديد",
+      "second-hand": "مستعمل",
+      "renovated": "مجدد"
+    }
+  },
+  "propertyDetails": {
+    "owner_details": "بيانات المالك",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "register_prompt": "يرجى التسجيل لعرض تفاصيل الاتصال بالمالك!",
+    "register_button": "سجل الآن",
+    "unlock_prompt": "مرحبًا! هل ترغب في رؤية تفاصيل المالك؟",
+    "free_views_remaining": "مشاهدات مجانية متبقية",
+    "unlock_button": "انقر هنا لفتح المعلومات",
+    "no_views_remaining": "ليس لديك مشاهدات مجانية متبقية. لعرض تفاصيل مالك هذا العقار، يرجى المتابعة إلى الدفع.",
+    "proceed_to_payment": "المتابعة إلى الدفع",
+    "loading": "جاري التحميل..."
+  },
+  "propertyItemView": {
+    "back_to_properties": "العودة إلى العقارات",
+    "untitled_property": "عقار بدون عنوان",
+    "description": "الوصف",
+    "show_less": "عرض أقل",
+    "read_more": "قراءة المزيد",
+    "share_property": "مشاركة هذا العقار",
+    "facebook": "فيسبوك",
+    "twitter": "تويتر",
+    "whatsapp": "واتساب",
+    "copy_link": "تم نسخ الرابط إلى الحافظة!",
+    "property_info": "معلومات العقار",
+    "floor_location": "الطابق",
+    "furnished": "مفروش",
+    "property_status": "حالة العقار",
+    "property_status_new": "جديد",
+    "property_status_second-hand": "مستعمل",
+    "property_status_renovated": "مجدد",
+    "rooms": "الغرف",
+    "living_rooms": "غرف المعيشة",
+    "bathrooms": "الحمامات",
+    "kitchens": "المطابخ",
+    "area": "المساحة",
+    "location_info": "معلومات الموقع",
+    "loading_map": "جاري تحميل الخريطة...",
+    "view_on_google_maps": "عرض على خرائط جوجل",
+    "similar_properties": "عقارات مشابهة",
+    "no_similar_properties": "لم يتم العثور على عقارات مشابهة بعد.",
+    "property_not_found": "العقار غير موجود",
+    "not_found_message": "ربما تمت إزالة العقار الذي تبحث عنه أو غير متاح.",
+    "back_to_home": "العودة إلى الصفحة الرئيسية",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "payment": {
+    "property_details": "تفاصيل العقار",
+    "title": "العنوان",
+    "no_title": "لا يوجد عنوان",
+    "price": "السعر",
+    "no_price": "لا يوجد سعر",
+    "area": "المساحة",
+    "no_area": "لا توجد مساحة",
+    "city": "المدينة",
+    "no_city": "لا توجد مدينة",
+    "currency": "جنيه",
+    "success": "تمت عملية الدفع بنجاح!",
+    "thank_you": "شكراً لك على الدفع. استمتع بالوصول الحصري!",
+    "confirm_payment": "تأكيد الدفع",
+    "fee_description": "سيتم فرض رسوم <span class=\"text-indigo-600 font-bold\">{fee}</span> لعرض بيانات التواصل للمالك.",
+    "payment_method": "طريقة الدفع",
+    "processing": "جاري المعالجة...",
+    "pay_button": "ادفع {fee} الآن",
+    "secure_payment": "دفع آمن بواسطة Stripe"
   }
 }

@@ -242,11 +242,52 @@ export default {
       "removeNotification",
       "markAsRead",
     ]),
-    changeLanguage(locale) {
-      this.$i18n.locale = locale;
-      localStorage.setItem("locale", locale);
-      document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
-      document.documentElement.lang = locale;
+    async changeLanguage(locale) {
+      // Prevent redundant changes
+      if (this.currentLocale === locale) return;
+
+      try {
+        // Start loading immediately for better UX
+        this.$store.dispatch("startLoading");
+
+        // Update locale and persist it
+        this.$i18n.locale = locale;
+        localStorage.setItem("locale", locale);
+
+        // Update document direction and language
+        document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+        document.documentElement.lang = locale;
+
+        // Simulate a delay for UI updates (optional, adjust as needed)
+        await new Promise((resolve) => setTimeout(resolve, 300)); // Smooth transition
+
+        // Optionally reload or fetch localized data if required
+        // Example: await this.fetchLocalizedContent();
+
+        // Notify user of success (optional)
+        this.$toast.success(
+          this.$t("language_switch_success", {
+            lang: locale === "ar" ? "العربية" : "English",
+          }),
+          { position: "top-left", autoClose: 3000 }
+        );
+      } catch (error) {
+        console.error("Failed to change language:", error);
+        this.$toast.error(this.$t("language_switch_error"), {
+          position: "top-left",
+          autoClose: 5000,
+        });
+
+        // Rollback to previous locale on failure (optional)
+        this.$i18n.locale = this.currentLocale;
+        localStorage.setItem("locale", this.currentLocale);
+        document.documentElement.dir =
+          this.currentLocale === "ar" ? "rtl" : "ltr";
+        document.documentElement.lang = this.currentLocale;
+      } finally {
+        // Stop loading regardless of success or failure
+        this.$store.dispatch("stopLoading");
+      }
     },
     async fetchNotifications() {
       try {
