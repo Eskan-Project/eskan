@@ -703,20 +703,23 @@ export default {
         });
       }
     },
-
     async sendAcceptanceNotification(ownerId, propertyTitle) {
-      try {
-        const notificationMessage = `"${propertyTitle}" has been approved! Go to your profile to complete the payment. ✅`;
-        await this.$store.dispatch("notifications/addNotification", {
-          type: "property_accepted",
-          ownerId: ownerId,
-          message: notificationMessage,
-        });
-        console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
-      } catch (error) {
-        console.error("Error sending acceptance notification:", error);
-      }
-    },
+  try {
+    const notificationMessage = `"${propertyTitle}" has been approved! Click here to complete the payment. ✅`;
+
+    await this.$store.dispatch("notifications/addNotification", {
+      type: "property_accepted",
+      ownerId: ownerId,
+      message: notificationMessage,
+      link: `/userProfile/${ownerId}`, 
+    });
+
+    console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
+  } catch (error) {
+    console.error("Error sending acceptance notification:", error);
+  }
+},
+
 
     async loadData() {
       this.loading = true;
@@ -939,9 +942,26 @@ export default {
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, reject it!",
         });
+        const propertyData = {
+            ...this.request,
+          };
 
         if (result.isConfirmed) {
+          console.log("Deleting request with id:", this.id);
           await this.deleteRequest(this.id);
+          console.log("Request deleted successfully");
+
+          if (propertyData.ownerId) {
+            await this.sendRejectionNotification(
+              propertyData.ownerId,
+              propertyData.title
+            );
+          } else {
+            console.warn(
+              "Owner ID not found, cannot send acceptance notification to the owner."
+            );
+          }
+
           await Swal.fire(
             "Rejected!",
             "The request has been rejected.",
@@ -958,6 +978,24 @@ export default {
         );
       }
     },
+
+    async sendRejectionNotification(ownerId, propertyTitle) {
+    
+      try {
+        const notificationMessage = `"${propertyTitle}" has been rejected! ❌`;
+        await this.$store.dispatch("notifications/addNotification", {
+          type: "property_rejected",
+          ownerId: ownerId,
+          message: notificationMessage,
+        });
+        console.log(`Rejection notification sent for owner ID: ${ownerId}: ${ownerId}`);
+      } catch (error) {
+        console.error("Error sending rejection notification:", error);
+      }
+    
+    },
+
+
   },
 };
 </script>

@@ -315,9 +315,17 @@ export default {
       }
     },
     notifClicked(notif) {
-      this.markAsRead(notif.id);
-      this.isNotificationsOpen = false; // Close on click for better UX
-    },
+    console.log("Notification clicked:", notif);
+    this.markAsRead(notif.id);
+    this.isNotificationsOpen = false;
+
+    if (notif.type === "property_accepted") {
+        console.log("Navigating to user profile");
+        this.$router.push("/userProfile");
+    } else {
+        console.log("Not navigating:", notif.type);
+    }
+},
     checkMobile: debounce(function () {
       this.isMobile = window.innerWidth < 768;
     }, 100),
