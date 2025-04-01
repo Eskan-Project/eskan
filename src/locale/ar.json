@@ -473,7 +473,7 @@
     "success": "تمت عملية الدفع بنجاح!",
     "thank_you": "شكراً لك على الدفع. استمتع بالوصول الحصري!",
     "confirm_payment": "تأكيد الدفع",
-    "fee_description": "سيتم فرض رسوم <span class=\"text-indigo-600 font-bold\">{fee}</span> لعرض بيانات التواصل للمالك.",
+    "fee_description": "سيتم فرض رسوم  لعرض بيانات التواصل للمالك.",
     "payment_method": "طريقة الدفع",
     "processing": "جاري المعالجة...",
     "pay_button": "ادفع {fee} الآن",

@@ -475,7 +475,7 @@
     "success": "Payment Successful!",
     "thank_you": "Thank you for your payment. Enjoy exclusive access!",
     "confirm_payment": "Confirm Payment",
-    "fee_description": "A <span class=\"text-indigo-600 font-bold\">{fee}</span> fee will be charged to view the owner's contact details.",
+    "fee_description": "A fee will be charged to view the owner's contact details.",
     "payment_method": "Payment Method",
     "processing": "Processing...",
     "pay_button": "Pay {fee} Now",
