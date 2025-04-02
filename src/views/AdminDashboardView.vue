@@ -1,6 +1,5 @@
 <template>
   <main class="min-h-screen bg-gray-100 flex relative">
-    <!-- Mobile Header Bar -->
     <div
       class="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#364365] shadow-lg z-40 flex items-center justify-between px-4"
     >
@@ -15,11 +14,12 @@
       </router-link>
     </div>
 
-    <!-- Sidebar/Navigation -->
     <aside
       :class="`${
         isOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0 transition-transform duration-300 fixed md:relative z-50 md:w-64 w-64 bg-[#364365] min-h-screen p-4 flex flex-col shadow-lg ${
+      } md:translate-x-0 transition-transform duration-300 fixed md:relative z-50 ${
+        windowWidth >= 775 && windowWidth <= 1060 ? 'w-fit' : 'w-64'
+      } bg-[#364365] min-h-screen p-4 flex flex-col shadow-lg ${
         isOpen ? 'mt-16' : ''
       } md:mt-0`"
     >
@@ -41,15 +41,13 @@
       </router-link>
     </aside>
 
-    <!-- Overlay for mobile -->
     <div
       v-if="isOpen"
       class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden mt-16"
       @click="closeSidebar"
     ></div>
 
-    <!-- Main Content -->
-    <section class="flex-1 p-4 md:p-2 w-full overflow-x-hidden md:mt-0 mt-15">
+    <section class="flex-1 p-4 md:p-2 w-full overflow-x-hidden md:mt-0 mt-16">
       <router-view></router-view>
     </section>
   </main>
@@ -61,6 +59,7 @@ export default {
   data() {
     return {
       isOpen: false,
+      windowWidth: window.innerWidth,
       links: [
         {
           path: "/admin/profile",
@@ -104,8 +103,12 @@ export default {
         this.closeSidebar();
       }
     },
+    updateWindowWidth() {
+      this.windowWidth = window.innerWidth;
+    },
   },
   mounted() {
+    this.updateWindowWidth();
     // Close sidebar when route changes
     this.$router.afterEach(() => {
       this.closeSidebarOnMobile();
@@ -113,13 +116,14 @@ export default {
 
     // Close sidebar when window resizes to desktop view
     window.addEventListener("resize", () => {
+      this.updateWindowWidth();
       if (window.innerWidth >= 768) {
         this.closeSidebar();
       }
     });
   },
   beforeDestroy() {
-    window.removeEventListener("resize", this.closeSidebar);
+    window.removeEventListener("resize", this.updateWindowWidth);
   },
 };
 </script>

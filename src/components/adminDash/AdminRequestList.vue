@@ -1,144 +1,96 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-2 sm:p-4 md:p-8">
-    <div class="w-full">
-      <!-- Main Content -->
-      <div class="w-full">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <!-- Search and Add Section -->
-          <div class="bg-white dark:bg-gray-900 p-3 sm:p-4">
-            <div
-              class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-            >
-              <div class="w-full sm:w-auto relative">
-                <input
-                  type="text"
-                  v-model="searchQuery"
-                  class="block w-full pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Search for properties"
-                  @input="resetPagination"
-                />
-              </div>
-              <router-link to="/admin/add-property" class="w-full sm:w-auto">
-                <button
-                  type="button"
-                  class="w-full sm:w-auto text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-                >
-                  Add Property
-                </button>
-              </router-link>
-            </div>
+  <main class="min-h-screen bg-gray-100 flex-1 p-6 md:p-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div class="w-full sm:w-auto relative">
+            <input
+              type="text"
+              v-model="searchQuery"
+              class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
+              placeholder="Search for properties"
+              @input="resetPagination"
+            />
           </div>
-
-          <!-- Table Section -->
-          <div class="overflow-x-auto">
-            <table
-              class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          <router-link to="/admin/add-property" class="w-full sm:w-auto">
+            <button
+              type="button"
+              class="px-5 py-2.5 text-sm font-medium text-white bg-[#364365] hover:bg-[#4a5b8a] rounded-lg transition duration-200 ease-in-out"
             >
-              <thead
-                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              Add Property
+            </button>
+          </router-link>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-600">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+              <tr>
+                <th scope="col" class="px-6 py-3 w-1/4">Property Title</th>
+                <th scope="col" class="px-6 py-3 w-1/4 hidden sm:table-cell">Status</th>
+                <th scope="col" class="px-6 py-3 w-1/4 hidden sm:table-cell">Price (EGP)</th>
+                <th scope="col" class="px-6 py-3 w-1/4 ">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="request in paginatedRequests"
+                :key="request.uid"
+                class="border-b hover:bg-gray-50 transition duration-200 ease-in-out"
               >
-                <tr>
-                  <th scope="col" class="px-3 sm:px-6 py-3">Title</th>
-                  <th
-                    scope="col"
-                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
-                  >
-                    Status
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-3 sm:px-6 py-3 hidden sm:table-cell"
-                  >
-                    Price
-                  </th>
-                  <th scope="col" class="px-3 sm:px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="request in paginatedRequests"
-                  :key="request.uid"
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <th class="flex items-center px-3 sm:px-6 py-4">
-                    <img
-                      class="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
-                      :src="
-                        request.images?.length
-                          ? request.images[0]
-                          : noPhotoImage
-                      "
-                      alt="Default image"
-                    />
-                    <div class="ps-3">
-                      <div
-                        class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white"
-                      >
-                        {{ request.title }}
-                      </div>
-                      <div class="font-normal text-gray-500">
-                        {{ request.propertyContact.name }}
-                      </div>
-                      <div class="text-xs text-gray-500 sm:hidden">
-                        Status: {{ request.status }} | Price:
-                        {{ request.price }} EGP
-                      </div>
+                <th class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  <img
+                    class="w-10 h-10 rounded-full mr-3 border border-[#364365]"
+                    :src="request.images?.length ? request.images[0] : noPhotoImage"
+                    alt="Property image"
+                  />
+                  <div>
+                    <div class="text-base font-semibold">{{ request.title }}</div>
+                    <div class="font-normal text-gray-500">{{ request.propertyContact.name }}</div>
+                    <div class="text-xs text-gray-500 sm:hidden">
+                      Status: {{ request.status }} | Price: {{ request.price }} EGP
                     </div>
-                  </th>
-                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
-                    {{ request.status }}
-                  </td>
-                  <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
-                    {{ request.price }} EGP
-                  </td>
-                  <td class="px-3 sm:px-6 py-4">
-                    <router-link
-                      :to="`/admin/requests/${request.uid}`"
-                      class="w-full sm:w-auto"
-                    >
-                      <button
-                        class="w-full text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-3 sm:px-5 py-2"
-                      >
-                        View Details
-                      </button>
-                    </router-link>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                  </div>
+                </th>
+                <td class="px-6 py-4 hidden sm:table-cell">{{ request.status }}</td>
+                <td class="px-6 py-4 hidden sm:table-cell">{{ request.price }} EGP</td>
+                <td class="px-6 py-4 text-center">
+                  <router-link :to="`/admin/requests/${request.uid}`" >
+                    <button class="text-[#364365]  rounded hover:bg-[#364365] hover:text-white transition duration-200 ease-in-out flex items-center">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  View Details
+</button>
+                  </router-link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          <!-- No data message -->
-          <div
-            v-if="paginatedRequests.length === 0"
-            class="p-4 text-center text-gray-500"
-          >
-            No requests found.
-          </div>
+        <div v-if="paginatedRequests.length === 0" class="p-4 text-center text-gray-500">
+          No requests found.
+        </div>
 
-          <!-- Pagination controls -->
-          <div
-            v-if="filteredRequests.length > 0"
-            class="flex justify-center items-center gap-2 p-4"
+        <div v-if="filteredRequests.length > 0" class="flex justify-center items-center gap-2 mt-6">
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
           >
-            <button
-              @click="prevPage"
-              :disabled="currentPage === 1"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span class="px-4 py-2 text-sm font-medium text-gray-700">
-              Page {{ currentPage }} of {{ totalPages }}
-            </span>
-            <button
-              @click="nextPage"
-              :disabled="currentPage === totalPages || totalPages === 0"
-              class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+            Previous
+          </button>
+          <span class="px-4 py-2 text-sm font-medium text-gray-700">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            class="px-4 py-2 text-sm font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
@@ -149,6 +101,8 @@
 import noPhotoImage from "../../assets/images/no-photo.jpg";
 import { mapActions, mapState } from "vuex"; // Add mapState
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 export default {
   data() {
