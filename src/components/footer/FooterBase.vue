@@ -4,11 +4,7 @@
       <div class="flex flex-col md:flex-row w-full items-center">
         <!-- Logo -->
         <div class="w-full md:w-1/2 flex flex-col items-center mb-6 md:mb-0">
-          <img
-            src="../../assets/images/logo.png"
-            alt="Eskan Logo"
-            class="w-[150px] mb-2"
-          />
+          <img :src="logoSrc" alt="Eskan Logo" class="w-[150px] mb-2" />
           <p class="mb-2 text-sm text-center">
             {{ $t("footer.tagline") }}
           </p>
@@ -41,6 +37,8 @@
 </template>
 
 <script>
+import arLogo from "@/assets/images/logo_ar.png";
+import enLogo from "@/assets/images/logo.png";
 export default {
   data() {
     return {
@@ -52,6 +50,12 @@ export default {
         { name: "Behance", icon: "behance", link: "#" },
       ],
     };
+  },
+  computed: {
+    logoSrc() {
+      const logoPath = this.$t("nav.logo");
+      return logoPath.includes("logo_ar") ? arLogo : enLogo;
+    },
   },
 };
 </script>

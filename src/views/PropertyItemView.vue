@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="property"
+    v-if="property && !loadingCount"
     class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-15 sm:mt-5"
   >
     <!-- Back Button -->
@@ -413,7 +413,10 @@
       </div>
     </transition>
   </div>
-  <div v-else class="min-h-screen flex items-center justify-center p-4">
+  <div
+    v-if="!property && loadingCount === 0"
+    class="min-h-screen flex items-center justify-center p-4"
+  >
     <div
       class="text-center p-6 sm:p-8 bg-white rounded-lg shadow-lg max-w-md mx-auto"
     >
@@ -467,8 +470,9 @@ export default {
     };
   },
   computed: {
-    ...mapState("property", ["property", "loading"]),
+    ...mapState("property", ["property"]),
     ...mapState("auth", ["userDetails", "isAuth"]),
+    ...mapState(["loadingCount"]),
     currentImage() {
       return (
         this.property?.images?.[this.currentImageIndex] ||
@@ -767,7 +771,6 @@ export default {
       ) {
         ({ latitude: lat, longitude: lng } = this.property.coordinates);
       } else {
-        // Step 2: Fallback to geocoding
         try {
           const coords = await this.geocodeLocation(this.locationText);
           if (coords && coords.lat && coords.lon) {

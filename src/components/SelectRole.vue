@@ -1,47 +1,62 @@
 <template>
-  <div v-if="role !== 'user'" class="md:p-10 flex justify-center align-middle">
-    <div class="bg-white rounded-xl w-screen text-black lg:w-[70vw] shadow-lg">
-      <img src="@/assets/images/logo-black.png" class="block mx-auto" />
+  <auth-header />
+  <div
+    v-if="role !== 'user'"
+    class="px-3 sm:px-5 md:px-10 flex justify-center items-center min-h-screen py-8"
+  >
+    <div
+      class="bg-white rounded-xl w-full text-black sm:w-[95vw] md:w-[90vw] lg:w-[70vw] shadow-lg"
+    >
       <div v-if="role === ''">
-        <p class="md:text-3xl text-lg text-stone-500 text-center">
+        <p
+          class="text-xl sm:text-2xl md:text-3xl text-stone-500 text-center mt-6 md:mt-10 leading-relaxed px-4"
+        >
           {{ $t("auth.select_role.welcome") }} <br />
           {{ $t("auth.select_role.subtitle") }}
         </p>
-        <div class="grid md:grid-cols-2 grid-cols-1 gap-10 md:p-20 p-5">
+        <div
+          class="grid sm:grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 md:gap-10 p-4 sm:p-5 md:p-10 lg:p-20"
+        >
           <button
-            class="cursor-pointer p-5 md:text-left rounded-xl text-center shadow-sm shadow-black hover:shadow-gray-400 hover:transition-all duration-300 hover:scale-105"
+            class="cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl text-center shadow-sm shadow-black hover:shadow-gray-400 hover:transition-all duration-300 hover:scale-105"
             @click="setRole('user')"
           >
-            <div class="grid md:grid-cols-2 grid-cols-1 p-5 gap-5">
-              <p class="text-2xl font-medium">
-                {{ $t("auth.select_role.register_as") }} <br />
+            <div
+              class="grid sm:grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 p-3 sm:p-4 md:p-5 items-center"
+            >
+              <p
+                class="text-xl sm:text-2xl font-medium md:text-left text-center"
+              >
                 {{ $t("auth.select_role.user") }}
               </p>
               <img
                 src="@/assets/images/login/registerMain-1.jpg"
-                class="shrink block mx-auto"
+                class="shrink md:block mx-auto w-full max-w-[150px] md:max-w-full hidden sm:block"
               />
             </div>
-            <p>
+            <p class="text-sm sm:text-base">
               {{ $t("auth.select_role.user_description") }}
             </p>
           </button>
 
           <button
-            class="cursor-pointer p-5 md:text-left rounded-xl text-center shadow-sm shadow-black hover:shadow-gray-400 hover:transition-all duration-300 hover:scale-105"
+            class="cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl text-center shadow-sm shadow-black hover:shadow-gray-400 hover:transition-all duration-300 hover:scale-105"
             @click="setRole('owner')"
           >
-            <div class="grid md:grid-cols-2 grid-cols-1 p-5 gap-5">
-              <p class="text-2xl font-medium">
-                {{ $t("auth.select_role.register_as") }} <br />
+            <div
+              class="grid sm:grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 p-3 sm:p-4 md:p-5 items-center"
+            >
+              <p
+                class="text-xl sm:text-2xl font-medium md:text-left text-center"
+              >
                 {{ $t("auth.select_role.owner") }}
               </p>
               <img
                 src="@/assets/images/login/registerMain-2.jpg"
-                class="shrink block mx-auto"
+                class="shrink md:block mx-auto w-full max-w-[150px] md:max-w-full hidden sm:block"
               />
             </div>
-            <p>
+            <p class="text-sm sm:text-base">
               {{ $t("auth.select_role.owner_description") }}
             </p>
           </button>
@@ -49,10 +64,10 @@
       </div>
       <UploadID v-if="role === 'owner'" @idUploaded="handleIdUpload" />
 
-      <div class="py-10 text-center">
+      <div class="py-6 md:py-10 text-center">
         <button
           v-if="role"
-          class="border shadow-xl bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm py-2 px-4 rounded-lg mt-6"
+          class="border shadow-xl bg-[#364365] hover:bg-white hover:text-[#364365] hover:border-[#364365] text-white text-sm sm:text-base py-2 px-4 sm:px-6 rounded-lg mt-4 sm:mt-6"
           @click="registerUser"
           :disabled="(role === 'owner' && !file) || loading"
           :class="{
@@ -79,8 +94,9 @@ import uploadToCloudinary from "../services/uploadToCloudinary";
 import { mapActions } from "vuex";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import AuthHeader from "./AuthHeader.vue";
 export default {
-  components: { UploadID },
+  components: { UploadID, AuthHeader },
   data() {
     return {
       uid: this.$route.query.uid,
@@ -154,5 +170,12 @@ export default {
 }
 .btn-primary:hover {
   background-color: #2a2f4a;
+}
+
+@media (max-width: 640px) {
+  .btn-primary {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 }
 </style>

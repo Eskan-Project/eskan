@@ -244,7 +244,9 @@ const isVerificationExpired = () => {
 
 // Combined navigation guard
 router.beforeEach(async (to, from, next) => {
-  store.dispatch("startLoading");
+  if (to.path !== "/properties" && to.path !== "/property/:id") {
+    store.dispatch("startLoading");
+  }
 
   // Check if user is verified and verification hasn't expired
   const isVerified =

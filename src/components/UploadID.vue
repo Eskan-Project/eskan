@@ -1,6 +1,9 @@
 <template>
   <div class="text-center text-black">
-    <p class="font-medium p-2" :class="{ 'text-green-500': idImage }">
+    <p
+      class="font-semibold text-xl md:text-2xl p-2 my-5"
+      :class="{ 'text-green-500': idImage }"
+    >
       {{ idImage ? "ID uploaded successfully" : "Please upload your ID" }}
     </p>
     <div
@@ -18,6 +21,7 @@
             >Browse</span
           >
         </p>
+        <p class="p-5 text-sm text-stone-400">Supports JPEG, PNG, JPG</p>
       </label>
       <input
         type="file"
@@ -26,7 +30,6 @@
         @change="handleFileChange"
         accept="image/png, image/jpeg, image/jpg"
       />
-      <p class="p-5 text-sm text-stone-400">Supports JPEG, PNG, JPG</p>
     </div>
 
     <div v-if="idImage">

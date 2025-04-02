@@ -14,6 +14,7 @@ import base64ToFile from "@/services/base64ToFileService";
 
 export default {
   async getProperties({ commit, dispatch, rootState }) {
+    commit("startLoading", null, { root: true });
     try {
       await dispatch("checkPropertyExpiration");
       const propertiesSnapshot = await getDocs(collection(db, "properties"));
@@ -42,6 +43,8 @@ export default {
       console.error("Error fetching properties:", error);
       commit("setProperties", []);
       throw error; // Changed from return [] to throw error
+    } finally {
+      commit("stopLoading", null, { root: true });
     }
   },
 
