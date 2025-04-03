@@ -34,6 +34,7 @@ import Payment from "@/components/Payment.vue";
 import AdminRequestDetailsVue from "@/components/adminDash/AdminRequestDetails.vue";
 import FaqView from "@/views/FaqView.vue";
 import TurnstileVerificationView from "@/views/TurnstileVerificationView.vue";
+import Overview from "@/components/adminDash/dashboard/Overview.vue";
 
 const routes = [
   {
@@ -204,6 +205,11 @@ const routes = [
         path: "requests",
         name: "propertyRequests",
         component: AdminRequestList,
+      },
+      {
+        path: "overview",
+        name: "dashboardOverview",
+        component: Overview,
       },
       {
         path: "requests/:id",

@@ -88,6 +88,11 @@ export default {
           icon: "bi bi-person-fill-add",
         },
         { path: "/admin/requests", label: "Requests", icon: "bi bi-cart" },
+        {
+          path: "/admin/overview",
+          label: "overview",
+          icon: "bi bi-person-fill-add",
+        },
       ],
     };
   },
