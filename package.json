@@ -19,6 +19,7 @@
     "aos": "^2.3.4",
     "axios": "^1.8.1",
     "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.4.8",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "countries-and-timezones": "^3.7.2",
@@ -38,7 +39,6 @@
     "stripe": "^17.7.0",
     "sweetalert2": "^11.17.2",
     "swiper": "^11.2.5",
-    "tailwindcss": "^4.0.9",
     "tesseract.js": "^6.0.0",
     "vue": "^3.5.13",
     "vue-advanced-cropper": "^2.8.9",
@@ -52,6 +52,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.1",
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.7.2"
   }

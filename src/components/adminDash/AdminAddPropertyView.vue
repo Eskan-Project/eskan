@@ -107,7 +107,7 @@
             <!-- Image Upload Section -->
             <div class="rounded-lg p-4 w-full mx-auto bg-gray-50">
               <h2
-                class="text-lg sm:text-xl font-semibold mb-4 text-center sm:text-left text-gray-900"
+                class="text-lg sm:text-xl font-semibold mb-4 text-center  text-gray-500"
               >
                 Property Images
               </h2>

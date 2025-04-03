@@ -1,8 +1,8 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-6 md:p-8">
+  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
-      <div class="bg-white shadow-md rounded-lg p-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div class="bg-white shadow-md rounded-lg p-4 md:p-6">
+        <div class="flex flex-row justify-between items-center gap-4 mb-6">
           <div class="w-full sm:w-auto relative">
             <input
               type="text"
@@ -15,7 +15,7 @@
           <router-link to="/admin/add-property" class="w-full sm:w-auto">
             <button
               type="button"
-              class="px-5 py-2.5 text-sm font-medium text-white bg-[#364365] hover:bg-[#4a5b8a] rounded-lg transition duration-200 ease-in-out"
+              class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-white bg-[#364365] hover:bg-[#4a5b8a] rounded-lg transition duration-200 ease-in-out"
             >
               Add Property
             </button>
@@ -26,10 +26,10 @@
           <table class="w-full text-sm text-left text-gray-600">
             <thead class="text-xs text-gray-700 uppercase bg-gray-200">
               <tr>
-                <th scope="col" class="px-6 py-3 w-1/4">Property Title</th>
-                <th scope="col" class="px-6 py-3 w-1/4 hidden sm:table-cell">Status</th>
-                <th scope="col" class="px-6 py-3 w-1/4 hidden sm:table-cell">Price (EGP)</th>
-                <th scope="col" class="px-6 py-3 w-1/4 ">Actions</th>
+                <th scope="col" class="px-4 py-3 w-1/3">Property Title</th>
+                <th scope="col" class="px-4 py-3 w-1/4 hidden md:table-cell">Status</th>
+                <th scope="col" class="px-4 py-3 w-1/4 hidden md:table-cell">Price (EGP)</th>
+                <th scope="col" class="px-4 py-3 w-1/4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -38,7 +38,7 @@
                 :key="request.uid"
                 class="border-b hover:bg-gray-50 transition duration-200 ease-in-out"
               >
-                <th class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <td class="flex items-center px-4 py-4 font-medium text-gray-900 whitespace-nowrap">
                   <img
                     class="w-10 h-10 rounded-full mr-3 border border-[#364365]"
                     :src="request.images?.length ? request.images[0] : noPhotoImage"
@@ -47,21 +47,19 @@
                   <div>
                     <div class="text-base font-semibold">{{ request.title }}</div>
                     <div class="font-normal text-gray-500">{{ request.propertyContact.name }}</div>
-                    <div class="text-xs text-gray-500 sm:hidden">
+                    <div class="text-xs text-gray-500 md:hidden">
                       Status: {{ request.status }} | Price: {{ request.price }} EGP
                     </div>
                   </div>
-                </th>
-                <td class="px-6 py-4 hidden sm:table-cell">{{ request.status }}</td>
-                <td class="px-6 py-4 hidden sm:table-cell">{{ request.price }} EGP</td>
-                <td class="px-6 py-4 text-center">
-                  <router-link :to="`/admin/requests/${request.uid}`" >
-                    <button class="text-[#364365]  rounded hover:bg-[#364365] hover:text-white transition duration-200 ease-in-out flex items-center">
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-  View Details
-</button>
+                </td>
+                <td class="px-4 py-4 hidden md:table-cell">{{ request.status }}</td>
+                <td class="px-4 py-4 hidden md:table-cell">{{ request.price }} EGP</td>
+                <td class="px-4 py-4 text-center">
+                  <router-link :to="`/admin/requests/${request.uid}`">
+                    <button class="flex items-center justify-center w-full md:w-auto px-3 py-2 text-[#364365]  hover:bg-[#364365] hover:text-white transition duration-200 ease-in-out">
+                     
+                      View Details
+                    </button>
                   </router-link>
                 </td>
               </tr>
@@ -73,7 +71,7 @@
           No requests found.
         </div>
 
-        <div v-if="filteredRequests.length > 0" class="flex justify-center items-center gap-2 mt-6">
+        <div v-if="filteredRequests.length > 0" class="flex  justify-center items-center gap-2 mt-6">
           <button
             @click="prevPage"
             :disabled="currentPage === 1"

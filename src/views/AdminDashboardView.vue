@@ -99,9 +99,9 @@ export default {
         },
         { path: "/admin/requests", label: "Requests", icon: "bi bi-cart" },
         {
-          label: "Logout",
-          icon: "bi bi-box-arrow-in-right",
-          path: "/login",
+          path: "/admin/overview",
+          label: "overview",
+          icon: "bi bi-person-fill-add",
         },
       ],
     };
