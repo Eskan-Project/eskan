@@ -34,8 +34,17 @@
 
         <!-- Content when data is loaded -->
 
-        <div v-else class="container mx-auto py-10 px-5 mt-15">
-          <div class="flex sm:flex-row justify-between items-start gap-4">
+        <div v-else class="container mx-auto py-5 px-5">
+          <div class="mb-5 sm:mt-0">
+            <router-link
+              to="/properties"
+              class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+            >
+              <i class="bi bi-arrow-left"></i>
+              <span>Back to Properties</span>
+            </router-link>
+          </div>
+          <div class="flex sm:flex-row justify-between items-start gap-4 mb-4">
             <div class="space-y-2">
               <h1 class="text-3xl font-bold text-gray-900 capitalize">
                 {{ property.title || "Untitled Property" }}
@@ -46,7 +55,7 @@
               </p>
             </div>
             <p class="text-2xl font-semibold text-blue-700 whitespace-nowrap">
-              Property Price :{{ property.price }} EGP
+              Price: {{ property.price }} EGP
             </p>
           </div>
           <div v-if="property" class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -140,7 +149,10 @@
                       property.propertyContact.email
                     }}</span>
                   </p>
-                  <p class="flex flex-col items-center space-y-1">
+                  <p
+                    v-if="property.address"
+                    class="flex flex-col items-center space-y-1"
+                  >
                     <span class="font-semibold">Address:</span>
                     <span class="text-sm capitalize">{{
                       property.address
@@ -200,7 +212,19 @@
               <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Location Information
               </h2>
-              <div id="map" class="w-full h-64 rounded-lg"></div>
+              <div
+                v-if="mapError"
+                class="w-full h-64 rounded-lg flex items-center justify-center bg-gray-100"
+              >
+                <div class="text-center p-4">
+                  <i class="bi bi-map text-gray-400 text-4xl mb-2"></i>
+                  <p class="text-gray-600">{{ mapError }}</p>
+                  <p class="text-gray-500 text-sm mt-2">
+                    {{ locationText || "No location information available" }}
+                  </p>
+                </div>
+              </div>
+              <div v-else id="map" class="w-full h-96 rounded-lg"></div>
               <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
                 Loading map...
               </p>
@@ -255,18 +279,26 @@ export default {
       mapLoaded: false, // Add this
       mapLoading: false, // Add this property
       mapInstance: null, // Add this to store map instance
+      mapError: null,
     };
   },
   computed: {
     ...mapState("property", ["property"]), // Add this computed property
     locationText() {
-      const governorateName = governorates.find(
-        (g) => g.id == this.property.governorate
-      )?.governorate_name_en;
-      const cityName = cities.find(
-        (c) => c.id == this.property.city
-      )?.city_name_en;
-      return `${governorateName}-${cityName}-${this.property?.neighborhood}`;
+      if (!this.property) return "";
+
+      const governorateName =
+        governorates.find((g) => g.id == this.property.governorate)
+          ?.governorate_name_en || "";
+
+      const cityName =
+        cities.find((c) => c.id == this.property.city)?.city_name_en || "";
+
+      const neighborhood = this.property?.neighborhood || "";
+
+      return `${governorateName}-${cityName}${
+        neighborhood ? `-${neighborhood}` : ""
+      }`;
     },
   },
   mounted() {
@@ -283,11 +315,11 @@ export default {
     this.loadData();
   },
   created() {
-    this.initMapWithFallback();
+    // Remove the initMapWithFallback call from here
   },
-  // mounted() {
-  //   this.initMap();
-  // },
+  mounted() {
+    // Remove initMap call since we're using initMapWithFallback
+  },
 
   // Use watch to handle route changes
   watch: {
@@ -299,6 +331,18 @@ export default {
         }
       },
       immediate: true,
+    },
+    // Property watcher to initialize map when property data changes
+    property: {
+      handler(newProperty) {
+        if (newProperty && !this.loading) {
+          console.log("Property data changed:", newProperty);
+          this.$nextTick(() => {
+            this.initMapWithFallback();
+          });
+        }
+      },
+      deep: true,
     },
   },
 
@@ -342,46 +386,114 @@ export default {
       }
     },
     async initMapWithFallback() {
+      console.log("initMapWithFallback called, property:", this.property);
+
+      if (!this.property) {
+        console.warn("No property data available");
+        return;
+      }
+
+      console.log("Property coordinates:", this.property.coordinates);
+
+      // Ensure the map element exists before trying to initialize
+      const mapElement = document.getElementById("map");
+      if (!mapElement) {
+        console.error("Map container not found");
+        return;
+      }
+
       // Remove existing map instance if it exists
       if (this.mapInstance) {
+        console.log("Removing existing map instance");
         this.mapInstance.remove();
         this.mapInstance = null;
       }
 
       this.mapLoading = true;
       let lat, lng;
-      if (this.property.coordinates) {
-        ({ latitude: lat, longitude: lng } = this.property.coordinates);
-        console.log(lat, lng);
-      } else {
-        try {
+      try {
+        // Check the format of coordinates - they might be in a different format
+        if (this.property.coordinates) {
+          console.log(
+            "Raw coordinates data:",
+            JSON.stringify(this.property.coordinates)
+          );
+
+          // Try different possible coordinate formats
+          if (typeof this.property.coordinates === "object") {
+            // Format 1: {latitude, longitude}
+            if (
+              "latitude" in this.property.coordinates &&
+              "longitude" in this.property.coordinates
+            ) {
+              lat = this.property.coordinates.latitude;
+              lng = this.property.coordinates.longitude;
+              console.log("Using latitude/longitude format:", lat, lng);
+            }
+            // Format 2: {lat, lng}
+            else if (
+              "lat" in this.property.coordinates &&
+              "lng" in this.property.coordinates
+            ) {
+              lat = this.property.coordinates.lat;
+              lng = this.property.coordinates.lng;
+              console.log("Using lat/lng format:", lat, lng);
+            }
+          }
+
+          // If coordinates are invalid or in an unknown format, try to geocode from location text
+          if (!lat || !lng) {
+            console.log("Coordinates not in expected format, trying geocoding");
+            const coords = await this.geocodeLocation(this.locationText);
+            if (coords) {
+              lat = coords.lat;
+              lng = coords.lon;
+              console.log("Using geocoded coordinates:", lat, lng);
+            } else {
+              throw new Error("Geocoding failed");
+            }
+          }
+        } else {
+          console.log("No coordinates in property data, trying geocoding");
           const coords = await this.geocodeLocation(this.locationText);
           if (coords) {
             lat = coords.lat;
             lng = coords.lon;
+            console.log("Using geocoded coordinates:", lat, lng);
           } else {
             throw new Error("Geocoding failed");
           }
-        } catch (error) {
-          console.error("Geocoding error:", error);
-          return;
         }
-      }
 
-      try {
+        // Final validation before creating map
+        if (!lat || !lng) {
+          console.error("Could not determine coordinates for map");
+          throw new Error("Could not determine coordinates for map");
+        }
+
+        console.log("Initializing map with coordinates:", lat, lng);
         this.mapInstance = L.map("map", { scrollWheelZoom: false }).setView(
           [lat, lng],
-          this.property.coordinates ? 13 : 10
+          13
         );
+
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap contributors",
         }).addTo(this.mapInstance);
+
         L.marker([lat, lng], { icon: this.getCustomIcon("red") })
           .addTo(this.mapInstance)
-          .bindPopup(`<b>${this.property.title}</b><br>${this.locationText}`)
+          .bindPopup(
+            `<b>${this.property.title || "Property"}</b><br>${
+              this.locationText || "Location"
+            }`
+          )
           .openPopup();
+
+        console.log("Map initialization complete");
       } catch (error) {
         console.error("Map initialization error:", error);
+        this.mapError = "Failed to initialize map. Please try again later.";
       } finally {
         this.mapLoading = false;
       }
@@ -402,6 +514,8 @@ export default {
     // Optimized data fetching
     async loadData() {
       this.loading = true;
+      this.mapError = null; // Reset map error on new data load
+
       try {
         this.error = null;
         await this.getProperty(this.id);
@@ -409,6 +523,13 @@ export default {
         if (!this.property) {
           throw new Error("Property not found");
         }
+
+        // Initialize map after property data is loaded and DOM is updated
+        setTimeout(() => {
+          if (!this.loading) {
+            this.initMapWithFallback();
+          }
+        }, 500); // Short delay to ensure DOM is ready
       } catch (error) {
         this.error = "Failed to load property. Please try again later.";
         console.error("Fetch property error:", error);
@@ -428,72 +549,57 @@ export default {
         this.property.images.length;
     },
     // Map related methods
-    initMap() {
-      const [latitude, longitude] = this.property.coordinates;
-      console.log(latitude, longitude);
-      const map = L.map("map", { scrollWheelZoom: false }).setView(
-        [latitude, longitude],
-        13
-      );
-      console.log(map);
+    async initMap() {
+      // Don't initialize map if we're in loading state or don't have coordinates
+      if (this.loading || !this.property.coordinates) {
+        return;
+      }
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(map);
+      try {
+        this.mapLoading = true;
 
-      L.marker([latitude, longitude], { icon: this.getCustomIcon("red") })
-        .addTo(map)
-        .bindPopup(
-          `<b>${this.property.title}</b><br>${this.property.data.location}`
-        )
-        .openPopup();
+        // Wait for the DOM to be ready
+        await this.$nextTick();
 
-      this.getUserLocation(map, latitude, longitude);
-      this.mapLoaded = true; // Add this line
+        // Make sure the map container exists
+        const mapContainer = document.getElementById("map");
+        if (!mapContainer) {
+          console.error("Map container not found");
+          return;
+        }
+
+        // Remove existing map instance if it exists
+        if (this.mapInstance) {
+          this.mapInstance.remove();
+          this.mapInstance = null;
+        }
+
+        const { lat, lng } = this.property.coordinates;
+
+        // Create new map instance
+        this.mapInstance = L.map("map", {
+          scrollWheelZoom: false,
+          zIndex: 1, // Set lower z-index
+        }).setView([lat, lng], 13);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(this.mapInstance);
+
+        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
+          .addTo(this.mapInstance)
+          .bindPopup(`<b>${this.property.title}</b><br>${this.locationText}`)
+          .openPopup();
+
+        this.mapLoaded = true;
+      } catch (error) {
+        console.error("Map initialization error:", error);
+      } finally {
+        this.mapLoading = false;
+      }
     },
-    getUserLocation(map, targetLat, targetLng) {
-      if (!navigator.geolocation) return;
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude: lat, longitude: lng } = position.coords;
-          this.userLocation = { lat, lng };
-
-          L.marker([lat, lng], { icon: this.getCustomIcon("blue") })
-            .addTo(map)
-            .bindPopup("You are here");
-
-          this.calculateDistance(targetLat, targetLng, lat, lng);
-        },
-        () => console.error("Could not retrieve location")
-      );
-    },
-    // Utility methods
-    calculateDistance(lat1, lng1, lat2, lng2) {
-      const R = 6371;
-      const dLat = this.degToRad(lat2 - lat1);
-      const dLng = this.degToRad(lng2 - lng1);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(this.degToRad(lat1)) *
-          Math.cos(this.degToRad(lat2)) *
-          Math.sin(dLng / 2) *
-          Math.sin(dLng / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      this.distance = R * c;
-      this.duration = (this.distance / 50) * 60;
-    },
-    formatDuration(minutes) {
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-      const remainingHours = hours % 24;
-      return days > 0
-        ? `${days} days, ${remainingHours} hours`
-        : `${hours} hours`;
-    },
-    degToRad(deg) {
-      return deg * (Math.PI / 180);
-    },
+    // Method to get Custom Icon
     getCustomIcon(color) {
       return L.icon({
         iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,

@@ -55,7 +55,7 @@
             <!-- Image Upload Section -->
             <div class="rounded-lg p-4 w-full mx-auto bg-gray-50">
               <h2
-                class="text-lg sm:text-xl font-semibold mb-4 text-center sm:text-left"
+                class="text-lg sm:text-xl font-semibold mb-4 text-center sm:text-left text-gray-900"
               >
                 Property Images
               </h2>
@@ -70,7 +70,7 @@
                 <label
                   class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
                 >
-                  Upload From Computer
+                  Upload
                   <input
                     type="file"
                     multiple

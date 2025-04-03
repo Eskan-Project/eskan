@@ -58,7 +58,7 @@
             <div
               class="text-xl bg-blue-50 p-3 rounded-lg border border-blue-100 shadow-sm flex items-center justify-center"
             >
-              <p class="text-blue-600 font-medium mr-2">Property Price:</p>
+              <p class="text-blue-600 font-medium mr-2">Price:</p>
               <p class="font-semibold text-blue-700">
                 {{ Number(request.price).toLocaleString() }}
                 <span class="text-lg">EGP</span>
@@ -165,7 +165,10 @@
                       request.propertyContact.email
                     }}</span>
                   </p>
-                  <p class="flex flex-col items-center space-y-1">
+                  <p
+                    v-if="request.address"
+                    class="flex flex-col items-center space-y-1"
+                  >
                     <span class="font-semibold">Address:</span>
                     <span class="text-sm capitalize">{{
                       request.address
