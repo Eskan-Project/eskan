@@ -79,6 +79,8 @@ export default {
         approvedAt: userRole === "admin" ? new Date() : "",
         approvedBy: userRole === "admin" ? userDetails.uid : "",
         isPaid: userRole === "admin" ? true : false,
+        expiresAt:
+          userRole === "admin" ? new Date(Date.now() + 5 * 60 * 1000) : "", // 5 minutes
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);
