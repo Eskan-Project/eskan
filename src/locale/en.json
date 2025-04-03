@@ -51,7 +51,8 @@
   "home": {
     "hero": {
       "title": "Your New Home Away from Home",
-      "description": "Find your perfect shared accommodation with ease. Whether you're moving for work, study, or adventure, Eskan connects you with safe, affordable, and verified housing options tailored to your needs."
+      "description": "Find your perfect shared accommodation with ease. Whether you're moving for work, study, or adventure, Eskan connects you with safe, affordable, and verified housing options tailored to your needs.",
+      "find_home": "Find New Home"
     },
     "features": {
       "section_title": "Find Everything You Need in One Place",
