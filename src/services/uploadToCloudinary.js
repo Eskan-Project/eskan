@@ -3,9 +3,11 @@ import axios from "axios";
 const uploadToCloudinary = async (file, uploadPreset, folderName) => {
   if (!file) throw new Error("No file selected for upload.");
 
-  const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
   if (!allowedTypes.includes(file.type)) {
-    throw new Error("Invalid file type. Only PNG, JPEG, and JPG are allowed.");
+    throw new Error(
+      "Invalid file type. Only PNG, JPEG, JPG, and WEBP are allowed."
+    );
   }
 
   if (file.size > 5 * 1024 * 1024) {

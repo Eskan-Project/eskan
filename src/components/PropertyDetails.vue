@@ -37,11 +37,16 @@
             >
             <span class="text-sm">{{ property.propertyContact.email }}</span>
           </p>
-          <p class="flex flex-col items-center space-y-1">
+          <p
+            v-if="property.propertyContact.address"
+            class="flex flex-col items-center space-y-1"
+          >
             <span class="font-semibold"
               >{{ $t("propertyDetails.address") }}:</span
             >
-            <span class="text-sm capitalize">{{ property.address }}</span>
+            <span class="text-sm capitalize">{{
+              property.propertyContact.address
+            }}</span>
           </p>
         </div>
       </div>

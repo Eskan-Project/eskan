@@ -446,6 +446,7 @@ import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
 import "vue3-toastify/dist/index.css";
 import { toast } from "vue3-toastify";
+import Swal from "sweetalert2";
 
 export default {
   name: "PropertyDetail",
@@ -471,8 +472,11 @@ export default {
   },
   computed: {
     ...mapState("property", ["property"]),
-    ...mapState("auth", ["userDetails", "isAuth"]),
+    ...mapState("auth", ["userDetails"]),
     ...mapState(["loadingCount"]),
+    isAdmin() {
+      return this.userDetails && this.userDetails.role === "admin";
+    },
     currentImage() {
       return (
         this.property?.images?.[this.currentImageIndex] ||
@@ -875,13 +879,29 @@ export default {
     },
     formattedPrice(price) {
       if (typeof price !== "number" && isNaN(Number(price))) {
-        return price; // Return as-is if price isn’t a valid number
+        return price; // Return as-is if price isn't a valid number
       }
       const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
       return new Intl.NumberFormat(locale, {
         minimumFractionDigits: 0, // No decimals unless needed
         maximumFractionDigits: 2, // Up to 2 decimals if present
       }).format(price);
+    },
+    viewContractImage() {
+      if (!this.property.propertyContact?.contract) return;
+
+      Swal.fire({
+        imageUrl: this.property.propertyContact.contract,
+        imageAlt: "Contract Document",
+        width: "auto",
+        padding: "1em",
+        showConfirmButton: false,
+        showCloseButton: true,
+        background: "#fff",
+        customClass: {
+          image: "max-h-screen max-w-full object-contain",
+        },
+      });
     },
   },
 };

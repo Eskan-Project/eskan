@@ -73,19 +73,48 @@ export default {
           )
         : [];
 
+      // Process contract image if exists
+      let contractImageUrl = "";
+      if (
+        state.propertyDetails.propertyContact?.contract &&
+        state.propertyDetails.propertyContact.contract.startsWith("data:image")
+      ) {
+        try {
+          const contractImage = base64ToFile(
+            state.propertyDetails.propertyContact.contract
+          );
+          contractImageUrl = await uploadToCloudinary(
+            contractImage,
+            import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
+            `requests/${propertyId}/contracts`
+          );
+        } catch (error) {
+          console.error("Error uploading contract image:", error);
+          // Continue even if contract upload fails
+        }
+      }
+
+      // Create a deep copy of the property details
+      const propertyDetailsClone = JSON.parse(
+        JSON.stringify(state.propertyDetails)
+      );
+
+      // Update contract with Cloudinary URL if successful
+      if (contractImageUrl) {
+        propertyDetailsClone.propertyContact.contract = contractImageUrl;
+      }
+
       const propertyData = {
-        ...state.propertyDetails,
+        ...propertyDetailsClone,
         images: imagesUrl,
         ownerId: userDetails.uid,
         createdAt: new Date(),
         status: userRole === "admin" ? "completed" : "pending",
-
         approvedAt: userRole === "admin" ? new Date() : "",
         approvedBy: userRole === "admin" ? userDetails.uid : "",
         isPaid: userRole === "admin" ? true : false,
         expiresAt:
           userRole === "admin" ? new Date(Date.now() + 5 * 60 * 1000) : "", // 5 minutes
-
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);
@@ -165,8 +194,33 @@ export default {
         );
       }
 
+      // Process contract image if exists and it's a data URL
+      let updatedDataClone = { ...updatedData };
+      if (
+        updatedData.propertyContact?.contract &&
+        updatedData.propertyContact.contract.startsWith("data:image")
+      ) {
+        try {
+          const contractImage = base64ToFile(
+            updatedData.propertyContact.contract
+          );
+          const contractImageUrl = await uploadToCloudinary(
+            contractImage,
+            import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
+            `properties/${propertyId}/contracts`
+          );
+
+          // Create a deep copy and update contract with Cloudinary URL
+          updatedDataClone = JSON.parse(JSON.stringify(updatedData));
+          updatedDataClone.propertyContact.contract = contractImageUrl;
+        } catch (error) {
+          console.error("Error uploading contract image:", error);
+          // Continue even if contract upload fails
+        }
+      }
+
       const cleanedData = Object.fromEntries(
-        Object.entries(updatedData)
+        Object.entries(updatedDataClone)
           .filter(([_, value]) => value !== undefined && value !== null)
           .map(([key, value]) => [
             key,

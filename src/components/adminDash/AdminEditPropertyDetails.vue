@@ -239,6 +239,58 @@
                 </div>
               </div>
 
+              <!-- Contract Document -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Contract Document Image</label
+                >
+                <div
+                  class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
+                  :class="{ 'border-green-500': contractImage }"
+                >
+                  <div
+                    v-if="!contractImage"
+                    class="flex flex-col items-center gap-3 py-4"
+                  >
+                    <i
+                      class="bi bi-file-earmark-text text-4xl text-gray-500"
+                    ></i>
+                    <p class="text-gray-500 text-sm text-center">
+                      Upload contract document image
+                    </p>
+                    <label class="cursor-pointer">
+                      <span
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                      >
+                        Upload Contract
+                      </span>
+                      <input
+                        type="file"
+                        class="hidden"
+                        @change="handleContractUpload"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                      />
+                    </label>
+                  </div>
+                  <div v-else class="relative w-full max-w-md py-4">
+                    <img
+                      :src="contractImage"
+                      class="max-h-48 mx-auto object-contain"
+                      alt="Contract"
+                    />
+                    <button
+                      @click="removeContractImage"
+                      class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded-full"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <p v-if="contractError" class="text-red-500 text-sm mt-1">
+                  {{ contractError }}
+                </p>
+              </div>
+
               <!-- Images -->
               <div class="mt-6">
                 <label class="block text-sm font-medium text-gray-700"
@@ -311,9 +363,11 @@ export default {
     return {
       loading: true,
       propertyId: this.$route.params.id,
+      contractImage: null,
+      contractError: null,
       propertyData: {
         title: "",
-        description: "", // Add this line
+        description: "",
         price: null,
         floor: null,
         area: null,
@@ -353,6 +407,12 @@ export default {
     try {
       await this.getProperty(this.propertyId);
       this.propertyData = { ...this.property };
+
+      // Set contract image if available
+      if (this.propertyData.propertyContact?.contract) {
+        this.contractImage = this.propertyData.propertyContact.contract;
+      }
+
       this.loading = false;
     } catch (error) {
       console.error("Error loading property:", error);
@@ -434,6 +494,45 @@ export default {
 
     removeImage(index) {
       this.propertyData.images.splice(index, 1);
+    },
+
+    handleContractUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      this.contractError = null;
+
+      // Validate file type
+      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        this.contractError =
+          "Please upload a valid image file (JPG, PNG, or WEBP)";
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.contractError = "Contract file size should not exceed 5MB";
+        return;
+      }
+
+      // Read and display the image
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.contractImage = e.target.result;
+        if (!this.propertyData.propertyContact) {
+          this.propertyData.propertyContact = {};
+        }
+        this.propertyData.propertyContact.contract = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    removeContractImage() {
+      this.contractImage = null;
+      if (this.propertyData.propertyContact) {
+        this.propertyData.propertyContact.contract = "";
+      }
     },
   },
 };

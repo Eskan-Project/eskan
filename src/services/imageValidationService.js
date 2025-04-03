@@ -30,8 +30,15 @@ export async function validateImage(
     });
 
     console.log(res.data);
+
+    // Check if predictions exist and has at least one element
+    if (!res.data.predictions || res.data.predictions.length === 0) {
+      console.warn("No predictions returned from Roboflow API.");
+      return false; // Or handle this case as needed
+    }
+
     const isValid = res.data.predictions[0].confidence > 0.8;
-    console.log(isValid);
+    console.log("Is valid:", isValid);
 
     return isValid;
   } catch (error) {

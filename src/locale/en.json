@@ -213,20 +213,23 @@
     "images": {
       "title": "Property Images",
       "dragAndDrop": "Drag and drop images here, or click to select files",
-      "orClick": "Or click to select files",
+      "orClick": "Upload",
       "imagesRequired": "Property images are required",
-      "maxImages": "Maximum 10 images allowed",
+      "maxImages": "Maximum 15 images allowed",
       "fileSize": "File size should be less than 5MB",
       "supportedFormats": "Supported formats: JPG, PNG, JPEG"
     },
     "contact": {
-      "title": "Contact Information",
+      "title": "Contact Information and Property Contract",
       "description": "How can potential renters contact you?",
       "name": "Full Name",
       "email": "Email Address",
       "phone": "Phone Number",
       "alternateName": "Alternate Contact Name",
-      "alternatePhone": "Alternate Phone Number"
+      "alternatePhone": "Alternate Phone Number",
+      "contract": "Property Contract",
+      "uploadContract": "Upload contract document image",
+      "address": "Address"
     },
     "preview": {
       "title": "Property Preview",
@@ -253,7 +256,8 @@
     "validation": {
       "fillAllFields": "Please fill all the fields",
       "selectLocation": "Please select property location on map",
-      "uploadImages": "Please upload at least one image"
+      "uploadImages": "Please upload at least one image",
+      "contractRequired": "Please upload contract image"
     }
   },
   "footer": {

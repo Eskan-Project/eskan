@@ -1,68 +1,65 @@
 <template>
   <div class="bg-white rounded-lg p-4 shadow-sm w-full mx-auto">
     <div class="rounded-lg p-4 w-full mx-auto">
-      <h2 class="text-lg font-semibold mb-2 text-center sm:text-left">
+      <h2
+        class="font-semibold mb-2 text-center text-gray-700 text-lg md:text-xl"
+      >
         {{ $t("createProperty.images.title") }}
       </h2>
 
-      <div class="flex flex-col items-center space-y-2 py-4">
-        <i
-          class="bi bi-images text-4xl text-gray-500"
-          v-if="localImages.length === 0"
-        ></i>
-        <p class="text-gray-500 text-center">
-          {{ $t("createProperty.images.maxImages") }}
-        </p>
-        <label
-          class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
-        >
-          {{ $t("createProperty.images.orClick") }}
-          <input
-            type="file"
-            multiple
-            @change="handleUpload"
-            class="hidden"
-            accept="image/png, image/jpeg, image/jpg, image/webp"
-          />
-        </label>
-      </div>
-
-      <p v-if="errorMessage" class="text-red-500 text-sm text-center mt-2">
-        {{ errorMessage }}
-      </p>
-
-      <div
-        class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center mt-4 w-full"
-      >
+      <div class="flex flex-col items-center space-y-4 py-4">
         <div
-          v-if="localImages.length === 0"
-          class="flex flex-col items-center text-center"
+          class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col gap-4 items-center justify-center mt-4 w-full"
         >
-          <span class="text-4xl text-gray-400">+</span>
-          <p class="text-gray-500">
-            {{ $t("createProperty.images.dragAndDrop") }}
+          <i
+            class="bi bi-images text-4xl text-gray-500"
+            v-if="localImages.length === 0"
+          ></i>
+          <p class="text-gray-500 text-center">
+            {{ $t("createProperty.images.maxImages") }}
           </p>
-        </div>
-
-        <div
-          v-else
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-2"
-        >
-          <div
-            v-for="(image, index) in localImages"
-            :key="index"
-            class="relative group"
+          <label
+            :class="
+              localImages.length >= 15
+                ? 'border border-[var(--secondary-color)] bg-gray-200 text-gray-500 px-4 py-2 rounded-md cursor-not-allowed'
+                : 'border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition'
+            "
           >
-            <img
-              :src="image"
-              class="w-24 h-24 object-cover rounded-lg sm:w-32 sm:h-32 md:w-36 md:h-36"
+            {{ $t("createProperty.images.orClick") }}
+            <input
+              :disabled="localImages.length >= 15"
+              type="file"
+              multiple
+              @change="handleUpload"
+              class="hidden"
+              accept="image/png, image/jpeg, image/jpg, image/webp"
             />
-            <button
-              @click="removeImage(index)"
-              class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          </label>
+
+          <p v-if="errorMessage" class="text-red-500 text-sm text-center mt-2">
+            {{ errorMessage }}
+          </p>
+
+          <div
+            v-else
+            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-2"
+          >
+            <div
+              v-for="(image, index) in localImages"
+              :key="index"
+              class="relative group"
             >
-              &times;
-            </button>
+              <img
+                :src="image"
+                class="w-24 h-24 object-cover rounded-lg sm:w-32 sm:h-32 md:w-36 md:h-36"
+              />
+              <button
+                @click="removeImage(index)"
+                class="cursor-pointer absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                &times;
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -71,6 +68,8 @@
 </template>
 
 <script>
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   props: {
     images: {
@@ -99,8 +98,8 @@ export default {
       const files = Array.from(event.target.files);
       this.errorMessage = "";
 
-      if (files.length + this.localImages.length > 30) {
-        this.errorMessage = this.$t("createProperty.images.maxImages");
+      if (files.length + this.localImages.length > 15) {
+        toast.error(this.$t("createProperty.images.maxImages"));
         return;
       }
 

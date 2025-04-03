@@ -150,12 +150,12 @@
                     }}</span>
                   </p>
                   <p
-                    v-if="property.address"
+                    v-if="property.propertyContact.address"
                     class="flex flex-col items-center space-y-1"
                   >
                     <span class="font-semibold">Address:</span>
                     <span class="text-sm capitalize">{{
-                      property.address
+                      property.propertyContact.address
                     }}</span>
                   </p>
                 </div>

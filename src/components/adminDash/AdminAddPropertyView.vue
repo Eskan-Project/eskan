@@ -50,6 +50,58 @@
                   :required="field.required"
                 />
               </div>
+
+              <!-- Contract Image Upload -->
+              <div class="col-span-1 sm:col-span-2 lg:col-span-3 mb-6">
+                <label class="block text-gray-700 font-medium mb-2">
+                  Contract Document <span class="text-red-500">*</span>
+                </label>
+                <div
+                  class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
+                  :class="{
+                    'border-green-500': contractImage,
+                    'border-red-500': errorMessage && !contractImage,
+                  }"
+                >
+                  <div
+                    v-if="!contractImage"
+                    class="flex flex-col items-center gap-3 py-4"
+                  >
+                    <i
+                      class="bi bi-file-earmark-text text-4xl text-gray-500"
+                    ></i>
+                    <p class="text-gray-500 text-sm sm:text-base text-center">
+                      Upload contract document image
+                    </p>
+                    <label class="cursor-pointer">
+                      <span
+                        class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
+                      >
+                        Upload
+                      </span>
+                      <input
+                        type="file"
+                        class="hidden"
+                        @change="handleContractUpload"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                      />
+                    </label>
+                  </div>
+                  <div v-else class="relative w-1/3 py-4">
+                    <img
+                      :src="contractImage"
+                      class="max-h-48 mx-auto object-contain"
+                      alt="Contract"
+                    />
+                    <button
+                      @click="removeContractImage"
+                      class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded-full"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Image Upload Section -->
@@ -59,43 +111,34 @@
               >
                 Property Images
               </h2>
-              <div class="flex flex-col items-center space-y-4 py-4">
-                <i
-                  class="bi bi-images text-3xl sm:text-4xl text-gray-500"
-                  v-if="uploadedImages.length === 0"
-                ></i>
-                <p class="text-gray-500 text-center text-sm sm:text-base">
-                  You can add up to 30 photos to your ad
-                </p>
-                <label
-                  class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
-                >
-                  Upload
-                  <input
-                    type="file"
-                    multiple
-                    @change="handleImageUpload"
-                    class="hidden"
-                    accept="image/png, image/jpeg, image/jpg, image/webp"
-                  />
-                </label>
-              </div>
-
-              <!-- Image Preview Grid -->
               <div
                 class="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4"
               >
-                <div
-                  v-if="uploadedImages.length === 0"
-                  class="flex flex-col items-center text-center p-8"
-                >
-                  <span class="text-3xl sm:text-4xl text-gray-400">+</span>
-                  <p class="text-gray-500 text-sm sm:text-base mt-2">
-                    You can add up to 30 photos to your ad
+                <div class="flex flex-col items-center space-y-4 py-4">
+                  <i
+                    class="bi bi-images text-3xl sm:text-4xl text-gray-500"
+                    v-if="uploadedImages.length === 0"
+                  ></i>
+                  <p class="text-gray-500 text-center text-sm sm:text-base">
+                    You can add up to 15 photos to your ad
                   </p>
+                  <label
+                    class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
+                  >
+                    Upload
+                    <input
+                      type="file"
+                      multiple
+                      @change="handleImageUpload"
+                      class="hidden"
+                      accept="image/png, image/jpeg, image/jpg, image/webp"
+                    />
+                  </label>
                 </div>
+
+                <!-- Image Preview Grid -->
                 <div
-                  v-else
+                  v-if="uploadedImages.length > 0"
                   class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
                 >
                   <div
@@ -115,14 +158,14 @@
                     </button>
                   </div>
                 </div>
-              </div>
 
-              <p
-                v-if="errorMessage"
-                class="text-red-500 text-sm text-center mt-4"
-              >
-                {{ errorMessage }}
-              </p>
+                <p
+                  v-if="errorMessage"
+                  class="text-red-500 text-sm text-center mt-4"
+                >
+                  {{ errorMessage }}
+                </p>
+              </div>
             </div>
 
             <!-- Action Buttons -->
@@ -160,6 +203,7 @@ export default {
   data() {
     return {
       errorMessage: "",
+      contractImage: null,
       initialPropertyDetails: {
         title: "",
         description: "",
@@ -183,6 +227,7 @@ export default {
           email: "",
           phone: "",
           phone2: "",
+          address: "",
         },
         isPaid: true,
         ownerProfile: "",
@@ -263,6 +308,7 @@ export default {
         { key: "email", label: "Email", type: "email", required: true },
         { key: "phone", label: "Phone", type: "text", required: true },
         { key: "phone2", label: "Phone 2", type: "text" },
+        { key: "address", label: "Address", type: "text", required: true },
       ],
       uploadedImages: [],
     };
@@ -305,8 +351,8 @@ export default {
     handleImageUpload(event) {
       this.errorMessage = "";
       const files = Array.from(event.target.files);
-      if (files.length + this.uploadedImages.length > 30) {
-        this.errorMessage = "You can only upload up to 30 images.";
+      if (files.length + this.uploadedImages.length > 15) {
+        this.errorMessage = "You can only upload up to 15 images.";
         return;
       }
       files.forEach((file) => {
@@ -320,11 +366,49 @@ export default {
     removeImage(index) {
       this.uploadedImages.splice(index, 1);
     },
+    handleContractUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file type
+      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        this.errorMessage =
+          "Please upload a valid image file (JPG, PNG, or WEBP)";
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.errorMessage = "Contract file size should not exceed 5MB";
+        return;
+      }
+
+      // Read and display the image
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.contractImage = e.target.result;
+        this.propertyDetails.propertyContact.contract = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    removeContractImage() {
+      this.contractImage = null;
+      this.propertyDetails.propertyContact.contract = "";
+    },
+
     async submitProperty() {
       if (this.uploadedImages.length === 0) {
         this.errorMessage = "Please upload at least one image.";
         return;
       }
+
+      if (!this.contractImage) {
+        this.errorMessage = "Please upload a contract document image.";
+        return;
+      }
+
       try {
         const result = await Swal.fire({
           title: "Are you sure?",

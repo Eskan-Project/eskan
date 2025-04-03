@@ -25,6 +25,8 @@ export default {
       phone: "",
       phone2: "",
       image: "",
+      contract: "",
+      address: "",
     },
   },
   property: null,

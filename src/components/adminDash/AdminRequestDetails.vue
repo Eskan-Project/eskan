@@ -113,22 +113,64 @@
                 >
                   <i class="bi bi-chevron-right"></i>
                 </button>
+
+                <button
+                  v-if="request && request.images && request.images.length > 0"
+                  @click="viewFullImage(request.images[currentImageIndex])"
+                  class="absolute bottom-4 right-4 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition opacity-80 hover:opacity-100"
+                  aria-label="View Fullscreen"
+                >
+                  <i class="bi bi-arrows-fullscreen"></i>
+                </button>
+
+                <div
+                  v-if="request && request.images && request.images.length > 1"
+                  class="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs"
+                >
+                  {{ currentImageIndex + 1 }} / {{ request.images.length }}
+                </div>
               </div>
 
               <!-- Thumbnail Gallery -->
               <div
                 v-if="request && request.images && request.images.length > 0"
-                class="grid grid-cols-4 gap-2 mt-4"
+                class="relative mt-4"
               >
-                <img
-                  v-for="(img, index) in request.images"
-                  :key="index"
-                  :src="img"
-                  loading="lazy"
-                  class="h-24 w-full object-cover rounded-lg cursor-pointer border-2"
-                  :class="{ 'border-blue-500': currentImageIndex === index }"
-                  @click="currentImageIndex = index"
-                />
+                <div
+                  ref="thumbnailContainer"
+                  class="flex overflow-x-auto gap-2 py-2 scroll-smooth thumbnail-gallery px-2"
+                >
+                  <img
+                    v-for="(img, index) in request.images"
+                    :key="index"
+                    :src="img"
+                    loading="lazy"
+                    class="h-50 w-50 object-cover rounded-lg cursor-pointer transition-all duration-200 hover:opacity-100 flex-shrink-0 hover:shadow-lg"
+                    :class="{
+                      'ring-2 ring-blue-500 shadow-md opacity-100':
+                        currentImageIndex === index,
+                      'opacity-70 hover:opacity-90':
+                        currentImageIndex !== index,
+                    }"
+                    @click="currentImageIndex = index"
+                  />
+                </div>
+                <button
+                  v-if="request.images.length > 4"
+                  @click="scrollThumbnails(-1)"
+                  class="cursor-pointer absolute top-1/2 left-0 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+                  aria-label="Scroll Left"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button
+                  v-if="request.images.length > 4"
+                  @click="scrollThumbnails(1)"
+                  class="cursor-pointer absolute top-1/2 right-0 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+                  aria-label="Scroll Right"
+                >
+                  <i class="bi bi-chevron-right"></i>
+                </button>
               </div>
             </div>
 
@@ -166,14 +208,34 @@
                     }}</span>
                   </p>
                   <p
-                    v-if="request.address"
+                    v-if="request.propertyContact.address"
                     class="flex flex-col items-center space-y-1"
                   >
                     <span class="font-semibold">Address:</span>
                     <span class="text-sm capitalize">{{
-                      request.address
+                      request.propertyContact.address
                     }}</span>
                   </p>
+
+                  <!-- Contract Document -->
+                  <div
+                    v-if="request.propertyContact?.contract"
+                    class="mt-3 w-full"
+                  >
+                    <p class="font-semibold text-center mb-2">
+                      Contract Document:
+                    </p>
+                    <div class="relative w-full">
+                      <img
+                        :src="request.propertyContact.contract"
+                        class="max-h-40 mx-auto object-contain rounded border border-gray-300"
+                        alt="Contract"
+                        @click="
+                          openContractImage(request.propertyContact.contract)
+                        "
+                      />
+                    </div>
+                  </div>
 
                   <router-link :to="`/admin/owners/edit/${request.ownerId}`">
                     <button
@@ -457,6 +519,54 @@ export default {
     ...mapActions("requests", ["getRequestById", "deleteRequest"]),
     ...mapActions("property", ["createPropertyFromRequest"]),
     ...mapActions("notifications", ["addNotification"]),
+
+    // Add method to view full image
+    viewFullImage(imageUrl) {
+      if (!imageUrl) return;
+
+      Swal.fire({
+        imageUrl: imageUrl,
+        imageAlt: "Property Image",
+        width: "auto",
+        padding: "1em",
+        showConfirmButton: false,
+        showCloseButton: true,
+        background: "#fff",
+        customClass: {
+          image: "max-h-screen max-w-full object-contain",
+        },
+      });
+    },
+
+    // Add method to scroll thumbnails
+    scrollThumbnails(direction) {
+      const container = this.$refs.thumbnailContainer;
+      if (!container) return;
+
+      const scrollAmount = direction * 200; // Adjust scroll amount as needed
+      container.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    },
+
+    // Add method to open contract image in larger view
+    openContractImage(imageUrl) {
+      if (!imageUrl) return;
+
+      Swal.fire({
+        imageUrl: imageUrl,
+        imageAlt: "Contract Document",
+        width: "auto",
+        padding: "1em",
+        showConfirmButton: false,
+        showCloseButton: true,
+        background: "#fff",
+        customClass: {
+          image: "max-h-screen max-w-full object-contain",
+        },
+      });
+    },
 
     // Add missing gallery navigation methods
     prevImage() {
@@ -1067,5 +1177,26 @@ button:active {
 /* Ensure modal appears above map */
 .modal-overlay {
   z-index: 100;
+}
+
+/* Thumbnail gallery styles */
+.thumbnail-gallery {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #edf2f7;
+  -ms-overflow-style: none;
+}
+
+.thumbnail-gallery::-webkit-scrollbar {
+  height: 6px;
+}
+
+.thumbnail-gallery::-webkit-scrollbar-track {
+  background: #edf2f7;
+  border-radius: 10px;
+}
+
+.thumbnail-gallery::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
 }
 </style>

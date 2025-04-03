@@ -54,6 +54,19 @@ export default {
           await this.$router.push({ name: this.name });
           this.stopLoading();
         } else if (this.name === "completed") {
+          const parentComponent = this.$parent;
+
+          if (
+            parentComponent &&
+            typeof parentComponent.validateBeforeSubmit === "function"
+          ) {
+            const isValid = parentComponent.validateBeforeSubmit();
+            if (!isValid) {
+              this.stopLoading();
+              return;
+            }
+          }
+
           storedStep++;
           localStorage.setItem("activeStep", storedStep);
           const localImages = JSON.parse(localStorage.getItem("localImages"));
