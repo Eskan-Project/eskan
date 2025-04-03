@@ -78,8 +78,8 @@ export default {
         images: imagesUrl,
         ownerId: userDetails.uid,
         createdAt: new Date(),
-        status: userRole === "admin" ? "approved" : "pending",
-        isPaid: false,
+        status: userRole === "admin" ? "completed" : "pending",
+        isPaid: true,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
       };
 
