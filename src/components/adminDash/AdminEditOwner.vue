@@ -185,6 +185,7 @@ export default {
         isActive: response.isActive,
         photo: response.photo || "",
         idImage: response.idImage || "",
+        createByAdmin: response.createByAdmin || false,
       };
     } catch (error) {
       console.error("Error fetching owner:", error);
@@ -196,10 +197,7 @@ export default {
   },
   computed: {
     defaultImage() {
-      return this.formData.idImage ==
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe3zbbTYJqLjRfhpuZY-h9aysJHFM29jfKzw&s"
-        ? true
-        : false;
+      return this.formData.createByAdmin;
     },
   },
   methods: {

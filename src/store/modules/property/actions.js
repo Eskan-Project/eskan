@@ -75,7 +75,7 @@ export default {
         images: imagesUrl,
         ownerId: userDetails.uid,
         createdAt: new Date(),
-        status: userRole === "admin" ? "approved" : "pending",
+        status: userRole === "admin" ? "completed" : "pending",
         approvedAt: userRole === "admin" ? new Date() : "",
         approvedBy: userRole === "admin" ? userDetails.uid : "",
         isPaid: userRole === "admin" ? true : false,
