@@ -76,7 +76,9 @@ export default {
         ownerId: userDetails.uid,
         createdAt: new Date(),
         status: userRole === "admin" ? "approved" : "pending",
-        isPaid: false,
+        approvedAt: userRole === "admin" ? new Date() : "",
+        approvedBy: userRole === "admin" ? userDetails.uid : "",
+        isPaid: userRole === "admin" ? true : false,
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);

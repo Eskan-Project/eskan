@@ -184,6 +184,9 @@ export default {
           phone: "",
           phone2: "",
         },
+        isPaid: true,
+        ownerProfile: "",
+        status: "approved",
       },
       propertyInfo: [
         { key: "title", label: "Property Title", type: "text", required: true },
