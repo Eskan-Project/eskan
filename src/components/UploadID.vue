@@ -1,10 +1,10 @@
 <template>
   <div class="text-center text-black">
     <p
-      class="font-semibold text-xl md:text-2xl p-2 my-5"
+      class="font-semibold text-lg md:text-2xl p-2 my-5"
       :class="{ 'text-green-500': idImage }"
     >
-      {{ idImage ? "ID uploaded successfully" : "Please upload your ID" }}
+      {{ idImage ? $t("auth.upload_id.success") : $t("auth.upload_id.title") }}
     </p>
     <div
       v-if="!idImage && validating === null"
@@ -15,13 +15,15 @@
           class="bi bi-cloud-upload text-5xl text-stone-400 cursor-pointer"
         ></i>
         <p>
-          Drag &amp; drop files or
+          {{ $t("auth.upload_id.drag_drop") }}
           <span
             class="font-bold text-[#364365] cursor-pointer underline decoration-2"
-            >Browse</span
+            >{{ $t("auth.upload_id.browse") }}</span
           >
         </p>
-        <p class="p-5 text-sm text-stone-400">Supports JPEG, PNG, JPG</p>
+        <p class="p-5 text-sm text-stone-400">
+          {{ $t("auth.upload_id.supported_formats") }}
+        </p>
       </label>
       <input
         type="file"
@@ -33,7 +35,7 @@
     </div>
 
     <div v-if="idImage">
-      <div class="w-1/3 mx-auto relative">
+      <div class="w-1/3 md:w-1/4 mx-auto relative">
         <img :src="idImage" alt="Image Preview" />
         <button
           @click="removeImage"
@@ -76,26 +78,27 @@ export default {
       this.file = file;
       this.error = null;
       this.idImage = null;
-      this.validating = "Preparing image data...";
+      this.validating = this.$t("auth.upload_id.validation.validating_id");
       try {
         const isValid = await validateImage(
           file,
-          this.$t("auth.validation.validating_id"),
+          this.$t("auth.upload_id.validation.validating_id"),
           (message) => {
             this.validating = message;
           }
         );
+        console.log(isValid);
         if (isValid) {
           this.idImage = URL.createObjectURL(this.file);
           this.error = null;
           this.validating = null;
           this.$emit("idUploaded", this.file);
         } else {
-          this.error = "Invalid ID image. Please upload a clear ID photo.";
+          this.error = this.$t("auth.upload_id.validation.invalid_id");
           this.validating = null;
         }
       } catch (error) {
-        this.error = "Error validating image. Please try again.";
+        this.error = this.$t("auth.upload_id.validation.error");
         this.validating = null;
         console.log(error);
       }
