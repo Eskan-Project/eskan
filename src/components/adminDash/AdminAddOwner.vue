@@ -108,6 +108,30 @@
               </span>
             </div>
           </div>
+
+          <!-- Add this inside the grid div, after the other form fields -->
+          <div class="col-span-full">
+            <label class="block text-sm font-medium text-gray-700"
+              >National ID Image</label
+            >
+            <div class="mt-2 flex items-center gap-x-3">
+              <img
+                v-if="formData.idImage"
+                :src="formData.idImage"
+                alt="ID Preview"
+                class="h-32 w-auto object-cover rounded-lg border"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                @change="handleIdImageUpload"
+                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            <p v-if="imageError" class="mt-1 text-sm text-red-500">
+              {{ imageError }}
+            </p>
+          </div>
         </div>
 
         <!-- Action Buttons -->
@@ -162,22 +186,25 @@ export default {
   data() {
     return {
       loading: false,
+      imageError: "",
       formData: {
         createdAt: "",
         email: "",
-        // freePropertyViewed: 0,
-        idImage: "",
+        freePropertyViewed: 3,
+        idImage:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe3zbbTYJqLjRfhpuZY-h9aysJHFM29jfKzw&s",
         gender: "",
         isActive: true,
         location: "",
         name: "",
         nationalId: "",
         nickName: "",
-        // paidProperties: [],
+        paidProperties: [],
         photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
         role: "owner",
         uid: "",
         updatedAt: "",
+        createByAdmin: true,
       },
     };
   },
@@ -190,7 +217,32 @@ export default {
       return re.test(email);
     },
     // In your component's handleSubmit method
-    // In your component's handleSubmit method
+    async handleIdImageUpload(event) {
+      this.imageError = "";
+      const file = event.target.files[0];
+
+      // Validate file
+      if (!file) return;
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        this.imageError = "Please upload an image file";
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.imageError = "Image must be less than 5MB";
+        return;
+      }
+
+      // Read and preview the image
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.formData.idImage = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
     async handleSubmit() {
       let secondaryApp = null;
       try {
@@ -263,9 +315,6 @@ export default {
         this.loading = false;
       }
     },
-
-    // Add this new action in your Vuex actions.js file
-    // This is specifically for just creating the Firestore document
   },
 };
 </script>

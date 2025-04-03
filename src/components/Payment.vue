@@ -83,7 +83,7 @@
           </h2>
           <h4></h4>
           <p class="text-lg text-gray-700 mb-6 text-center">
-            {{ $t("payment.fee_description", { fee: "$50" }) }}
+            {{ $t("payment.fee_description", { fee: "200EGP" }) }}
           </p>
 
           <div class="space-y-6">
