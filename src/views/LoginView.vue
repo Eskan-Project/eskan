@@ -1,106 +1,11 @@
-<script>
-import { mapActions, mapGetters } from "vuex";
-import Turnstile from "@/components/Turnstile.vue";
-export default {
-  components: {
-    Turnstile,
-  },
-  data() {
-    return {
-      email: "",
-      password: "",
-      errors: {},
-      loading: false,
-      showPassword: false,
-      turnstileToken: null,
-    };
-  },
-  computed: {
-    ...mapGetters("auth", ["isError"]),
-  },
-  watch: {
-    isError(newVal) {
-      this.errors.server = newVal;
-    },
-    email() {
-      this.errors.email = null;
-    },
-    password() {
-      this.errors.password = null;
-    },
-  },
-
-  methods: {
-    ...mapActions("auth", ["login", "loginWithGoogle"]),
-
-    handleTurnstileVerified(token) {
-      this.turnstileToken = token;
-      this.errors.turnstile = null;
-    },
-
-    handleTurnstileExpired() {
-      this.turnstileToken = null;
-      this.errors.turnstile = this.$t("auth.login.validation.security_expired");
-    },
-
-    handleTurnstileError() {
-      this.turnstileToken = null;
-      this.errors.turnstile = this.$t("auth.login.validation.security_failed");
-    },
-
-    async submitLogin() {
-      this.errors = {};
-
-      if (!this.email) {
-        this.errors.email = this.$t("auth.login.validation.email_required");
-      } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
-        this.errors.email = this.$t("auth.login.validation.email_invalid");
-      }
-      if (!this.password) {
-        this.errors.password = this.$t(
-          "auth.login.validation.password_required"
-        );
-      } else if (this.password.length < 6) {
-        this.errors.password = this.$t("auth.login.validation.password_length");
-      }
-      if (!this.turnstileToken) {
-        this.errors.turnstile = this.$t("auth.login.validation.security_check");
-      }
-
-      if (Object.keys(this.errors).length > 0) return;
-
-      try {
-        const userData = {
-          email: this.email,
-          password: this.password,
-          turnstileToken: this.turnstileToken,
-        };
-        await this.login(userData);
-        this.$router.push({ name: "Home" });
-      } catch (error) {
-        console.error("Login failed:", error.message);
-        this.errors.server =
-          error.message || this.$t("auth.login.validation.registration_failed");
-      }
-    },
-
-    togglePassword() {
-      this.showPassword = !this.showPassword;
-    },
-  },
-};
-</script>
-
 <template>
-  <div class="md:p-10 flex justify-center h-screen md:h-auto">
-    <div
-      class="bg-white rounded-xl grid md:grid-cols-2 grid-cols-1 lg:w-[60vw]"
-    >
+  <auth-header />
+  <div class="md:p-10 flex justify-center items-center h-screen">
+    <div class="bg-white rounded-xl w-full md:w-1/3">
       <div class="main-text p-8 rounded-l-xl">
         <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
           {{ $t("auth.login.title") }}
         </h1>
-
         <form @submit.prevent="submitLogin">
           <div class="mb-6">
             <label class="block mb-1 text-[#364365]">{{
@@ -150,7 +55,6 @@ export default {
               {{ $t("auth.login.forgot_password") }}
             </a>
           </div>
-
           <div
             class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
           >
@@ -159,16 +63,13 @@ export default {
               @turnstileExpired="handleTurnstileExpired"
               @turnstileError="handleTurnstileError"
             />
-
             <p v-if="errors.turnstile" class="text-red-500 text-sm mt-1">
               {{ errors.turnstile }}
             </p>
           </div>
-
           <p v-if="isError" class="text-red-500 text-center mb-4">
             {{ isError }}
           </p>
-
           <div class="p-5">
             <button
               type="submit"
@@ -185,7 +86,6 @@ export default {
             </button>
           </div>
         </form>
-
         <div>
           <div
             class="text-[#364365] font-medium text-sm flex justify-center gap-2 my-4 text-center"
@@ -194,7 +94,6 @@ export default {
             <p>{{ $t("auth.login.or_sign_in_with") }}</p>
             <span class="border-b-1 w-20 self-center"></span>
           </div>
-
           <div class="logs flex justify-center gap-2 p-5">
             <button
               class="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
@@ -204,7 +103,6 @@ export default {
               {{ $t("auth.login.google") }}
             </button>
           </div>
-
           <p class="text-black text-center">
             {{ $t("auth.login.no_account") }}
             <a
@@ -216,14 +114,94 @@ export default {
           </p>
         </div>
       </div>
-
-      <div class="img-container hidden md:block">
-        <img
-          loading="lazy"
-          class="w-full h-full rounded-r-xl"
-          src="@/assets/images/login/login.jpg"
-        />
-      </div>
     </div>
   </div>
 </template>
+
+<script>
+import { mapActions, mapGetters } from "vuex";
+import Turnstile from "@/components/Turnstile.vue";
+import AuthHeader from "@/components/AuthHeader.vue";
+export default {
+  components: {
+    Turnstile,
+    AuthHeader,
+  },
+  data() {
+    return {
+      email: "",
+      password: "",
+      errors: {},
+      loading: false,
+      showPassword: false,
+      turnstileToken: null,
+    };
+  },
+  computed: {
+    ...mapGetters("auth", ["isError"]),
+  },
+  watch: {
+    isError(newVal) {
+      this.errors.server = newVal;
+    },
+    email() {
+      this.errors.email = null;
+    },
+    password() {
+      this.errors.password = null;
+    },
+  },
+  methods: {
+    ...mapActions("auth", ["login", "loginWithGoogle"]),
+
+    handleTurnstileVerified(token) {
+      this.turnstileToken = token;
+      this.errors.turnstile = null;
+    },
+    handleTurnstileExpired() {
+      this.turnstileToken = null;
+      this.errors.turnstile = this.$t("auth.login.validation.security_expired");
+    },
+    handleTurnstileError() {
+      this.turnstileToken = null;
+      this.errors.turnstile = this.$t("auth.login.validation.security_failed");
+    },
+    async submitLogin() {
+      this.errors = {};
+      if (!this.email) {
+        this.errors.email = this.$t("auth.login.validation.email_required");
+      } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
+        this.errors.email = this.$t("auth.login.validation.email_invalid");
+      }
+      if (!this.password) {
+        this.errors.password = this.$t(
+          "auth.login.validation.password_required"
+        );
+      } else if (this.password.length < 6) {
+        this.errors.password = this.$t("auth.login.validation.password_length");
+      }
+      if (!this.turnstileToken) {
+        this.errors.turnstile = this.$t("auth.login.validation.security_check");
+      }
+      if (Object.keys(this.errors).length > 0) return;
+
+      try {
+        const userData = {
+          email: this.email,
+          password: this.password,
+          turnstileToken: this.turnstileToken,
+        };
+        await this.login(userData);
+        this.$router.push({ name: "Home" });
+      } catch (error) {
+        console.error("Login failed:", error.message);
+        this.errors.server =
+          error.message || this.$t("auth.login.validation.registration_failed");
+      }
+    },
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
+  },
+};
+</script>

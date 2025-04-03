@@ -244,7 +244,9 @@ const isVerificationExpired = () => {
 
 // Combined navigation guard
 router.beforeEach(async (to, from, next) => {
-  store.dispatch("startLoading");
+  if (to.path !== "/properties" && to.path !== "/property/:id") {
+    store.dispatch("startLoading");
+  }
 
   // Check if user is verified and verification hasn't expired
   const isVerified =
@@ -282,6 +284,9 @@ async function handleAuthAndRole(to, next) {
     next({ name: "NotFound" });
   } else if (to.meta.requiresOwner && role !== "owner") {
     next({ name: "NotFound" });
+  } else if (isAuth && role === "admin" && to.path === "/") {
+    next({ name: "adminProfile" });
+    store.dispatch("stopLoading");
   } else {
     next();
   }

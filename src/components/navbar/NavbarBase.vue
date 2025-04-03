@@ -34,23 +34,25 @@
         class="flex items-center gap-2 sm:gap-4"
         :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
       >
-        <div class="relative inline-flex items-center">
+        <div class="relative items-center hidden md:inline-flex">
           <div
-            class="w-18 h-8 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+            class="w-15 h-6 md:h-8 md:w-18 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
             <span
-              class="text-gray-600 text-sm z-10"
-              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-2 font-bold'"
+              class="text-gray-600 text-xs md:text-sm z-10"
+              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 font-bold'"
               >EN</span
             >
             <span
-              class="text-gray-600 text-base z-10"
-              :class="currentLocale === 'ar' ? 'ml-4 font-bold' : 'mr-2'"
+              class="text-gray-600 text-xs md:text-sm z-10"
+              :class="
+                currentLocale === 'ar' ? 'ml-3 md:ml-4 font-bold' : 'mr-2'
+              "
               >ع</span
             >
             <div
-              class="bg-white w-8 h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+              class="bg-white w-7 h-5 md:w-8 md:h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
             ></div>
           </div>
         </div>
@@ -163,7 +165,13 @@
           @click="logout"
           class="cursor-pointer hidden md:block bg-white px-0.5 py-0.1 md:px-2 md:py-1 text-[var(--secondary-color)] rounded border border-white hover:bg-[var(--secondary-color)] hover:text-white transition-all"
         >
-          <i class="bi bi-box-arrow-in-right text-sm md:text-2xl"></i>
+          <i
+            :class="
+              this.$i18n.locale === 'ar'
+                ? 'bi bi-box-arrow-in-left text-sm md:text-xl'
+                : 'bi bi-box-arrow-in-right text-sm md:text-xl'
+            "
+          ></i>
         </button>
 
         <button
@@ -315,17 +323,17 @@ export default {
       }
     },
     notifClicked(notif) {
-    console.log("Notification clicked:", notif);
-    this.markAsRead(notif.id);
-    this.isNotificationsOpen = false;
+      console.log("Notification clicked:", notif);
+      this.markAsRead(notif.id);
+      this.isNotificationsOpen = false;
 
-    if (notif.type === "property_accepted") {
+      if (notif.type === "property_accepted") {
         console.log("Navigating to user profile");
         this.$router.push("/userProfile");
-    } else {
+      } else {
         console.log("Not navigating:", notif.type);
-    }
-},
+      }
+    },
     checkMobile: debounce(function () {
       this.isMobile = window.innerWidth < 768;
     }, 100),

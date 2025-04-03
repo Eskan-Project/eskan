@@ -14,6 +14,7 @@ import base64ToFile from "@/services/base64ToFileService";
 
 export default {
   async getProperties({ commit, dispatch, rootState }) {
+    commit("startLoading", null, { root: true });
     try {
       await dispatch("checkPropertyExpiration");
       const propertiesSnapshot = await getDocs(collection(db, "properties"));
@@ -42,6 +43,8 @@ export default {
       console.error("Error fetching properties:", error);
       commit("setProperties", []);
       throw error; // Changed from return [] to throw error
+    } finally {
+      commit("stopLoading", null, { root: true });
     }
   },
 
@@ -76,11 +79,13 @@ export default {
         ownerId: userDetails.uid,
         createdAt: new Date(),
         status: userRole === "admin" ? "completed" : "pending",
+
         approvedAt: userRole === "admin" ? new Date() : "",
         approvedBy: userRole === "admin" ? userDetails.uid : "",
         isPaid: userRole === "admin" ? true : false,
         expiresAt:
           userRole === "admin" ? new Date(Date.now() + 5 * 60 * 1000) : "", // 5 minutes
+
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);
@@ -284,10 +289,9 @@ export default {
       const propertyData = {
         ...requestData,
         status: "approved",
-        lastUpdated: new Date(),
         approvedBy: userDetails.uid,
-        approvedAt: new Date(),
         isPaid: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
       };
 
       delete propertyData.id; // Remove request ID

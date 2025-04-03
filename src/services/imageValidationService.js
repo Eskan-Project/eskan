@@ -19,7 +19,7 @@ export async function validateImage(
     onProgress(validationMessage);
     const res = await axios({
       method: "POST",
-      url: "https://outline.roboflow.com/national-id-ltfb6/2",
+      url: "https://detect.roboflow.com/id-xbtly/1",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -30,7 +30,7 @@ export async function validateImage(
     });
 
     console.log(res.data);
-    const isValid = res.data.predictions[0].confidence > 0.6;
+    const isValid = res.data.predictions[0].confidence > 0.8;
     console.log(isValid);
 
     return isValid;
