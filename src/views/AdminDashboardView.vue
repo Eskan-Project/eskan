@@ -25,16 +25,25 @@
     >
       <nav class="space-y-2">
         <router-link
-          v-for="link in links"
+          v-for="link in links.filter((l) => l.label !== 'Logout')"
           :key="link.path"
           :to="link.path"
           class="flex items-center text-white p-3 rounded hover:bg-[#4a5b8a] transition-colors cursor-pointer text-sm"
           active-class="bg-[#4a5b8a]"
-          @click="closeSidebarOnMobile"
+          @click="handleLinkClick(link)"
         >
           <i :class="link.icon" class="mr-3 text-lg"></i>
           {{ link.label }}
         </router-link>
+
+        <!-- Special handling for logout button -->
+        <button
+          @click="handleLogout"
+          class="flex items-center text-white p-3 rounded hover:bg-[#4a5b8a] transition-colors cursor-pointer text-sm w-full text-left"
+        >
+          <i class="bi bi-box-arrow-in-right mr-3 text-lg"></i>
+          Logout
+        </button>
       </nav>
       <router-link to="/" class="mt-auto pt-4" @click="closeSidebarOnMobile">
         <img src="../assets/images/logo.png" alt="" class="w-full" />
@@ -54,6 +63,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "AdminDashboard",
   data() {
@@ -97,6 +107,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions("auth", ["logout"]),
     toggleSidebar() {
       this.isOpen = !this.isOpen;
     },
@@ -106,6 +117,24 @@ export default {
     closeSidebarOnMobile() {
       if (window.innerWidth < 768) {
         this.closeSidebar();
+      }
+    },
+    handleLogout() {
+      this.closeSidebarOnMobile();
+      try {
+        this.logout().catch((error) => {
+          console.error("Logout error:", error);
+          this.$router.push("/login");
+        });
+      } catch (error) {
+        console.error("Error during logout:", error);
+        this.$router.push("/login");
+      }
+    },
+    handleLinkClick(link) {
+      this.closeSidebarOnMobile();
+      if (link.click) {
+        link.click();
       }
     },
     updateWindowWidth() {

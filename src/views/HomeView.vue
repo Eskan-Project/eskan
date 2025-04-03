@@ -24,6 +24,25 @@
         >
           {{ $t("home.hero.description") }}
         </p>
+        <div class="mt-6 sm:mt-8">
+          <button
+            @click="$router.push('/properties')"
+            class="group relative overflow-hidden px-6 py-3 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur transition-all duration-300 ease-out hover:px-12"
+          >
+            <span
+              class="relative z-10 text-white text-sm sm:text-base font-medium group-hover:opacity-0 transition-opacity duration-300"
+            >
+              <i class="bi bi-search mr-2"></i>
+              {{ $t("search.button") }}
+            </span>
+            <span
+              class="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <i class="bi bi-search mr-2"></i>
+              {{ $t("home.hero.find_home") }}
+            </span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -505,5 +524,25 @@ export default {
 
 :deep(.swiper-slide:hover) {
   z-index: 2;
+}
+
+/* Add this to your existing styles */
+button {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.group:hover {
+  width: auto;
+  min-width: 200px;
 }
 </style>

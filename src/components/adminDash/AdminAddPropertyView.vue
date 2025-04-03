@@ -70,7 +70,7 @@
                 <label
                   class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
                 >
-                  Upload From Computer
+                  Upload
                   <input
                     type="file"
                     multiple
@@ -184,6 +184,9 @@ export default {
           phone: "",
           phone2: "",
         },
+        isPaid: true,
+        ownerProfile: "",
+        status: "approved",
       },
       propertyInfo: [
         { key: "title", label: "Property Title", type: "text", required: true },

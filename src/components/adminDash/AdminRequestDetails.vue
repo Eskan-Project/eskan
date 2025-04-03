@@ -58,7 +58,7 @@
             <div
               class="text-xl bg-blue-50 p-3 rounded-lg border border-blue-100 shadow-sm flex items-center justify-center"
             >
-              <p class="text-blue-600 font-medium mr-2">Property Price:</p>
+              <p class="text-blue-600 font-medium mr-2">Price:</p>
               <p class="font-semibold text-blue-700">
                 {{ Number(request.price).toLocaleString() }}
                 <span class="text-lg">EGP</span>
@@ -165,7 +165,10 @@
                       request.propertyContact.email
                     }}</span>
                   </p>
-                  <p class="flex flex-col items-center space-y-1">
+                  <p
+                    v-if="request.address"
+                    class="flex flex-col items-center space-y-1"
+                  >
                     <span class="font-semibold">Address:</span>
                     <span class="text-sm capitalize">{{
                       request.address
@@ -229,14 +232,33 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white shadow-lg rounded-lg">
+            <div class="p-6 bg-white shadow-lg rounded-lg relative">
               <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Location Information
               </h2>
-              <div id="map" class="w-full h-96 rounded-lg"></div>
-              <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
-                Loading map...
-              </p>
+              <!-- Only show map if data is loaded and not in loading state -->
+              <div v-if="!loading && request.coordinates">
+                <div id="map" class="w-full h-96 rounded-lg"></div>
+              </div>
+              <!-- Loading state -->
+              <div
+                v-else-if="loading || mapLoading"
+                class="w-full h-96 rounded-lg flex items-center justify-center bg-gray-100"
+              >
+                <div class="text-center">
+                  <div
+                    class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-2"
+                  ></div>
+                  <p class="text-gray-600">Loading map...</p>
+                </div>
+              </div>
+              <!-- Error state -->
+              <div
+                v-else
+                class="w-full h-96 rounded-lg flex items-center justify-center bg-gray-100"
+              >
+                <p class="text-gray-600">No location data available</p>
+              </div>
             </div>
           </div>
         </div>
@@ -244,10 +266,10 @@
         <!-- Meeting Form Modal -->
         <div
           v-if="meetingInfo"
-          class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4"
+          class="fixed inset-0 z-50 overflow-y-auto backdrop-blur-md bg-white/30 flex items-center justify-center p-4"
         >
           <div
-            class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative"
+            class="bg-white/90 backdrop-blur rounded-xl shadow-xl max-w-md w-full p-6 relative"
           >
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-semibold text-gray-900">
@@ -704,22 +726,21 @@ export default {
       }
     },
     async sendAcceptanceNotification(ownerId, propertyTitle) {
-  try {
-    const notificationMessage = `"${propertyTitle}" has been approved! Click here to complete the payment. ✅`;
+      try {
+        const notificationMessage = `"${propertyTitle}" has been approved! Click here to complete the payment. ✅`;
 
-    await this.$store.dispatch("notifications/addNotification", {
-      type: "property_accepted",
-      ownerId: ownerId,
-      message: notificationMessage,
-      link: `/userProfile/${ownerId}`, 
-    });
+        await this.$store.dispatch("notifications/addNotification", {
+          type: "property_accepted",
+          ownerId: ownerId,
+          message: notificationMessage,
+          link: `/userProfile/${ownerId}`,
+        });
 
-    console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
-  } catch (error) {
-    console.error("Error sending acceptance notification:", error);
-  }
-},
-
+        console.log(`Acceptance notification sent for owner ID: ${ownerId}`);
+      } catch (error) {
+        console.error("Error sending acceptance notification:", error);
+      }
+    },
 
     async loadData() {
       this.loading = true;
@@ -734,7 +755,7 @@ export default {
 
         await this.$nextTick();
         if (!this.loading && this.request && this.request.coordinates) {
-          this.initMap();
+          await this.initMap();
         }
       } catch (error) {
         this.error = "Failed to load Request. Please try again later.";
@@ -744,9 +765,24 @@ export default {
       }
     },
 
-    initMap() {
+    async initMap() {
+      // Don't initialize map if we're in loading state or don't have coordinates
+      if (this.loading || !this.request.coordinates) {
+        return;
+      }
+
       try {
         this.mapLoading = true;
+
+        // Wait for the DOM to be ready
+        await this.$nextTick();
+
+        // Make sure the map container exists
+        const mapContainer = document.getElementById("map");
+        if (!mapContainer) {
+          console.error("Map container not found");
+          return;
+        }
 
         // Remove existing map instance if it exists
         if (this.mapInstance) {
@@ -754,29 +790,24 @@ export default {
           this.mapInstance = null;
         }
 
-        // Check if we have coordinates
-        if (!this.request.coordinates) {
-          this.mapLoading = false;
-          return;
-        }
-
         const { lat, lng } = this.request.coordinates;
-        const map = L.map("map", { scrollWheelZoom: false }).setView(
-          [lat, lng],
-          13
-        );
+
+        // Create new map instance
+        this.mapInstance = L.map("map", {
+          scrollWheelZoom: false,
+          zIndex: 1, // Set lower z-index
+        }).setView([lat, lng], 13);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(map);
+        }).addTo(this.mapInstance);
 
         L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(map)
+          .addTo(this.mapInstance)
           .bindPopup(`<b>${this.request.title}</b><br>${this.locationText}`)
           .openPopup();
 
         this.mapLoaded = true;
-        this.mapInstance = map;
       } catch (error) {
         console.error("Map initialization error:", error);
       } finally {
@@ -943,8 +974,8 @@ export default {
           confirmButtonText: "Yes, reject it!",
         });
         const propertyData = {
-            ...this.request,
-          };
+          ...this.request,
+        };
 
         if (result.isConfirmed) {
           console.log("Deleting request with id:", this.id);
@@ -980,7 +1011,6 @@ export default {
     },
 
     async sendRejectionNotification(ownerId, propertyTitle) {
-    
       try {
         const notificationMessage = `"${propertyTitle}" has been rejected! ❌`;
         await this.$store.dispatch("notifications/addNotification", {
@@ -988,14 +1018,13 @@ export default {
           ownerId: ownerId,
           message: notificationMessage,
         });
-        console.log(`Rejection notification sent for owner ID: ${ownerId}: ${ownerId}`);
+        console.log(
+          `Rejection notification sent for owner ID: ${ownerId}: ${ownerId}`
+        );
       } catch (error) {
         console.error("Error sending rejection notification:", error);
       }
-    
     },
-
-
   },
 };
 </script>
@@ -1023,5 +1052,20 @@ button:hover {
 
 button:active {
   transform: translateY(0);
+}
+
+/* Add these new styles */
+.fixed {
+  z-index: 50;
+}
+
+#map {
+  z-index: 1;
+  position: relative;
+}
+
+/* Ensure modal appears above map */
+.modal-overlay {
+  z-index: 100;
 }
 </style>

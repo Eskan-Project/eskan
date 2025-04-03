@@ -78,8 +78,14 @@ export default {
         images: imagesUrl,
         ownerId: userDetails.uid,
         createdAt: new Date(),
-        status: userRole === "admin" ? "approved" : "pending",
-        isPaid: false,
+        status: userRole === "admin" ? "completed" : "pending",
+
+        approvedAt: userRole === "admin" ? new Date() : "",
+        approvedBy: userRole === "admin" ? userDetails.uid : "",
+        isPaid: userRole === "admin" ? true : false,
+        expiresAt:
+          userRole === "admin" ? new Date(Date.now() + 5 * 60 * 1000) : "", // 5 minutes
+
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);
@@ -283,10 +289,9 @@ export default {
       const propertyData = {
         ...requestData,
         status: "approved",
-        lastUpdated: new Date(),
         approvedBy: userDetails.uid,
-        approvedAt: new Date(),
         isPaid: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
       };
 
       delete propertyData.id; // Remove request ID
