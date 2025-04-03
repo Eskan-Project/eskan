@@ -80,6 +80,7 @@ export default {
         createdAt: new Date(),
         status: userRole === "admin" ? "approved" : "pending",
         isPaid: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
       };
 
       await setDoc(doc(db, collectionName, propertyId), propertyData);
@@ -283,10 +284,9 @@ export default {
       const propertyData = {
         ...requestData,
         status: "approved",
-        lastUpdated: new Date(),
         approvedBy: userDetails.uid,
-        approvedAt: new Date(),
         isPaid: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
       };
 
       delete propertyData.id; // Remove request ID
