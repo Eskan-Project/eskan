@@ -141,15 +141,27 @@ export default {
     }
   },
 
-  async getProperty({ commit }, id) {
+  async getProperty({ commit }, title) {
     commit("startLoading", null, { root: true });
     try {
-      const propertyRef = doc(db, "properties", id);
-      const propertySnapshot = await getDoc(propertyRef);
-      if (!propertySnapshot.exists()) {
+      // Get all properties
+      const propertiesSnapshot = await getDocs(collection(db, "properties"));
+
+      // Find the property with matching title (case insensitive)
+      const propertyDoc = propertiesSnapshot.docs.find((doc) => {
+        const data = doc.data();
+        return data.title && data.title.toLowerCase() === title.toLowerCase();
+      });
+
+      if (!propertyDoc) {
         throw new Error("Property not found");
       }
-      const property = { id: propertySnapshot.id, ...propertySnapshot.data() };
+
+      const property = {
+        id: propertyDoc.id,
+        ...propertyDoc.data(),
+      };
+
       commit("setProperty", property);
       return property;
     } catch (error) {

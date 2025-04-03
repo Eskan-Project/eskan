@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg">
+  <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg h-[440px]">
     <p v-if="loading" class="text-center text-gray-600">
       {{ $t("propertyDetails.loading") }}
     </p>
@@ -84,7 +84,7 @@
         class="text-center"
       >
         <div
-          class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
+          class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto mt-10"
         >
           <svg
             class="w-10 h-10 text-[#124365] animate-bounce"

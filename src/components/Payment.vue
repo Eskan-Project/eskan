@@ -249,7 +249,7 @@ export default {
           this.redirecting = true;
           setTimeout(() => {
             this.redirecting = false;
-            this.$router.push(`/property/${this.property.id}`);
+            this.$router.push(`/property/${this.property.title}`);
           }, 3000);
         }
       } catch (error) {

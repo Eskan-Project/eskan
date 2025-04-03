@@ -187,7 +187,7 @@
       <div class="col-span-3 md:col-span-1 space-y-5 sm:space-y-8">
         <!-- Contact Card -->
         <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg">
-          <PropertyDetails :property="property" :id="id" />
+          <PropertyDetails :property="property" :id="property?.id" />
         </div>
         <div class="bg-white rounded-lg max-w-md w-full p-4 shadow-lg">
           <h3 class="text-xl font-semibold mb-4 text-gray-900">
@@ -450,7 +450,7 @@ import Swal from "sweetalert2";
 
 export default {
   name: "PropertyDetail",
-  props: ["id"],
+  props: ["title"],
   components: { PropertyDetails },
   data() {
     return {
@@ -539,17 +539,12 @@ export default {
               newValue.description.substring(0, 300) + "...";
           }
         }
-
-        // Check if property is in wishlist
-        if (this.isAuth && newValue) {
-          this.checkWishlistStatus();
-        }
       },
     },
   },
   mounted() {
-    this.getProperty(this.id).then(() => {
-      console.log("Fetched property:", this.property);
+    this.getProperty(this.title).then(() => {
+      console.log("Fetched property by title:", this.property);
       this.$nextTick(() => {
         this.initMapWithFallback();
         this.scrollToActiveThumbnail();
@@ -574,39 +569,6 @@ export default {
   },
   methods: {
     ...mapActions("property", ["getProperty"]),
-
-    // Wishlist functionality
-    toggleWishlist() {
-      if (!this.isAuth) {
-        // Redirect to login or show login modal
-        toast.info(this.$t("wishlist.login_required"), {
-          autoClose: 3000,
-          position: toast.POSITION.TOP_CENTER,
-        });
-        return;
-      }
-
-      this.isWishlisted = !this.isWishlisted;
-
-      // Here you would implement the actual wishlist functionality with Firestore
-      // For now, just show a toast notification
-      if (this.isWishlisted) {
-        toast.success(this.$t("wishlist.added"), {
-          autoClose: 2000,
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      } else {
-        toast.info(this.$t("wishlist.removed"), {
-          autoClose: 2000,
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      }
-    },
-
-    checkWishlistStatus() {
-      // Mock implementation - would be replaced with Firestore check
-      this.isWishlisted = false;
-    },
 
     // Share functionality
     shareProperty() {

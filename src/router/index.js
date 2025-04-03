@@ -53,7 +53,7 @@ const routes = [
       { path: "properties", name: "Properties", component: PropertiesView },
       { path: "contact", name: "Contact", component: ContactView },
       { path: "propertyItem", name: "item", component: PropertyItemView },
-      { path: "property/:id", component: PropertyItemView, props: true },
+      { path: "property/:title", component: PropertyItemView, props: true },
       { path: "payment", name: "payment", component: Payment },
 
       {
@@ -250,7 +250,7 @@ const isVerificationExpired = () => {
 
 // Combined navigation guard
 router.beforeEach(async (to, from, next) => {
-  if (to.path !== "/properties" && to.path !== "/property/:id") {
+  if (to.path !== "/properties" && to.path !== "/property/:title") {
     store.dispatch("startLoading");
   }
 

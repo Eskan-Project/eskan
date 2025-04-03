@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="`/property/${property.id}`"
+    :to="`/property/${property.title}`"
     class="block group focus:outline-none w-full h-full"
     :aria-label="`View details for ${property.title || 'property'}`"
   >
