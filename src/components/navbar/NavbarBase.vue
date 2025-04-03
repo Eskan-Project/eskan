@@ -34,6 +34,28 @@
         class="flex items-center gap-2 sm:gap-4"
         :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
       >
+        <div class="relative items-center hidden md:inline-flex">
+          <div
+            class="w-15 h-6 md:h-8 md:w-18 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+            @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
+          >
+            <span
+              class="text-gray-600 text-xs md:text-sm z-10"
+              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 font-bold'"
+              >EN</span
+            >
+            <span
+              class="text-gray-600 text-xs md:text-sm z-10"
+              :class="
+                currentLocale === 'ar' ? 'ml-3 md:ml-4 font-bold' : 'mr-2'
+              "
+              >ع</span
+            >
+            <div
+              class="bg-white w-7 h-5 md:w-8 md:h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+            ></div>
+          </div>
+        </div>
         <div
           v-if="isAuth"
           class="relative text-xl sm:text-2xl cursor-pointer"

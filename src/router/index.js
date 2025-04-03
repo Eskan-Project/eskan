@@ -284,6 +284,9 @@ async function handleAuthAndRole(to, next) {
     next({ name: "NotFound" });
   } else if (to.meta.requiresOwner && role !== "owner") {
     next({ name: "NotFound" });
+  } else if (isAuth && role === "admin" && to.path === "/") {
+    next({ name: "adminProfile" });
+    store.dispatch("stopLoading");
   } else {
     next();
   }

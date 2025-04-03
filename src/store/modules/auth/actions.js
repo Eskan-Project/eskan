@@ -40,7 +40,14 @@ export default {
         commit("setUser", userDoc.data() || {});
       }
     } catch (error) {
-      commit("setError", error.message);
+      if (
+        error.message &&
+        error.message.includes("Missing or insufficient permissions")
+      ) {
+        console.error(error.message);
+        return null;
+      }
+      commit("setError", error.message || "Error fetching user details");
       console.error(error);
     }
   },
