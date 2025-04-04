@@ -1,23 +1,29 @@
 <template>
   <auth-header />
-  <div class="md:p-10 flex justify-center items-center h-screen">
-    <div class="bg-white rounded-xl w-full md:w-1/3">
+  <div
+    class="md:p-10 flex justify-center items-center h-screen bg-gray-50 dark:bg-[#111827]"
+  >
+    <div
+      class="bg-white dark:bg-[#1F2937] rounded-xl w-full md:w-1/3 shadow-md"
+    >
       <div class="main-text p-8 rounded-l-xl">
-        <h1 class="text-[#364365] text-3xl text-center font-bold pb-10">
+        <h1
+          class="text-[#364365] dark:text-white text-3xl text-center font-bold pb-10"
+        >
           {{ $t("auth.login.title") }}
         </h1>
         <form @submit.prevent="submitLogin">
           <div class="mb-6">
-            <label class="block mb-1 text-[#364365]">{{
+            <label class="block mb-1 text-[#364365] dark:text-white">{{
               $t("auth.login.email")
             }}</label>
             <input
               v-model="email"
               type="email"
-              class="border-b-2 w-full focus:outline-none text-black"
+              class="border-b-2 w-full focus:outline-none text-black dark:text-white dark:bg-[#1F2937] dark:border-gray-600"
               :class="{
                 'border-red-500': errors.email,
-                'border-gray-300': !errors.email,
+                'border-gray-300 dark:border-gray-600': !errors.email,
               }"
             />
             <p v-if="errors.email" class="text-red-500 text-sm">
@@ -25,22 +31,22 @@
             </p>
           </div>
           <div class="mb-6 relative">
-            <label class="block mb-1 text-[#364365]">{{
+            <label class="block mb-1 text-[#364365] dark:text-white">{{
               $t("auth.login.password")
             }}</label>
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
-              class="border-b-2 w-full focus:outline-none text-black"
+              class="border-b-2 w-full focus:outline-none text-black dark:text-white dark:bg-[#1F2937] dark:border-gray-600"
               :class="{
                 'border-red-500': errors.password,
-                'border-gray-300': !errors.password,
+                'border-gray-300 dark:border-gray-600': !errors.password,
               }"
             />
             <i
               :class="[
                 showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash',
-                'text-black absolute cursor-pointer',
+                'text-black dark:text-white absolute cursor-pointer',
                 $i18n.locale === 'ar' ? 'left-2 top-1/3' : 'right-2 top-1/3',
               ]"
               @click="togglePassword"
@@ -49,14 +55,14 @@
               {{ errors.password }}
             </p>
             <a
-              class="text-[#364365] text-sm text-right pt-4 cursor-pointer block underline w-fit"
+              class="text-[#364365] dark:text-[#3D8BFF] text-sm text-right pt-4 cursor-pointer block underline w-fit"
               @click.prevent="$router.push({ name: 'forgetPassword' })"
             >
               {{ $t("auth.login.forgot_password") }}
             </a>
           </div>
           <div
-            class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500"
+            class="mb-6 flex flex-col gap-6 justify-center items-center text-gray-500 dark:text-gray-300"
           >
             <Turnstile
               @turnstileVerified="handleTurnstileVerified"
@@ -74,7 +80,7 @@
             <button
               type="submit"
               :disabled="loading"
-              class="border shadow-xl w-full bg-[#364365] text-white text-sm py-2 px-4 rounded-lg hover:bg-white hover:text-[#364365] hover:border-[#364365]"
+              class="border shadow-xl w-full bg-[#364365] dark:bg-[#3D8BFF] text-white text-sm py-2 px-4 rounded-lg hover:bg-white hover:text-[#364365] hover:border-[#364365] dark:hover:bg-[#1F2937] dark:hover:text-[#3D8BFF] dark:hover:border-[#3D8BFF]"
               :class="{
                 'opacity-50 cursor-not-allowed': loading,
                 'cursor-pointer': !loading,
@@ -88,25 +94,29 @@
         </form>
         <div>
           <div
-            class="text-[#364365] font-medium text-sm flex justify-center gap-2 my-4 text-center"
+            class="text-[#364365] dark:text-white font-medium text-sm flex justify-center gap-2 my-4 text-center"
           >
-            <span class="border-b-1 w-20 self-center"></span>
+            <span
+              class="border-b-1 w-20 self-center dark:border-gray-600"
+            ></span>
             <p>{{ $t("auth.login.or_sign_in_with") }}</p>
-            <span class="border-b-1 w-20 self-center"></span>
+            <span
+              class="border-b-1 w-20 self-center dark:border-gray-600"
+            ></span>
           </div>
           <div class="logs flex justify-center gap-2 p-5">
             <button
-              class="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-lg"
+              class="cursor-pointer flex items-center gap-2 bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 text-gray-700 dark:text-white py-2 px-4 rounded-lg"
               @click="loginWithGoogle"
             >
               <i class="bi bi-google"></i>
               {{ $t("auth.login.google") }}
             </button>
           </div>
-          <p class="text-black text-center">
+          <p class="text-black dark:text-gray-300 text-center">
             {{ $t("auth.login.no_account") }}
             <a
-              class="text-blue-500 hover:text-blue-700 cursor-pointer"
+              class="text-blue-500 dark:text-[#3D8BFF] hover:text-blue-700 dark:hover:text-blue-400 cursor-pointer"
               @click.prevent="$router.push({ name: 'register' })"
             >
               {{ $t("auth.login.sign_up") }}

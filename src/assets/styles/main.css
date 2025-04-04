@@ -25,3 +25,4 @@ body {
   background-color: var(--primary-color);
   color: var(--text-color);
 }
+@custom-variant dark (&:where(.dark, .dark *));

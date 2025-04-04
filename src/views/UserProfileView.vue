@@ -1,7 +1,11 @@
 <template>
-  <main class="min-h-screen bg-gray-100 text-gray-900 pt-[86px] py-8">
+  <main
+    class="min-h-screen bg-gray-100 dark:bg-[#111827] text-gray-900 dark:text-white pt-[86px] py-8"
+  >
     <div class="max-w-6xl mx-auto px-4">
-      <section class="bg-white rounded-lg shadow-md overflow-hidden">
+      <section
+        class="bg-white dark:bg-[#1F2937] rounded-lg shadow-md overflow-hidden"
+      >
         <div class="relative h-48">
           <img
             class="h-full w-full object-cover"
@@ -12,30 +16,30 @@
           <div class="absolute inset-0 bg-[#053052]/80"></div>
         </div>
 
-        <div class="relative px-6 pb-6 text-gray-900">
+        <div class="relative px-6 pb-6 text-gray-900 dark:text-white">
           <article class="flex flex-col sm:flex-row items-center">
             <figure class="-mt-16 relative">
               <img
                 v-if="croppedImageSrc"
                 :src="croppedImageSrc"
                 :alt="$t('profile.title')"
-                class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
+                class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 object-cover shadow-lg"
                 loading="lazy"
               />
               <img
                 v-else
                 :src="userDetails?.photo || defaultPhoto"
                 :alt="$t('profile.title')"
-                class="w-32 h-32 rounded-full border-4 border-white bg-white object-cover shadow-lg"
+                class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 object-cover shadow-lg"
                 loading="lazy"
               />
 
               <div
                 v-if="isEditing"
-                class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow cursor-pointer"
+                class="absolute bottom-0 right-0 bg-white dark:bg-gray-700 p-2 rounded-full shadow cursor-pointer"
                 @click="triggerFileInput"
               >
-                <i class="bi bi-pencil-square text-xl"></i>
+                <i class="bi bi-pencil-square text-xl dark:text-white"></i>
               </div>
 
               <input
@@ -55,20 +59,22 @@
                     <input
                       type="text"
                       v-model="userDetails.name"
-                      class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                      class="w-full mt-2 lg:text-2xl md:text-1xl font-semibold text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#3D8BFF] shadow-sm dark:bg-[#1F2937]"
                       :placeholder="$t('profile.name')"
                     />
                   </div>
                   <div v-else>
                     <h1
-                      class="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis mt-2 capitalize"
+                      class="text-3xl font-bold text-gray-900 dark:text-white whitespace-nowrap overflow-hidden text-ellipsis mt-2 capitalize"
                     >
                       {{ userDetails?.name || "No Name" }}
                     </h1>
                   </div>
                 </div>
 
-                <p class="text-sm mt-2 text-gray-600 flex items-center">
+                <p
+                  class="text-sm mt-2 text-gray-600 dark:text-gray-300 flex items-center"
+                >
                   {{ userDetails?.email || "mariamsamuel111@gmail.com" }}
                 </p>
               </div>
@@ -76,7 +82,7 @@
 
             <button
               @click="toggleEdit"
-              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] text-white rounded-lg hover:bg-[#2a355e] shadow-md cursor-pointer"
+              class="mt-6 sm:mt-0 sm:ml-auto px-4 py-2 bg-[#364365] dark:bg-[#3D8BFF] text-white rounded-lg hover:bg-[#2a355e] dark:hover:bg-[#1F2937] dark:hover:text-[#3D8BFF] dark:hover:border dark:hover:border-[#3D8BFF] shadow-md cursor-pointer"
             >
               {{
                 isEditing ? $t("profile.cancel") : $t("profile.edit_profile")
@@ -90,14 +96,16 @@
         v-if="showCropper"
         class="fixed inset-0 bg-[#053052]/80 flex items-center justify-center z-50"
       >
-        <div class="bg-white p-4 rounded-lg shadow-lg w-[90%] max-w-lg">
-          <h3 class="text-xl font-semibold mb-4">
+        <div
+          class="bg-white dark:bg-[#1F2937] p-4 rounded-lg shadow-lg w-[90%] max-w-lg"
+        >
+          <h3 class="text-xl font-semibold mb-4 dark:text-white">
             {{ $t("profile.crop_image") }}
           </h3>
           <div class="cropper-container">
             <Cropper
               ref="cropper"
-              class="w-full h-64 bg-gray-200"
+              class="w-full h-64 bg-gray-200 dark:bg-gray-700"
               :src="croppedImageSrc"
               :stencil-props="{ aspectRatio: 1 }"
             />
@@ -105,13 +113,13 @@
           <div class="flex justify-end mt-4 space-x-2">
             <button
               @click="applyCrop"
-              class="cursor-pointer px-4 py-2 bg-[var(--secondary-color)] text-white rounded hover:bg-white hover:text-[var(--secondary-color)] border hover:border-[var(--secondary-color)]"
+              class="cursor-pointer px-4 py-2 bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white rounded hover:bg-white hover:text-[var(--secondary-color)] dark:hover:bg-[#1F2937] dark:hover:text-[#3D8BFF] border hover:border-[var(--secondary-color)] dark:hover:border-[#3D8BFF]"
             >
               {{ $t("profile.apply") }}
             </button>
             <button
               @click="cancelCrop"
-              class="cursor-pointer px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+              class="cursor-pointer px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700"
             >
               {{ $t("profile.cancel_crop") }}
             </button>
@@ -122,10 +130,10 @@
       <div class="mt-8 grid grid-cols-1 md:grid-cols-1 gap-6">
         <section class="md:col-span-2">
           <article
-            class="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
+            class="bg-white dark:bg-[#1F2937] rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700"
           >
             <h2
-              class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700 border-b pb-3 flex items-center"
+              class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700 dark:text-white border-b dark:border-gray-700 pb-3 flex items-center"
             >
               {{ $t("profile.personal_information") }}
             </h2>
@@ -134,7 +142,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label
-                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 dark:text-white flex items-center mb-2"
                   >
                     {{ $t("profile.national_id") }}
                   </label>
@@ -142,12 +150,12 @@
                     <input
                       v-model="userDetails.nationalId"
                       type="text"
-                      class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      class="block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-[#1F2937] dark:text-white focus:ring-2 focus:ring-blue-400 dark:focus:ring-[#3D8BFF] focus:outline-none"
                     />
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg shadow-md"
                   >
                     {{ userDetails?.nationalId || $t("profile.not_specified") }}
                   </div>
@@ -155,14 +163,14 @@
 
                 <div>
                   <label
-                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 dark:text-white flex items-center mb-2"
                   >
                     {{ $t("profile.gender") }}
                   </label>
                   <div v-if="isEditing">
                     <select
                       v-model="userDetails.gender"
-                      class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      class="block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-[#1F2937] dark:text-white focus:ring-2 focus:ring-blue-400 dark:focus:ring-[#3D8BFF] focus:outline-none"
                     >
                       <option disabled value="">
                         {{ $t("profile.not_specified") }}
@@ -173,7 +181,7 @@
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg shadow-md"
                   >
                     {{ userDetails?.gender || $t("profile.not_specified") }}
                   </div>
@@ -181,7 +189,7 @@
 
                 <div>
                   <label
-                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 dark:text-white flex items-center mb-2"
                   >
                     {{ $t("profile.address") }}
                   </label>
@@ -189,12 +197,12 @@
                     <input
                       v-model="userDetails.address"
                       type="text"
-                      class="capitalize block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      class="capitalize block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-[#1F2937] dark:text-white focus:ring-2 focus:ring-blue-400 dark:focus:ring-[#3D8BFF] focus:outline-none"
                     />
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg shadow-md"
                   >
                     {{ userDetails?.address || $t("profile.not_specified") }}
                   </div>
@@ -202,7 +210,7 @@
 
                 <div>
                   <label
-                    class="text-sm font-semibold text-gray-700 flex items-center mb-2"
+                    class="text-sm font-semibold text-gray-700 dark:text-white flex items-center mb-2"
                   >
                     {{ $t("profile.phone") }}
                   </label>
@@ -210,12 +218,12 @@
                     <input
                       v-model="userDetails.phone"
                       type="text"
-                      class="block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      class="block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-[#1F2937] dark:text-white focus:ring-2 focus:ring-blue-400 dark:focus:ring-[#3D8BFF] focus:outline-none"
                     />
                   </div>
                   <div
                     v-else
-                    class="text-gray-900 bg-gray-100 px-4 py-2 rounded-lg shadow-md"
+                    class="text-gray-900 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg shadow-md"
                   >
                     {{ userDetails?.phone || $t("profile.not_specified") }}
                   </div>
@@ -236,17 +244,17 @@
     </div>
 
     <div class="max-w-6xl mx-auto p-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
         {{ $t("profile.my_properties") }}
       </h2>
 
-      <p v-if="loading" class="text-gray-600">
+      <p v-if="loading" class="text-gray-600 dark:text-gray-300">
         {{ $t("profile.loading_properties") }}
       </p>
 
       <p
         v-else-if="allProperties && allProperties.length === 0"
-        class="text-gray-600"
+        class="text-gray-600 dark:text-gray-300"
       >
         {{ $t("profile.no_properties") }}
       </p>
@@ -258,7 +266,7 @@
         <div
           v-for="property in allProperties"
           :key="property.id"
-          class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+          class="bg-white dark:bg-[#1F2937] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
         >
           <div class="relative">
             <img
@@ -270,9 +278,11 @@
             />
             <div
               v-else
-              class="w-full h-48 bg-gray-300 flex items-center justify-center"
+              class="w-full h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
             >
-              <i class="bi bi-building text-4xl text-gray-500"></i>
+              <i
+                class="bi bi-building text-4xl text-gray-500 dark:text-gray-400"
+              ></i>
             </div>
             <div class="absolute top-2 right-2">
               <span
@@ -294,12 +304,14 @@
 
           <div class="p-4">
             <h4
-              class="text-xl font-bold text-gray-800 truncate capitalize text-center mb-4"
+              class="text-xl font-bold text-gray-800 dark:text-white truncate capitalize text-center mb-4"
             >
               {{ property.title }}
             </h4>
 
-            <div class="flex items-center text-gray-600 mb-2">
+            <div
+              class="flex items-center text-gray-600 dark:text-gray-300 mb-2"
+            >
               <i class="bi bi-geo-alt mr-1"></i>
               <span class="truncate"
                 >{{ getCityName(property) }},
@@ -309,13 +321,15 @@
 
             <div class="grid grid-cols-2 gap-2 mb-3 ml-1">
               <div class="flex items-center">
-                <span class="font-semibold"
+                <span class="font-semibold dark:text-white"
                   >{{ formattedPrice(property.price) }}
                   {{ $t("profile.currency") }}</span
                 >
               </div>
-              <div class="flex items-center">
-                <i class="bi bi-door-open mr-1 text-blue-500"></i>
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <i
+                  class="bi bi-door-open mr-1 text-blue-500 dark:text-[#3D8BFF]"
+                ></i>
                 <span>
                   {{
                     property.rooms.length > 1
@@ -328,11 +342,11 @@
 
             <div
               v-if="property.isPaid"
-              class="flex flex-wrap gap-2 border-t pt-3 mt-2"
+              class="flex flex-wrap gap-2 border-t dark:border-gray-700 pt-3 mt-2"
             >
               <span
                 v-if="property.isPaid"
-                class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 text-blue-700 flex items-center"
+                class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center"
               >
                 <i class="bi bi-check-circle-fill mr-1"></i>
                 {{ $t("profile.paid") }}
@@ -342,7 +356,7 @@
             <button
               v-if="!property.isPaid && property.status === 'approved'"
               @click="goToPaymentPage(property)"
-              class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              class="mt-3 w-full bg-blue-600 dark:bg-[#3D8BFF] hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
             >
               <i class="bi bi-credit-card mr-2"></i> {{ $t("profile.pay_now") }}
             </button>

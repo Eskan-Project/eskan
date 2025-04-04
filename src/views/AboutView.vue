@@ -126,8 +126,8 @@ export default {
 </script>
 
 <style scoped>
-@import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+/* @import "tailwindcss"; */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 /* Optional: Add subtle animation for section entrances */
 section {
   opacity: 0;

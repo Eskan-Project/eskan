@@ -1,5 +1,5 @@
 <template>
-  <div class="properties">
+  <div class="properties dark:bg-[#111827]">
     <section
       class="relative w-full h-60 sm:h-72 md:h-80 lg:h-96 bg-cover bg-center"
       :style="{
@@ -15,7 +15,7 @@
         <div
           class="w-full fixed left-0 z-50 transition-all duration-300 flex justify-center"
           :class="{
-            'bg-white top-14 sm:top-16 md:top-20 py-4 sm:py-5 shadow-lg':
+            'bg-white dark:bg-[#1F2937] top-14 sm:top-16 md:top-20 py-4 sm:py-5 shadow-lg':
               isScrolled || isExpanded,
             'bg-transparent top-1/4 md:top-1/3 -translate-y-1/2':
               !isScrolled && !isExpanded,
@@ -47,14 +47,14 @@
         <div
           v-for="i in 8"
           :key="i"
-          class="bg-gray-200 h-56 sm:h-64 md:h-72 rounded-lg animate-pulse"
+          class="bg-gray-200 dark:bg-gray-700 h-56 sm:h-64 md:h-72 rounded-lg animate-pulse"
         ></div>
       </div>
       <div v-else-if="error" class="text-center py-10">
         <p class="text-red-500 text-sm sm:text-base md:text-lg">{{ error }}</p>
         <button
           @click="loadData"
-          class="mt-4 text-blue-500 underline text-sm sm:text-base"
+          class="mt-4 text-blue-500 dark:text-blue-400 underline text-sm sm:text-base hover:text-blue-700 dark:hover:text-blue-300"
         >
           {{ $t("pagination.retry") }}
         </button>
@@ -66,7 +66,7 @@
         />
         <p
           v-else
-          class="text-center text-gray-500 py-10 text-sm sm:text-base md:text-lg"
+          class="text-center text-gray-500 dark:text-gray-300 py-10 text-sm sm:text-base md:text-lg"
         >
           {{ $t("properties.no_properties") }}
         </p>

@@ -1,27 +1,33 @@
 <template>
-  <div class="flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 class="text-2xl font-bold text-center text-gray-700 mb-4">
+  <div
+    class="flex items-center justify-center h-screen bg-gray-50 dark:bg-[#111827]"
+  >
+    <div
+      class="bg-white dark:bg-[#1F2937] p-8 rounded-lg shadow-md w-full max-w-md"
+    >
+      <h2
+        class="text-2xl font-bold text-center text-gray-700 dark:text-white mb-4"
+      >
         {{ $t("auth.reset_password.title") }}
       </h2>
-      <p class="text-sm text-gray-500 text-center mb-6">
+      <p class="text-sm text-gray-500 dark:text-gray-300 text-center mb-6">
         {{ $t("auth.reset_password.description") }}
       </p>
 
       <form @submit.prevent="handleResetPassword">
         <div class="mb-4 relative">
-          <label class="block text-gray-700">{{
+          <label class="block text-gray-700 dark:text-white">{{
             $t("auth.reset_password.new_password")
           }}</label>
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            class="border border-gray-300 w-full p-2 rounded-md focus:outline-none focus:border-blue-500 text-black"
+            class="border border-gray-300 dark:border-gray-600 w-full p-2 rounded-md focus:outline-none focus:border-blue-500 dark:focus:border-[#3D8BFF] text-black dark:text-white dark:bg-[#1F2937]"
             required
           />
           <i
             :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'"
-            class="text-black absolute right-2 top-8 cursor-pointer"
+            class="text-black dark:text-white absolute right-2 top-8 cursor-pointer"
             @click="togglePassword"
           ></i>
         </div>
@@ -35,7 +41,7 @@
 
         <button
           type="submit"
-          class="w-full text-white bg-[#364365] hover:bg-white hover:text-[#364365] py-2 px-4 rounded-lg border border-[#364365] cursor-pointer"
+          class="w-full text-white bg-[#364365] dark:bg-[#3D8BFF] hover:bg-white hover:text-[#364365] dark:hover:bg-[#1F2937] dark:hover:text-[#3D8BFF] py-2 px-4 rounded-lg border border-[#364365] dark:border-[#3D8BFF] cursor-pointer"
           :class="loading ? 'opacity-50 cursor-not-allowed' : ''"
           :disabled="loading"
         >
