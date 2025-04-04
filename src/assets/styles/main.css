@@ -11,6 +11,12 @@
   font-family: "Montserrat", sans-serif;
 }
 
+:root.dark {
+  --primary-color: #111827;
+  --secondary-color: #364365;
+  --text-color: white;
+}
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -24,5 +30,10 @@ input[type="number"]::-webkit-inner-spin-button {
 body {
   background-color: var(--primary-color);
   color: var(--text-color);
+}
+
+.dark body {
+  background-color: var(--primary-color);
+  color: white;
 }
 @custom-variant dark (&:where(.dark, .dark *));

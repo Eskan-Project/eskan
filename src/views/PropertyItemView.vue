@@ -257,7 +257,7 @@
               "
               :class="[
                 $i18n.locale === 'ar' ? 'ml-10 text-right' : 'mr-10 text-left',
-                'w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-gray-300',
+                'dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 text-gray-900 ',
               ]"
               dir="ltr"
               ref="shareUrlInput"

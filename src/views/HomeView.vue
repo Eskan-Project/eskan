@@ -264,50 +264,32 @@ export default {
     swiperModules: [Autoplay, Pagination, Navigation],
     features: [
       {
-        icon: new URL(
-          "../assets/images/icons/VerifyForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-patch-check-fill",
         titleKey: "home.features.verified.title",
         descriptionKey: "home.features.verified.description",
       },
       {
-        icon: new URL(
-          "../assets/images/icons/BudgetForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-wallet2",
         titleKey: "home.features.budget.title",
         descriptionKey: "home.features.budget.description",
       },
       {
-        icon: new URL(
-          "../assets/images/icons/ContactForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-chat-dots-fill",
         titleKey: "home.features.contact.title",
         descriptionKey: "home.features.contact.description",
       },
       {
-        icon: new URL(
-          "../assets/images/icons/SmartForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-lightbulb-fill",
         titleKey: "home.features.smart.title",
         descriptionKey: "home.features.smart.description",
       },
       {
-        icon: new URL(
-          "../assets/images/icons/SecureForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-shield-lock-fill",
         titleKey: "home.features.secure.title",
         descriptionKey: "home.features.secure.description",
       },
       {
-        icon: new URL(
-          "../assets/images/icons/CurvedArrowForHomePage.png",
-          import.meta.url
-        ).href,
+        icon: "bi bi-arrow-repeat",
         titleKey: "home.features.flexible.title",
         descriptionKey: "home.features.flexible.description",
       },

@@ -11,7 +11,7 @@
           <!-- Image and Contact Info Section -->
           <div class="relative flex flex-col justify-between">
             <img
-              src="../assets/images/contact/contact-1.jpg"
+              src="../assets/images/contact/contact-2.jpg"
               loading="lazy"
               alt="Contact Us"
               class="w-full h-48 sm:h-64 md:h-full object-cover rounded-t-2xl md:rounded-none md:rounded-l-2xl"

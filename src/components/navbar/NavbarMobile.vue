@@ -10,10 +10,11 @@
     </transition>
 
     <!-- Mobile Menu -->
+    <!-- Updating mobile menu for dark mode -->
     <transition name="slide">
       <ul
         v-if="isVisible"
-        class="md:hidden flex flex-col bg-white w-64 sm:w-72 fixed top-0 h-full shadow-lg p-4 z-200"
+        class="md:hidden flex flex-col bg-white dark:bg-gray-800 w-64 sm:w-72 fixed top-0 h-full shadow-lg p-4 z-200"
         :class="[currentLocale === 'ar' ? 'left-0' : 'right-0']"
       >
         <li
@@ -24,7 +25,7 @@
         >
           <button
             @click="closeMenu"
-            class="text-gray-600 hover:text-gray-800 transition-colors"
+            class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors"
             aria-label="Close menu"
           >
             <i class="bi bi-x text-2xl"></i>
@@ -35,9 +36,9 @@
         <li v-for="item in navLinks" :key="item.path">
           <router-link
             :to="item.path"
-            class="block py-3 px-4 text-[var(--secondary-color)] font-medium text-base hover:bg-gray-100 rounded-md transition-colors"
+            class="block py-3 px-4 text-[var(--secondary-color)] dark:text-white font-medium text-base hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
             :class="{
-              'bg-gray-100': $route.path === item.path,
+              'bg-gray-100 dark:bg-gray-700': $route.path === item.path,
               'border-r-4 border-[var(--secondary-color)]':
                 $route.path === item.path && currentLocale === 'ar',
               'border-l-4 border-[var(--secondary-color)]':
@@ -51,10 +52,12 @@
 
         <!-- Language Switcher -->
         <li class="py-3 px-4">
-          <div class="flex items-center gap-2 text-[var(--secondary-color)]">
+          <div
+            class="flex items-center gap-2 text-[var(--secondary-color)] dark:text-white"
+          >
             <i class="bi bi-globe"></i>
             <button
-              class="flex items-center gap-2 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              class="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded transition-colors"
               @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
             >
               {{ currentLocale === "ar" ? "English" : "العربية" }}
@@ -63,11 +66,11 @@
         </li>
 
         <!-- Auth Actions -->
-        <li v-if="isAuth" class="mt-auto border-t pt-4">
+        <li v-if="isAuth" class="mt-auto border-t dark:border-gray-600 pt-4">
           <router-link
             v-if="userDetails.role === 'owner'"
             to="/createProperty"
-            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             @click="closeMenu"
           >
             <i class="bi bi-plus-circle"></i>
@@ -77,7 +80,7 @@
           <router-link
             v-if="userDetails.role === 'admin'"
             to="/admin"
-            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             @click="closeMenu"
           >
             <i class="bi bi-person-fill-gear"></i>
@@ -87,7 +90,7 @@
           <!-- Profile link for all authenticated users -->
           <router-link
             to="/userProfile"
-            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             @click="closeMenu"
           >
             <i class="bi bi-person"></i>
@@ -96,17 +99,17 @@
 
           <button
             @click="logoutAndClose"
-            class="flex items-center gap-2 py-3 px-4 text-red-600 hover:bg-gray-100 rounded-md w-full text-left"
+            class="flex items-center gap-2 py-3 px-4 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md w-full text-left"
           >
             <i class="bi bi-box-arrow-in-right"></i>
             {{ $t("nav.logout") }}
           </button>
         </li>
 
-        <li v-else class="mt-auto border-t pt-4">
+        <li v-else class="mt-auto border-t dark:border-gray-600 pt-4">
           <router-link
             to="/login"
-            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] hover:bg-gray-100 rounded-md"
+            class="flex items-center gap-2 py-3 px-4 text-[var(--secondary-color)] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             @click="closeMenu"
           >
             <i class="bi bi-box-arrow-in-right"></i>
