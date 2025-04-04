@@ -129,7 +129,7 @@
                   class="text-center"
                   :class="windowWidth <= 550 ? 'px-1 py-1' : 'px-4 py-3'"
                 >
-                  <router-link :to="`/admin/properties/${property.id}`">
+                  <router-link :to="`/admin/properties/${property.title}`">
                     <button
                       class="text-[#364365] dark:text-blue-400 p-1 rounded hover:bg-[#364365] dark:hover:bg-blue-700 hover:text-white transition duration-200 ease-in-out flex items-center"
                       :class="windowWidth <= 550 ? 'text-[8px]' : 'text-xs'"
