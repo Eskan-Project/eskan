@@ -1,25 +1,33 @@
 <template>
-  <div class="flex-1 p-4 md:p-8">
+  <div class="flex-1 p-4 md:p-8 dark:bg-gray-900">
     <!-- Profile Section -->
     <section
-      class="bg-white rounded-lg shadow p-4 mb-6 flex items-center space-x-4"
+      class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6 flex items-center space-x-4"
     >
       <img
         :src="userInfo.photo"
         loading="lazy"
         alt="Profile"
-        class="w-16 h-16 rounded-full object-cover"
+        class="w-16 h-16 rounded-full object-cover border dark:border-gray-600"
       />
       <div>
-        <h1 class="text-lg md:text-xl font-semibold text-gray-600">
+        <h1
+          class="text-lg md:text-xl font-semibold text-gray-600 dark:text-white"
+        >
           {{ userInfo.name }}
         </h1>
-        <p class="text-sm md:text-base text-gray-600">{{ userInfo.email }}</p>
+        <p class="text-sm md:text-base text-gray-600 dark:text-gray-300">
+          {{ userInfo.email }}
+        </p>
       </div>
     </section>
 
-    <section class="bg-white rounded-lg shadow p-4 md:p-6">
-      <h2 class="text-lg md:text-xl font-semibold mb-4">Edit Profile</h2>
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+      <h2
+        class="text-lg md:text-xl font-semibold mb-4 text-gray-700 dark:text-white"
+      >
+        Edit Profile
+      </h2>
       <form @submit.prevent="handleUpdateProfile">
         <div class="grid md:grid-cols-2 gap-7">
           <InputField
@@ -30,6 +38,7 @@
             :type="field.type"
             :placeholder="field.placeholder"
             :disabled="!isEdited"
+            class="dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
 
@@ -64,7 +73,9 @@
 
     <!-- Orders Section -->
     <section class="mt-8" v-if="latestRequests.length === 0">
-      <div class="bg-green-100 text-green-800 p-4 rounded-lg shadow">
+      <div
+        class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 p-4 rounded-lg shadow"
+      >
         <p class="text-center font-semibold">
           Well Done! There are no Pending Requests
         </p>
@@ -72,12 +83,14 @@
     </section>
     <section v-else class="mt-8">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-[#364365] text-lg md:text-xl font-semibold">
+        <h2
+          class="text-[#364365] dark:text-blue-300 text-lg md:text-xl font-semibold"
+        >
           Owners Requests
         </h2>
         <router-link
           to="/admin/requests"
-          class="text-[#364365] hover:underline"
+          class="text-[#364365] dark:text-blue-300 hover:underline"
         >
           View all
         </router-link>
@@ -87,7 +100,7 @@
           v-for="request in latestRequests"
           :key="request.id"
           @click="viewRequestDetails(request.id)"
-          class="bg-white rounded-lg shadow cursor-pointer hover:shadow-lg transition-shadow"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow cursor-pointer hover:shadow-lg transition-shadow"
         >
           <img
             :src="request.images?.[0] || 'default-image-url'"
@@ -97,24 +110,27 @@
           />
           <div class="p-4">
             <div class="flex items-center justify-between mb-2">
-              <h3 class="font-semibold text-gray-600">
+              <h3 class="font-semibold text-gray-600 dark:text-white">
                 {{ request.title }}
               </h3>
               <span
                 :class="{
-                  'bg-yellow-100 text-yellow-800': request.status === 'pending',
-                  'bg-green-100 text-green-800': request.status === 'approved',
-                  'bg-red-100 text-red-800': request.status === 'rejected',
+                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100':
+                    request.status === 'pending',
+                  'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100':
+                    request.status === 'approved',
+                  'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100':
+                    request.status === 'rejected',
                 }"
                 class="px-2 py-1 rounded-full text-xs"
               >
                 {{ request.status }}
               </span>
             </div>
-            <p class="text-gray-600 text-sm">
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
               {{ request.propertyContact.name }}
             </p>
-            <p class="text-gray-500 text-xs mt-2">
+            <p class="text-gray-500 dark:text-gray-400 text-xs mt-2">
               {{
                 new Date(request.createdAt.seconds * 1000).toLocaleDateString()
               }}
@@ -125,6 +141,24 @@
     </section>
   </div>
 </template>
+
+<style>
+/* Add dark mode styles for inputs */
+.dark input,
+.dark textarea,
+.dark select {
+  color: white;
+  background-color: #374151; /* gray-700 */
+  border-color: #4b5563; /* gray-600 */
+}
+
+/* Fix any potential light mode issues */
+input,
+textarea,
+select {
+  color: #111827; /* gray-900 for better contrast in light mode */
+}
+</style>
 
 <script>
 import { mapState, mapActions } from "vuex";

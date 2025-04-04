@@ -1,14 +1,16 @@
 <template>
-  <main class="min-h-screen bg-white flex-1 p-3 sm:p-4 md:p-8">
+  <main class="min-h-screen bg-white dark:bg-gray-900 flex-1 p-3 sm:p-4 md:p-8">
     <div class="w-full">
       <div class="max-w-7xl mx-auto">
         <form @submit.prevent="submitProperty">
           <div class="space-y-8">
-            <div class="border-b border-gray-900/10 pb-8">
-              <h2 class="text-xl sm:text-2xl font-semibold text-gray-900">
+            <div class="border-b border-gray-900/10 dark:border-gray-700 pb-8">
+              <h2
+                class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white"
+              >
                 Add Property
               </h2>
-              <p class="mt-2 text-sm text-gray-600">
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 This information will be displayed to users to see the details
                 about the property.
               </p>
@@ -34,6 +36,7 @@
                   :type="field.type"
                   :required="field.required"
                   :options="field.options"
+                  class="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
 
@@ -48,16 +51,19 @@
                   v-model="propertyDetails.propertyContact[field.key]"
                   :type="field.type"
                   :required="field.required"
+                  class="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
 
               <!-- Contract Image Upload -->
               <div class="col-span-1 sm:col-span-2 lg:col-span-3 mb-6">
-                <label class="block text-gray-700 font-medium mb-2">
+                <label
+                  class="block text-gray-700 dark:text-gray-300 font-medium mb-2"
+                >
                   Contract Document <span class="text-red-500">*</span>
                 </label>
                 <div
-                  class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
+                  class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center"
                   :class="{
                     'border-green-500': contractImage,
                     'border-red-500': errorMessage && !contractImage,
@@ -68,14 +74,16 @@
                     class="flex flex-col items-center gap-3 py-4"
                   >
                     <i
-                      class="bi bi-file-earmark-text text-4xl text-gray-500"
+                      class="bi bi-file-earmark-text text-4xl text-gray-500 dark:text-gray-400"
                     ></i>
-                    <p class="text-gray-500 text-sm sm:text-base text-center">
+                    <p
+                      class="text-gray-500 dark:text-gray-400 text-sm sm:text-base text-center"
+                    >
                       Upload contract document image
                     </p>
                     <label class="cursor-pointer">
                       <span
-                        class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
+                        class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md hover:bg-white hover:text-[var(--secondary-color)] dark:hover:bg-gray-800 transition text-sm sm:text-base"
                       >
                         Upload
                       </span>
@@ -105,25 +113,29 @@
             </div>
 
             <!-- Image Upload Section -->
-            <div class="rounded-lg p-4 w-full mx-auto bg-gray-50">
+            <div
+              class="rounded-lg p-4 w-full mx-auto bg-gray-50 dark:bg-gray-800"
+            >
               <h2
-                class="text-lg sm:text-xl font-semibold mb-4 text-center  text-gray-500"
+                class="text-lg sm:text-xl font-semibold mb-4 text-center text-gray-500 dark:text-gray-300"
               >
                 Property Images
               </h2>
               <div
-                class="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4"
+                class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 sm:p-4"
               >
                 <div class="flex flex-col items-center space-y-4 py-4">
                   <i
-                    class="bi bi-images text-3xl sm:text-4xl text-gray-500"
+                    class="bi bi-images text-3xl sm:text-4xl text-gray-500 dark:text-gray-400"
                     v-if="uploadedImages.length === 0"
                   ></i>
-                  <p class="text-gray-500 text-center text-sm sm:text-base">
+                  <p
+                    class="text-gray-500 dark:text-gray-400 text-center text-sm sm:text-base"
+                  >
                     You can add up to 15 photos to your ad
                   </p>
                   <label
-                    class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition text-sm sm:text-base"
+                    class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 py-2.5 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] dark:hover:bg-gray-800 transition text-sm sm:text-base"
                   >
                     Upload
                     <input
@@ -172,14 +184,14 @@
             <div class="flex gap-4 justify-center py-4">
               <button
                 type="submit"
-                class="text-white rounded-md bg-[var(--secondary-color)] px-6 py-2.5 text-sm sm:text-base font-semibold border border-[var(--secondary-color)] hover:text-[var(--secondary-color)] hover:bg-white transition-colors"
+                class="text-white rounded-md bg-[var(--secondary-color)] px-6 py-2.5 text-sm sm:text-base font-semibold border border-[var(--secondary-color)] hover:text-[var(--secondary-color)] hover:bg-white dark:hover:bg-gray-800 transition-colors"
               >
                 Add Property
               </button>
               <button
                 @click="resetForm"
                 type="reset"
-                class="text-white rounded-md bg-red-500 px-6 py-2.5 text-sm sm:text-base font-semibold border border-red-500 hover:bg-white hover:text-red-500 transition-colors"
+                class="text-white rounded-md bg-red-500 px-6 py-2.5 text-sm sm:text-base font-semibold border border-red-500 hover:bg-white hover:text-red-500 dark:hover:bg-gray-800 dark:hover:text-red-400 transition-colors"
               >
                 Reset
               </button>

@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4">
+  <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex-1 p-4">
     <div class="md:flex block">
       <!-- Main Content -->
 
@@ -8,7 +8,7 @@
         <div class="mb-6">
           <router-link
             to="/admin/requests"
-            class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+            class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors"
           >
             <i class="bi bi-arrow-left mr-2"></i> Back to Requests
           </router-link>
@@ -21,7 +21,9 @@
               <div
                 class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto"
               ></div>
-              <p class="mt-4 text-gray-600">Loading Request details...</p>
+              <p class="mt-4 text-gray-600 dark:text-gray-400">
+                Loading Request details...
+              </p>
             </div>
           </div>
         </div>
@@ -29,7 +31,7 @@
         <!-- Error State -->
         <div v-else-if="error" class="container mx-auto py-10 px-5 mt-15">
           <div
-            class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+            class="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded"
           >
             <p class="font-bold">Error</p>
             <p>{{ error }}</p>
@@ -47,7 +49,9 @@
         <div v-else class="container mx-auto py-10 px-5 mt-10">
           <div class="flex sm:flex-row justify-between items-start gap-4 mb-4">
             <div class="space-y-2">
-              <h1 class="text-3xl font-bold text-gray-900 capitalize">
+              <h1
+                class="text-3xl font-bold text-gray-900 dark:text-white capitalize"
+              >
                 {{ request.title || "Untitled request" }}
               </h1>
               <p class="text-lg text-gray-600 flex items-center capitalize">
@@ -175,8 +179,8 @@
             </div>
 
             <!-- Owner Information Section -->
-            <div class="bg-white rounded-lg p-6 shadow-lg">
-              <div class="mt-2 text-gray-900">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+              <div class="mt-2 text-gray-900 dark:text-gray-100">
                 <h2 class="text-xl font-semibold text-center mb-4">
                   Owner Details
                 </h2>
@@ -187,23 +191,23 @@
                       'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
                     "
                     alt="Profile Picture"
-                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300 object-cover"
+                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300 dark:border-gray-600 object-cover"
                   />
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold">Name:</span>
-                    <span class="text-sm capitalize">{{
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">Name:</span>
+                    <span class="text-sm capitalize text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.name
                     }}</span>
                   </p>
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold">Phone:</span>
-                    <span class="text-sm">{{
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">Phone:</span>
+                    <span class="text-sm text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.phone
                     }}</span>
                   </p>
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold">Email:</span>
-                    <span class="text-sm">{{
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">Email:</span>
+                    <span class="text-sm text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.email
                     }}</span>
                   </p>
@@ -211,8 +215,8 @@
                     v-if="request.propertyContact.address"
                     class="flex flex-col items-center space-y-1"
                   >
-                    <span class="font-semibold">Address:</span>
-                    <span class="text-sm capitalize">{{
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">Address:</span>
+                    <span class="text-sm capitalize text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.address
                     }}</span>
                   </p>
@@ -222,13 +226,13 @@
                     v-if="request.propertyContact?.contract"
                     class="mt-3 w-full"
                   >
-                    <p class="font-semibold text-center mb-2">
+                    <p class="font-semibold text-center mb-2 text-gray-900 dark:text-gray-100">
                       Contract Document:
                     </p>
                     <div class="relative w-full">
                       <img
                         :src="request.propertyContact.contract"
-                        class="max-h-40 mx-auto object-contain rounded border border-gray-300"
+                        class="max-h-40 mx-auto object-contain rounded border border-gray-300 dark:border-gray-600"
                         alt="Contract"
                         @click="
                           openContractImage(request.propertyContact.contract)
@@ -250,11 +254,15 @@
           </div>
 
           <!-- Description Section -->
-          <div class="mt-8 w-full bg-white shadow-lg rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+          <div
+            class="mt-8 w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6"
+          >
+            <h2
+              class="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center"
+            >
               Property Description
             </h2>
-            <div class="prose max-w-none text-gray-700">
+            <div class="prose max-w-none text-gray-700 dark:text-gray-300">
               <p v-if="request.description" class="whitespace-pre-line">
                 {{ request.description }}
               </p>
@@ -265,11 +273,15 @@
           </div>
 
           <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-6 bg-white shadow-lg rounded-lg">
-              <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
+            <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+              <h2
+                class="text-xl font-semibold text-gray-900 dark:text-white mb-6 text-center"
+              >
                 General Information
               </h2>
-              <div class="grid grid-cols-2 gap-4 text-gray-700">
+              <div
+                class="grid grid-cols-2 gap-4 text-gray-700 dark:text-gray-300"
+              >
                 <div class="space-y-4">
                   <p><strong>Published Date:</strong></p>
                   <p><strong>Floor Location:</strong></p>
@@ -294,8 +306,12 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white shadow-lg rounded-lg relative">
-              <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+            <div
+              class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg relative"
+            >
+              <h2
+                class="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center"
+              >
                 Location Information
               </h2>
               <!-- Only show map if data is loaded and not in loading state -->
@@ -328,13 +344,13 @@
         <!-- Meeting Form Modal -->
         <div
           v-if="meetingInfo"
-          class="fixed inset-0 z-50 overflow-y-auto backdrop-blur-md bg-white/30 flex items-center justify-center p-4"
+          class="fixed inset-0 z-50 overflow-y-auto backdrop-blur-md bg-white/30 dark:bg-gray-900/30 flex items-center justify-center p-4"
         >
           <div
-            class="bg-white/90 backdrop-blur rounded-xl shadow-xl max-w-md w-full p-6 relative"
+            class="bg-white/90 dark:bg-gray-800/90 backdrop-blur rounded-xl shadow-xl max-w-md w-full p-6 relative"
           >
             <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-semibold text-gray-900">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
                 Schedule Verification Meeting
               </h2>
               <button
@@ -348,19 +364,19 @@
 
             <form @submit.prevent="scheduleMeeting" class="space-y-4">
               <div class="flex flex-col space-y-2">
-                <label class="text-gray-700 font-medium"
+                <label class="text-gray-700 dark:text-gray-300 font-medium"
                   >Meeting Date/Time:</label
                 >
                 <input
                   type="datetime-local"
                   v-model="meetingData.date"
                   required
-                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
               </div>
 
               <div class="flex flex-col space-y-2">
-                <label class="text-gray-700 font-medium"
+                <label class="text-gray-700 dark:text-gray-300 font-medium"
                   >Duration (minutes):</label
                 >
                 <input
@@ -369,29 +385,33 @@
                   required
                   min="15"
                   max="180"
-                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
               </div>
 
               <div class="flex flex-col space-y-2">
-                <label class="text-gray-700 font-medium">Owner Email:</label>
+                <label class="text-gray-700 dark:text-gray-300 font-medium"
+                  >Owner Email:</label
+                >
                 <input
                   type="email"
                   v-model="meetingData.ownerEmail"
                   :placeholder="request.propertyContact?.email || 'Owner email'"
                   required
-                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
               </div>
 
               <div class="flex flex-col space-y-2">
-                <label class="text-gray-700 font-medium">Admin Email:</label>
+                <label class="text-gray-700 dark:text-gray-300 font-medium"
+                  >Admin Email:</label
+                >
                 <input
                   type="email"
                   v-model="meetingData.adminEmail"
                   required
                   placeholder="Your email for meeting notifications"
-                  class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
               </div>
 
@@ -399,13 +419,13 @@
                 <button
                   type="button"
                   @click="meetingInfo = false"
-                  class="flex-1 bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+                  class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  class="flex-1 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                  class="flex-1 bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 transition-colors"
                 >
                   Schedule
                 </button>
@@ -1198,5 +1218,30 @@ button:active {
 .thumbnail-gallery::-webkit-scrollbar-thumb {
   background: #cbd5e0;
   border-radius: 10px;
+}
+
+/* Add dark mode specific styles */
+.dark input,
+.dark textarea,
+.dark select {
+  color: white;
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+input,
+textarea,
+select {
+  color: #111827;
+}
+
+.dark .leaflet-control-container .leaflet-control {
+  background-color: #1f2937;
+  color: white;
+  border-color: #4b5563;
+}
+
+.dark .leaflet-control-container .leaflet-control a {
+  color: white;
 }
 </style>

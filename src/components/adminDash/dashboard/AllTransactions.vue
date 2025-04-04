@@ -1,23 +1,33 @@
 <template>
-  <div class="bg-gray-800 rounded-lg p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-white">All Transactions</h3>
+      <h3 class="text-gray-900 dark:text-white text-lg font-semibold">All Transactions</h3>
     </div>
 
-    <div v-if="loading" class="text-white">Loading...</div>
+    <div v-if="loading" class="text-gray-900 dark:text-white">Loading...</div>
     <div v-else-if="error" class="text-red-500">Error: {{ error }}</div>
     <div v-else style="max-height: 300px; overflow-y: auto;">
-      <div v-for="(user, userId) in users" :key="userId" class="mb-4 p-3 rounded-lg bg-gray-700 flex items-center justify-between">
+      <div v-for="(user, userId) in users" 
+           :key="userId" 
+           class="mb-4 p-3 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-between">
         
         <div class="flex items-center">
-          <img :src="user.photo || '/images/default-avatar.png'" alt="User Image" class="w-8 h-8 rounded-full mr-3">
+          <img :src="user.photo || '/images/default-avatar.png'" 
+               alt="User Image" 
+               class="w-8 h-8 rounded-full mr-3">
           <div>
-            <p class="text-white text-xs truncate max-w-[100px]">{{ user.name }}</p>
-            <p class="text-gray-400 text-[10px] truncate max-w-[120px]">{{ user.email }}</p> 
+            <p class="text-gray-900 dark:text-white text-xs truncate max-w-[100px]">
+              {{ user.name }}
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-[10px] truncate max-w-[120px]">
+              {{ user.email }}
+            </p> 
           </div>
         </div>
 
-        <span class="text-green-400 font-light text-xs">{{ formatAmount(user.totalAmount) }}</span>
+        <span class="text-green-600 dark:text-green-400 font-light text-xs">
+          {{ formatAmount(user.totalAmount) }}
+        </span>
 
       </div>
     </div>
