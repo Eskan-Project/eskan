@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <label
-      :class="`absolute -top-3 start-3 bg-white px-2 text-sm text-gray-700 rounded-full z-10`"
+      :class="`absolute -top-3 start-3 bg-white dark:bg-[#1F2937] px-2 text-sm text-gray-700 dark:text-white rounded-full z-10`"
     >
       {{ label }} <span v-if="required" class="text-red-500">*</span>
     </label>
@@ -9,10 +9,10 @@
       <textarea
         v-model="inputValue"
         :class="[
-          'text-gray-700 w-full p-3 border border-gray-300 rounded-md focus:outline-none h-32 resize-none',
+          'text-gray-700 dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none h-32 resize-none dark:bg-[#1F2937]',
           errorMessage
             ? 'border-red-500 focus:outline-none'
-            : 'focus:ring-2 focus:ring-blue-500',
+            : 'focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#3D8BFF]',
         ]"
         :placeholder="placeholder"
         :required="required"
@@ -23,24 +23,29 @@
       <div class="relative">
         <select
           v-model="inputValue"
-          class="text-gray-700 cursor-pointer w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-start"
+          class="text-gray-700 dark:text-white cursor-pointer w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#3D8BFF] appearance-none text-start dark:bg-[#1F2937]"
           :required="required"
           @blur="validateInput"
         >
-          <option value="" disabled selected class="text-start">
+          <option
+            value=""
+            disabled
+            selected
+            class="text-start dark:bg-[#1F2937] dark:text-white"
+          >
             {{ $t("createProperty.form.select") }}
           </option>
           <option
             v-for="option in options"
             :key="option.value"
             :value="option.value"
-            class="text-start"
+            class="text-start dark:bg-[#1F2937] dark:text-white"
           >
             {{ option.label }}
           </option>
         </select>
         <i
-          class="bi bi-chevron-down absolute end-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+          class="bi bi-chevron-down absolute end-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none"
         ></i>
       </div>
     </template>
@@ -55,9 +60,11 @@
           :value="option"
           :id="option"
           v-model="inputValue"
-          class="mr-2"
+          class="mr-2 dark:bg-[#1F2937] dark:border-gray-600"
         />
-        <label :for="option" class="text-gray-700">{{ option }}</label>
+        <label :for="option" class="text-gray-700 dark:text-white">{{
+          option
+        }}</label>
       </div>
     </template>
 
@@ -67,12 +74,13 @@
       :disabled="disabled"
       v-model="inputValue"
       :class="[
-        'text-gray-700 w-full p-3 border border-gray-300 rounded-md outline-none ',
+        'text-gray-700 dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md outline-none dark:bg-[#1F2937]',
         errorMessage
           ? 'border-red-500 focus:outline-none'
-          : 'focus:ring-2 focus:ring-blue-500',
+          : 'focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#3D8BFF]',
       ]"
       :required="required"
+      :placeholder="placeholder"
       @blur="validateInput"
     />
 
@@ -129,3 +137,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Dark mode placeholder styles */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Ensure text is white in dark mode */
+.dark input,
+.dark textarea,
+.dark select,
+.dark option {
+  color: white !important;
+}
+
+/* Fix for select dropdown in dark mode */
+.dark select option {
+  background-color: #1f2937;
+}
+</style>

@@ -3,7 +3,7 @@
     @click="nextStep"
     :name="name"
     :disabled="isLoading"
-    class="w-fit py-2 mx-auto border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-6 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition"
+    class="w-fit py-2 mx-auto border border-[var(--secondary-color)] dark:border-[#3D8BFF] bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white px-6 rounded-md cursor-pointer hover:bg-white dark:hover:bg-gray-800 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] transition"
   >
     {{ isLoading ? $t("createProperty.buttons.loading") : title }}
   </button>

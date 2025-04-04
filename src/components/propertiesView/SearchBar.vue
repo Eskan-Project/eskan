@@ -1,42 +1,42 @@
 <template>
-  <div class="filter-bar text-gray-900" :style="filterBarStyle">
+  <div class="filter-bar text-gray-900 dark:text-white" :style="filterBarStyle">
     <!-- Expanded or Unscrolled State -->
     <div
       v-if="isExpanded || !isScrolled"
-      class="inline-flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 mt-4 sm:mt-6 mb-3 transition-all duration-300 sm:bg-white rounded-lg flex-wrap justify-center w-full max-w-6xl mx-auto"
+      class="inline-flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 mt-4 sm:mt-6 mb-3 transition-all duration-300 sm:bg-white dark:sm:bg-[#1F2937] rounded-lg flex-wrap justify-center w-full max-w-6xl mx-auto"
     >
       <div
         v-if="!isSmallScreen"
-        class="flex flex-wrap gap-3 sm:gap-4 w-full justify-center"
+        class="flex flex-wrap gap-3 sm:gap-4 w-full justify-center dark:text-white"
       >
         <input
           :value="localSearchQuery"
           @input="handleSearchInput"
           type="text"
           :placeholder="$t('search.placeholder')"
-          class="w-full sm:w-40 px-3 sm:px-4 py-2 sm:placeholder:text-sm placeholder:text-base text-sm sm:text-base rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#364365]"
+          class="dark:text-white dark:placeholder-white w-full sm:w-40 px-3 sm:px-4 py-2 sm:placeholder:text-sm placeholder:text-base text-sm sm:text-base rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#364365] dark:focus:ring-[#3D8BFF] dark:bg-[#1F2937]"
         />
         <div class="relative w-full sm:w-40" ref="governorateDropdown">
           <div
             @click="toggleGovernorateDropdown"
-            class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
+            class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
               selectedGovernorateLabel || $t("search.select_governorate")
             }}</span>
-            <span class="text-gray-500">▼</span>
+            <span class="text-gray-500 dark:text-gray-400">▼</span>
           </div>
           <ul
             v-if="isGovernorateOpen"
-            class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
+            class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
           >
             <li
               v-for="loc in governorates"
               :key="loc.value"
               @click="selectGovernorate(loc)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base governorate-option"
+              class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm sm:text-base governorate-option text-gray-700 dark:text-gray-200"
             >
-              <i class="bi bi-geo-alt"></i>
+              <i class="bi bi-geo-alt text-[#364365] dark:text-[#3D8BFF]"></i>
               <span>{{ loc.label }}</span>
             </li>
           </ul>
@@ -44,22 +44,22 @@
         <div class="relative w-full sm:w-40" ref="propertyStatusDropdown">
           <div
             @click="togglePropertyStatusDropdown"
-            class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
+            class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
               selectedPropertyStatusLabel || $t("search.select_status")
             }}</span>
-            <span class="text-gray-500">▼</span>
+            <span class="text-gray-500 dark:text-gray-400">▼</span>
           </div>
           <ul
             v-if="isPropertyStatusOpen"
-            class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
+            class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
           >
             <li
               v-for="option in propertyStatusOptions"
               :key="option.value"
               @click="selectPropertyStatus(option)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base property-status-option"
+              class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm sm:text-base property-status-option text-gray-700 dark:text-gray-200"
             >
               <span>{{ option.label }}</span>
             </li>
@@ -68,35 +68,35 @@
         <div class="relative w-full sm:w-40" ref="roomsDropdown">
           <div
             @click="toggleRoomsDropdown"
-            class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 cursor-pointer flex justify-between items-center"
+            class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 sm:p-4 sm:px-2 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
           >
             <span class="truncate sm:text-sm text-base">{{
               selectedRoomsLabel || $t("search.select_rooms")
             }}</span>
-            <span class="text-gray-500">▼</span>
+            <span class="text-gray-500 dark:text-gray-400">▼</span>
           </div>
           <ul
             v-if="isRoomsOpen"
-            class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
+            class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-48 overflow-y-auto"
           >
             <li
               v-for="room in roomsOptions"
               :key="room.value"
               @click="selectRooms(room)"
-              class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm sm:text-base rooms-option"
+              class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm sm:text-base rooms-option text-gray-700 dark:text-gray-200"
             >
               <span>{{ room.label }}</span>
             </li>
           </ul>
         </div>
         <button
-          class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
+          class="bg-[#364365] dark:bg-[#3D8BFF] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300"
           @click="applyFilters"
         >
           {{ $t("search.button") }}
         </button>
         <button
-          class="bg-[#364365] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] transition duration-300"
+          class="bg-[#364365] dark:bg-[#3D8BFF] text-white px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300"
           @click="resetFilters"
         >
           {{ $t("search.reset") }}
@@ -105,22 +105,24 @@
 
       <!-- Mobile Search Bar -->
       <div v-else class="relative w-full max-w-md mx-auto">
-        <div class="flex items-center bg-white rounded-full p-2">
+        <div
+          class="flex items-center bg-white dark:bg-[#1F2937] rounded-full p-2"
+        >
           <input
             :value="localSearchQuery"
             @input="handleSearchInput"
             type="text"
             :placeholder="$t('search.placeholder')"
-            class="w-full px-3 sm:px-4 py-2 mr-2 text-sm sm:text-base rounded-full focus:outline-none focus:ring-2 focus:ring-[#364365] border border-gray-200"
+            class="w-full px-3 sm:px-4 py-2 mr-2 text-sm sm:text-base rounded-full focus:outline-none focus:ring-2 focus:ring-[#364365] dark:focus:ring-[#3D8BFF] border border-gray-200 dark:border-gray-600 dark:bg-[#1F2937] dark:text-white"
           />
           <button
-            class="bg-[#364365] text-white mr-2 p-2 sm:p-3 rounded-full hover:bg-[#2c3751] transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
+            class="bg-[#364365] dark:bg-[#3D8BFF] text-white mr-2 p-2 sm:p-3 rounded-full hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
             @click="applyFilters"
           >
             <i class="bi bi-search text-base sm:text-lg"></i>
           </button>
           <button
-            class="bg-[#364365] text-white p-2 sm:p-3 rounded-full hover:bg-[#2c3751] transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
+            class="bg-[#364365] dark:bg-[#3D8BFF] text-white p-2 sm:p-3 rounded-full hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
             @click="toggleFilterOptions"
           >
             <i class="bi bi-filter-circle text-base sm:text-lg"></i>
@@ -130,29 +132,31 @@
           <div
             v-if="showFilterOptions"
             ref="filterContainer"
-            class="absolute top-full mt-2 left-0 right-0 bg-white rounded-lg shadow-lg p-4 z-20 grid grid-cols-1 gap-4 max-w-md mx-auto max-h-[70vh] overflow-y-auto"
+            class="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-[#1F2937] rounded-lg shadow-lg p-4 z-20 grid grid-cols-1 gap-4 max-w-md mx-auto max-h-[70vh] overflow-y-auto"
           >
             <div class="relative w-full">
               <div
                 @click="toggleGovernorateDropdown"
-                class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
+                class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
                   selectedGovernorateLabel || $t("search.select_governorate")
                 }}</span>
-                <span class="text-gray-500">▼</span>
+                <span class="text-gray-500 dark:text-gray-400">▼</span>
               </div>
               <ul
                 v-if="isGovernorateOpen"
-                class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
+                class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
               >
                 <li
                   v-for="loc in governorates"
                   :key="loc.value"
                   @click="selectGovernorate(loc)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm governorate-option"
+                  class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm governorate-option text-gray-700 dark:text-gray-200"
                 >
-                  <i class="bi bi-geo-alt"></i>
+                  <i
+                    class="bi bi-geo-alt text-[#364365] dark:text-[#3D8BFF]"
+                  ></i>
                   <span>{{ loc.label }}</span>
                 </li>
               </ul>
@@ -160,22 +164,22 @@
             <div class="relative w-full">
               <div
                 @click="togglePropertyStatusDropdown"
-                class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
+                class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
                   selectedPropertyStatusLabel || $t("search.select_status")
                 }}</span>
-                <span class="text-gray-500">▼</span>
+                <span class="text-gray-500 dark:text-gray-400">▼</span>
               </div>
               <ul
                 v-if="isPropertyStatusOpen"
-                class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
+                class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
               >
                 <li
                   v-for="option in propertyStatusOptions"
                   :key="option.value"
                   @click="selectPropertyStatus(option)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm property-status-option"
+                  class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm property-status-option text-gray-700 dark:text-gray-200"
                 >
                   <span>{{ option.label }}</span>
                 </li>
@@ -184,35 +188,35 @@
             <div>
               <div
                 @click="toggleRoomsDropdown"
-                class="bg-white text-gray-700 text-sm sm:text-base rounded-md p-3 border border-gray-300 cursor-pointer flex justify-between items-center"
+                class="bg-white dark:bg-[#1F2937] text-gray-700 dark:text-gray-200 text-sm sm:text-base rounded-md p-3 border border-gray-300 dark:border-gray-600 cursor-pointer flex justify-between items-center"
               >
                 <span class="truncate">{{
                   selectedRoomsLabel || $t("search.select_rooms")
                 }}</span>
-                <span class="text-gray-500">▼</span>
+                <span class="text-gray-500 dark:text-gray-400">▼</span>
               </div>
               <ul
                 v-if="isRoomsOpen"
-                class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
+                class="absolute w-full bg-white dark:bg-[#1F2937] border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto"
               >
                 <li
                   v-for="room in roomsOptions"
                   :key="room.value"
                   @click="selectRooms(room)"
-                  class="p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2 text-sm rooms-option"
+                  class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer flex items-center gap-2 text-sm rooms-option text-gray-700 dark:text-gray-200"
                 >
                   <span>{{ room.label }}</span>
                 </li>
               </ul>
             </div>
             <button
-              class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
+              class="bg-[#364365] dark:bg-[#3D8BFF] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300 text-sm sm:text-base"
               @click="applyFilters"
             >
               {{ $t("search.apply_filters") }}
             </button>
             <button
-              class="bg-[#364365] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] transition duration-300 text-sm sm:text-base"
+              class="bg-[#364365] dark:bg-[#3D8BFF] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#2c3751] dark:hover:bg-blue-600 transition duration-300 text-sm sm:text-base"
               @click="resetFilters"
             >
               {{ $t("search.reset") }}
@@ -228,7 +232,7 @@
       class="flex items-center justify-center p-3 sm:p-4 transition-all duration-300 w-full max-w-3xl mx-auto"
     >
       <div
-        class="border rounded-full bg-white shadow-md text-[#364365] w-full px-3 sm:px-6 py-2 flex items-center gap-2 sm:gap-4"
+        class="border dark:border-gray-600 rounded-full bg-white dark:bg-[#1F2937] shadow-md text-[#364365] dark:text-white w-full px-3 sm:px-6 py-2 flex items-center gap-2 sm:gap-4"
       >
         <div
           class="grid grid-cols-3 flex-grow text-center text-xs sm:text-sm md:text-base"
@@ -245,14 +249,14 @@
         </div>
         <div class="flex gap-2 sm:gap-3 flex-shrink-0">
           <button
-            class="bg-[#364365] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:scale-110 transition-transform flex items-center justify-center"
+            class="bg-[#364365] dark:bg-[#3D8BFF] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:scale-110 transition-transform flex items-center justify-center"
             @click="$emit('toggle-search')"
           >
             <i class="bi bi-search text-sm sm:text-base"></i>
           </button>
           <button
             v-if="selectedGovernorate"
-            class="bg-[#364365] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:scale-110 transition-transform flex items-center justify-center"
+            class="bg-[#364365] dark:bg-[#3D8BFF] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:scale-110 transition-transform flex items-center justify-center"
             @click="resetFilters"
           >
             <i class="bi bi-x text-sm sm:text-base"></i>

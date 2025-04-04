@@ -2,7 +2,7 @@
   <transition name="fade">
     <div
       v-if="loading"
-      class="fixed inset-0 bg-[var(--secondary-color)] flex items-center justify-center z-50"
+      class="fixed inset-0 bg-[var(--secondary-color)] dark:bg-[#111827] flex items-center justify-center z-50"
     >
       <div class="loader-container">
         <img
@@ -11,8 +11,10 @@
           class="logo-spinner"
           loading="lazy"
         />
-        <div class="orbit-ring"></div>
-        <div class="pulse-ring"></div>
+        <div
+          class="orbit-ring dark:border-top-[#3D8BFF] dark:border-right-[#1a4b8c]"
+        ></div>
+        <div class="pulse-ring dark:bg-pulse-dark"></div>
       </div>
     </div>
   </transition>
@@ -66,6 +68,15 @@ export default {
   border-radius: 50%;
   animation: pulse 1.5s ease infinite;
   z-index: 1;
+}
+
+:root.dark .orbit-ring {
+  border-top: 4px solid #3d8bff;
+  border-right: 4px solid #1a4b8c;
+}
+
+:root.dark .pulse-ring {
+  background: radial-gradient(circle, rgba(61, 139, 255, 0.3), transparent);
 }
 
 @keyframes spin {

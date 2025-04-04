@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 sm:p-6 bg-white shadow-sm rounded-lg">
+  <div class="p-4 sm:p-6 bg-white dark:bg-[#1F2937] shadow-sm rounded-lg">
     <h2
-      class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10 text-gray-700 text-center"
+      class="text-lg sm:text-xl font-semibold mb-6 sm:mb-10 text-gray-700 dark:text-white text-center"
     >
       {{ $t("createProperty.form.generalInfo") }}
     </h2>
@@ -167,5 +167,42 @@ textarea {
 /* Ensure full-width fields on mobile */
 .w-full {
   width: 100%;
+}
+
+/* Dark mode styles for form elements */
+:deep(.dark) input,
+:deep(.dark) select,
+:deep(.dark) textarea {
+  background-color: #1f2937;
+  color: white;
+  border-color: #4b5563;
+}
+
+:deep(.dark) input::placeholder,
+:deep(.dark) textarea::placeholder {
+  color: #9ca3af;
+}
+
+:deep(.dark) select {
+  background-color: #1f2937;
+  color: white;
+}
+
+:deep(.dark) select option {
+  background-color: #1f2937;
+  color: white;
+}
+
+:deep(.dark) .dropdown-menu {
+  background-color: #1f2937;
+  border-color: #4b5563;
+}
+
+:deep(.dark) .dropdown-item {
+  color: white;
+}
+
+:deep(.dark) .dropdown-item:hover {
+  background-color: #374151;
 }
 </style>

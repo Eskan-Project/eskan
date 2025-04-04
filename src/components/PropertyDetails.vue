@@ -1,6 +1,8 @@
 <template>
-  <div class="max-w-lg mx-auto my-auto p-6 bg-white rounded-lg h-[440px]">
-    <p v-if="loading" class="text-center text-gray-600">
+  <div
+    class="max-w-lg mx-auto my-auto p-6 bg-white dark:bg-[#1F2937] rounded-lg h-[440px]"
+  >
+    <p v-if="loading" class="text-center text-gray-600 dark:text-gray-300">
       {{ $t("propertyDetails.loading") }}
     </p>
 
@@ -8,43 +10,49 @@
       <!-- Case 1: Admin user -->
       <div
         v-if="isAuthenticated && userDetails?.role === 'admin'"
-        class="text-gray-900 flex flex-col gap-10"
+        class="text-gray-900 dark:text-white flex flex-col gap-10"
       >
-        <h2 class="text-xl font-semibold text-center mb-4">
+        <h2 class="text-xl font-semibold text-center mb-4 dark:text-white">
           {{ $t("propertyDetails.owner_details") }}
         </h2>
         <div class="flex flex-col items-center space-y-3">
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
             alt="Profile Picture"
-            class="w-24 h-24 rounded-full border-2 border-gray-300"
+            class="w-24 h-24 rounded-full border-2 border-gray-300 dark:border-gray-600"
           />
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">{{ $t("propertyDetails.name") }}:</span>
-            <span class="text-sm capitalize">{{
+            <span class="font-semibold dark:text-white"
+              >{{ $t("propertyDetails.name") }}:</span
+            >
+            <span class="text-sm capitalize dark:text-gray-300">{{
               property.propertyContact.name
             }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.phone") }}:</span
             >
-            <span class="text-sm">{{ property.propertyContact.phone }}</span>
+            <span class="text-sm dark:text-gray-300">{{
+              property.propertyContact.phone
+            }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.email") }}:</span
             >
-            <span class="text-sm">{{ property.propertyContact.email }}</span>
+            <span class="text-sm dark:text-gray-300">{{
+              property.propertyContact.email
+            }}</span>
           </p>
           <p
             v-if="property.propertyContact.address"
             class="flex flex-col items-center space-y-1"
           >
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.address") }}:</span
             >
-            <span class="text-sm capitalize">{{
+            <span class="text-sm capitalize dark:text-gray-300">{{
               property.propertyContact.address
             }}</span>
           </p>
@@ -54,10 +62,10 @@
       <!-- Case 2: User not authenticated -->
       <div v-else-if="!isAuthenticated" class="text-center">
         <div
-          class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto"
+          class="flex justify-center mb-3 p-3 rounded-full bg-white dark:bg-gray-700 w-16 h-16 mx-auto"
         >
           <svg
-            class="w-10 h-10 text-[#124365] animate-bounce"
+            class="w-10 h-10 text-[#124365] dark:text-[#3D8BFF] animate-bounce"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -67,12 +75,12 @@
             />
           </svg>
         </div>
-        <p class="text-lg text-gray-700 mb-3">
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-3">
           {{ $t("propertyDetails.register_prompt") }}
         </p>
         <button
           @click="redirectToRegister"
-          class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
+          class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] dark:from-[#3D8BFF] dark:to-[#1a4b8c] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
         >
           📝 {{ $t("propertyDetails.register_button") }}
         </button>
@@ -84,10 +92,10 @@
         class="text-center"
       >
         <div
-          class="flex justify-center mb-3 p-3 rounded-full bg-white w-16 h-16 mx-auto mt-10"
+          class="flex justify-center mb-3 p-3 rounded-full bg-white dark:bg-gray-700 w-16 h-16 mx-auto mt-10"
         >
           <svg
-            class="w-10 h-10 text-[#124365] animate-bounce"
+            class="w-10 h-10 text-[#124365] dark:text-[#3D8BFF] animate-bounce"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -97,14 +105,14 @@
             />
           </svg>
         </div>
-        <p class="text-lg text-gray-700 mb-3">
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-3">
           {{ $t("propertyDetails.unlock_prompt") }} <br />
           ({{ userDetails?.freeViewsRemaining }}
           {{ $t("propertyDetails.free_views_remaining") }})
         </p>
         <button
           @click="unlock"
-          class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
+          class="cursor-pointer bg-gradient-to-r mt-4 from-[#124365] to-[#364365] dark:from-[#3D8BFF] dark:to-[#1a4b8c] text-white py-2 px-6 rounded-lg hover:scale-105 transition-transform"
         >
           🔓 {{ $t("propertyDetails.unlock_button") }}
         </button>
@@ -113,9 +121,9 @@
       <!-- Case 4: Showing owner details (only if paid or unlocked) -->
       <div
         v-else-if="paidProperties"
-        class="text-gray-900 flex flex-col gap-10"
+        class="text-gray-900 dark:text-white flex flex-col gap-10"
       >
-        <h2 class="text-xl font-semibold text-center mb-4">
+        <h2 class="text-xl font-semibold text-center mb-4 dark:text-white">
           {{ $t("propertyDetails.owner_details") }}
         </h2>
         <div class="flex flex-col items-center space-y-3">
@@ -126,31 +134,39 @@
                 : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
             "
             alt="Profile Picture"
-            class="w-24 h-24 rounded-full border-2 border-gray-300"
+            class="w-24 h-24 rounded-full border-2 border-gray-300 dark:border-gray-600"
           />
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold">{{ $t("propertyDetails.name") }}:</span>
-            <span class="text-sm capitalize">{{
+            <span class="font-semibold dark:text-white"
+              >{{ $t("propertyDetails.name") }}:</span
+            >
+            <span class="text-sm capitalize dark:text-gray-300">{{
               property.propertyContact.name
             }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.phone") }}:</span
             >
-            <span class="text-sm">{{ property.propertyContact.phone }}</span>
+            <span class="text-sm dark:text-gray-300">{{
+              property.propertyContact.phone
+            }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.email") }}:</span
             >
-            <span class="text-sm">{{ property.propertyContact.email }}</span>
+            <span class="text-sm dark:text-gray-300">{{
+              property.propertyContact.email
+            }}</span>
           </p>
           <p class="flex flex-col items-center space-y-1">
-            <span class="font-semibold"
+            <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.address") }}:</span
             >
-            <span class="text-sm capitalize">{{ property.address }}</span>
+            <span class="text-sm capitalize dark:text-gray-300">{{
+              property.address
+            }}</span>
           </p>
         </div>
       </div>
@@ -162,11 +178,11 @@
           !paidProperties &&
           userDetails?.freeViewsRemaining === 0
         "
-        class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg text-center"
+        class="mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-center"
       >
         <div class="flex items-center justify-center space-x-2">
           <svg
-            class="w-6 h-6 text-red-600"
+            class="w-6 h-6 text-red-600 dark:text-red-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -185,7 +201,7 @@
         </div>
         <button
           @click="redirectToPayment"
-          class="cursor-pointer mt-3 bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
+          class="cursor-pointer mt-3 bg-green-600 dark:bg-green-700 text-white py-2 px-6 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition"
         >
           💳 {{ $t("propertyDetails.proceed_to_payment") }}
         </button>
