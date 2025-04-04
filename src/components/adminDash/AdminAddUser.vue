@@ -1,71 +1,80 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-3 sm:p-4 md:p-8">
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 p-3 sm:p-4 md:p-8">
     <div
-      class="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-md p-4 sm:p-6"
+      class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6"
     >
-      <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Add New User</h2>
+      <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 dark:text-white">
+        Add New User
+      </h2>
 
       <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
         <!-- Basic Information -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <!-- Form fields remain the same, just update their container classes -->
           <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Full Name</label
             >
             <input
               v-model="formData.name"
               type="text"
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm sm:text-base"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label
+            >
             <input
               v-model="formData.email"
               type="email"
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >National ID</label
             >
             <input
               v-model="formData.nationalId"
               type="text"
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
               This will be used as the initial password
             </p>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Location</label
             >
             <input
               v-model="formData.location"
               type="text"
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Gender</label
             >
             <select
               v-model="formData.gender"
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -80,7 +89,7 @@
           <button
             type="button"
             @click="$router.push('/admin/users')"
-            class="cursor-pointer w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            class="cursor-pointer w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
           >
             Cancel
           </button>

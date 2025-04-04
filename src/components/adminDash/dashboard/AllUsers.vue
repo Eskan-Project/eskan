@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-6xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg p-4">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
       <div class="flex flex-col md:flex-row items-center justify-center mb-4">
        
         <div class="flex-shrink-0 w-32 h-28 relative mb-4 sm:mb-0 sm:w-32 sm:h-32">
@@ -9,13 +9,13 @@
 
       
         <div class="ml-0 sm:ml-4 text-center sm:text-left">
-          <p class="text-xl font-semibold text-gray-500">{{ users.length }} Users</p>
-          <div class="text-sm text-gray-400">Users distribution {{ totalAmount }}</div>
+          <p class="text-xl font-semibold text-gray-500 dark:text-gray-300">{{ users.length }} Users</p>
+          <div class="text-sm text-gray-400 dark:text-gray-400">Users distribution {{ totalAmount }}</div>
         </div>
       </div>
 
     
-      <div v-if="users.length === 0" class="p-4 text-center text-gray-500">
+      <div v-if="users.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
         No users found.
       </div>
     </div>

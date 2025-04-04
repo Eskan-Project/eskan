@@ -1,16 +1,18 @@
 <template>
   <div class="flex flex-col items-center p-4">
-    <img
-      :src="feature.icon"
-      :alt="$t(feature.titleKey)"
-      class="w-12 sm:w-14 md:w-16 h-auto mb-3"
-    />
+    <i
+      :class="feature.icon"
+      :aria-label="$t(feature.titleKey)"
+      class="text-3xl sm:text-4xl md:text-5xl mb-3 text-[#364365] dark:text-white"
+    ></i>
     <h3
-      class="text-sm sm:text-base md:text-lg font-semibold text-[#364365] text-center"
+      class="text-sm sm:text-base md:text-lg font-semibold text-[#364365] dark:text-[#3D8BFF] text-center"
     >
       {{ $t(feature.titleKey) }}
     </h3>
-    <p class="text-xs sm:text-sm md:text-base text-gray-600 text-center">
+    <p
+      class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 text-center"
+    >
       {{ $t(feature.descriptionKey) }}
     </p>
   </div>

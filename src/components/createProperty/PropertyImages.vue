@@ -1,28 +1,30 @@
 <template>
-  <div class="bg-white rounded-lg p-4 shadow-sm w-full mx-auto">
+  <div
+    class="bg-white dark:bg-[#1F2937] rounded-lg p-4 shadow-sm w-full mx-auto"
+  >
     <div class="rounded-lg p-4 w-full mx-auto">
       <h2
-        class="font-semibold mb-2 text-center text-gray-700 text-lg md:text-xl"
+        class="font-semibold mb-2 text-center text-gray-700 dark:text-white text-lg md:text-xl"
       >
         {{ $t("createProperty.images.title") }}
       </h2>
 
       <div class="flex flex-col items-center space-y-4 py-4">
         <div
-          class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col gap-4 items-center justify-center mt-4 w-full"
+          class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col gap-4 items-center justify-center mt-4 w-full"
         >
           <i
-            class="bi bi-images text-4xl text-gray-500"
+            class="bi bi-images text-4xl text-gray-500 dark:text-gray-400"
             v-if="localImages.length === 0"
           ></i>
-          <p class="text-gray-500 text-center">
+          <p class="text-gray-500 dark:text-gray-400 text-center">
             {{ $t("createProperty.images.maxImages") }}
           </p>
           <label
             :class="
               localImages.length >= 15
-                ? 'border border-[var(--secondary-color)] bg-gray-200 text-gray-500 px-4 py-2 rounded-md cursor-not-allowed'
-                : 'border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white hover:text-[var(--secondary-color)] transition'
+                ? 'border border-[var(--secondary-color)] dark:border-gray-500 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-4 py-2 rounded-md cursor-not-allowed'
+                : 'border border-[var(--secondary-color)] dark:border-[#3D8BFF] bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-white dark:hover:bg-gray-800 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] transition'
             "
           >
             {{ $t("createProperty.images.orClick") }}

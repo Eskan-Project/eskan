@@ -1,6 +1,8 @@
 <template>
-  <div class="p-6 bg-white shadow-sm rounded-lg">
-    <h2 class="text-xl font-bold text-[#364365] mb-10 text-center">
+  <div class="p-6 bg-white dark:bg-[#1F2937] shadow-sm rounded-lg">
+    <h2
+      class="text-xl font-bold text-[#364365] dark:text-[#3D8BFF] mb-10 text-center"
+    >
       {{ $t("createProperty.location.title") }}
     </h2>
     <form class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 mb-10">
@@ -23,14 +25,14 @@
       />
       <button
         @click.prevent="getUserLocation"
-        class="h-12 px-4 py-2 border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white rounded-lg hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors duration-300"
+        class="h-12 px-4 py-2 border border-[var(--secondary-color)] dark:border-[#3D8BFF] bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white rounded-lg hover:bg-[var(--primary-color)] dark:hover:bg-gray-800 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] transition-colors duration-300"
       >
         {{ $t("createProperty.location.selectLocation") }}
       </button>
     </form>
 
     <div id="map" class="w-full h-64 mt-2 rounded-lg z-10"></div>
-    <p class="text-sm text-gray-500 text-center mt-3">
+    <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-3">
       {{ $t("createProperty.location.selectLocation") }}
     </p>
   </div>

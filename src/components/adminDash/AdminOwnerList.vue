@@ -1,31 +1,37 @@
 <template>
-  <main class="min-h-screen bg-gray-50 flex-1 p-4 md:p-8">
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 flex-1 p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
-      <div class="bg-white shadow-lg rounded-lg p-6">
+      <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div class="flex justify-between items-center gap-4">
           <div class="relative max-w-md">
             <input
               type="text"
               v-model="searchQuery"
-              :class="windowWidth <= 550 ? 'text-xs p-1 pl-6' : 'text-sm p-2 pl-10'"
-      class="block w-full text-gray-900 border border-gray-300 rounded-lg bg-gray-200 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
-      placeholder="Search for owners"
+              :class="
+                windowWidth <= 550 ? 'text-xs p-1 pl-6' : 'text-sm p-2 pl-10'
+              "
+              class="block w-full text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-200 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
+              placeholder="Search for owners"
               @input="resetPagination"
             />
           </div>
           <router-link to="/admin/owners/add-owner">
             <button
-            :class="[
-    'font-medium',
-    'text-white',
-    'bg-[#364365]',
-    'hover:bg-indigo-700',
-    'rounded-lg',
-    'transition',
-    'duration-200',
-    'ease-in-out',
-    windowWidth <= 450 ? 'px-2 py-2 text-[10px]' : (windowWidth <= 550 ? 'px-2 py-2 text-xs' : 'px-5 py-2 text-sm')
-  ]"
+              :class="[
+                'font-medium',
+                'text-white',
+                'bg-[#364365]',
+                'hover:bg-indigo-700',
+                'rounded-lg',
+                'transition',
+                'duration-200',
+                'ease-in-out',
+                windowWidth <= 450
+                  ? 'px-2 py-2 text-[10px]'
+                  : windowWidth <= 550
+                  ? 'px-2 py-2 text-xs'
+                  : 'px-5 py-2 text-sm',
+              ]"
             >
               + Add Owner
             </button>
@@ -33,41 +39,129 @@
         </div>
 
         <div class="overflow-x-auto mt-4">
-          <table class="w-full text-left text-gray-600">
-            <thead class="text-gray-700 uppercase bg-gray-100">
+          <table class="w-full text-left text-gray-600 dark:text-gray-300">
+            <thead
+              class="text-gray-700 dark:text-gray-200 uppercase bg-gray-100 dark:bg-gray-700"
+            >
               <tr>
-                <th :class="windowWidth <= 550 ? 'px-1 py-1 text-xs' : 'px-4 py-3 text-sm'">Name</th>
-                <th  v-if="windowWidth > 978" :class="[windowWidth <= 420 ? 'hidden sm:table-cell' : windowWidth <= 550 ? 'px-1 py-1 text-xs hidden sm:table-cell' : 'px-4 py-3 text-sm hidden sm:table-cell']">Email</th>
-                <th v-if="windowWidth > 978" :class="windowWidth <= 550 ? 'px-1 py-1 text-xs hidden sm:table-cell' : 'px-4 py-3 text-sm hidden sm:table-cell'">National ID</th>
-                <th :class="windowWidth <= 550 ? 'px-1 py-1 text-xs text-center' : 'px-4 py-3 text-sm text-center'">Actions</th>
+                <th
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-xs'
+                      : 'px-4 py-3 text-sm'
+                  "
+                >
+                  Name
+                </th>
+                <th
+                  v-if="windowWidth > 978"
+                  :class="[
+                    windowWidth <= 420
+                      ? 'hidden sm:table-cell'
+                      : windowWidth <= 550
+                      ? 'px-1 py-1 text-xs hidden sm:table-cell'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell',
+                  ]"
+                >
+                  Email
+                </th>
+                <th
+                  v-if="windowWidth > 978"
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-xs hidden sm:table-cell'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell'
+                  "
+                >
+                  National ID
+                </th>
+                <th
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-xs text-center'
+                      : 'px-4 py-3 text-sm text-center'
+                  "
+                >
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="owner in paginatedOwners"
                 :key="owner.uid"
-               class="border-b hover:bg-gray-50 transition duration-200 ease-in-out"
+                class="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 ease-in-out"
               >
-                <td class="flex items-center px-4 py-4" :class="windowWidth <= 550 ? 'px-2 py-2' : 'px-4 py-4'">
+                <td
+                  class="flex items-center px-4 py-4"
+                  :class="windowWidth <= 550 ? 'px-2 py-2' : 'px-4 py-4'"
+                >
                   <img
-                     :class="windowWidth <= 550 ? 'w-6 h-6' : 'w-10 h-10'"
-                    class="rounded-full border shadow-sm"
+                    :class="windowWidth <= 550 ? 'w-6 h-6' : 'w-10 h-10'"
+                    class="rounded-full border shadow-sm dark:border-gray-600"
                     :src="owner.photo"
                     alt="Owner photo"
                   />
                   <div class="pl-2">
-                    <div :class="windowWidth <= 550 ? 'font-semibold text-gray-900 text-xs' : 'font-semibold text-gray-900'">{{ owner.name }}</div>
-                    <div v-if="windowWidth <= 978 && windowWidth > 420" :class="windowWidth <= 550 ? 'text-xs text-gray-500' : 'text-sm text-gray-500'">{{ owner.email }}</div>
+                    <div
+                      :class="
+                        windowWidth <= 550
+                          ? 'font-semibold text-gray-900 dark:text-white text-xs'
+                          : 'font-semibold text-gray-900 dark:text-white'
+                      "
+                    >
+                      {{ owner.name }}
+                    </div>
+                    <div
+                      v-if="windowWidth <= 978 && windowWidth > 420"
+                      :class="
+                        windowWidth <= 550
+                          ? 'text-xs text-gray-500 dark:text-gray-400'
+                          : 'text-sm text-gray-500 dark:text-gray-400'
+                      "
+                    >
+                      {{ owner.email }}
+                    </div>
                   </div>
                 </td>
-                <td v-if="windowWidth > 978" :class="[windowWidth <= 420 ? 'hidden sm:table-cell' : windowWidth <= 550 ? 'px-1 py-1 text-xs hidden sm:table-cell' : 'px-4 py-4 text-sm hidden sm:table-cell']">{{ owner.email }}</td>
-                <td v-if="windowWidth > 978" :class="windowWidth <= 550 ? 'px-1 py-1 text-xs hidden sm:table-cell' : 'px-4 py-4 text-sm hidden sm:table-cell'">{{ owner.nationalId }}</td>
-                <td class="px-4 py-4" :class="windowWidth <= 550 ? 'px-2 py-2' : 'px-4 py-4'">
+                <td
+                  v-if="windowWidth > 978"
+                  :class="[
+                    windowWidth <= 420
+                      ? 'hidden sm:table-cell'
+                      : windowWidth <= 550
+                      ? 'px-1 py-1 text-xs hidden sm:table-cell'
+                      : 'px-4 py-4 text-sm hidden sm:table-cell',
+                  ]"
+                >
+                  {{ owner.email }}
+                </td>
+                <td
+                  v-if="windowWidth > 978"
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-xs hidden sm:table-cell'
+                      : 'px-4 py-4 text-sm hidden sm:table-cell'
+                  "
+                >
+                  {{ owner.nationalId }}
+                </td>
+                <td
+                  class="px-4 py-4"
+                  :class="windowWidth <= 550 ? 'px-2 py-2' : 'px-4 py-4'"
+                >
                   <div class="flex justify-center gap-2">
                     <router-link :to="`/admin/owners/edit/${owner.uid}`">
-                      <PencilIcon :class="windowWidth <= 550 ? 'w-3 h-3' : 'w-5 h-5'" class="text-indigo-600 hover:text-indigo-800 cursor-pointer" />
+                      <PencilIcon
+                        :class="windowWidth <= 550 ? 'w-3 h-3' : 'w-5 h-5'"
+                        class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 cursor-pointer"
+                      />
                     </router-link>
-                    <TrashIcon @click="handleDeleteOwner(owner.uid)" :class="windowWidth <= 550 ? 'w-3 h-3' : 'w-5 h-5'" class="text-red-600 hover:text-red-800 cursor-pointer" />
+                    <TrashIcon
+                      @click="handleDeleteOwner(owner.uid)"
+                      :class="windowWidth <= 550 ? 'w-3 h-3' : 'w-5 h-5'"
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
+                    />
                   </div>
                 </td>
               </tr>
@@ -75,27 +169,42 @@
           </table>
         </div>
 
-        <div v-if="paginatedOwners.length === 0" class="p-4 text-center text-gray-500">
+        <div
+          v-if="paginatedOwners.length === 0"
+          class="p-4 text-center text-gray-500 dark:text-gray-400"
+        >
           No owners found.
         </div>
 
-        <div v-if="filteredOwners.length > 0" class="flex justify-center gap-4 p-4">
+        <div
+          v-if="filteredOwners.length > 0"
+          class="flex justify-center gap-4 p-4"
+        >
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
-            :class="windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'"
-            class="font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-md disabled:opacity-50 transition duration-200 ease-in-out"
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'
+            "
+            class="font-medium text-white bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 transition duration-200 ease-in-out"
           >
             Previous
           </button>
-          <span :class="windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'" class="font-medium text-gray-700">
+          <span
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'
+            "
+            class="font-medium text-gray-700 dark:text-gray-300"
+          >
             Page {{ currentPage }} of {{ totalPages }}
           </span>
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages || totalPages === 0"
-            :class="windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'"
-            class="font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-md disabled:opacity-50 transition duration-200 ease-in-out"
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'
+            "
+            class="font-medium text-white bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md disabled:opacity-50 transition duration-200 ease-in-out"
           >
             Next
           </button>
@@ -105,6 +214,12 @@
   </main>
 </template>
 
+<style>
+/* Add dark mode styles for inputs */
+.dark input {
+  color: white;
+}
+</style>
 
 <script>
 import { mapActions, mapState } from "vuex"; // Add mapState

@@ -2,8 +2,10 @@
   <div
     class="flex flex-col gap-8 md:w-[80vw] w-[90vw] mx-auto my-6 md:my-10 max-w-screen-lg min-h-[56vh]"
   >
-    <div class="px-3 py-6 bg-white shadow-sm rounded-lg">
-      <h2 class="text-xl font-semibold mb-10 text-gray-700 text-center">
+    <div class="px-3 py-6 bg-white dark:bg-[#1F2937] shadow-sm rounded-lg">
+      <h2
+        class="text-xl font-semibold mb-10 text-gray-700 dark:text-white text-center"
+      >
         {{ $t("createProperty.contact.title") }}
       </h2>
 
@@ -36,29 +38,26 @@
           :label="$t('createProperty.contact.alternatePhone')"
           class="w-full md:w-[70%]"
         />
-        <InputField
-          v-model="propertyDetails.propertyContact.address"
-          :label="$t('createProperty.contact.address')"
-          class="w-full md:w-[70%]"
-        />
       </form>
       <div class="w-full md:w-[70%] mx-auto">
-        <label class="block text-gray-700 mb-2 font-medium">
+        <label class="block text-gray-700 dark:text-white mb-2 font-medium">
           {{ $t("createProperty.contact.contract") }}
           <span class="text-red-500">*</span>
         </label>
         <div
-          class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
+          class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center"
           :class="{
             'border-green-500': contractImage,
             'border-red-500': isSubmitAttempted && !contractImage,
           }"
         >
           <div v-if="!contractImage" class="flex flex-col items-center gap-2">
-            <i class="bi bi-file-earmark-text text-4xl text-gray-500"></i>
+            <i
+              class="bi bi-file-earmark-text text-4xl text-gray-500 dark:text-gray-400"
+            ></i>
             <label class="cursor-pointer">
               <span
-                class="border border-[var(--secondary-color)] bg-[var(--secondary-color)] text-white px-4 py-2 rounded-md hover:bg-white hover:text-[var(--secondary-color)] transition"
+                class="border border-[var(--secondary-color)] dark:border-[#3D8BFF] bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white px-4 py-2 rounded-md hover:bg-white dark:hover:bg-gray-800 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] transition"
               >
                 {{ $t("createProperty.images.orClick") }}
               </span>
@@ -69,7 +68,9 @@
                 accept="image/png, image/jpeg, image/jpg, image/webp"
               />
             </label>
-            <p class="text-gray-500 text-sm text-center mt-2">
+            <p
+              class="text-gray-500 dark:text-gray-400 text-sm text-center mt-2"
+            >
               {{
                 $t("createProperty.contact.uploadContract") ||
                 "Upload contract image"

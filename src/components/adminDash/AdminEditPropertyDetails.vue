@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
+  <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex-1 p-4 md:p-8">
     <div class="md:flex block">
       <div class="flex-1 p-4 md:p-8">
         <!-- Loading State -->
@@ -7,72 +7,82 @@
           <div
             class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto"
           ></div>
-          <p class="mt-4 text-gray-600">Loading property details...</p>
+          <p class="mt-4 text-gray-600 dark:text-gray-400">
+            Loading property details...
+          </p>
         </div>
 
         <form v-else @submit.prevent="handleSubmit" class="max-w-4xl mx-auto">
           <div class="space-y-8">
-            <div class="border-b border-gray-900/10 pb-12">
-              <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+            <div class="border-b border-gray-900/10 dark:border-gray-700 pb-12">
+              <h2
+                class="text-2xl font-semibold text-gray-900 dark:text-white mb-4"
+              >
                 Edit Property
               </h2>
 
               <!-- Basic Information -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Title</label
                   >
                   <input
                     v-model="propertyData.title"
                     type="text"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Price</label
                   >
                   <input
                     v-model="propertyData.price"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
+                <!-- Similar changes for other input fields -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Floor Location</label
                   >
                   <input
                     v-model="propertyData.floor"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Area (m²)</label
                   >
                   <input
                     v-model="propertyData.area"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
               </div>
 
               <!-- Description -->
               <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >Description</label
                 >
                 <textarea
                   v-model="propertyData.description"
                   rows="4"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   placeholder="Enter property description..."
                 ></textarea>
               </div>
@@ -80,46 +90,51 @@
               <!-- Room Details -->
               <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Rooms</label
                   >
                   <input
                     v-model="propertyData.rooms"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
+                <!-- Similar changes for other room detail fields -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Living Rooms</label
                   >
                   <input
                     v-model="propertyData.livingRooms"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Bathrooms</label
                   >
                   <input
                     v-model="propertyData.bathrooms"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Kitchens</label
                   >
                   <input
                     v-model="propertyData.kitchens"
                     type="number"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
               </div>
@@ -127,12 +142,13 @@
               <!-- Property Status and Furnishing -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Property Status</label
                   >
                   <select
                     v-model="propertyData.propertyStatus"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   >
                     <option value="for-sale">For Sale</option>
                     <option value="for-rent">For Rent</option>
@@ -140,12 +156,13 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Furnished</label
                   >
                   <select
                     v-model="propertyData.furnished"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   >
                     <option :value="true">Yes</option>
                     <option :value="false">No</option>
@@ -156,12 +173,13 @@
               <!-- Location Information -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Governorate</label
                   >
                   <select
                     v-model="propertyData.governorate"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   >
                     <option
                       v-for="gov in governorates"
@@ -174,12 +192,13 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >City</label
                   >
                   <select
                     v-model="propertyData.city"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   >
                     <option
                       v-for="city in filteredCities"
@@ -192,13 +211,14 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Neighborhood</label
                   >
                   <input
                     v-model="propertyData.neighborhood"
                     type="text"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
               </div>
@@ -206,46 +226,50 @@
               <!-- Contact Information -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Contact Name</label
                   >
                   <input
                     v-model="propertyData.propertyContact.name"
                     type="text"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Contact Phone</label
                   >
                   <input
                     v-model="propertyData.propertyContact.phone"
                     type="tel"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >Contact Email</label
                   >
                   <input
                     v-model="propertyData.propertyContact.email"
                     type="email"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
               </div>
 
               <!-- Contract Document -->
               <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2"
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >Contract Document Image</label
                 >
                 <div
-                  class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
+                  class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center"
                   :class="{ 'border-green-500': contractImage }"
                 >
                   <div
@@ -253,14 +277,16 @@
                     class="flex flex-col items-center gap-3 py-4"
                   >
                     <i
-                      class="bi bi-file-earmark-text text-4xl text-gray-500"
+                      class="bi bi-file-earmark-text text-4xl text-gray-500 dark:text-gray-400"
                     ></i>
-                    <p class="text-gray-500 text-sm text-center">
+                    <p
+                      class="text-gray-500 dark:text-gray-400 text-sm text-center"
+                    >
                       Upload contract document image
                     </p>
                     <label class="cursor-pointer">
                       <span
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 transition"
                       >
                         Upload Contract
                       </span>
@@ -293,7 +319,8 @@
 
               <!-- Images -->
               <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >Add New Images</label
                 >
                 <input
@@ -301,7 +328,7 @@
                   multiple
                   @change="handleImageChange"
                   accept="image/*"
-                  class="mt-1 block w-full"
+                  class="mt-1 block w-full dark:text-gray-300 dark:file:bg-gray-700 dark:file:text-white dark:file:border-gray-600 dark:hover:file:bg-gray-600"
                 />
 
                 <!-- Existing Images Preview -->
@@ -334,7 +361,7 @@
               <button
                 type="button"
                 @click="$router.go(-1)"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>

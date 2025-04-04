@@ -35,13 +35,13 @@
         </swiper-slide>
       </swiper>
       <button
-        class="cursor-pointer absolute border border-[var(--secondary-color)] -left-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
+        class="cursor-pointer absolute border border-[var(--secondary-color)] dark:border-[#3D8BFF] -left-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] hover:bg-white dark:hover:bg-gray-800"
         @click="swiper.slidePrev()"
       >
         <i class="bi bi-arrow-left"></i>
       </button>
       <button
-        class="cursor-pointer absolute border border-[var(--secondary-color)] -right-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] hover:bg-white"
+        class="cursor-pointer absolute border border-[var(--secondary-color)] dark:border-[#3D8BFF] -right-15 top-1/2 transform -translate-y-1/2 bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white rounded-full px-2 py-1 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] hover:bg-white dark:hover:bg-gray-800"
         @click="swiper.slideNext()"
       >
         <i class="bi bi-arrow-right"></i>
@@ -50,16 +50,20 @@
 
     <!-- Property Info -->
     <div
-      class="relative bg-white shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6 sm:-mt-10 z-10"
+      class="relative bg-white dark:bg-[#1F2937] shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6 sm:-mt-10 z-10"
     >
-      <div class="border-t pt-4 flex flex-row justify-between gap-4">
+      <div
+        class="border-t dark:border-gray-600 pt-4 flex flex-row justify-between gap-4"
+      >
         <div class="flex flex-col gap-2">
           <h2
-            class="text-xl sm:text-2xl font-semibold text-gray-800 capitalize"
+            class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white capitalize"
           >
             {{ propertyDetails.title || "Untitled" }}
           </h2>
-          <p class="text-gray-500 flex items-center text-sm sm:text-base">
+          <p
+            class="text-gray-500 dark:text-gray-300 flex items-center text-sm sm:text-base"
+          >
             <i
               :class="`bi bi-geo-alt-fill text-yellow-500 ${
                 this.$i18n.locale === 'ar' ? 'ml-2' : 'mr-2'
@@ -76,7 +80,7 @@
             </span>
           </p>
         </div>
-        <p class="text-lg sm:text-xl font-bold text-gray-800">
+        <p class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">
           {{
             propertyDetails.price
               ? `${formattedPrice(propertyDetails.price)} ${$t(
@@ -88,14 +92,14 @@
       </div>
 
       <!-- General Information -->
-      <div class="pt-4 border-t">
+      <div class="pt-4 border-t dark:border-gray-600">
         <h3
-          class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6"
+          class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-4 sm:mb-6"
         >
           {{ $t("createProperty.preview.basicInfo") }}
         </h3>
         <div
-          class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-800"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-800 dark:text-gray-200"
         >
           <div class="space-y-6">
             <div class="flex items-center gap-2">
@@ -174,13 +178,15 @@
 
     <!-- Description -->
     <div
-      class="relative bg-white shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6"
+      class="relative bg-white dark:bg-[#1F2937] shadow-lg rounded-lg overflow-hidden p-4 sm:p-6 mt-6"
     >
       <div>
-        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4">
+        <h3
+          class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-4"
+        >
           {{ $t("createProperty.form.description") }}
         </h3>
-        <p class="text-gray-600 text-sm sm:text-base">
+        <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
           {{ propertyDetails.description || "No description available" }}
         </p>
       </div>

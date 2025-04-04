@@ -1,13 +1,13 @@
 <template>
   <div
     v-if="property && !loadingCount"
-    class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-15 sm:mt-5"
+    class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-15 sm:mt-5 dark:bg-gray-900"
   >
     <!-- Back Button -->
     <div class="mb-5 sm:mt-0">
       <router-link
         to="/properties"
-        class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+        class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 font-medium"
       >
         <i class="bi bi-arrow-left"></i>
         <span>{{ $t("propertyItemView.back_to_properties") }}</span>
@@ -17,18 +17,20 @@
     <!-- Property Header Section -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
       <!-- Left Column (Images & Details) -->
-      <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg col-span-3">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg col-span-3"
+      >
         <div
           class="flex flex-col sm:flex-row justify-between items-start gap-4"
         >
           <div class="space-y-2 w-full sm:w-auto">
             <h1
-              class="text-2xl sm:text-3xl font-bold text-gray-900 capitalize break-words"
+              class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 capitalize break-words"
             >
               {{ property.title || $t("propertyItemView.untitled_property") }}
             </h1>
             <p
-              class="text-base sm:text-lg text-gray-600 flex items-center capitalize break-words"
+              class="text-base sm:text-lg text-gray-600 dark:text-gray-400 flex items-center capitalize break-words"
             >
               <i class="bi bi-geo-alt mr-2 text-blue-500 flex-shrink-0"></i>
               <span>{{ locationText }}</span>
@@ -37,11 +39,15 @@
           <div
             class="flex flex-col items-start sm:items-end justify-between gap-2 sm:gap-4 w-full sm:w-auto"
           >
-            <p class="text-xl sm:text-2xl font-bold text-blue-700">
+            <p
+              class="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400"
+            >
               {{ formattedPrice(property.price) }}
               {{ $t("propertyCard.currency") }}
             </p>
-            <div class="flex items-center text-sm text-gray-500 gap-3">
+            <div
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-3"
+            >
               <p>
                 <i class="bi bi-calendar3 mr-1"></i>
                 {{ formatDate(property.createdAt) }}
@@ -53,18 +59,24 @@
 
       <div class="col-span-3 md:col-span-2 space-y-5 sm:space-y-8">
         <!-- Main Image Gallery -->
-        <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
           <div
             class="relative w-full h-60 xs:h-72 sm:h-96 rounded-lg overflow-hidden group"
           >
             <div
               v-if="!imageLoaded"
-              class="absolute inset-0 flex items-center justify-center bg-gray-100"
+              class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700"
             >
               <div class="animate-pulse flex space-x-2">
-                <div class="h-2 w-2 bg-blue-400 rounded-full"></div>
-                <div class="h-2 w-2 bg-blue-400 rounded-full"></div>
-                <div class="h-2 w-2 bg-blue-400 rounded-full"></div>
+                <div
+                  class="h-2 w-2 bg-blue-400 dark:bg-blue-500 rounded-full"
+                ></div>
+                <div
+                  class="h-2 w-2 bg-blue-400 dark:bg-blue-500 rounded-full"
+                ></div>
+                <div
+                  class="h-2 w-2 bg-blue-400 dark:bg-blue-500 rounded-full"
+                ></div>
               </div>
             </div>
             <img
@@ -80,21 +92,21 @@
             />
             <button
               @click="prevImage"
-              class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
               aria-label="Previous Image"
             >
               <i class="bi bi-chevron-left text-base sm:text-xl"></i>
             </button>
             <button
               @click="nextImage"
-              class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
               aria-label="Next Image"
             >
               <i class="bi bi-chevron-right text-base sm:text-xl"></i>
             </button>
             <button
               @click="toggleFullScreen"
-              class="cursor-pointer absolute bottom-4 right-4 bg-white text-gray-700 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute bottom-4 right-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
               aria-label="View Fullscreen"
             >
               <i class="bi bi-arrows-fullscreen text-base sm:text-lg"></i>
@@ -117,7 +129,7 @@
                 :key="index"
                 :src="img"
                 loading="lazy"
-                class="h-16 w-16 xs:h-18 xs:w-18 sm:h-24 sm:w-32 object-cover rounded-lg cursor-pointer transition-all duration-200 hover:opacity-100 flex-shrink-0 hover:shadow-lg"
+                class="h-16 w-16 xs:h-18 xs:w-18 sm:h-24 sm:w-32 object-cover rounded-lg cursor-pointer transition-all duration-200 hover:opacity-100 flex-shrink-0 hover:shadow-lg dark:hover:shadow-gray-700"
                 :class="{
                   'ring-2 ring-blue-500 shadow-md opacity-100 scale-105':
                     currentImageIndex === index,
@@ -133,7 +145,7 @@
             <button
               v-if="property.images.length > visibleThumbnails"
               @click="scrollThumbnails(-1)"
-              class="cursor-pointer absolute top-1/2 left-0 transform -translate-y-1/2 bg-white text-gray-700 w-6 h-6 sm:w-8 sm:h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+              class="cursor-pointer absolute top-1/2 left-0 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-6 h-6 sm:w-8 sm:h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
               aria-label="Scroll Left"
             >
               <i class="bi bi-chevron-left text-xs sm:text-base"></i>
@@ -141,7 +153,7 @@
             <button
               v-if="property.images.length > visibleThumbnails"
               @click="scrollThumbnails(1)"
-              class="cursor-pointer absolute top-1/2 right-0 transform -translate-y-1/2 bg-white text-gray-700 w-6 h-6 sm:w-8 sm:h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+              class="cursor-pointer absolute top-1/2 right-0 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-6 h-6 sm:w-8 sm:h-8 hidden md:flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
               aria-label="Scroll Right"
             >
               <i class="bi bi-chevron-right text-xs sm:text-base"></i>
@@ -152,20 +164,22 @@
         <!-- Property Description (if available) -->
         <div
           v-if="property.description"
-          class="bg-white rounded-lg p-4 sm:p-6 shadow-lg"
+          class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg"
         >
           <h2
-            class="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4"
+            class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4"
           >
             {{ $t("propertyItemView.description") }}
           </h2>
-          <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
+          <p
+            class="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base"
+          >
             {{ property.description }}
           </p>
           <div v-if="longDescription" class="mt-4 flex justify-center">
             <button
               @click="showFullDescription = !showFullDescription"
-              class="text-blue-600 hover:text-blue-800 text-sm font-medium transition flex items-center gap-1"
+              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium transition flex items-center gap-1"
             >
               <span>{{
                 showFullDescription
@@ -186,20 +200,24 @@
       <!-- Right Column (Contact & Details) -->
       <div class="col-span-3 md:col-span-1 space-y-5 sm:space-y-8">
         <!-- Contact Card -->
-        <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
           <PropertyDetails :property="property" :id="property?.id" />
         </div>
-        <div class="bg-white rounded-lg max-w-md w-full p-4 shadow-lg">
-          <h3 class="text-xl font-semibold mb-4 text-gray-900">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-4 shadow-lg"
+        >
+          <h3
+            class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100"
+          >
             {{ $t("propertyItemView.share_property") }}
           </h3>
           <div class="grid grid-cols-3 gap-4 mb-2">
             <button
               @click="shareVia('facebook')"
-              class="cursor-pointer flex flex-col items-center text-blue-600 hover:opacity-80 transition"
+              class="cursor-pointer flex flex-col items-center text-blue-600 dark:text-blue-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2"
+                class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-facebook text-xl"></i>
               </div>
@@ -207,10 +225,10 @@
             </button>
             <button
               @click="shareVia('twitter')"
-              class="cursor-pointer flex flex-col items-center text-sky-500 hover:opacity-80 transition"
+              class="cursor-pointer flex flex-col items-center text-sky-500 dark:text-sky-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center mb-2"
+                class="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-twitter text-xl"></i>
               </div>
@@ -218,10 +236,10 @@
             </button>
             <button
               @click="shareVia('whatsapp')"
-              class="cursor-pointer flex flex-col items-center text-green-600 hover:opacity-80 transition"
+              class="cursor-pointer flex flex-col items-center text-green-600 dark:text-green-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mb-2"
+                class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-whatsapp text-xl"></i>
               </div>
@@ -239,7 +257,7 @@
               "
               :class="[
                 $i18n.locale === 'ar' ? 'ml-10 text-right' : 'mr-10 text-left',
-                'w-full p-3 border border-gray-300 rounded-lg text-sm ',
+                'dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 text-gray-900 ',
               ]"
               dir="ltr"
               ref="shareUrlInput"
@@ -249,7 +267,7 @@
               @click="copyShareUrl"
               :class="[
                 $i18n.locale === 'ar' ? 'left-0' : 'right-0',
-                'cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 absolute top-1/2 transform -translate-y-1/2 hover:text-gray-300',
+                'cursor-pointer bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors duration-200 absolute top-1/2 transform -translate-y-1/2 hover:text-gray-300',
               ]"
             >
               <i
@@ -265,9 +283,9 @@
     <!-- Additional Information Section -->
     <div class="mt-5 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
       <!-- General Information -->
-      <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
         <h2
-          class="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center"
+          class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 flex items-center"
         >
           <i
             :class="[
@@ -279,7 +297,7 @@
           {{ $t("propertyItemView.property_info") }}
         </h2>
         <div
-          class="grid grid-cols-2 gap-3 sm:gap-4 text-gray-700 text-sm sm:text-base"
+          class="grid grid-cols-2 gap-3 sm:gap-4 text-gray-700 dark:text-gray-300 text-sm sm:text-base"
         >
           <div class="space-y-3 sm:space-y-4">
             <p>
@@ -335,9 +353,9 @@
       </div>
 
       <!-- Location Map -->
-      <div class="bg-white rounded-lg p-4 sm:p-6 shadow-lg">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
         <h2
-          class="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center"
+          class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 flex items-center"
         >
           <i
             :class="[
@@ -351,7 +369,7 @@
         <div id="map" class="w-full h-48 sm:h-64 rounded-lg"></div>
         <p
           v-if="mapLoading"
-          class="mt-3 text-gray-700 text-center text-sm sm:text-base"
+          class="mt-3 text-gray-700 dark:text-gray-300 text-center text-sm sm:text-base"
         >
           {{ $t("propertyItemView.loading_map") }}
         </p>
@@ -359,7 +377,7 @@
           <a
             :href="getGoogleMapsLink()"
             target="_blank"
-            class="text-sm text-blue-600 hover:text-blue-800 transition flex items-center gap-1"
+            class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition flex items-center gap-1"
           >
             <span>{{ $t("propertyItemView.view_on_google_maps") }}</span>
             <i
@@ -388,19 +406,19 @@
           />
           <button
             @click="prevImage"
-            class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+            class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
             <i class="bi bi-chevron-left text-base sm:text-xl"></i>
           </button>
           <button
             @click="nextImage"
-            class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white text-gray-700 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+            class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
             <i class="bi bi-chevron-right text-base sm:text-xl"></i>
           </button>
           <button
             @click="toggleFullScreen"
-            class="cursor-pointer absolute top-2 sm:top-4 right-2 sm:right-4 bg-white text-gray-700 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 transition"
+            class="cursor-pointer absolute top-2 sm:top-4 right-2 sm:right-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
             <i class="bi bi-x-lg text-base sm:text-lg"></i>
           </button>
@@ -418,13 +436,17 @@
     class="min-h-screen flex items-center justify-center p-4"
   >
     <div
-      class="text-center p-6 sm:p-8 bg-white rounded-lg shadow-lg max-w-md mx-auto"
+      class="text-center p-6 sm:p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md mx-auto"
     >
-      <i class="bi bi-house-x text-4xl sm:text-5xl text-gray-400 mb-4"></i>
-      <div class="text-gray-600 text-lg sm:text-xl font-medium mb-2">
+      <i
+        class="bi bi-house-x text-4xl sm:text-5xl text-gray-400 dark:text-gray-500 mb-4"
+      ></i>
+      <div
+        class="text-gray-600 dark:text-gray-300 text-lg sm:text-xl font-medium mb-2"
+      >
         {{ $t("propertyItemView.property_not_found") }}
       </div>
-      <p class="text-gray-500 mb-4 text-sm sm:text-base">
+      <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm sm:text-base">
         {{ $t("propertyItemView.not_found_message") }}
       </p>
       <router-link

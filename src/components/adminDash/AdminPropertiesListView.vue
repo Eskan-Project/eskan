@@ -1,14 +1,18 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-6 md:p-8">
+  <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex-1 p-6 md:p-8">
     <div class="max-w-6xl mx-auto">
-      <div class="bg-white shadow-md rounded-lg p-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+        >
           <div class="w-full sm:w-auto relative">
             <input
               type="text"
               v-model="searchQuery"
-              :class="windowWidth <= 550 ? 'text-xs p-1 pl-6' : 'text-sm p-3 pl-10'"
-              class="block w-full text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
+              :class="
+                windowWidth <= 550 ? 'text-xs p-1 pl-6' : 'text-sm p-3 pl-10'
+              "
+              class="block w-full text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
               placeholder="Search for properties"
               @input="resetPagination"
             />
@@ -16,42 +20,133 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-gray-600">
-            <thead class="text-gray-700 uppercase bg-gray-200">
+          <table class="w-full text-left text-gray-600 dark:text-gray-300">
+            <thead
+              class="text-gray-700 dark:text-gray-200 uppercase bg-gray-200 dark:bg-gray-700"
+            >
               <tr>
-                <th :class="windowWidth <= 550 ? 'px-1 py-1 text-[10px] w-2/5' : 'px-4 py-3 text-sm w-2/5'">Title</th>
-                <th v-if="windowWidth > 978 && windowWidth > 450" :class="[windowWidth <= 550 ? 'px-1 py-1 text-[10px] hidden sm:table-cell w-1/5' : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5']">Owner Email</th>
-                <th v-if="windowWidth > 978" :class="windowWidth <= 550 ? 'px-1 py-1 text-[10px] hidden sm:table-cell w-1/5' : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5'">Type</th>
-                <th :class="windowWidth <= 550 ? 'px-1 py-1 text-[10px] w-1/5' : 'px-4 py-3 text-sm w-1/5'">Details</th>
+                <th
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] w-2/5'
+                      : 'px-4 py-3 text-sm w-2/5'
+                  "
+                >
+                  Title
+                </th>
+                <th
+                  v-if="windowWidth > 978 && windowWidth > 450"
+                  :class="[
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] hidden sm:table-cell w-1/5'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5',
+                  ]"
+                >
+                  Owner Email
+                </th>
+                <th
+                  v-if="windowWidth > 978"
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] hidden sm:table-cell w-1/5'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5'
+                  "
+                >
+                  Type
+                </th>
+                <th
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] w-1/5'
+                      : 'px-4 py-3 text-sm w-1/5'
+                  "
+                >
+                  Details
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="property in paginatedProperties"
                 :key="property.id"
-                class="border-b hover:bg-gray-50 transition duration-200 ease-in-out"
+                class="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 ease-in-out"
               >
-                <th scope="row" class="flex items-center px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                <th
+                  scope="row"
+                  class="flex items-center px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+                >
                   <div class="flex items-center gap-3">
                     <img
                       :class="windowWidth <= 550 ? 'w-6 h-6' : 'w-10 h-10'"
-                      class="rounded-full border border-[#364365] object-cover"
+                      class="rounded-full border border-[#364365] dark:border-gray-600 object-cover"
                       :src="property.images[0]"
                       alt="Property image"
                     />
                     <div>
-                      <div :class="windowWidth <= 550 ? 'text-[10px] font-semibold truncate' : 'text-sm font-semibold truncate'">{{ property.title }}</div>
-                      <div v-if="windowWidth > 450" :class="windowWidth <= 550 ? 'text-[10px] text-gray-500 truncate' : 'text-xs text-gray-500 truncate'">{{ property.propertyContact.email }}</div>
+                      <div
+                        :class="
+                          windowWidth <= 550
+                            ? 'text-[10px] font-semibold truncate'
+                            : 'text-sm font-semibold truncate'
+                        "
+                      >
+                        {{ property.title }}
+                      </div>
+                      <div
+                        v-if="windowWidth > 450"
+                        :class="
+                          windowWidth <= 550
+                            ? 'text-[10px] text-gray-500 dark:text-gray-400 truncate'
+                            : 'text-xs text-gray-500 dark:text-gray-400 truncate'
+                        "
+                      >
+                        {{ property.propertyContact.email }}
+                      </div>
                     </div>
                   </div>
                 </th>
-                <td v-if="windowWidth > 978 && windowWidth > 450" :class="[windowWidth <= 550 ? 'px-1 py-1 text-[10px] hidden sm:table-cell truncate' : 'px-4 py-3 text-sm hidden sm:table-cell truncate']">{{ property.propertyContact.name }}</td>
-                <td v-if="windowWidth > 978" :class="windowWidth <= 550 ? 'px-1 py-1 text-[10px] hidden sm:table-cell truncate' : 'px-4 py-3 text-sm hidden sm:table-cell truncate'">{{ property.price }}</td>
-                <td class="text-center" :class="windowWidth <= 550 ? 'px-1 py-1' : 'px-4 py-3'">
-                  <router-link :to="`/admin/properties/${property.id}`">
-                    <button class="text-[#364365] p-1 rounded hover:bg-[#364365] hover:text-white transition duration-200 ease-in-out flex items-center" :class="windowWidth <= 550 ? 'text-[8px]' : 'text-xs'">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <td
+                  v-if="windowWidth > 978 && windowWidth > 450"
+                  :class="[
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] hidden sm:table-cell truncate'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell truncate',
+                  ]"
+                >
+                  {{ property.propertyContact.name }}
+                </td>
+                <td
+                  v-if="windowWidth > 978"
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-1 py-1 text-[10px] hidden sm:table-cell truncate'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell truncate'
+                  "
+                >
+                  {{ property.price }}
+                </td>
+                <td
+                  class="text-center"
+                  :class="windowWidth <= 550 ? 'px-1 py-1' : 'px-4 py-3'"
+                >
+                  <router-link :to="`/admin/properties/${property.title}`">
+                    <button
+                      class="text-[#364365] dark:text-blue-400 p-1 rounded hover:bg-[#364365] dark:hover:bg-blue-700 hover:text-white transition duration-200 ease-in-out flex items-center"
+                      :class="windowWidth <= 550 ? 'text-[8px]' : 'text-xs'"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                       View Details
                     </button>
@@ -62,26 +157,42 @@
           </table>
         </div>
 
-        <div v-if="paginatedProperties.length === 0" class="p-3 text-center text-gray-500 bg-white" :class="windowWidth <= 550 ? 'text-[10px]' : 'text-xs'">
+        <div
+          v-if="paginatedProperties.length === 0"
+          class="p-3 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800"
+          :class="windowWidth <= 550 ? 'text-[10px]' : 'text-xs'"
+        >
           No properties found.
         </div>
 
-        <div v-if="filteredProperties.length > 0" class="flex flex-wrap justify-center gap-1 p-1 sm:p-2 mt-6">
+        <div
+          v-if="filteredProperties.length > 0"
+          class="flex flex-wrap justify-center gap-1 p-1 sm:p-2 mt-6"
+        >
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
-            :class="windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-4 py-2 text-sm'"
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-4 py-2 text-sm'
+            "
             class="font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
           >
             Previous
           </button>
-          <span :class="windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-2 py-1 text-sm'" class="font-medium text-gray-700">
+          <span
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-2 py-1 text-sm'
+            "
+            class="font-medium text-gray-700 dark:text-gray-300"
+          >
             Page {{ currentPage }} of {{ totalPages }}
           </span>
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages || totalPages === 0"
-            :class="windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-4 py-2 text-sm'"
+            :class="
+              windowWidth <= 550 ? 'px-2 py-1 text-[10px]' : 'px-4 py-2 text-sm'
+            "
             class="font-medium text-white bg-[#364365] rounded-md hover:bg-[#4a5b8a] disabled:opacity-50"
           >
             Next
@@ -91,6 +202,18 @@
     </div>
   </main>
 </template>
+
+<style>
+/* Add dark mode styles for inputs */
+.dark input {
+  color: white;
+}
+
+/* Fix any potential light mode issues */
+input {
+  color: #111827; /* gray-900 for better contrast in light mode */
+}
+</style>
 <script>
 import { mapActions } from "vuex";
 export default {
@@ -105,11 +228,11 @@ export default {
     };
   },
   mounted() {
-        window.addEventListener('resize', this.updateWindowWidth);
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.updateWindowWidth);
-    },
+    window.addEventListener("resize", this.updateWindowWidth);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.updateWindowWidth);
+  },
   computed: {
     filteredProperties() {
       if (!this.searchQuery) {
@@ -207,8 +330,8 @@ export default {
       }
     },
     updateWindowWidth() {
-            this.windowWidth = window.innerWidth;
-        },
+      this.windowWidth = window.innerWidth;
+    },
   },
 };
 </script>

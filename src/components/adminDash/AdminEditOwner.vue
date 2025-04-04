@@ -1,14 +1,20 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-4 md:p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-bold mb-6 text-gray-700">Edit Owner Profile</h2>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
+    <div
+      class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+    >
+      <h2 class="text-2xl font-bold mb-6 text-gray-700 dark:text-white">
+        Edit Owner Profile
+      </h2>
 
       <!-- Add loading state -->
       <div v-if="!formData" class="text-center py-8">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"
         ></div>
-        <p class="mt-4 text-gray-600">Loading owner data...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">
+          Loading owner data...
+        </p>
       </div>
 
       <form v-else @submit.prevent="handleSubmit" class="space-y-6">
@@ -17,62 +23,69 @@
           <img
             :src="formData.photo"
             alt="Owner photo"
-            class="w-20 h-20 rounded-full object-cover"
+            class="w-20 h-20 rounded-full object-cover border dark:border-gray-600"
           />
         </div>
 
         <!-- Basic Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Full Name</label
             >
             <input
               v-model="formData.name"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label
+            >
             <input
               v-model="formData.email"
               type="email"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               readonly
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >National ID</label
             >
             <input
               v-model="formData.nationalId"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Location</label
             >
             <input
               v-model="formData.location"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Gender</label
             >
             <select
               v-model="formData.gender"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -85,7 +98,7 @@
           <button
             type="button"
             @click="$router.push('/admin/owners')"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
@@ -100,11 +113,11 @@
       </form>
 
       <!-- National ID Card Display -->
-      <div class="mt-8 border-t pt-6">
-        <h3 class="text-lg font-semibold mb-4 text-gray-700">
+      <div class="mt-8 border-t dark:border-gray-700 pt-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-700 dark:text-white">
           National ID Card
         </h3>
-        <div class="bg-gray-50 rounded-lg p-4">
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
           <!-- Add v-if check for formData first -->
           <div v-if="formData">
             <div v-if="formData.idImage" class="flex flex-col items-center">
@@ -115,11 +128,16 @@
                 style="max-height: 200px"
               />
             </div>
-            <div v-else class="text-center py-8 text-gray-500">
+            <div
+              v-else
+              class="text-center py-8 text-gray-500 dark:text-gray-400"
+            >
               No national ID image available
             </div>
           </div>
-          <div v-else class="text-center py-8 text-gray-500">Loading...</div>
+          <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+            Loading...
+          </div>
         </div>
         <button
           v-if="formData"
@@ -127,7 +145,7 @@
           :disabled="defaultImage"
           :class="
             defaultImage
-              ? 'mt-4 px-4 py-2 bg-green-600'
+              ? 'mt-4 px-4 py-2 bg-green-600 text-white rounded'
               : 'mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
           "
         >

@@ -79,18 +79,20 @@
             v-if="isNotificationsOpen"
             :class="[
               isMobile
-                ? 'fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-lg p-4 max-h-[70vh] z-30'
-                : 'absolute top-20 w-full md:w-64 right-30 bg-white p-3 shadow-lg rounded-md max-h-[40vh]',
+                ? 'fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-xl shadow-lg p-4 max-h-[70vh] z-30'
+                : 'absolute top-20 w-full md:w-64 right-30 bg-white dark:bg-gray-800 p-3 shadow-lg rounded-md max-h-[40vh]',
               'overflow-y-auto',
             ]"
           >
             <div v-if="isMobile" class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-[var(--secondary-color)]">
+              <h3
+                class="text-lg font-semibold text-[var(--secondary-color)] dark:text-white"
+              >
                 {{ $t("nav.notifications") }}
               </h3>
               <button
                 @click.stop="toggleNotifications"
-                class="text-gray-600 hover:text-gray-800"
+                class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
               >
                 <i class="bi bi-x text-xl"></i>
               </button>
@@ -103,21 +105,24 @@
                 :class="[
                   'flex justify-between items-center p-2 rounded cursor-pointer transition-colors text-xs sm:text-sm',
                   notif.read
-                    ? 'text-gray-600 bg-gray-50 hover:bg-gray-100'
-                    : 'text-black bg-blue-50 font-semibold hover:bg-blue-100',
+                    ? 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'text-black dark:text-white bg-blue-50 dark:bg-blue-900 font-semibold hover:bg-blue-100 dark:hover:bg-blue-800',
                 ]"
               >
                 <span class="flex-1">{{ notif.message }}</span>
                 <button
                   @click.stop="removeNotification(notif.id)"
-                  class="text-red-500 hover:text-red-700 transition-colors ml-1"
+                  class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors ml-1"
                   title="Dismiss"
                 >
                   ✖
                 </button>
               </div>
             </div>
-            <p v-else class="p-2 text-gray-500 text-sm text-center">
+            <p
+              v-else
+              class="p-2 text-gray-500 dark:text-gray-400 text-sm text-center"
+            >
               {{ $t("nav.no_notifications") }}
             </p>
           </div>
@@ -158,7 +163,7 @@
         >
           <i class="bi bi-person text-sm md:text-2xl"></i>
         </router-link>
-
+        <dark-toggle></dark-toggle>
         <button
           v-if="isAuth"
           :title="$t('nav.logout')"
@@ -207,10 +212,12 @@ import NavbarMobileVue from "./NavbarMobile.vue";
 import debounce from "lodash/debounce";
 import arLogo from "@/assets/images/logo_ar.png";
 import enLogo from "@/assets/images/logo.png";
+import DarkToggle from "../DarkToggle.vue";
 
 export default {
   components: {
     NavbarMobileVue,
+    DarkToggle,
   },
   data() {
     return {
@@ -356,6 +363,8 @@ export default {
 </script>
 
 <style scoped>
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 .transition-all {
   transition: all 0.3s ease-in-out;
 }

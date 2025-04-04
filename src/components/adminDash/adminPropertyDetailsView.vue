@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex-1 p-4 md:p-8">
+  <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex-1 p-4 md:p-8">
     <div class="md:flex block">
       <!-- Main Content -->
 
@@ -11,7 +11,9 @@
               <div
                 class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto"
               ></div>
-              <p class="mt-4 text-gray-600">Loading property details...</p>
+              <p class="mt-4 text-gray-600 dark:text-gray-400">
+                Loading property details...
+              </p>
             </div>
           </div>
         </div>
@@ -19,7 +21,7 @@
         <!-- Error State -->
         <div v-else-if="error" class="container mx-auto py-10 px-5 mt-15">
           <div
-            class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+            class="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded"
           >
             <p class="font-bold">Error</p>
             <p>{{ error }}</p>
@@ -38,7 +40,7 @@
           <div class="mb-5 sm:mt-0">
             <router-link
               to="/properties"
-              class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+              class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200 font-medium"
             >
               <i class="bi bi-arrow-left"></i>
               <span>Back to Properties</span>
@@ -46,15 +48,23 @@
           </div>
           <div class="flex sm:flex-row justify-between items-start gap-4 mb-4">
             <div class="space-y-2">
-              <h1 class="text-3xl font-bold text-gray-900 capitalize">
+              <h1
+                class="text-3xl font-bold text-gray-900 dark:text-white capitalize"
+              >
                 {{ property.title || "Untitled Property" }}
               </h1>
-              <p class="text-lg text-gray-600 flex items-center capitalize">
-                <i class="bi bi-geo-alt mr-2 text-gray-500"></i>
+              <p
+                class="text-lg text-gray-600 dark:text-gray-300 flex items-center capitalize"
+              >
+                <i
+                  class="bi bi-geo-alt mr-2 text-gray-500 dark:text-gray-400"
+                ></i>
                 {{ locationText }}
               </p>
             </div>
-            <p class="text-2xl font-semibold text-blue-700 whitespace-nowrap">
+            <p
+              class="text-2xl font-semibold text-blue-700 dark:text-blue-400 whitespace-nowrap"
+            >
               Price: {{ property.price }} EGP
             </p>
           </div>
@@ -75,9 +85,11 @@
                 />
                 <div
                   v-if="!imageLoaded"
-                  class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center"
+                  class="w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center"
                 >
-                  <span class="text-gray-500">Loading image...</span>
+                  <span class="text-gray-500 dark:text-gray-400"
+                    >Loading image...</span
+                  >
                 </div>
 
                 <!-- Gallery Navigation Buttons -->
@@ -86,7 +98,7 @@
                     property && property.images && property.images.length > 1
                   "
                   @click="prevImage"
-                  class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+                  class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-90 transition"
                 >
                   ❮
                 </button>
@@ -96,7 +108,7 @@
                     property && property.images && property.images.length > 1
                   "
                   @click="nextImage"
-                  class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-700 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 active:scale-90 transition"
+                  class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-90 transition"
                 >
                   ❯
                 </button>
@@ -120,8 +132,8 @@
             </div>
 
             <!-- Owner Information Section -->
-            <div class="bg-white rounded-lg p-6 shadow-lg">
-              <div class="mt-2 text-gray-900">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+              <div class="mt-2 text-gray-900 dark:text-white">
                 <h2 class="text-xl font-semibold text-center mb-4">
                   Owner Details
                 </h2>
@@ -129,23 +141,23 @@
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                     alt="Profile Picture"
-                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300"
+                    class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300 dark:border-gray-600"
                   />
                   <p class="flex flex-col items-center space-y-1">
                     <span class="font-semibold">Name:</span>
-                    <span class="text-sm capitalize">{{
+                    <span class="text-sm capitalize dark:text-gray-300">{{
                       property.propertyContact.name
                     }}</span>
                   </p>
                   <p class="flex flex-col items-center space-y-1">
                     <span class="font-semibold">Phone:</span>
-                    <span class="text-sm">{{
+                    <span class="text-sm dark:text-gray-300">{{
                       property.propertyContact.phone
                     }}</span>
                   </p>
                   <p class="flex flex-col items-center space-y-1">
                     <span class="font-semibold">Email:</span>
-                    <span class="text-sm">{{
+                    <span class="text-sm dark:text-gray-300">{{
                       property.propertyContact.email
                     }}</span>
                   </p>
@@ -154,7 +166,7 @@
                     class="flex flex-col items-center space-y-1"
                   >
                     <span class="font-semibold">Address:</span>
-                    <span class="text-sm capitalize">{{
+                    <span class="text-sm capitalize dark:text-gray-300">{{
                       property.propertyContact.address
                     }}</span>
                   </p>
@@ -164,26 +176,37 @@
           </div>
 
           <!-- Description Section -->
-          <div class="mt-8 w-full bg-white shadow-lg rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+          <div
+            class="mt-8 w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6"
+          >
+            <h2
+              class="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center"
+            >
               Property Description
             </h2>
-            <div class="prose max-w-none text-gray-700">
+            <div class="prose max-w-none text-gray-700 dark:text-gray-300">
               <p v-if="property.description" class="whitespace-pre-line">
                 {{ property.description }}
               </p>
-              <p v-else class="text-gray-500 italic text-center">
+              <p
+                v-else
+                class="text-gray-500 dark:text-gray-400 italic text-center"
+              >
                 No description available
               </p>
             </div>
           </div>
 
           <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-6 bg-white shadow-lg rounded-lg">
-              <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
+            <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+              <h2
+                class="text-xl font-semibold text-gray-900 dark:text-white mb-6 text-center"
+              >
                 General Information
               </h2>
-              <div class="grid grid-cols-2 gap-4 text-gray-700">
+              <div
+                class="grid grid-cols-2 gap-4 text-gray-700 dark:text-gray-300"
+              >
                 <div class="space-y-4">
                   <p><strong>Published Date:</strong></p>
                   <p><strong>Floor Location:</strong></p>
@@ -208,24 +231,31 @@
                 </div>
               </div>
             </div>
-            <div class="p-6 bg-white shadow-lg rounded-lg">
-              <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">
+            <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+              <h2
+                class="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center"
+              >
                 Location Information
               </h2>
               <div
                 v-if="mapError"
-                class="w-full h-64 rounded-lg flex items-center justify-center bg-gray-100"
+                class="w-full h-64 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-700"
               >
                 <div class="text-center p-4">
-                  <i class="bi bi-map text-gray-400 text-4xl mb-2"></i>
-                  <p class="text-gray-600">{{ mapError }}</p>
-                  <p class="text-gray-500 text-sm mt-2">
+                  <i
+                    class="bi bi-map text-gray-400 dark:text-gray-500 text-4xl mb-2"
+                  ></i>
+                  <p class="text-gray-600 dark:text-gray-300">{{ mapError }}</p>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">
                     {{ locationText || "No location information available" }}
                   </p>
                 </div>
               </div>
               <div v-else id="map" class="w-full h-96 rounded-lg"></div>
-              <p v-if="mapLoading" class="mt-3 text-gray-700 text-center">
+              <p
+                v-if="mapLoading"
+                class="mt-3 text-gray-700 dark:text-gray-300 text-center"
+              >
                 Loading map...
               </p>
             </div>

@@ -15,8 +15,8 @@
               step.icon,
               'text-base sm:text-2xl py-2 px-2 rounded-full transition-all ',
               index <= activeStep || isCompleted
-                ? 'bg-[var(--secondary-color)] text-white'
-                : 'bg-gray-300 text-gray-600',
+                ? 'bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white'
+                : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300',
             ]"
           ></i>
         </span>
@@ -25,8 +25,8 @@
           :class="[
             'border border-b-1 w-20 mx-3 transition-all',
             index < activeStep || isCompleted
-              ? 'border-[var(--secondary-color)]'
-              : 'border-gray-300',
+              ? 'border-[var(--secondary-color)] dark:border-[#3D8BFF]'
+              : 'border-gray-300 dark:border-gray-600',
           ]"
         ></span>
       </template>

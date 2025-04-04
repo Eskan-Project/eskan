@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-[var(--secondary-color)] text-white py-4">
+  <footer class="bg-[var(--secondary-color)] dark:bg-[#1F2937] text-white py-4">
     <div class="container mx-auto w-3/4 ml-auto">
       <div class="flex flex-col md:flex-row w-full items-center">
         <!-- Logo -->
@@ -18,7 +18,7 @@
             :href="icon.link"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-10 h-10 flex items-center justify-center bg-white rounded-lg text-[var(--secondary-color)] hover:bg-[var(--secondary-color)] hover:border hover:text-white hover:bg-opacity-80 transition-all"
+            class="w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-700 rounded-lg text-[var(--secondary-color)] dark:text-[#3D8BFF] hover:bg-[var(--secondary-color)] dark:hover:bg-[#3D8BFF] hover:border hover:text-white dark:hover:text-white hover:bg-opacity-80 transition-all"
             :aria-label="$t(`footer.social.${icon.name.toLowerCase()}`)"
           >
             <i :class="`bi bi-${icon.icon} text-xl`"></i>
@@ -28,7 +28,9 @@
     </div>
   </footer>
   <!-- Copyright -->
-  <div class="bg-[#001c3ac9] text-center text-white py-3 w-full">
+  <div
+    class="bg-[#001c3ac9] dark:bg-[#111827] text-center text-white py-3 w-full"
+  >
     <h3>
       {{ $t("footer.copyright") }} <strong>Eskan</strong>.
       {{ $t("footer.all_rights_reserved") }}

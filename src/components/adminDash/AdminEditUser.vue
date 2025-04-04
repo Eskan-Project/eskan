@@ -1,14 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-4 md:p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-bold mb-6">Edit User Profile</h2>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
+    <div
+      class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+    >
+      <h2 class="text-2xl font-bold mb-6 dark:text-white">Edit User Profile</h2>
 
       <!-- Add loading state -->
       <div v-if="!formData" class="text-center py-8">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"
         ></div>
-        <p class="mt-4 text-gray-600">Loading user data...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">
+          Loading user data...
+        </p>
       </div>
 
       <form v-else @submit.prevent="handleSubmit" class="space-y-6">
@@ -17,62 +21,69 @@
           <img
             :src="formData.photo"
             alt="User photo"
-            class="w-20 h-20 rounded-full object-cover"
+            class="w-20 h-20 rounded-full object-cover border dark:border-gray-600"
           />
         </div>
 
         <!-- Basic Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Full Name</label
             >
             <input
               v-model="formData.name"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label
+            >
             <input
               v-model="formData.email"
               type="email"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               readonly
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >National ID</label
             >
             <input
               v-model="formData.nationalId"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Location</label
             >
             <input
               v-model="formData.location"
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Gender</label
             >
             <select
               v-model="formData.gender"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -92,7 +103,8 @@
           </div> -->
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Account Status</label
             >
             <div class="flex items-center">
@@ -107,7 +119,9 @@
                   :class="formData.isActive ? 'translate-x-5' : 'translate-x-0'"
                 ></span>
               </button>
-              <span class="ml-3 text-sm font-medium text-gray-900">
+              <span
+                class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-200"
+              >
                 {{ formData.isActive ? "Active" : "Inactive" }}
               </span>
             </div>
@@ -119,7 +133,7 @@
           <button
             type="button"
             @click="$router.push('/admin/users')"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
@@ -202,3 +216,12 @@ export default {
   },
 };
 </script>
+
+<style>
+/* Add dark mode styles for inputs */
+.dark input,
+.dark textarea,
+.dark select {
+  color: white;
+}
+</style>

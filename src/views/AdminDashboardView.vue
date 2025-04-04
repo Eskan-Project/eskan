@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-gray-100 flex relative">
+  <main class="min-h-screen bg-gray-100 dark:bg-gray-900 flex relative">
     <div
       class="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#364365] shadow-lg z-40 flex items-center justify-between px-4"
     >
@@ -12,6 +12,9 @@
       <router-link to="/" class="h-full flex items-center">
         <img src="../assets/images/logo.png" alt="Logo" class="h-8" />
       </router-link>
+
+      <!-- Add dark toggle to mobile header for better visibility -->
+      <dark-toggle></dark-toggle>
     </div>
 
     <aside
@@ -23,6 +26,18 @@
         isOpen ? 'mt-16' : ''
       } md:mt-0`"
     >
+      <!-- Header with logo and dark toggle -->
+      <div class="flex justify-between items-center mb-6">
+        <router-link to="/" @click="closeSidebarOnMobile">
+          <img
+            src="../assets/images/logo.png"
+            alt="Eskan Logo"
+            class="h-8 w-auto"
+          />
+        </router-link>
+        <dark-toggle></dark-toggle>
+      </div>
+
       <nav class="space-y-2">
         <router-link
           v-for="link in links.filter((l) => l.label !== 'Logout')"
@@ -45,9 +60,8 @@
           Logout
         </button>
       </nav>
-      <router-link to="/" class="mt-auto pt-4" @click="closeSidebarOnMobile">
-        <img src="../assets/images/logo.png" alt="" class="w-full" />
-      </router-link>
+
+      <!-- Remove the logo from the bottom -->
     </aside>
 
     <div
@@ -56,7 +70,9 @@
       @click="closeSidebar"
     ></div>
 
-    <section class="flex-1 p-4 md:p-2 w-full overflow-x-hidden md:mt-0 mt-16">
+    <section
+      class="flex-1 p-4 md:p-2 w-full overflow-x-hidden md:mt-0 mt-16 dark:text-white"
+    >
       <router-view></router-view>
     </section>
   </main>
@@ -64,7 +80,11 @@
 
 <script>
 import { mapActions } from "vuex";
+import DarkToggle from "@/components/DarkToggle.vue";
 export default {
+  components: {
+    DarkToggle,
+  },
   name: "AdminDashboard",
   data() {
     return {

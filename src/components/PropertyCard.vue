@@ -5,13 +5,13 @@
     :aria-label="`View details for ${property.title || 'property'}`"
   >
     <article
-      class="bg-white text-gray-800 shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500 flex flex-col h-full relative"
+      class="bg-white dark:bg-[#1F2937] text-gray-800 dark:text-white shadow-md rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-[#3D8BFF] flex flex-col h-full relative"
     >
       <!-- Property Image with Skeleton Loader -->
       <div class="relative h-40 sm:h-48 md:h-56 lg:h-64 w-full overflow-hidden">
         <div
           v-if="!imageLoaded && property.images?.length"
-          class="absolute inset-0 bg-gray-200 animate-pulse"
+          class="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse"
         ></div>
         <img
           v-if="property.images?.length"
@@ -27,7 +27,7 @@
         />
         <div
           v-else
-          class="w-full h-full flex items-center justify-center text-gray-500 text-sm bg-gray-200"
+          class="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm bg-gray-200 dark:bg-gray-700"
         >
           <span>{{ $t("propertyCard.no_image") }}</span>
         </div>
@@ -74,7 +74,7 @@
       <div class="p-3 sm:p-4 md:p-5 flex-1 flex flex-col justify-between gap-2">
         <!-- Property Title -->
         <h2
-          class="font-semibold text-sm sm:text-base md:text-lg text-gray-900 transition-colors capitalize line-clamp-2"
+          class="font-semibold text-sm sm:text-base md:text-lg text-gray-900 dark:text-white transition-colors capitalize line-clamp-2"
           :title="property.title || $t('propertyCard.untitled_property')"
         >
           {{ property.title || $t("propertyCard.untitled_property") }}
@@ -84,9 +84,9 @@
         <div class="mt-1 sm:mt-2">
           <!-- Location -->
           <p
-            class="flex items-center gap-1 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2"
+            class="flex items-center gap-1 text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-1 sm:mb-2"
           >
-            <i class="bi bi-geo-alt text-[#364365]"></i>
+            <i class="bi bi-geo-alt text-[#364365] dark:text-[#3D8BFF]"></i>
             <span class="truncate">{{ locationText }}</span>
           </p>
 
@@ -95,10 +95,12 @@
             class="flex flex-col sm:grid sm:grid-cols-2 gap-1.5 sm:gap-2 mt-2"
           >
             <div
-              class="flex items-center gap-1 text-xs bg-gray-100 rounded-md p-1.5 hover:bg-gray-200 transition-colors"
+              class="flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 rounded-md p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              <i class="bi bi-house-door text-[#364365]"></i>
-              <span
+              <i
+                class="bi bi-house-door text-[#364365] dark:text-[#3D8BFF]"
+              ></i>
+              <span class="dark:text-gray-300"
                 >{{ property.rooms }}
                 {{
                   property.rooms === 1
@@ -110,18 +112,20 @@
 
             <div
               v-if="property.area"
-              class="flex items-center gap-1 text-xs bg-gray-100 rounded-md p-1.5 hover:bg-gray-200 transition-colors"
+              class="flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 rounded-md p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              <i class="bi bi-rulers text-[#364365]"></i>
-              <span>{{ property.area }} {{ $t("propertyCard.area") }}</span>
+              <i class="bi bi-rulers text-[#364365] dark:text-[#3D8BFF]"></i>
+              <span class="dark:text-gray-300"
+                >{{ property.area }} {{ $t("propertyCard.area") }}</span
+              >
             </div>
 
             <div
               v-if="property.furnished !== undefined"
-              class="flex items-center gap-1 text-xs bg-gray-100 rounded-md p-1.5 hover:bg-gray-200 transition-colors"
+              class="flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 rounded-md p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              <i class="bi bi-lamp text-[#364365]"></i>
-              <span>{{
+              <i class="bi bi-lamp text-[#364365] dark:text-[#3D8BFF]"></i>
+              <span class="dark:text-gray-300">{{
                 property.furnished
                   ? $t("propertyCard.furnished")
                   : $t("propertyCard.unfurnished")
@@ -133,7 +137,7 @@
         <!-- View Details Button with Touch-friendly tap target -->
         <div class="mt-2 sm:mt-3 md:mt-4 text-center">
           <span
-            class="inline-block text-xs sm:text-sm font-medium text-white bg-[#364365] px-3 py-1.5 rounded-full group-hover:bg-[#4c5b87] transition-all duration-200"
+            class="inline-block text-xs sm:text-sm font-medium text-white bg-[#364365] dark:bg-[#3D8BFF] px-3 py-1.5 rounded-full group-hover:bg-[#4c5b87] dark:group-hover:bg-blue-600 transition-all duration-200"
           >
             {{ $t("propertyCard.view_details") }}
             <i

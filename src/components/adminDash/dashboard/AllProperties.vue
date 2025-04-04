@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-6xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg p-4">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
       <div class="flex flex-col md:flex-row items-center justify-center mb-4">
         
         <div class="flex-shrink-0 w-32 h-28 relative mb-4 sm:mb-0 sm:w-32 sm:h-32">
@@ -9,8 +9,8 @@
 
      
         <div class="ml-0 sm:ml-4 text-center sm:text-left">
-          <p class="text-xl font-semibold text-gray-500">{{ properties.length }} Properties</p>
-          <p class="text-sm text-gray-400">Property distribution</p>
+          <p class="text-xl font-semibold text-gray-500 dark:text-gray-300">{{ properties.length }} Properties</p>
+          <p class="text-sm text-gray-400 dark:text-gray-400">Property distribution</p>
         </div>
       </div>
     </div>
