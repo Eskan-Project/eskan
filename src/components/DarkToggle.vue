@@ -73,3 +73,7 @@ export default {
   },
 };
 </script>
+<style scoped>
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+</style>

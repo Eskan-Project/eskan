@@ -359,9 +359,7 @@ export default {
 
 <style scoped>
 @import "tailwindcss";
-
 @custom-variant dark (&:where(.dark, .dark *));
-
 .transition-all {
   transition: all 0.3s ease-in-out;
 }
