@@ -158,7 +158,7 @@
         >
           <i class="bi bi-person text-sm md:text-2xl"></i>
         </router-link>
-
+        <dark-toggle></dark-toggle>
         <button
           v-if="isAuth"
           :title="$t('nav.logout')"
@@ -207,10 +207,12 @@ import NavbarMobileVue from "./NavbarMobile.vue";
 import debounce from "lodash/debounce";
 import arLogo from "@/assets/images/logo_ar.png";
 import enLogo from "@/assets/images/logo.png";
+import DarkToggle from "../DarkToggle.vue";
 
 export default {
   components: {
     NavbarMobileVue,
+    DarkToggle,
   },
   data() {
     return {
@@ -356,6 +358,10 @@ export default {
 </script>
 
 <style scoped>
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 .transition-all {
   transition: all 0.3s ease-in-out;
 }
