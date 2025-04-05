@@ -17,6 +17,23 @@
               @input="resetPagination"
             />
           </div>
+
+          <div class="w-full sm:w-auto">
+            <select
+              v-model="statusFilter"
+              @change="resetPagination"
+              :class="windowWidth <= 550 ? 'text-xs p-1' : 'text-sm p-3'"
+              class="block w-full text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
+            >
+              <option
+                v-for="option in statusOptions"
+                :key="option.value"
+                :value="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -42,7 +59,7 @@
                       : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5',
                   ]"
                 >
-                  Owner Email
+                  Owner Name
                 </th>
                 <th
                   v-if="windowWidth > 978"
@@ -52,7 +69,7 @@
                       : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5'
                   "
                 >
-                  Type
+                  Property Status
                 </th>
                 <th
                   :class="
@@ -117,13 +134,27 @@
                 </td>
                 <td
                   v-if="windowWidth > 978"
-                  :class="
+                  :class="[
                     windowWidth <= 550
                       ? 'px-1 py-1 text-[10px] hidden sm:table-cell truncate'
-                      : 'px-4 py-3 text-sm hidden sm:table-cell truncate'
-                  "
+                      : 'px-4 py-3 text-sm hidden sm:table-cell truncate',
+                    {
+                      'text-red-500 font-medium': property.status === 'expired',
+                      'text-green-500 font-medium':
+                        property.status === 'completed',
+                    },
+                  ]"
                 >
-                  {{ property.price }}
+                  <span
+                    :class="{
+                      'bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded':
+                        property.status === 'expired',
+                      'bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded':
+                        property.status === 'completed',
+                    }"
+                  >
+                    {{ property.status }}
+                  </span>
                 </td>
                 <td
                   class="text-center"
@@ -145,7 +176,7 @@
                           stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 9 0 11-18 0 9 9 9 0 0118 0z"
                         />
                       </svg>
                       View Details
@@ -225,6 +256,12 @@ export default {
       searchQuery: "",
       isLoading: false,
       windowWidth: window.innerWidth,
+      statusFilter: "all", // Add this line
+      statusOptions: [
+        { value: "all", label: "All Status" },
+        { value: "completed", label: "Completed" },
+        { value: "expired", label: "Expired" },
+      ],
     };
   },
   mounted() {
@@ -235,20 +272,31 @@ export default {
   },
   computed: {
     filteredProperties() {
-      if (!this.searchQuery) {
-        return this.properties;
+      let filtered = [...this.properties];
+
+      // Apply status filter
+      if (this.statusFilter !== "all") {
+        filtered = filtered.filter(
+          (property) => property.status === this.statusFilter
+        );
       }
 
-      const query = this.searchQuery.toLowerCase();
-      return this.properties.filter((prop) => {
-        return (
-          (prop.data.title && prop.data.title.toLowerCase().includes(query)) ||
-          (prop.data.description &&
-            prop.data.description.toLowerCase().includes(query)) ||
-          (prop.owner.name && prop.owner.name.toLowerCase().includes(query)) ||
-          (prop.data.type && prop.data.type.toLowerCase().includes(query))
-        );
-      });
+      // Apply search query
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter((property) => {
+          return (
+            (property.title && property.title.toLowerCase().includes(query)) ||
+            (property.status &&
+              property.status.toLowerCase().includes(query)) ||
+            (property.propertyContact?.name &&
+              property.propertyContact.name.toLowerCase().includes(query)) ||
+            (property.type && property.type.toLowerCase().includes(query))
+          );
+        });
+      }
+
+      return filtered;
     },
     totalPages() {
       return Math.max(
@@ -277,6 +325,9 @@ export default {
     },
   },
   watch: {
+    statusFilter() {
+      this.resetPagination();
+    },
     // Reset to page 1 when filtered data changes
     filteredProperties() {
       if (this.currentPage > this.totalPages && this.totalPages > 0) {
