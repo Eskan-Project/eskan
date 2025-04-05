@@ -1,0 +1,95 @@
+<template>
+  <button
+    @click="nextStep"
+    :name="name"
+    :disabled="isLoading"
+    class="w-fit py-2 mx-auto border border-[var(--secondary-color)] dark:border-[#3D8BFF] bg-[var(--secondary-color)] dark:bg-[#3D8BFF] text-white px-6 rounded-md cursor-pointer hover:bg-white dark:hover:bg-gray-800 hover:text-[var(--secondary-color)] dark:hover:text-[#3D8BFF] transition"
+  >
+    {{ isLoading ? $t("createProperty.buttons.loading") : title }}
+  </button>
+</template>
+
+<script>
+import { mapActions, mapMutations, mapGetters } from "vuex";
+
+export default {
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    ...mapGetters(["isLoading"]),
+  },
+  methods: {
+    ...mapActions("property", ["createProperty"]),
+    ...mapMutations("property", ["updateProperty"]),
+    ...mapActions(["startLoading", "stopLoading"]),
+
+    async nextStep() {
+      this.startLoading();
+      try {
+        let storedStep = localStorage.getItem("activeStep");
+
+        if (this.name === "propertyPreview") {
+          this.$emit("validateAndProceed", (valid) => {
+            if (valid) {
+              storedStep++;
+              localStorage.setItem("activeStep", storedStep);
+              this.$router.push({ name: this.name }).then(() => {
+                this.stopLoading();
+              });
+            } else {
+              this.stopLoading();
+            }
+          });
+        } else if (this.name === "propertyContact") {
+          storedStep++;
+          localStorage.setItem("activeStep", storedStep);
+          await this.$router.push({ name: this.name });
+          this.stopLoading();
+        } else if (this.name === "completed") {
+          const parentComponent = this.$parent;
+
+          if (
+            parentComponent &&
+            typeof parentComponent.validateBeforeSubmit === "function"
+          ) {
+            const isValid = parentComponent.validateBeforeSubmit();
+            if (!isValid) {
+              this.stopLoading();
+              return;
+            }
+          }
+
+          storedStep++;
+          localStorage.setItem("activeStep", storedStep);
+          const localImages = JSON.parse(localStorage.getItem("localImages"));
+          const propertyDetails = localStorage.getItem("propertyDetails");
+          this.updateProperty(JSON.parse(propertyDetails));
+          await this.createProperty(localImages);
+          await this.$router.push({ name: "completed" });
+          this.stopLoading();
+        } else {
+          await this.$router.push({ name: this.name });
+          setTimeout(() => {
+            localStorage.removeItem("localImages");
+            localStorage.removeItem("propertyDetails");
+            localStorage.removeItem("activeStep");
+            localStorage.removeItem("maxSteps");
+          }, 0);
+          this.stopLoading();
+        }
+      } catch (error) {
+        console.error("Error in nextStep:", error);
+        this.stopLoading();
+      }
+    },
+  },
+};
+</script>

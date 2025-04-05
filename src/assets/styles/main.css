@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+@import "tailwindcss";
+:root {
+  --primary-color: #f1f5ff;
+  --secondary-color: #364365;
+  --text-color: white;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: "Montserrat", sans-serif;
+}
+
+:root.dark {
+  --primary-color: #111827;
+  --secondary-color: #364365;
+  --text-color: white;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.dark body {
+  background-color: var(--primary-color);
+  color: white;
+}
+@custom-variant dark (&:where(.dark, .dark *));

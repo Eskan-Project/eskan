@@ -1,0 +1,491 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About",
+    "contact": "Contact",
+    "faqs": "FAQs",
+    "login": "Login",
+    "logout": "Logout",
+    "notifications": "Notifications",
+    "no_notifications": "No new notifications",
+    "create_property": "Create Property",
+    "admin_dashboard": "Admin Dashboard",
+    "user_profile": "User Profile",
+    "logo": "../assets/images/logo.png"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit_profile": "Edit Profile",
+    "cancel": "Cancel",
+    "save_profile": "Save Profile",
+    "personal_information": "Personal Information",
+    "name": "Name",
+    "email": "Email",
+    "national_id": "National ID",
+    "gender": "Gender",
+    "address": "Address",
+    "phone": "Phone Number",
+    "male": "Male",
+    "female": "Female",
+    "not_specified": "Not specified",
+    "my_properties": "My Properties",
+    "loading_properties": "Loading properties...",
+    "no_properties": "You have not added any properties yet",
+    "select_room": "One Room",
+    "select_rooms": "Rooms",
+    "currency": "EGP",
+    "property_status": {
+      "approved": "Approved",
+      "pending": "Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "expired": "Expired"
+    },
+    "pay_now": "Pay Now",
+    "paid": "Paid",
+    "crop_image": "Crop Image",
+    "apply": "Apply",
+    "cancel_crop": "Cancel Crop"
+  },
+  "home": {
+    "hero": {
+      "title": "Your New Home Away from Home",
+      "description": "Find your perfect shared accommodation with ease. Whether you're moving for work, study, or adventure, Eskan connects you with safe, affordable, and verified housing options tailored to your needs.",
+      "find_home": "Find New Home"
+    },
+    "features": {
+      "section_title": "Find Everything You Need in One Place",
+      "verified": {
+        "title": "Verified & Safe Listings",
+        "description": "Browse properties screened for safety, with verified owners and legal documentation"
+      },
+      "budget": {
+        "title": "Budget-Friendly Options",
+        "description": "Discover shared accommodations designed for affordability without compromising comfort"
+      },
+      "contact": {
+        "title": "Free Initial Contact",
+        "description": "Reach out to property owners for free—unlock unlimited access with flexible subscriptions"
+      },
+      "smart": {
+        "title": "Smart Search Filters",
+        "description": "Refine your search by price, location, amenities, and room type—find your ideal match in seconds"
+      },
+      "secure": {
+        "title": "Secure Payments",
+        "description": "Enjoy hassle-free transactions with trusted payment gateways like Stripe or PayPal"
+      },
+      "flexible": {
+        "title": "Flexible Subscriptions",
+        "description": "Owners: List your first property free for 3 days. Users: Unlock premium features with tailored plans"
+      }
+    },
+    "properties": {
+      "section_title": "Latest Properties for Rent",
+      "loading": "Loading properties...",
+      "no_properties": "No properties available.",
+      "error": "Failed to load properties. Please try again later.",
+      "retry": "Retry",
+      "view_all": "View All Properties"
+    },
+    "stats": {
+      "verified_owners": "Verified Owners",
+      "happy_customers": "Happy Customers",
+      "properties_listed": "Properties Listed"
+    },
+    "contact": {
+      "title": "Find Your Perfect Home",
+      "description": "Have questions or need assistance? Reach out to us—we're here to make your housing search seamless and stress-free.",
+      "button": "Contact Us"
+    }
+  },
+  "about": {
+    "who_we_are": {
+      "title": "Who We Are",
+      "description": "Eskan is a dedicated web platform designed to simplify the rental process. Whether you're a newcomer looking for an affordable place or a property owner wanting to list your available spaces, Eskan provides a seamless and user-friendly solution."
+    },
+    "our_mission": {
+      "title": "Our Mission",
+      "description": "We strive to make housing more accessible for expatriates moving across Egypt. Our platform connects individuals searching for shared accommodations with property owners, ensuring a smooth and secure housing experience."
+    },
+    "our_values": {
+      "title": "Our Values",
+      "cards": {
+        "people_first": {
+          "title": "People First",
+          "description": "We're dedicated to helping our members thrive. From finding the perfect home to providing 24/7 support, we put people at the center of everything we do."
+        },
+        "best_quality": {
+          "title": "Best Quality",
+          "description": "We're passionate about providing excellent service and creating a high-quality experience for our community."
+        },
+        "comprehensive": {
+          "title": "Comprehensive",
+          "description": "Easily browse and filter housing options by location, price, and amenities."
+        },
+        "verified_owners": {
+          "title": "Verified Owners",
+          "description": "We ensure safety by verifying owners through legal document submissions and online meetings."
+        }
+      }
+    }
+  },
+  "search": {
+    "placeholder": "Search by keyword",
+    "button": "Search",
+    "reset": "Reset",
+    "apply_filters": "Apply Filters",
+    "anywhere": "Anywhere",
+    "any_status": "Any Status",
+    "any_rooms": "Any Rooms",
+    "select_governorate": "Governorate",
+    "select_city": "City",
+    "select_status": "Property Status",
+    "select_rooms": "Rooms Number"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "properties": {
+    "title": "Properties",
+    "filters": "Filters",
+    "no_properties": "No properties available.",
+    "loading": "Loading properties...",
+    "no_properties_found": "No properties found. Try adjusting your filters."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "send_message": "Send Us A Message",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "error": "Failed to send message. Please try again later."
+  },
+  "createProperty": {
+    "progress": {
+      "general": "General Information",
+      "preview": "Preview",
+      "contact": "Contact Information",
+      "completed": "Completed"
+    },
+    "form": {
+      "generalInfo": "General Information",
+      "title": "Title",
+      "description": "Description",
+      "rooms": "Number of Rooms",
+      "livingRooms": "Number of Living Rooms",
+      "bathrooms": "Number of Bathrooms",
+      "price": "Price",
+      "kitchens": "Number of Kitchens",
+      "area": "Area (M²)",
+      "floor": "Floor Location",
+      "furnished": "Furnished",
+      "yes": "Yes",
+      "no": "No",
+      "propertyStatus": "Status",
+      "new": "New",
+      "second-hand": "Second Hand",
+      "renovated": "Renovated",
+      "select": "Select Option",
+      "required": "Required"
+    },
+    "location": {
+      "title": "Property Location",
+      "address": "Address",
+      "governorate": "Governorate",
+      "city": "City",
+      "neighborhood": "Neighborhood",
+      "selectLocation": "Select Location on Map",
+      "propertyType": "Property Type",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "house": "House",
+      "studio": "Studio"
+    },
+    "images": {
+      "title": "Property Images",
+      "dragAndDrop": "Drag and drop images here, or click to select files",
+      "orClick": "Upload",
+      "imagesRequired": "Property images are required",
+      "maxImages": "Maximum 15 images allowed",
+      "fileSize": "File size should be less than 5MB",
+      "supportedFormats": "Supported formats: JPG, PNG, JPEG"
+    },
+    "contact": {
+      "title": "Contact Information and Property Contract",
+      "description": "How can potential renters contact you?",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "alternateName": "Alternate Contact Name",
+      "alternatePhone": "Alternate Phone Number",
+      "contract": "Property Contract",
+      "uploadContract": "Upload contract document image",
+      "address": "Address"
+    },
+    "preview": {
+      "title": "Property Preview",
+      "description": "Review your property details before submitting",
+      "basicInfo": "Basic Information",
+      "features": "Features",
+      "amenities": "Amenities",
+      "location": "Location",
+      "contact": "Contact Information",
+      "m2": "m²"
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "submit": "Submit Property",
+      "saveAndContinue": "Save and Continue",
+      "loading": "Loading..."
+    },
+    "completed": {
+      "title": "Property Submitted Successfully!",
+      "description": "Your property has been submitted and is pending review.",
+      "returnHome": "Return to Home"
+    },
+    "validation": {
+      "fillAllFields": "Please fill all the fields",
+      "selectLocation": "Please select property location on map",
+      "uploadImages": "Please upload at least one image",
+      "contractRequired": "Please upload contract image"
+    }
+  },
+  "footer": {
+    "tagline": "Your Gateway to Safe and Affordable Shared Housing",
+    "copyright": "© Copyright",
+    "all_rights_reserved": "All Rights Reserved",
+    "social": {
+      "facebook": "Facebook",
+      "dribbble": "Dribbble",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "behance": "Behance"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about using Eskan for your housing needs",
+    "still_questions": "Still have questions? We're here to help!",
+    "contact_support": "Contact Support",
+    "no_faqs": "No FAQs available. Please check back later or contact support for assistance.",
+    "questions": [
+      {
+        "question": "How do I search for housing on Eskan?",
+        "answer": "Simply log in as a regular user, select your target governorate, and use the search and filter options to find shared housing that matches your preferences like price, location, and amenities."
+      },
+      {
+        "question": "How can I list my property?",
+        "answer": "Register as a property owner, submit your legal documents for verification, attend an online verification meeting, and then create your listing. Your first listing is free for three days!"
+      },
+      {
+        "question": "What does the verification process entail?",
+        "answer": "Property owners must submit legal documents and attend an online meeting via Zoom or Microsoft Teams. Our admins will review everything to ensure safety and authenticity."
+      },
+      {
+        "question": "How does the subscription work for property owners?",
+        "answer": "After the free 3-day period for your first listing, you can choose a per-listing subscription or an annual plan to continue posting and managing your properties."
+      },
+      {
+        "question": "How can I contact a property owner?",
+        "answer": "Regular users get 1-2 free contacts. For unlimited access to owner details, you can subscribe monthly or purchase a package with a set number of unlocks."
+      }
+    ]
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgot Your Password?",
+      "sign_in": "Sign In",
+      "signing_in": "Signing In...",
+      "or_sign_in_with": "Or sign in with",
+      "google": "Google",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign Up",
+      "validation": {
+        "email_required": "Email is required",
+        "email_invalid": "Invalid email format",
+        "password_required": "Password is required",
+        "password_length": "Password must be at least 6 characters",
+        "security_check": "Please complete the security check",
+        "security_expired": "Security check expired. Please try again.",
+        "security_failed": "Security check failed. Please try again.",
+        "validating_id": "Validating ID..."
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "create_account": "Create Account",
+      "loading": "Loading...",
+      "or_sign_up_with": "Or sign Up with",
+      "google": "Google",
+      "have_account": "Already have an account?",
+      "log_in": "Log In",
+      "validation": {
+        "name_required": "Name is required",
+        "email_required": "Email is required",
+        "email_invalid": "Invalid email format",
+        "password_required": "Password is required",
+        "password_length": "Password must be at least 6 characters",
+        "confirm_required": "Confirm your password",
+        "password_match": "Passwords do not match",
+        "captcha_required": "Please complete the CAPTCHA",
+        "id_required": "Please upload your ID",
+        "captcha_expired": "CAPTCHA expired. Please try again.",
+        "captcha_failed": "CAPTCHA verification failed. Please try again.",
+        "email_in_use": "The email address is already in use.",
+        "registration_failed": "Registration failed. Please try again."
+      }
+    },
+    "upload_id": {
+      "title": "Please upload your ID",
+      "success": "ID uploaded successfully",
+      "drag_drop": "Drag & drop files or",
+      "browse": "Browse",
+      "supported_formats": "Supports JPEG, PNG, JPG",
+      "validation": {
+        "validating_id": "Validating ID card...",
+        "invalid_id": "Invalid ID card. Please upload a valid national ID.",
+        "error": "Error validating ID card. Please try again."
+      }
+    },
+    "select_role": {
+      "welcome": "Welcome to ESKAN!",
+      "subtitle": "Choose your role and start your journey with us",
+      "register_as": "Register As a",
+      "user": "User",
+      "owner": "Owner",
+      "user_description": "Manage your properties, track tenants, and streamline your business operations efficiently.",
+      "owner_description": "Manage your properties, track tenants, and streamline your business operations efficiently.",
+      "register": "Register",
+      "registering": "Registering...",
+      "welcome_message": "Welcome! You have 3 free property views."
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "description": "Enter your new password below.",
+      "new_password": "New Password",
+      "reset": "Reset Password",
+      "processing": "Processing...",
+      "success": "Password successfully reset! Redirecting...",
+      "validation": {
+        "password_length": "Password must be at least 6 characters.",
+        "invalid_code": "Invalid reset code."
+      }
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "description": "Enter your email to receive a password reset link.",
+      "email": "Email",
+      "send_link": "Send Reset Link",
+      "sending": "Sending...",
+      "back_to_login": "Back to Login",
+      "validation": {
+        "email_required": "Please enter a valid email.",
+        "failed": "Failed to send reset email. Please try again."
+      }
+    }
+  },
+  "propertyCard": {
+    "no_image": "No Image Available",
+    "rooms": "Room",
+    "rooms_plural": "Rooms",
+    "area": "m²",
+    "furnished": "Furnished",
+    "unfurnished": "Unfurnished",
+    "view_details": "View Details",
+    "currency": "EGP",
+    "untitled_property": "Untitled Property",
+    "unknown": "Unknown",
+    "not_available": "N/A",
+    "status": {
+      "new": "New",
+      "second-hand": "Second Hand",
+      "renovated": "Renovated"
+    }
+  },
+  "propertyDetails": {
+    "owner_details": "Owner Details",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "register_prompt": "Please register to view the owner's contact details!",
+    "register_button": "Register Now",
+    "unlock_prompt": "Welcome! Would you like to view the owner's details?",
+    "free_views_remaining": "free views remaining",
+    "unlock_button": "Click here to unlock information",
+    "no_views_remaining": "You have no free views remaining. To view this property's owner details, please proceed with the payment.",
+    "proceed_to_payment": "Proceed to Payment",
+    "loading": "Loading..."
+  },
+  "propertyItemView": {
+    "back_to_properties": "Back to Properties",
+    "untitled_property": "Untitled Property",
+    "description": "Description",
+    "show_less": "Show Less",
+    "read_more": "Read More",
+    "share_property": "Share this property",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "whatsapp": "WhatsApp",
+    "copy_link": "Link copied to clipboard!",
+    "property_info": "Property Information",
+    "floor_location": "Floor Location",
+    "furnished": "Furnished",
+    "property_status": "Property Status",
+    "property_status_new": "New",
+    "property_status_second-hand": "Second Hand",
+    "property_status_renovated": "Renovated",
+    "rooms": "Rooms",
+    "living_rooms": "Living Rooms",
+    "bathrooms": "Bathrooms",
+    "kitchens": "Kitchens",
+    "area": "Area",
+    "location_info": "Location Information",
+    "loading_map": "Loading map...",
+    "view_on_google_maps": "View on Google Maps",
+    "similar_properties": "Similar Properties",
+    "no_similar_properties": "No similar properties found yet.",
+    "property_not_found": "Property Not Found",
+    "not_found_message": "The property you're looking for might have been removed or is unavailable.",
+    "back_to_home": "Back to Home",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "payment": {
+    "property_details": "Property Details",
+    "title": "Title",
+    "no_title": "No Title",
+    "price": "Price",
+    "no_price": "No Price",
+    "area": "Area",
+    "no_area": "No Area",
+    "city": "City",
+    "no_city": "No City",
+    "currency": "EGP",
+    "success": "Payment Successful!",
+    "thank_you": "Thank you for your payment. Enjoy exclusive access!",
+    "confirm_payment": "Confirm Payment",
+    "fee_description": "A fee will be charged to view the owner's contact details.",
+    "payment_method": "Payment Method",
+    "processing": "Processing...",
+    "pay_button": "Pay {fee} Now",
+    "secure_payment": "Secure payment powered by Stripe"
+  }
+}
