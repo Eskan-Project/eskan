@@ -13,7 +13,7 @@
     <div class="flex flex-col justify-between mb-3">
       <div class="text-sm text-gray-600 dark:text-gray-400">Credit Details</div>
       <div class="text-lg font-semibold text-gray-700 dark:text-white">
-        42424 4242 4242 4242
+        42424 4242 **** ****
       </div>
     </div>
   </div>

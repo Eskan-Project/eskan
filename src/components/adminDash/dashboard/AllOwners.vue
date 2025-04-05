@@ -1,12 +1,20 @@
 <template>
   <div class="max-w-6xl mx-auto">
     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
-      <div class="flex flex-col md:flex-row items-center justify-center mb-4">
+      <div
+        :class="[
+          'flex',
+          isStacked ? 'flex-col' : 'md:flex-row',
+          'items-center',
+          'justify-center',
+          'mb-4'
+        ]"
+      >
         <div class="flex-shrink-0 w-32 h-28 relative">
-          <canvas ref="chartCanvas" width="100" height="100"></canvas>
+          <canvas ref="chartCanvas" class="w-full h-full"></canvas>
         </div>
 
-        <div class="ml-4">
+        <div :class="[isStacked ? 'mt-4 text-center' : 'ml-4']">
           <p class="text-xl font-semibold text-gray-500 dark:text-gray-300">
             {{ owners.length }} Owners
           </p>
@@ -28,6 +36,7 @@ export default {
     return {
       windowWidth: window.innerWidth,
       chart: null,
+      isStacked: window.innerWidth <= 1225,
     };
   },
   computed: {
@@ -61,6 +70,7 @@ export default {
     },
     updateWindowWidth() {
       this.windowWidth = window.innerWidth;
+      this.isStacked = this.windowWidth <= 1225;
     },
     renderChart() {
       if (this.owners.length > 0) {
@@ -76,7 +86,7 @@ export default {
             ],
           },
           options: {
-            responsive: false,
+            responsive: true,
             maintainAspectRatio: false,
             cutout: "70%",
             plugins: {

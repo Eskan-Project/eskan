@@ -7,28 +7,34 @@
     <div v-if="loading" class="text-gray-900 dark:text-white">Loading...</div>
     <div v-else-if="error" class="text-red-500">Error: {{ error }}</div>
     <div v-else style="max-height: 300px; overflow-y: auto;">
-      <div v-for="(user, userId) in users" 
-           :key="userId" 
+      <div v-for="(user, userId) in users"
+           :key="userId"
            class="mb-4 p-3 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-between">
-        
+
         <div class="flex items-center">
-          <img :src="user.photo || '/images/default-avatar.png'" 
-               alt="User Image" 
+          <img :src="user.photo || '/images/default-avatar.png'"
+               alt="User Image"
                class="w-8 h-8 rounded-full mr-3">
           <div>
             <p class="text-gray-900 dark:text-white text-xs truncate max-w-[100px]">
               {{ user.name }}
             </p>
-            <p class="text-gray-600 dark:text-gray-400 text-[10px] truncate max-w-[120px]">
-              {{ user.email }}
-            </p> 
+            <div class="flex flex-col md:flex-row md:items-center">
+              <p class="text-gray-600 dark:text-gray-400 text-[10px] truncate max-w-[120px] mb-1 md:mb-0 md:mr-2">
+                {{ user.email }}
+              </p>
+              <span class="text-green-600 dark:text-green-400 font-light text-xs md:hidden"
+                    v-if="windowWidth >= 1225 && windowWidth < 768">
+                {{ formatAmount(user.totalAmount) }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <span class="text-green-600 dark:text-green-400 font-light text-xs">
+        <span class="text-green-600 dark:text-green-400 font-light text-xs "
+              v-if="windowWidth < 1225 || windowWidth >= 768">
           {{ formatAmount(user.totalAmount) }}
         </span>
-
       </div>
     </div>
   </div>
@@ -41,11 +47,11 @@ import { db } from "@/config/firebase";
 async function getTransactions() {
   try {
     const users = {};
-    const querySnapshot = await getDocs(collection(db, "payments")); // 🟢 جلب المدفوعات فقط
-    
+    const querySnapshot = await getDocs(collection(db, "payments"));
+
     for (const doc of querySnapshot.docs) {
       let transactionData = { id: doc.id, ...doc.data() };
-      
+
       if (transactionData.userId) {
         if (!users[transactionData.userId]) {
           const user = await getUserDetails(transactionData.userId);
@@ -94,20 +100,32 @@ export default {
       users: {},
       loading: true,
       error: null,
+      windowWidth: window.innerWidth,
     };
   },
   async mounted() {
     try {
       this.users = await getTransactions();
+      window.addEventListener('resize', this.updateWindowWidth);
     } catch (err) {
       this.error = err.message || "Failed to fetch transactions.";
     } finally {
       this.loading = false;
     }
   },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.updateWindowWidth);
+  },
   methods: {
+    updateWindowWidth() {
+      this.windowWidth = window.innerWidth;
+    },
     formatAmount(amount) {
-      return `$${amount.toLocaleString("en-US", { notation: "compact", maximumFractionDigits: 1 })}`;
+      const formatter = Intl.NumberFormat('en', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      });
+      return `$${formatter.format(amount)}`;
     },
   },
 };
