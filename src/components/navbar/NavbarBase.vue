@@ -36,7 +36,7 @@
       >
         <div class="relative items-center hidden md:inline-flex">
           <div
-            class="w-15 h-6 md:h-8 md:w-18 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+            class="h-6 w-15 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
             <span
@@ -52,10 +52,11 @@
               >ع</span
             >
             <div
-              class="bg-white w-7 h-5 md:w-8 md:h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+              class="bg-white w-7 h-5 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
             ></div>
           </div>
         </div>
+        <dark-toggle></dark-toggle>
         <div
           v-if="isAuth"
           class="relative text-xl sm:text-2xl cursor-pointer"
@@ -163,7 +164,7 @@
         >
           <i class="bi bi-person text-sm md:text-2xl"></i>
         </router-link>
-        <dark-toggle></dark-toggle>
+
         <button
           v-if="isAuth"
           :title="$t('nav.logout')"

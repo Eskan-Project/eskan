@@ -3,7 +3,9 @@
   <div
     class="md:p-10 flex justify-center items-center h-screen bg-gray-50 dark:bg-[#111827]"
   >
-    <div class="container rounded-xl bg-[#364365] w-full md:w-1/2">
+    <div
+      class="container rounded-xl bg-[#364365] w-full md:w-1/2 shadow-md mt-10"
+    >
       <div class="main-text p-8 rounded-r-xl bg-white dark:bg-[#1F2937]">
         <h1
           class="text-[#364365] dark:text-white text-3xl text-center font-bold pb-10"
