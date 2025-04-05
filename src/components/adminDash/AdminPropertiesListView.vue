@@ -67,23 +67,6 @@
               </option>
             </select>
           </div>
-
-          <div class="w-full sm:w-auto">
-            <select
-              v-model="statusFilter"
-              @change="resetPagination"
-              :class="windowWidth <= 550 ? 'text-xs p-1' : 'text-sm p-3'"
-              class="block w-full text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out"
-            >
-              <option
-                v-for="option in statusOptions"
-                :key="option.value"
-                :value="option.value"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-          </div>
         </div>
 
         <!-- Loading state -->
@@ -133,7 +116,7 @@
                       : 'px-4 py-3 text-sm hidden sm:table-cell w-1/5',
                   ]"
                 >
-                  Price
+                  Price (EGP)
                 </th>
                 <th
                   :class="[
@@ -212,11 +195,21 @@
                 </td>
                 <td
                   v-if="windowWidth > 978"
+                  :class="
+                    windowWidth <= 550
+                      ? 'px-3 py-2 text-[10px] hidden sm:table-cell'
+                      : 'px-4 py-3 text-sm hidden sm:table-cell'
+                  "
+                >
+                  {{ property.price }}
+                </td>
+                <td
+                  v-if="windowWidth > 978"
                   :class="[
                     windowWidth <= 550
                       ? 'px-3 py-2 text-[10px] hidden sm:table-cell'
-                      : 'px-4 py-3 text-sm hidden sm:table-cell font-medium'
-                  "
+                      : 'px-4 py-3 text-sm hidden sm:table-cell font-medium',
+                  ]"
                 >
                   <span
                     :class="{
@@ -229,50 +222,7 @@
                     {{ property.status }}
                   </span>
                 </td>
-                <td
-                  v-if="windowWidth > 978"
-                  :class="
-                    windowWidth <= 550
-                      ? 'px-3 py-2 text-[10px] hidden sm:table-cell'
-                      : 'px-4 py-3 text-sm hidden sm:table-cell'
-                  "
-                >
-                  <span
-                    class="inline-flex px-2 py-1 text-xs rounded-full"
-                    :class="{
-                      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300':
-                        property.status === 'active',
-                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300':
-                        property.status === 'pending',
-                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300':
-                        property.status === 'inactive',
-                    }"
-                  >
-                    {{ property.status }}
-                  </span>
-                </td>
-                <td
-                  v-if="windowWidth > 978"
-                  :class="
-                    windowWidth <= 550
-                      ? 'px-3 py-2 text-[10px] hidden sm:table-cell'
-                      : 'px-4 py-3 text-sm hidden sm:table-cell'
-                  "
-                >
-                  <span
-                    class="inline-flex px-2 py-1 text-xs rounded-full"
-                    :class="{
-                      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300':
-                        property.status === 'active',
-                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300':
-                        property.status === 'pending',
-                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300':
-                        property.status === 'inactive',
-                    }"
-                  >
-                    {{ property.status }}
-                  </span>
-                </td>
+
                 <td
                   class="text-center"
                   :class="windowWidth <= 550 ? 'px-2 py-2' : 'px-4 py-3'"
