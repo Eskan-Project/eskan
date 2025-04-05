@@ -37,15 +37,6 @@
         <!-- Content when data is loaded -->
 
         <div v-else class="container mx-auto py-5 px-5">
-          <div class="mb-5 sm:mt-0">
-            <router-link
-              to="/properties"
-              class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200 font-medium"
-            >
-              <i class="bi bi-arrow-left"></i>
-              <span>Back to Properties</span>
-            </router-link>
-          </div>
           <div class="flex sm:flex-row justify-between items-start gap-4 mb-4">
             <div class="space-y-2">
               <h1
