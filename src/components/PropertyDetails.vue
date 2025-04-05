@@ -10,7 +10,7 @@
       <!-- Case 1: Admin user -->
       <div
         v-if="isAuthenticated && userDetails?.role === 'admin'"
-        class="text-gray-900 dark:text-white flex flex-col gap-10"
+        class="text-gray-900 dark:text-white flex flex-col items-center justify-center h-full gap-10"
       >
         <h2 class="text-xl font-semibold text-center mb-4 dark:text-white">
           {{ $t("propertyDetails.owner_details") }}
@@ -60,7 +60,10 @@
       </div>
 
       <!-- Case 2: User not authenticated -->
-      <div v-else-if="!isAuthenticated" class="text-center">
+      <div
+        v-else-if="!isAuthenticated"
+        class="text-center flex flex-col items-center justify-center h-full"
+      >
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white dark:bg-gray-700 w-16 h-16 mx-auto"
         >
@@ -71,7 +74,7 @@
             fill="currentColor"
           >
             <path
-              d="M21 16.5V19a2 2 0 0 1-2 2c-8.28 0-15-6.72-15-15a2 2 0 0 1 2-2h2.5a1 1 0 0 1 1 1v3.18a1 1 0 0 1-.29.71L7.91 9.91A12.06 12.06 0 0 0 14.09 16.09l1.52-1.52a1 1 0 0 1 .71-.29H19a1 1 0 0 1 1Z"
+              d="M21 16.5V19a2 2 0 0 1-2 2c-8.28 0-15-6.72-15-15a2 2 0 0 1 2-2h2.5a1 1 0 0 1 1 1v3.18a1 1 0 0 1-.29.71L7.91 9.91A12.06 12.06 0 0 0 14.09 16.09l1.52-1.52a1 1 0 0 1 .71-.29H19a1 1 0 0 1 1 Z"
             />
           </svg>
         </div>
@@ -89,7 +92,7 @@
       <!-- Case 3: Authenticated user with free views available -->
       <div
         v-else-if="!paidProperties && userDetails?.freeViewsRemaining > 0"
-        class="text-center"
+        class="text-center flex flex-col items-center justify-center h-full"
       >
         <div
           class="flex justify-center mb-3 p-3 rounded-full bg-white dark:bg-gray-700 w-16 h-16 mx-auto mt-10"
@@ -121,7 +124,7 @@
       <!-- Case 4: Showing owner details (only if paid or unlocked) -->
       <div
         v-else-if="paidProperties"
-        class="text-gray-900 dark:text-white flex flex-col gap-10"
+        class="text-gray-900 dark:text-white flex flex-col items-center justify-center h-full gap-10"
       >
         <h2 class="text-xl font-semibold text-center mb-4 dark:text-white">
           {{ $t("propertyDetails.owner_details") }}
@@ -178,7 +181,7 @@
           !paidProperties &&
           userDetails?.freeViewsRemaining === 0
         "
-        class="mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-center"
+        class="mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-center flex flex-col items-center justify-center h-full"
       >
         <div class="flex items-center justify-center space-x-2">
           <svg

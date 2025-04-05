@@ -21,7 +21,7 @@
           :key="item.path"
           :to="item.path"
           :class="[
-            'text-white font-bold hover:text-gray-200 transition-colors',
+            'text-white font-bold hover:text-gray-200 transition-colors focus:outline-none!',
             { 'border-b-2 border-white': $route.path === item.path },
           ]"
           @click="closeMenu"
@@ -36,23 +36,30 @@
       >
         <div class="relative items-center hidden md:inline-flex">
           <div
-            class="h-6 w-15 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+            class="h-6 w-15 flex items-center justify-between bg-gray-300 dark:bg-gray-700 rounded-full cursor-pointer"
             @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
           >
             <span
               class="text-gray-600 text-xs md:text-sm z-10"
-              :class="currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 font-bold'"
+              :class="
+                currentLocale === 'ar'
+                  ? 'mr-1 dark:text-gray-200'
+                  : 'ml-1.5 font-bold dark:text-gray-600'
+              "
               >EN</span
             >
             <span
               class="text-gray-600 text-xs md:text-sm z-10"
               :class="
-                currentLocale === 'ar' ? 'ml-3 md:ml-4 font-bold' : 'mr-2'
+                currentLocale === 'ar'
+                  ? 'ml-2 md:ml-2.5 font-bold dark:text-gray-600'
+                  : 'mr-2 dark:text-gray-200'
               "
               >ع</span
             >
             <div
-              class="bg-white w-7 h-5 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+              class="bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+              :class="currentLocale === 'ar' ? 'w-5 h-5' : 'w-7 h-5'"
             ></div>
           </div>
         </div>
@@ -193,7 +200,14 @@
           @click="$router.push('/login')"
           class="items-center hidden md:flex gap-1 px-2 md:px-4 py-1 md:py-2 text-xs md:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
-          {{ $t("nav.login") }} <i class="bi bi-box-arrow-in-right"></i>
+          {{ $t("nav.login") }}
+          <i
+            :class="
+              this.$i18n.locale === 'ar'
+                ? 'bi bi-box-arrow-in-left'
+                : 'bi bi-box-arrow-in-right'
+            "
+          ></i>
         </button>
       </div>
     </div>
@@ -372,6 +386,13 @@ export default {
 
 .bg-creative {
   background: linear-gradient(45deg, #364365, #3d4d74, #3a528f, #364365a0);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Dark mode version of the creative background */
+:global(.dark) .bg-creative {
+  background: linear-gradient(45deg, #1a2036, #212a40, #1e2a4d, #1a2036a0);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
 }

@@ -23,7 +23,7 @@
               type="text"
               id="username"
               name="name"
-              class="border-b-2 border-gray-300 dark:border-gray-600 w-full focus:outline-none focus:border-black dark:focus:border-white text-black dark:text-white dark:bg-[#1F2937]"
+              class="border-b-2 dark:border-gray-600 w-full outline-none focus:outline-none text-black dark:text-white dark:bg-[#1F2937]"
               :class="{
                 'border-red-500': errors.name,
                 'border-gray-300 dark:border-gray-600': !errors.name,
@@ -499,3 +499,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+input:focus {
+  outline: none !important;
+}
+</style>
