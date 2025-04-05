@@ -13,42 +13,53 @@
             />
           </router-link>
         </div>
-        <div
-          class="flex items-center gap-2 sm:gap-4"
-          :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
-        >
-          <div class="relative inline-flex items-center">
-            <div
-              class="w-15 h-6 md:h-8 md:w-18 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
-              @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
-            >
-              <span
-                class="text-gray-600 text-xs md:text-sm z-10"
-                :class="currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 font-bold'"
-                >EN</span
-              >
-              <span
-                class="text-gray-600 text-xs md:text-sm z-10"
-                :class="
-                  currentLocale === 'ar' ? 'ml-3 md:ml-4 font-bold' : 'mr-2'
-                "
-                >ع</span
-              >
+        <div class="flex items-center gap-2 sm:gap-4">
+          <dark-toggle></dark-toggle>
+          <div
+            class="flex items-center gap-2 sm:gap-4"
+            :class="currentLocale === 'ar' ? 'mr-auto' : 'ml-auto'"
+          >
+            <div class="relative inline-flex items-center">
               <div
-                class="bg-white w-7 h-5 md:w-8 md:h-6 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
-              ></div>
+                class="w-13 h-6 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+                @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
+              >
+                <span
+                  class="text-gray-600 text-xs md:text-sm z-10"
+                  :class="
+                    currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 py-0.5 font-bold'
+                  "
+                  >EN</span
+                >
+                <span
+                  class="text-gray-600 text-xs md:text-sm z-10"
+                  :class="
+                    currentLocale === 'ar' ? 'ml-2.5 md:ml-4 font-bold' : 'mr-2'
+                  "
+                  >ع</span
+                >
+                <div
+                  class="bg-white w-6 h-5 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </header>
+  <!-- This is a spacer div to prevent content from being hidden behind the fixed header -->
+  <div class="header-spacer"></div>
 </template>
 
 <script>
 import arLogo from "@/assets/images/logo_ar.png"; // Adjust path
 import enLogo from "@/assets/images/logo.png"; // Adjust path
+import DarkToggle from "@/components/DarkToggle.vue";
 export default {
+  components: {
+    DarkToggle,
+  },
   data() {
     return {
       languages: [

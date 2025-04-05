@@ -29,10 +29,6 @@
               >
                 {{ $t("auth.select_role.user") }}
               </p>
-              <img
-                src="@/assets/images/login/registerMain-1.jpg"
-                class="shrink md:block mx-auto w-full max-w-[150px] md:max-w-full hidden sm:block"
-              />
             </div>
             <p class="text-sm sm:text-base">
               {{ $t("auth.select_role.user_description") }}
@@ -51,10 +47,6 @@
               >
                 {{ $t("auth.select_role.owner") }}
               </p>
-              <img
-                src="@/assets/images/login/registerMain-2.jpg"
-                class="shrink md:block mx-auto w-full max-w-[150px] md:max-w-full hidden sm:block"
-              />
             </div>
             <p class="text-sm sm:text-base">
               {{ $t("auth.select_role.owner_description") }}

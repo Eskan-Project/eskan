@@ -14,7 +14,7 @@
         </h1>
         <form @submit.prevent="submitLogin">
           <div class="mb-6">
-            <label class="block mb-1 text-[#364365] dark:text-white">{{
+            <label class="block mb-0 md:mb-1 text-[#364365] dark:text-white">{{
               $t("auth.login.email")
             }}</label>
             <input
@@ -31,7 +31,7 @@
             </p>
           </div>
           <div class="mb-6 relative">
-            <label class="block mb-1 text-[#364365] dark:text-white">{{
+            <label class="block mb-0 md:mb-1 text-[#364365] dark:text-white">{{
               $t("auth.login.password")
             }}</label>
             <input

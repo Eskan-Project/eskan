@@ -56,7 +56,15 @@
             ></div>
           </div>
         </div>
+
         <dark-toggle></dark-toggle>
+        <button
+          @click="toggleMenu"
+          class="md:hidden text-3xl text-white cursor-pointer relative order-last"
+          :aria-label="isMenuOpen ? 'Close Menu' : 'Open Menu'"
+        >
+          <i :class="isMenuOpen ? 'bi bi-x' : 'bi bi-list'"></i>
+        </button>
         <div
           v-if="isAuth"
           class="relative text-xl sm:text-2xl cursor-pointer"
@@ -183,17 +191,9 @@
         <button
           v-else
           @click="$router.push('/login')"
-          class="flex items-center gap-1 px-2 md:px-4 py-1 md:py-2 text-xs md:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
+          class="items-center hidden md:flex gap-1 px-2 md:px-4 py-1 md:py-2 text-xs md:text-base text-white font-bold border border-white rounded hover:bg-white hover:text-[var(--secondary-color)] transition-all cursor-pointer"
         >
           {{ $t("nav.login") }} <i class="bi bi-box-arrow-in-right"></i>
-        </button>
-        <button
-          @click="toggleMenu"
-          class="md:hidden text-2xl sm:text-3xl text-white cursor-pointer"
-          :class="currentLocale === 'ar' ? 'order-last' : 'order-first'"
-          :aria-label="isMenuOpen ? 'Close Menu' : 'Open Menu'"
-        >
-          <i :class="isMenuOpen ? 'bi bi-x' : 'bi bi-list'"></i>
         </button>
       </div>
     </div>
