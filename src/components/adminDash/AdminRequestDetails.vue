@@ -194,19 +194,26 @@
                     class="w-24 h-24 rounded-full shadow-md border-2 border-gray-300 dark:border-gray-600 object-cover"
                   />
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">Name:</span>
-                    <span class="text-sm capitalize text-gray-800 dark:text-gray-200">{{
-                      request.propertyContact.name
-                    }}</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100"
+                      >Name:</span
+                    >
+                    <span
+                      class="text-sm capitalize text-gray-800 dark:text-gray-200"
+                      >{{ request.propertyContact.name }}</span
+                    >
                   </p>
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">Phone:</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100"
+                      >Phone:</span
+                    >
                     <span class="text-sm text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.phone
                     }}</span>
                   </p>
                   <p class="flex flex-col items-center space-y-1">
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">Email:</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100"
+                      >Email:</span
+                    >
                     <span class="text-sm text-gray-800 dark:text-gray-200">{{
                       request.propertyContact.email
                     }}</span>
@@ -215,10 +222,13 @@
                     v-if="request.propertyContact.address"
                     class="flex flex-col items-center space-y-1"
                   >
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">Address:</span>
-                    <span class="text-sm capitalize text-gray-800 dark:text-gray-200">{{
-                      request.propertyContact.address
-                    }}</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100"
+                      >Address:</span
+                    >
+                    <span
+                      class="text-sm capitalize text-gray-800 dark:text-gray-200"
+                      >{{ request.propertyContact.address }}</span
+                    >
                   </p>
 
                   <!-- Contract Document -->
@@ -226,7 +236,9 @@
                     v-if="request.propertyContact?.contract"
                     class="mt-3 w-full"
                   >
-                    <p class="font-semibold text-center mb-2 text-gray-900 dark:text-gray-100">
+                    <p
+                      class="font-semibold text-center mb-2 text-gray-900 dark:text-gray-100"
+                    >
                       Contract Document:
                     </p>
                     <div class="relative w-full">
@@ -433,7 +445,14 @@
             </form>
           </div>
         </div>
-
+        <!-- Rejection Form Modal -->
+        <reject-email
+          v-if="rejectionInfo"
+          :request="request"
+          :location-text="locationText"
+          @close="rejectionInfo = false"
+          @rejection-complete="handleRejectionComplete"
+        ></reject-email>
         <div class="text-center py-8 mt-4" v-if="!loading">
           <div class="flex flex-col md:flex-row justify-center gap-4">
             <button
@@ -470,6 +489,7 @@ import { mapActions, mapState } from "vuex";
 import emailjs from "emailjs-com";
 import { createEvent } from "ics";
 import { nextTick } from "vue";
+import RejectEmail from "./RejectEmail.vue";
 
 // Initialize EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_USER_ID);
@@ -478,6 +498,9 @@ import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
 
 export default {
+  components: {
+    RejectEmail,
+  },
   data() {
     return {
       meetingData: {
@@ -486,6 +509,7 @@ export default {
         ownerEmail: "",
         adminEmail: "",
       },
+      rejectionInfo: false,
       id: null,
       currentImageIndex: 0,
       loading: true,
@@ -1093,67 +1117,10 @@ export default {
       next();
     },
     async handleDeleteRequest() {
-      try {
-        const result = await Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, reject it!",
-        });
-        const propertyData = {
-          ...this.request,
-        };
-
-        if (result.isConfirmed) {
-          console.log("Deleting request with id:", this.id);
-          await this.deleteRequest(this.id);
-          console.log("Request deleted successfully");
-
-          if (propertyData.ownerId) {
-            await this.sendRejectionNotification(
-              propertyData.ownerId,
-              propertyData.title
-            );
-          } else {
-            console.warn(
-              "Owner ID not found, cannot send acceptance notification to the owner."
-            );
-          }
-
-          await Swal.fire(
-            "Rejected!",
-            "The request has been rejected.",
-            "success"
-          );
-          this.$router.push("/admin/requests");
-        }
-      } catch (error) {
-        console.error("Error deleting request:", error);
-        Swal.fire(
-          "Error",
-          "Failed to reject the request. Please try again.",
-          "error"
-        );
-      }
+      this.rejectionInfo = true;
     },
-
-    async sendRejectionNotification(ownerId, propertyTitle) {
-      try {
-        const notificationMessage = `"${propertyTitle}" has been rejected! ❌`;
-        await this.$store.dispatch("notifications/addNotification", {
-          type: "property_rejected",
-          ownerId: ownerId,
-          message: notificationMessage,
-        });
-        console.log(
-          `Rejection notification sent for owner ID: ${ownerId}: ${ownerId}`
-        );
-      } catch (error) {
-        console.error("Error sending rejection notification:", error);
-      }
+    handleRejectionComplete() {
+      this.rejectionInfo = false;
     },
   },
 };
