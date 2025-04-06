@@ -231,7 +231,7 @@ export default {
         };
         try {
           const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
-          console.log(serviceID);
+
           const response = await emailjs.send(
             "service_itsyzca",
             import.meta.env.VITE_EMAILJS_TEMPLATE_ID5,
