@@ -173,7 +173,12 @@
     "send": "Send",
     "sending": "Sending...",
     "success": "Message sent successfully!",
-    "error": "Failed to send message. Please try again later."
+    "error": "Failed to send message. Please try again later.",
+  
+    "success_message": "your message has been sent successfully",
+  
+    "error_message": "Failed to send message. Please try again later.",
+    "location_message":"We are here"
   },
   "createProperty": {
     "progress": {

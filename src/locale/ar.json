@@ -173,7 +173,12 @@
     "send": "إرسال",
     "sending": "جاري الإرسال...",
     "success": "تم إرسال الرسالة بنجاح!",
-    "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا."
+    "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا.",
+
+    "success_message": "تم إرسال الرسالة بنجاح!",
+
+    "error_message": "Failed to send message. Please try again later.",
+    "location_message":"نحن هنا"
   },
   "createProperty": {
     "progress": {
