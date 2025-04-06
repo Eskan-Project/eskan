@@ -573,7 +573,7 @@ export default {
     },
     formattedPrice(price) {
       if (typeof price !== "number" && isNaN(Number(price))) {
-        return price; /
+        return price; 
       }
       const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
       return new Intl.NumberFormat(locale, {
