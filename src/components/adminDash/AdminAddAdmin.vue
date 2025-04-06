@@ -283,7 +283,7 @@ export default {
         }
         await Swal.fire({
           title: "Success",
-          text: "Admin created successfully. Password Sent to Owner Email.",
+          text: "Admin created successfully. Password Sent to Admin Email.",
           icon: "success",
         });
 
