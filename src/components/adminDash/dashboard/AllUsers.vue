@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import Chart from "chart.js/auto";
 import { nextTick } from "vue";
 
@@ -191,6 +191,7 @@ export default {
 
     updateWindowWidth() {
       this.windowWidth = window.innerWidth;
+      this.isStacked = this.windowWidth <= 1225;
     },
     async renderChart() {
       await nextTick();
@@ -254,6 +255,11 @@ export default {
       if (percentage < 70) return "Growing steadily towards target";
       return "Near or at target user count";
     },
+  },
+  watch: {
+    users: "renderChart",
+    owners: "renderChart",
+    properties: "renderChart",
   },
 };
 </script>

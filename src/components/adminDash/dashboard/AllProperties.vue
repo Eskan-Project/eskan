@@ -108,14 +108,14 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import Chart from "chart.js/auto";
 import { nextTick } from "vue";
 
 export default {
   data() {
     return {
-      properties: [],
+      windowWidth: window.innerWidth,
       chart: null,
       isStacked: window.innerWidth <= 1225,
       isLoading: false,
@@ -244,6 +244,11 @@ export default {
       if (percentage < 70) return "Balanced inventory";
       return "High availability rate";
     },
+  },
+  watch: {
+    properties: "renderChart",
+    users: "renderChart",
+    owners: "renderChart",
   },
 };
 </script>
