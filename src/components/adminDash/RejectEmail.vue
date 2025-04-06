@@ -117,7 +117,7 @@ export default {
         // Send email through EmailJS
 
         await emailjs.send(
-          "service_ajqcke2",
+          import.meta.env.VITE_EMAILJS_SERVICE_ID2,
           import.meta.env.VITE_EMAILJS_TEMPLATE_ID3,
           templateParams
         );
