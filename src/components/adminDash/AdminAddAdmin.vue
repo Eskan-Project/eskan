@@ -51,7 +51,7 @@
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              This will be used as the initial password
+              For identification purposes only
             </p>
           </div>
 
@@ -138,6 +138,7 @@
 </template>
 
 <script>
+import emailjs from "emailjs-com";
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -160,10 +161,11 @@ import {
 import { auth, db } from "@/config/firebase";
 import { app } from "@/config/firebase";
 import Swal from "sweetalert2";
-
+emailjs.init("aQTbmvnAXB72PTixL");
 export default {
   data() {
     return {
+      password: "",
       loading: false,
       formData: {
         createdAt: "",
@@ -187,7 +189,17 @@ export default {
 
   methods: {
     ...mapActions("owners", ["createOwner"]),
-
+    generateSecurePassword(length = 10) {
+      const charset =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=";
+      let generatedPassword = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        generatedPassword += charset[randomIndex];
+      }
+      this.password = generatedPassword;
+      return generatedPassword;
+    },
     validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
@@ -222,7 +234,7 @@ export default {
         const userCredential = await createUserWithEmailAndPassword(
           secondaryAuth,
           this.formData.email.trim(),
-          this.formData.nationalId
+          this.generateSecurePassword()
         );
 
         // Get the new user's UID
@@ -242,10 +254,36 @@ export default {
 
         const userRef = doc(db, "owners", newUserUid);
         await setDoc(userRef, userData);
+        const templateParams = {
+          to_email: this.formData.email,
+          to_name: this.formData.name,
+          user_email: this.formData.email,
+          user_password: this.password,
+          user_role: "Admin", // Capitalize first letter
+          message: `Your account has been created as an Admin . Please use the credentials below to log in.`,
+        };
 
+        try {
+          const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
+          console.log(serviceID);
+          const response = await emailjs.send(
+            "service_itsyzca",
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID5,
+            templateParams
+          );
+
+          console.log("Email sent successfully:", response);
+
+          if (response.status !== 200) {
+            throw new Error("Failed to send welcome email");
+          }
+        } catch (emailError) {
+          console.error("EmailJS error:", emailError);
+          throw new Error("Failed to send welcome email: " + emailError.text);
+        }
         await Swal.fire({
           title: "Success",
-          text: "Owner created successfully. Initial password is their National ID.",
+          text: "Admin created successfully. Password Sent to Owner Email.",
           icon: "success",
         });
 
