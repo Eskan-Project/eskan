@@ -2,7 +2,7 @@
   <auth-header />
   <div
     class="md:p-10 flex justify-center items-center h-screen bg-gray-50 dark:bg-[#111827]"
-    :class="{ 'mt-30 md:mt-0': isOwner }"
+    :class="{ 'mt-30 md:mt-5': isOwner }"
   >
     <div class="container rounded-xl bg-[#364365] w-full md:w-1/2 shadow-md">
       <div class="main-text p-8 rounded-r-xl bg-white dark:bg-[#1F2937]">
