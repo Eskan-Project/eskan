@@ -59,7 +59,7 @@
             >
             <div
               class="bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
-              :class="currentLocale === 'ar' ? 'w-5 h-5' : 'w-7 h-5'"
+              :class="currentLocale === 'ar' ? 'w-6 h-5' : 'w-7 h-5'"
             ></div>
           </div>
         </div>

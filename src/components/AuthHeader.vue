@@ -21,25 +21,30 @@
           >
             <div class="relative inline-flex items-center">
               <div
-                class="w-13 h-6 flex items-center justify-between bg-gray-300 rounded-full cursor-pointer"
+                class="h-6 w-15 flex items-center justify-between bg-gray-300 dark:bg-gray-700 rounded-full cursor-pointer"
                 @click="changeLanguage(currentLocale === 'en' ? 'ar' : 'en')"
               >
                 <span
                   class="text-gray-600 text-xs md:text-sm z-10"
                   :class="
-                    currentLocale === 'ar' ? 'mr-2' : 'ml-1.5 py-0.5 font-bold'
+                    currentLocale === 'ar'
+                      ? 'mr-1 dark:text-gray-200'
+                      : 'ml-1.5 font-bold dark:text-gray-600'
                   "
                   >EN</span
                 >
                 <span
                   class="text-gray-600 text-xs md:text-sm z-10"
                   :class="
-                    currentLocale === 'ar' ? 'ml-2.5 md:ml-4 font-bold' : 'mr-2'
+                    currentLocale === 'ar'
+                      ? 'ml-2 md:ml-2.5 font-bold dark:text-gray-600'
+                      : 'mr-2 dark:text-gray-200'
                   "
                   >ع</span
                 >
                 <div
-                  class="bg-white w-6 h-5 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+                  class="bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 absolute left-1"
+                  :class="currentLocale === 'ar' ? 'w-6 h-5' : 'w-7 h-5'"
                 ></div>
               </div>
             </div>
