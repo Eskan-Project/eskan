@@ -1,66 +1,80 @@
 <template>
   <div
-    class="fixed inset-0 z-50 overflow-y-auto backdrop-blur-md bg-white/30 dark:bg-gray-900/30 flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 overflow-y-auto bg-black/50 dark:bg-black/70 flex items-center justify-center p-4"
   >
     <div
-      class="bg-white/90 dark:bg-gray-800/90 backdrop-blur rounded-xl shadow-xl max-w-md w-full p-6 relative"
+      class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-0 relative transform transition-all duration-300 ease-in-out"
     >
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          Reject Property Request
-        </h2>
-        <button
-          @click="$emit('close')"
-          class="text-gray-500 hover:text-gray-700 focus:outline-none"
-          aria-label="Close"
-        >
-          <i class="bi bi-x-lg"></i>
-        </button>
+      <!-- Header with gradient background -->
+      <div
+        class="bg-gradient-to-r from-red-500 to-red-700 dark:from-red-600 dark:to-red-800 rounded-t-2xl p-5"
+      >
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-bold text-white">Reject Property Request</h2>
+          <button
+            @click="$emit('close')"
+            class="text-white/80 hover:text-white focus:outline-none transition-colors duration-200"
+            aria-label="Close"
+          >
+            <i class="bi bi-x-lg text-lg"></i>
+          </button>
+        </div>
       </div>
 
-      <form @submit.prevent="handleRejection" class="space-y-4">
-        <div class="flex flex-col space-y-2">
-          <label class="text-gray-700 dark:text-gray-300 font-medium">
-            Rejection Reason:
-          </label>
-          <textarea
-            v-model="localRejectionData.reason"
-            required
-            rows="4"
-            class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            placeholder="Please provide a detailed reason for rejection..."
-          ></textarea>
-        </div>
+      <!-- Form content -->
+      <div class="p-6">
+        <form @submit.prevent="handleRejection" class="space-y-5">
+          <div class="flex flex-col space-y-2">
+            <label
+              class="text-gray-700 dark:text-gray-300 font-medium flex items-center"
+            >
+              <i class="bi bi-exclamation-circle mr-2 text-red-500"></i>
+              Rejection Reason:
+            </label>
+            <textarea
+              v-model="localRejectionData.reason"
+              required
+              rows="4"
+              class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 dark:bg-gray-700 dark:text-white text-sm"
+              placeholder="Please provide a detailed reason for rejection..."
+            ></textarea>
+          </div>
 
-        <div class="flex flex-col space-y-2">
-          <label class="text-gray-700 dark:text-gray-300 font-medium">
-            Owner Email:
-          </label>
-          <input
-            type="email"
-            v-model="localRejectionData.ownerEmail"
-            required
-            :placeholder="request.propertyContact?.email || 'Owner email'"
-            class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-          />
-        </div>
+          <div class="flex flex-col space-y-2">
+            <label
+              class="text-gray-700 dark:text-gray-300 font-medium flex items-center"
+            >
+              <i class="bi bi-envelope mr-2 text-red-500"></i>
+              Owner Email:
+            </label>
+            <input
+              type="email"
+              v-model="localRejectionData.ownerEmail"
+              required
+              :placeholder="request.propertyContact?.email || 'Owner email'"
+              class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 dark:bg-gray-700 dark:text-white text-sm"
+            />
+          </div>
 
-        <div class="flex gap-3 mt-6">
-          <button
-            type="button"
-            @click="$emit('close')"
-            class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="flex-1 bg-red-600 dark:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:ring-offset-2 transition-colors"
-          >
-            Reject Request
-          </button>
-        </div>
-      </form>
+          <div class="flex gap-4 mt-8">
+            <button
+              type="button"
+              @click="$emit('close')"
+              class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-3 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 text-sm flex items-center justify-center"
+            >
+              <i class="bi bi-x mr-2"></i>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg text-sm flex items-center justify-center"
+            >
+              <i class="bi bi-x-circle mr-2"></i>
+              Reject Request
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
