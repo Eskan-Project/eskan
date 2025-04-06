@@ -65,7 +65,7 @@
         </div>
         <div>
           <p class="text-white text-opacity-70 text-xs mb-1">EXPIRES</p>
-          <p class="text-white text-sm font-medium">12/25</p>
+          <p class="text-white text-sm font-medium">12/28</p>
         </div>
       </div>
     </div>
@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     formattedAmountEGP() {
-      const amount = this.totalAmount * this.exchangeRateEGP;
+      const amount = localStorage.getItem("totalAmount");
       if (amount < 1000) return `EGP ${amount.toFixed(2)}`;
       if (amount < 1000000) return `EGP ${(amount / 1000).toFixed(2)}K`;
       return `EGP ${(amount / 1000000).toFixed(2)}M`;

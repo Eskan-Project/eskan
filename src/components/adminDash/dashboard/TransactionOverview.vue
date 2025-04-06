@@ -1,4 +1,5 @@
 <template>
+  <!-- Template remains unchanged -->
   <div class="p-5 h-full">
     <div
       class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
@@ -22,6 +23,7 @@
                 ? 'bg-indigo-600 text-white shadow-md'
                 : 'bg-white text-gray-600 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700',
             ]"
+            :aria-label="`View ${period} transactions`"
           >
             {{ period }}
           </button>
@@ -30,6 +32,7 @@
           @click="exportToCSV"
           class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="Export to CSV"
+          aria-label="Export transactions to CSV"
         >
           <svg
             class="w-5 h-5 text-gray-500"
@@ -48,7 +51,6 @@
       </div>
     </div>
 
-    <!-- Loading State -->
     <div v-if="loading" class="h-[340px] flex items-center justify-center">
       <div class="flex flex-col items-center gap-4">
         <div class="relative">
@@ -82,7 +84,6 @@
       </div>
     </div>
 
-    <!-- Error State -->
     <div v-else-if="error" class="h-[340px] flex items-center justify-center">
       <div
         class="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 text-center max-w-md shadow-lg"
@@ -112,7 +113,6 @@
       </div>
     </div>
 
-    <!-- Empty State -->
     <div
       v-else-if="filteredTransactions.length === 0"
       class="h-[340px] flex items-center justify-center"
@@ -139,12 +139,11 @@
           No transactions found
         </p>
         <p class="text-gray-500 dark:text-gray-400 text-sm">
-          Try adjusting the period or check your data source.
+          Check your payments collection in Firestore.
         </p>
       </div>
     </div>
 
-    <!-- Chart and Stats -->
     <div v-else class="chart-wrapper">
       <div
         class="stats-summary grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"
@@ -173,13 +172,18 @@
           <select
             v-model="chartType"
             class="text-sm bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-1 border-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Select chart type"
           >
             <option value="bar">Bar Chart</option>
             <option value="line">Line Chart</option>
           </select>
         </div>
-        <div id="chart-container" class="w-full h-[240px]">
-          <canvas ref="chartCanvas" class="w-full h-full"></canvas>
+        <div id="chart-container" class="w-full h-[350px]">
+          <canvas
+            ref="chartCanvas"
+            class="w-full h-full"
+            aria-label="Transactions chart"
+          ></canvas>
         </div>
       </div>
       <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -190,41 +194,103 @@
 </template>
 
 <script>
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "@/config/firebase";
 import Chart from "chart.js/auto";
 import { nextTick } from "vue";
 
-async function getTransactions() {
-  try {
-    const transactions = [];
-    const querySnapshot = await getDocs(collection(db, "payments"));
-    querySnapshot.forEach((doc) => {
-      transactions.push({
-        id: doc.id,
-        ...doc.data(),
-      });
+async function fetchPayments() {
+  const payments = [];
+  const querySnapshot = await getDocs(collection(db, "payments"));
+  querySnapshot.forEach((doc) => {
+    payments.push({
+      id: doc.id,
+      ...doc.data(),
     });
-    return transactions.length > 0 ? transactions : generateSampleData();
-  } catch (err) {
-    throw err;
+  });
+  return payments;
+}
+
+// Optimized property details fetching with caching
+const propertyCache = new Map();
+async function getPropertyDetails(propertyId) {
+  if (!propertyId) return null;
+
+  // Return from cache if available
+  if (propertyCache.has(propertyId)) {
+    return propertyCache.get(propertyId);
+  }
+
+  try {
+    const propertyRef = doc(db, "properties", propertyId);
+    const propertySnap = await getDoc(propertyRef);
+
+    if (propertySnap.exists()) {
+      const data = propertySnap.data();
+      // Store in cache
+      propertyCache.set(propertyId, data);
+      return data;
+    }
+    // Cache null results too to avoid repeat lookups for missing properties
+    propertyCache.set(propertyId, null);
+    return null;
+  } catch (error) {
+    console.error(`Error fetching property (${propertyId}):`, error);
+    return null;
   }
 }
 
-function generateSampleData() {
-  const sample = [];
-  const now = new Date();
-  for (let i = 30; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(now.getDate() - i);
-    sample.push({
-      id: `sample-${i}`,
-      amount: Math.min(Math.floor(Math.random() * 1000) + 50, 1000), // Cap at $1,000
-      timestamp: { seconds: Math.floor(date.getTime() / 1000) },
-    });
+// Optimized user details fetching with caching
+const userCache = new Map();
+async function getUserDetails(userId) {
+  if (!userId) return null;
+
+  // Return from cache if available
+  if (userCache.has(userId)) {
+    return userCache.get(userId);
   }
-  console.log("Generated sample data:", sample);
-  return sample;
+
+  try {
+    // Try owner collection first
+    const ownerRef = doc(db, "owners", userId);
+    const ownerSnap = await getDoc(ownerRef);
+    if (ownerSnap.exists()) {
+      const data = ownerSnap.data();
+      userCache.set(userId, data);
+      return data;
+    }
+
+    // Try users collection next
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      userCache.set(userId, data);
+      return data;
+    }
+
+    // Try admins collection last
+    const adminRef = doc(db, "admins", userId);
+    const adminSnap = await getDoc(adminRef);
+    if (adminSnap.exists()) {
+      const data = adminSnap.data();
+      userCache.set(userId, data);
+      return data;
+    }
+
+    // Cache null results too
+    userCache.set(userId, null);
+    return null;
+  } catch (error) {
+    console.error(`Error fetching user (${userId}):`, error);
+    return null;
+  }
 }
 
 export default {
@@ -243,91 +309,135 @@ export default {
       retryCount: 0,
       maxRetries: 3,
       renderTimeout: null,
+      renderPending: false,
       isRendering: false,
+      totalAmount: 0,
+      exportProgress: {
+        isExporting: false,
+        processed: 0,
+        total: 0,
+        status: "",
+      },
     };
   },
   computed: {
     stats() {
       return [
         {
-          label: "Total Transactions",
+          label: "Total Payments",
           value: this.filteredTransactions.length,
           color: "text-indigo-600 dark:text-indigo-400",
-          tooltip: "Number of transactions processed",
+          tooltip: "Number of payments processed",
         },
         {
           label: "Total Amount",
           value: this.formatAmount(this.getTotalAmount()),
           color: "text-green-600 dark:text-green-400",
-          tooltip: "Sum of all transaction amounts",
+          tooltip: "Sum of all payment amounts",
         },
         {
-          label: "Avg Transaction",
+          label: "Avg Payment",
           value: this.formatAmount(this.getAvgAmount()),
           color: "text-purple-600 dark:text-purple-400",
-          tooltip: "Average amount per transaction",
+          tooltip: "Average amount per payment",
         },
       ];
     },
     chartData() {
       if (!this.filteredTransactions.length) return null;
 
+      const dataPoints = this.filteredTransactions
+        .filter(
+          (p) =>
+            p.timestamp?.seconds &&
+            !isNaN(p.timestamp.seconds) &&
+            Number.isFinite(Number(p.amount))
+        )
+        .map((payment) => ({
+          x: new Date(payment.timestamp.seconds * 1000),
+          y: Math.floor(Number(payment.amount)),
+        }));
+
+      if (!dataPoints.length) {
+        console.warn("No valid payment data for chart");
+        return null;
+      }
+
       const periodData = {};
-      this.filteredTransactions.forEach((transaction) => {
-        if (!transaction.timestamp?.seconds) {
-          console.warn(
-            `Skipping transaction ${transaction.id} due to missing timestamp`
-          );
-          return;
+      if (this.selectedPeriod === "Weekly") {
+        // Get the last 7 days
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // End of today
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 6); // 7 days total
+        startDate.setHours(0, 0, 0, 0); // Start of the day
+
+        // Initialize periodData with the last 7 days
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+          const dateKey = date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          periodData[dateKey] = 0;
         }
 
-        let dateFormat;
-        switch (this.selectedPeriod) {
-          case "Yearly":
-            dateFormat = { year: "numeric" };
-            break;
-          case "Monthly":
-            dateFormat = { month: "short", year: "numeric" };
-            break;
-          default:
-            dateFormat = { month: "short", day: "numeric" };
-        }
+        // Aggregate data by date
+        dataPoints.forEach((point) => {
+          const date = new Date(point.x);
+          const dateKey = date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          if (date >= startDate && date <= today) {
+            periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+          }
+        });
+      } else if (this.selectedPeriod === "Monthly") {
+        dataPoints.forEach((point) => {
+          const date = new Date(point.x);
+          const dateKey = `${date.toLocaleString("en-US", {
+            month: "short",
+          })} ${date.getFullYear()}`;
+          periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+        });
+      } else {
+        // Yearly
+        dataPoints.forEach((point) => {
+          const date = new Date(point.x);
+          const dateKey = date.getFullYear().toString();
+          periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+        });
+      }
 
-        const date = new Date(
-          transaction.timestamp.seconds * 1000
-        ).toLocaleDateString("en-US", dateFormat);
-        const amount = Number(transaction.amount) || 0;
-        if (isNaN(amount)) {
-          console.warn(
-            `Invalid amount in transaction ${transaction.id}: ${transaction.amount}`
-          );
-        }
-        periodData[date] = (periodData[date] || 0) + amount;
-      });
+      const labels = Object.keys(periodData);
+      const values = Object.values(periodData);
+      const maxAmount = Math.max(...values);
+      const stepSize = this.calculateOptimalStepSize(maxAmount);
 
-      const chartData = {
-        labels: Object.keys(periodData),
+      return {
+        labels,
         datasets: [
           {
-            label: "Transaction Amounts",
-            data: Object.values(periodData),
-            backgroundColor:
-              this.chartType === "bar"
-                ? "rgba(79, 70, 229, 0.6)"
-                : "rgba(79, 70, 229, 0.2)",
+            label: "Payment Amounts",
+            data: values,
+            backgroundColor: this.createGradient,
             borderColor: "rgba(79, 70, 229, 1)",
-            borderWidth: 2,
-            tension: this.chartType === "line" ? 0.3 : 0,
-            pointRadius: this.chartType === "line" ? 4 : 0,
-            pointBackgroundColor:
-              this.chartType === "line" ? "rgba(79, 70, 229, 1)" : undefined,
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: this.chartType === "line" ? 5 : 0,
+            pointHoverRadius: this.chartType === "line" ? 8 : 0,
+            pointBackgroundColor: "rgba(79, 70, 229, 1)",
+            pointBorderColor: "#fff",
+            pointBorderWidth: this.chartType === "line" ? 2 : 0,
+            pointStyle: "circle",
             borderRadius: this.chartType === "bar" ? 6 : 0,
-            fill: this.chartType === "line" ? true : false,
+            fill: this.chartType === "line",
           },
         ],
+        stepSize,
       };
-      console.log("Chart data:", chartData); // Debug chart data
-      return chartData;
     },
   },
   mounted() {
@@ -343,33 +453,60 @@ export default {
   methods: {
     async fetchTransactions() {
       try {
-        const cached = localStorage.getItem("transactionsCache");
+        const cached = localStorage.getItem("paymentsCache");
         if (cached) {
           this.transactions = JSON.parse(cached);
-          console.log("Cached transactions:", this.transactions);
         }
 
-        const data = await getTransactions();
-        const normalizedData = data.map((t) => ({
-          ...t,
-          amount:
-            typeof t.amount === "string"
-              ? Number.parseFloat(t.amount.replace(/,/g, ""))
-              : Number(t.amount),
-        }));
-        console.log("Normalized transactions:", normalizedData);
-        this.transactions = normalizedData;
-        this.filteredTransactions = [...normalizedData];
-        localStorage.setItem(
-          "transactionsCache",
-          JSON.stringify(normalizedData)
+        const payments = await fetchPayments();
+        this.totalAmount = payments.reduce(
+          (sum, p) => sum + (Number(p.amount) || 0),
+          0
         );
-        this.lastUpdated = new Date().toLocaleTimeString();
+        localStorage.setItem("totalAmount", this.totalAmount);
+        const normalizedPayments = payments.map((p) => ({
+          ...p,
+          amount:
+            typeof p.amount === "string"
+              ? Number.parseFloat(p.amount.replace(/,/g, ""))
+              : Number(p.amount) || 0,
+          timestamp:
+            p.timestamp && typeof p.timestamp.seconds === "number"
+              ? p.timestamp
+              : { seconds: Date.now() / 1000 },
+        }));
+
+        this.transactions = normalizedPayments;
+        this.filterTransactionsByPeriod();
+        localStorage.setItem(
+          "paymentsCache",
+          JSON.stringify(normalizedPayments)
+        );
+        this.lastUpdated = new Date().toLocaleString();
         this.retryCount = 0;
         this.error = null;
       } catch (err) {
         throw err;
       }
+    },
+    filterTransactionsByPeriod() {
+      const now = new Date();
+      let startDate;
+
+      if (this.selectedPeriod === "Weekly") {
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 6); // Last 7 days
+        startDate.setHours(0, 0, 0, 0); // Start of the first day
+      } else if (this.selectedPeriod === "Monthly") {
+        startDate = new Date(now.setMonth(now.getMonth() - 1));
+      } else {
+        startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+      }
+
+      this.filteredTransactions = this.transactions.filter((t) => {
+        const txDate = new Date(t.timestamp.seconds * 1000);
+        return txDate >= startDate;
+      });
     },
     setupRealtimeListener() {
       this.loading = true;
@@ -391,8 +528,7 @@ export default {
     },
     async retryFetch() {
       if (this.retryCount >= this.maxRetries) {
-        this.error =
-          "Unable to connect after several attempts. Please check your network or try again later.";
+        this.error = `Failed to connect after ${this.maxRetries} attempts. Please check your network or contact support.`;
         return;
       }
 
@@ -400,21 +536,20 @@ export default {
       const delay = Math.pow(2, this.retryCount) * 1000;
       await new Promise((resolve) => setTimeout(resolve, delay));
       this.retryCount++;
-      await this.fetchTransactions();
-      this.loading = false;
-    },
-    async refreshData() {
-      this.loading = true;
-      await this.fetchTransactions();
-      await this.renderChart();
-      this.loading = false;
+      try {
+        await this.fetchTransactions();
+        await this.renderChart();
+      } catch (err) {
+        this.handleError(err);
+      } finally {
+        this.loading = false;
+      }
     },
     handleError(err) {
       this.error =
         err.code === "permission-denied"
           ? "You don't have permission to access this data. Contact your administrator."
-          : err.message || "Failed to load transactions. Please try again.";
-      this.retryFetch();
+          : err.message || "Failed to load payments. Please try again.";
     },
     handleResize() {
       if (this.chart) {
@@ -428,41 +563,61 @@ export default {
       }
       this.isRendering = false;
     },
+    createGradient(ctx, chartArea) {
+      if (this.chartType !== "line") return "rgba(79, 70, 229, 0.6)";
+      const gradient = ctx.createLinearGradient(
+        0,
+        chartArea.bottom,
+        0,
+        chartArea.top
+      );
+      gradient.addColorStop(0, "rgba(79, 70, 229, 0.1)");
+      gradient.addColorStop(0.5, "rgba(79, 70, 229, 0.3)");
+      gradient.addColorStop(1, "rgba(79, 70, 229, 0.5)");
+      return gradient;
+    },
     async renderChart() {
-      if (this.isRendering || !this.chartData) return;
-
-      if (this.renderTimeout) {
-        clearTimeout(this.renderTimeout);
+      if (this.isRendering || !this.chartData) {
+        if (!this.renderPending && this.chartData) {
+          this.renderPending = true;
+          this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+        }
+        return;
       }
 
       this.isRendering = true;
+      this.renderPending = false;
+      if (this.renderTimeout) clearTimeout(this.renderTimeout);
 
       try {
         await nextTick();
+        this.cleanupChart();
 
         const canvas = this.$refs.chartCanvas;
-        if (!canvas || !canvas.getContext) {
-          console.warn("Canvas not available, scheduling retry");
-          this.scheduleRenderRetry();
-          return;
+        if (!canvas || !document.contains(canvas)) {
+          throw new Error("Canvas element not found or not in DOM");
         }
 
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          console.warn("Canvas context not available, scheduling retry");
-          this.scheduleRenderRetry();
-          return;
+          throw new Error("Canvas context unavailable");
         }
 
-        const container = document.getElementById("chart-container");
-        if (!container || container.offsetParent === null) {
-          console.warn("Chart container not visible, scheduling retry");
-          this.scheduleRenderRetry();
-          return;
-        }
+        const { stepSize } = this.chartData;
+        const maxValue = Math.max(...this.chartData.datasets[0].data);
+        const yAxisMax = Math.ceil(maxValue / stepSize) * stepSize;
+        const dataLength = this.chartData.labels.length;
+        const maxLabelLength = Math.max(
+          ...this.chartData.labels.map((l) => l.length)
+        );
+        const rotation = dataLength > 12 || maxLabelLength > 10 ? 45 : 0;
 
-        this.cleanupChart();
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        this.chartData.datasets[0].backgroundColor = (context) => {
+          const chart = context.chart;
+          const { ctx: chartCtx, chartArea } = chart;
+          if (!chartArea) return "rgba(79, 70, 229, 0.6)";
+          return this.createGradient(chartCtx, chartArea);
+        };
 
         this.chart = new Chart(ctx, {
           type: this.chartType,
@@ -477,122 +632,315 @@ export default {
             scales: {
               y: {
                 beginAtZero: true,
-                grid: { color: "rgba(0, 0, 0, 0.05)" },
-                title: { display: true, text: "Amount (USD)" },
+                max: yAxisMax,
+                grid: {
+                  color: "rgba(0, 0, 0, 0.05)",
+                  drawBorder: false,
+                  drawTicks: false,
+                },
+                title: {
+                  display: true,
+                  text: "Amount (EGP)",
+                  color: "rgba(0, 0, 0, 0.7)",
+                  font: { size: 12, weight: "500" },
+                },
                 ticks: {
-                  callback: (value) => `$${value.toLocaleString()}`,
+                  callback: (value) =>
+                    `EGP ${value.toLocaleString("en-US", {
+                      maximumFractionDigits: 0,
+                    })}`,
+                  stepSize: stepSize,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  padding: 10,
                 },
               },
               x: {
                 grid: { display: false },
-                title: { display: true, text: this.selectedPeriod },
+                title: {
+                  display: true,
+                  text: this.selectedPeriod,
+                  color: "rgba(0, 0, 0, 0.7)",
+                  font: { size: 12, weight: "500" },
+                },
+                ticks: {
+                  autoSkip: false, // Show all days
+                  maxTicksLimit: this.selectedPeriod === "Weekly" ? 7 : 10,
+                  maxRotation: rotation,
+                  minRotation: rotation,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  padding: 10,
+                },
               },
             },
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                backgroundColor: "rgba(0, 0, 0, 0.85)",
                 padding: 12,
                 cornerRadius: 8,
+                bodyFont: { size: 12 },
+                titleFont: { size: 14, weight: "bold" },
                 callbacks: {
-                  label: (context) => `$${context.raw.toLocaleString()}`,
+                  label: (context) => {
+                    const value = Math.floor(context.raw);
+                    const prevValue =
+                      context.dataset.data[context.dataIndex - 1] || 0;
+                    const diff = value - prevValue;
+                    const trend = diff > 0 ? "↑" : diff < 0 ? "↓" : "→";
+                    return `EGP ${value.toLocaleString()} (${trend} ${Math.abs(
+                      diff
+                    ).toLocaleString()})`;
+                  },
+                  title: (tooltipItems) => tooltipItems[0].label,
                 },
               },
+            },
+            hover: {
+              mode: "nearest",
+              intersect: true,
+              animationDuration: 200,
             },
           },
         });
       } catch (error) {
         console.error("Chart rendering error:", error);
-        this.scheduleRenderRetry();
+        this.cleanupChart();
+        this.renderTimeout = setTimeout(() => this.renderChart(), 200);
       } finally {
         this.isRendering = false;
+        if (this.renderPending) {
+          this.renderPending = false;
+          this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+        }
       }
     },
-    scheduleRenderRetry() {
-      this.cleanupChart();
-      this.renderTimeout = setTimeout(() => {
-        this.renderChart();
-      }, 200);
-    },
     getTotalAmount() {
-      const total = this.filteredTransactions.reduce((sum, t) => {
-        const amount = Number(t.amount) || 0;
-        if (isNaN(amount)) {
-          console.warn(
-            `Invalid amount found in transaction ${t.id}: ${t.amount}`
-          );
-        }
-        return sum + amount;
-      }, 0);
-      console.log("Calculated Total Amount:", total);
-      return total;
+      return this.filteredTransactions.reduce(
+        (sum, t) => sum + (Number(t.amount) || 0),
+        0
+      );
     },
     getAvgAmount() {
       const total = this.getTotalAmount();
-      const avg = this.filteredTransactions.length
+      return this.filteredTransactions.length
         ? total / this.filteredTransactions.length
         : 0;
-      console.log("Calculated Avg Amount:", avg);
-      return avg;
     },
     formatAmount(amount) {
-      if (isNaN(amount) || amount === Infinity) return "$0";
-      if (amount > Number.MAX_SAFE_INTEGER) {
-        console.warn("Amount exceeds safe integer limit:", amount);
-        return (
-          "$" + amount.toLocaleString("en-US", { maximumFractionDigits: 0 })
-        );
-      }
+      if (isNaN(amount) || !Number.isFinite(amount)) return "EGP 0";
       return new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "USD",
+        currency: "EGP",
         maximumFractionDigits: 0,
-      }).format(amount);
+      }).format(Math.floor(amount));
     },
-    exportToCSV() {
-      const headers = ["ID", "Amount", "Date"];
-      const rows = this.filteredTransactions.map((t) => [
-        t.id,
-        this.formatAmount(t.amount),
-        t.timestamp
-          ? new Date(t.timestamp.seconds * 1000).toISOString()
-          : "N/A",
-      ]);
-      const csvContent = [
-        headers.join(","),
-        ...rows.map((row) => row.join(",")),
-      ].join("\n");
+    async exportToCSV() {
+      if (this.exportProgress.isExporting) {
+        // Prevent multiple export operations
+        this.$emit("export-notification", "Export already in progress");
+        return;
+      }
 
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `transactions_${this.selectedPeriod.toLowerCase()}_${
-        new Date().toISOString().split("T")[0]
-      }.csv`;
-      link.click();
+      // Reset and initialize progress tracking
+      this.exportProgress = {
+        isExporting: true,
+        processed: 0,
+        total: this.filteredTransactions.length,
+        status: "Preparing export...",
+      };
+
+      try {
+        // Define all exportable fields with proper escaping for CSV format
+        const headers = [
+          "Payment ID",
+          "Amount",
+          "Date",
+          "Time",
+          "Property ID",
+          "Property Title",
+          "User ID",
+          "User Name",
+          "Status",
+          "Payment Method",
+        ];
+
+        // Helper function to escape CSV field values properly
+        const escapeCSV = (field) => {
+          if (field === null || field === undefined) return "";
+          const str = String(field);
+          // If the field contains commas, quotes, or newlines, wrap it in quotes and escape any quotes
+          if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        };
+
+        // Add metadata row showing export information
+        const metadataRow = [
+          `Exported: ${new Date().toLocaleString()}`,
+          `Period: ${this.selectedPeriod}`,
+          `Total Transactions: ${this.filteredTransactions.length}`,
+          `Total Amount: ${this.formatAmount(this.getTotalAmount())}`,
+        ];
+
+        this.exportProgress.status = "Collecting property and user data...";
+
+        // Optimize by pre-gathering all unique property and user IDs first
+        const uniquePropertyIds = new Set();
+        const uniqueUserIds = new Set();
+
+        this.filteredTransactions.forEach((t) => {
+          if (t.propertyId) uniquePropertyIds.add(t.propertyId);
+          if (t.userId) uniqueUserIds.add(t.userId);
+        });
+
+        this.exportProgress.status = `Loading ${uniquePropertyIds.size} properties and ${uniqueUserIds.size} users...`;
+
+        // Pre-load properties and users in parallel batches
+        await Promise.all([
+          ...Array.from(uniquePropertyIds).map((id) => getPropertyDetails(id)),
+          ...Array.from(uniqueUserIds).map((id) => getUserDetails(id)),
+        ]);
+
+        // Process transactions in batches to prevent UI freezing
+        const BATCH_SIZE = 20;
+        const processedRows = [];
+        const totalBatches = Math.ceil(
+          this.filteredTransactions.length / BATCH_SIZE
+        );
+
+        for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+          const start = batchIndex * BATCH_SIZE;
+          const end = Math.min(
+            start + BATCH_SIZE,
+            this.filteredTransactions.length
+          );
+          const batch = this.filteredTransactions.slice(start, end);
+
+          this.exportProgress.status = `Processing batch ${
+            batchIndex + 1
+          }/${totalBatches}...`;
+
+          // Process each transaction in the current batch
+          for (const t of batch) {
+            // Format date and time separately for better readability
+            const date = t.timestamp?.seconds
+              ? new Date(t.timestamp.seconds * 1000)
+              : new Date();
+
+            // Get property details (should be from cache now)
+            let propertyTitle = "N/A";
+            if (t.propertyId) {
+              const propertyDetails = await getPropertyDetails(t.propertyId);
+              propertyTitle = propertyDetails?.title || "Unknown Property";
+            }
+
+            // Get user details (should be from cache now)
+            let userName = "N/A";
+            if (t.userId) {
+              const userDetails = await getUserDetails(t.userId);
+              userName =
+                userDetails?.name || userDetails?.email || "Unknown User";
+            }
+
+            processedRows.push([
+              escapeCSV(t.id),
+              escapeCSV(t.amount),
+              escapeCSV(date.toLocaleDateString()),
+              escapeCSV(date.toLocaleTimeString()),
+              escapeCSV(t.propertyId || "N/A"),
+              escapeCSV(propertyTitle),
+              escapeCSV(t.userId || "N/A"),
+              escapeCSV(userName),
+              escapeCSV(t.status || "Completed"),
+              escapeCSV(t.paymentMethod || "N/A"),
+            ]);
+
+            this.exportProgress.processed++;
+          }
+
+          // Allow UI to update between batches
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+
+        this.exportProgress.status = "Generating CSV file...";
+
+        // Combine all rows with proper line breaks
+        const csvContent = [
+          metadataRow.join(","),
+          "", // Empty line as separator
+          headers.join(","),
+          ...processedRows.map((row) => row.join(",")),
+        ].join("\n");
+
+        // Create and download the file
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const link = document.createElement("a");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+        link.href = URL.createObjectURL(blob);
+        link.download = `eskan_payments_${this.selectedPeriod.toLowerCase()}_${timestamp}.csv`;
+        link.style.display = "none";
+        document.body.appendChild(link);
+
+        this.exportProgress.status = "Downloading file...";
+        link.click();
+
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+          this.$emit("export-success", "CSV export completed successfully");
+        }, 100);
+      } catch (error) {
+        console.error("Error exporting CSV:", error);
+        // Show user-friendly error notification
+        this.$emit(
+          "export-error",
+          `Failed to export CSV: ${error.message || "Unknown error"}`
+        );
+      } finally {
+        this.exportProgress.isExporting = false;
+        this.exportProgress.status = "";
+      }
+    },
+    calculateOptimalStepSize(maxValue) {
+      if (maxValue <= 0) return 100;
+      const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)));
+      const normalizedMax = maxValue / magnitude;
+      let step =
+        normalizedMax <= 1.5
+          ? 0.2 * magnitude
+          : normalizedMax <= 3
+          ? 0.5 * magnitude
+          : normalizedMax <= 7
+          ? 1 * magnitude
+          : 2 * magnitude;
+      step = Math.ceil(step / (magnitude / 10)) * (magnitude / 10);
+      const steps = maxValue / step;
+      if (steps > 10) return step * 2;
+      if (steps < 4) return step / 2;
+      return step;
     },
   },
   watch: {
     chartData: {
       handler() {
         if (this.renderTimeout) clearTimeout(this.renderTimeout);
-        this.renderTimeout = setTimeout(() => {
-          this.renderChart();
-        }, 100);
+        this.renderTimeout = setTimeout(() => this.renderChart(), 100);
       },
       deep: true,
     },
     chartType() {
       if (this.renderTimeout) clearTimeout(this.renderTimeout);
-      this.renderTimeout = setTimeout(() => {
-        this.renderChart();
-      }, 50);
+      this.renderTimeout = setTimeout(() => this.renderChart(), 100);
     },
-    selectedPeriod() {
+    selectedPeriod(newPeriod) {
+      this.filterTransactionsByPeriod();
       if (this.renderTimeout) clearTimeout(this.renderTimeout);
-      this.renderTimeout = setTimeout(() => {
-        this.renderChart();
-      }, 100);
+      this.renderTimeout = setTimeout(() => this.renderChart(), 100);
     },
   },
 };

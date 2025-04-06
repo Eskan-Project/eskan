@@ -119,6 +119,7 @@ export default {
       chart: null,
       isStacked: window.innerWidth <= 1225,
       isLoading: false,
+      properties: [],
     };
   },
   computed: {

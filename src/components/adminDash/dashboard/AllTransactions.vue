@@ -5,14 +5,8 @@
         class="text-gray-800 dark:text-white text-lg font-semibold flex items-center"
       >
         <span class="inline-block w-1 h-5 bg-indigo-500 mr-2 rounded"></span>
-        Recent Transactions
+        Recent Payments
       </h3>
-
-      <button
-        class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm"
-      >
-        View All
-      </button>
     </div>
 
     <!-- Loading State -->
@@ -39,7 +33,7 @@
           ></path>
         </svg>
         <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
-          Loading transactions...
+          Loading payments...
         </p>
       </div>
     </div>
@@ -74,12 +68,12 @@
 
     <!-- Empty State -->
     <div
-      v-else-if="Object.keys(users).length === 0"
+      v-else-if="payments.length === 0"
       class="min-h-[200px] flex items-center justify-center text-center"
     >
       <div>
         <div
-          class="rounded-full bg-gray-100 dark:bg-gray-700 p-3 mx-auto w-16 h-16 flex items-center justify-center mb-3"
+          class="rounded-full bg-gray-100 dark:bg-gray-800 p-3 mx-auto w-16 h-16 flex items-center justify-center mb-3"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -96,30 +90,28 @@
             />
           </svg>
         </div>
-        <p class="text-gray-600 dark:text-gray-400 mb-1">
-          No transactions found
-        </p>
+        <p class="text-gray-600 dark:text-gray-400 mb-1">No payments found</p>
         <p class="text-gray-500 dark:text-gray-500 text-sm">
-          Transactions will appear here
+          Recent payments will appear here
         </p>
       </div>
     </div>
 
-    <!-- Transaction List -->
+    <!-- Payment List -->
     <div
       v-else
-      class="transaction-list"
-      style="max-height: 280px; overflow-y-auto"
+      class="payment-list"
+      style="max-height: 280px; overflow-y: auto"
     >
       <div
-        v-for="(user, userId) in users"
-        :key="userId"
-        class="transaction-item mb-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 hover:shadow-md transition-all duration-200 flex items-center justify-between"
+        v-for="payment in sortedPayments"
+        :key="payment.id"
+        class="payment-item mb-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 hover:shadow-md transition-all duration-200 flex items-center justify-between"
       >
         <div class="flex items-center">
           <div class="relative mr-3">
             <img
-              :src="user.photo || '/images/default-avatar.png'"
+              :src="payment.userPhoto || '/images/default-avatar.png'"
               alt="User Avatar"
               class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-700"
               @error="handleImageError"
@@ -131,12 +123,12 @@
 
           <div>
             <p class="text-gray-800 dark:text-white text-sm font-medium">
-              {{ user.name || "Unknown User" }}
+              {{ payment.userName || "Unknown User" }}
             </p>
             <p
               class="text-gray-500 dark:text-gray-400 text-xs truncate max-w-[140px]"
             >
-              {{ user.email || "No email" }}
+              {{ payment.userEmail || "No email" }}
             </p>
           </div>
         </div>
@@ -145,15 +137,15 @@
           <span
             :class="[
               'font-medium text-sm',
-              user.totalAmount > 0
+              payment.amount > 0
                 ? 'text-green-600 dark:text-green-400'
                 : 'text-red-600 dark:text-red-400',
             ]"
           >
-            {{ formatAmount(user.totalAmount) }}
+            {{ formatAmount(payment.amount) }}
           </span>
           <span class="text-gray-400 dark:text-gray-500 text-xs">
-            {{ formatDate(new Date()) }}
+            {{ formatDate(payment.timestamp) }}
           </span>
         </div>
       </div>
@@ -162,35 +154,25 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "@/config/firebase";
 
-async function getTransactions() {
-  try {
-    const users = {};
-    const querySnapshot = await getDocs(collection(db, "payments"));
-
-    for (const doc of querySnapshot.docs) {
-      let transactionData = { id: doc.id, ...doc.data() };
-
-      if (transactionData.userId) {
-        if (!users[transactionData.userId]) {
-          const user = await getUserDetails(transactionData.userId);
-          if (user) {
-            users[transactionData.userId] = { ...user, totalAmount: 0 };
-          }
-        }
-        if (users[transactionData.userId]) {
-          users[transactionData.userId].totalAmount += transactionData.amount;
-        }
-      }
-    }
-
-    return users;
-  } catch (error) {
-    console.error("Error fetching transactions:", error);
-    throw error;
-  }
+async function getPayments() {
+  const payments = [];
+  const querySnapshot = await getDocs(collection(db, "payments"));
+  querySnapshot.forEach((doc) => {
+    payments.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+  return payments;
 }
 
 async function getUserDetails(userId) {
@@ -218,54 +200,105 @@ async function getUserDetails(userId) {
 export default {
   data() {
     return {
-      users: {},
+      payments: [],
       loading: true,
       error: null,
-      windowWidth: window.innerWidth,
+      unsubscribe: null,
     };
   },
-  async mounted() {
-    await this.fetchTransactions();
-    window.addEventListener("resize", this.updateWindowWidth);
+  computed: {
+    sortedPayments() {
+      return this.payments
+        .slice()
+        .sort((a, b) => {
+          const dateA = a.timestamp?.seconds
+            ? a.timestamp.seconds * 1000
+            : Date.now();
+          const dateB = b.timestamp?.seconds
+            ? b.timestamp.seconds * 1000
+            : Date.now();
+          return dateB - dateA; // Newest first
+        })
+        .slice(0, 10); // Limit to 10 most recent
+    },
+  },
+  mounted() {
+    this.setupRealtimeListener();
   },
   beforeUnmount() {
-    window.removeEventListener("resize", this.updateWindowWidth);
+    if (this.unsubscribe) this.unsubscribe();
   },
   methods: {
-    updateWindowWidth() {
-      this.windowWidth = window.innerWidth;
-    },
     formatAmount(amount) {
-      const formatter = Intl.NumberFormat("en", {
-        notation: "compact",
-        maximumFractionDigits: 1,
-      });
-      return `$${formatter.format(amount)}`;
+      if (isNaN(amount) || !Number.isFinite(amount)) return "EGP 0";
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "EGP",
+        maximumFractionDigits: 0,
+      }).format(Math.floor(amount));
     },
-    formatDate(date) {
+    formatDate(timestamp) {
+      if (!timestamp?.seconds) return "N/A";
+      const date = new Date(timestamp.seconds * 1000);
       return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     },
     handleImageError(e) {
       e.target.src = "/images/default-avatar.png";
     },
-    async fetchTransactions() {
+    async fetchPayments() {
       this.loading = true;
       this.error = null;
       try {
-        this.users = await getTransactions();
-        return this.users;
+        const payments = await getPayments();
+        const enrichedPayments = await Promise.all(
+          payments.map(async (payment) => {
+            const user = payment.userId
+              ? await getUserDetails(payment.userId)
+              : null;
+            return {
+              ...payment,
+              userName: user?.name,
+              userEmail: user?.email,
+              userPhoto: user?.photo,
+              amount: Number(payment.amount) || 0,
+              timestamp: payment.timestamp || { seconds: Date.now() / 1000 },
+            };
+          })
+        );
+        this.payments = enrichedPayments;
       } catch (err) {
-        this.error = err.message || "Failed to fetch transactions.";
+        this.error = err.message || "Failed to fetch payments.";
         throw err;
       } finally {
         this.loading = false;
       }
     },
+    setupRealtimeListener() {
+      this.loading = true;
+      this.unsubscribe = onSnapshot(
+        collection(db, "payments"),
+        async () => {
+          try {
+            await this.fetchPayments();
+          } catch (err) {
+            this.error = err.message || "Failed to load payments.";
+          } finally {
+            this.loading = false;
+          }
+        },
+        (err) => {
+          this.error = err.message || "Failed to load payments.";
+          this.loading = false;
+        }
+      );
+    },
     retryFetch() {
-      this.fetchTransactions();
+      this.fetchPayments();
     },
   },
 };
@@ -278,25 +311,25 @@ export default {
   text-overflow: ellipsis;
 }
 
-.transaction-list {
+.payment-list {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
 }
 
-.transaction-list::-webkit-scrollbar {
+.payment-list::-webkit-scrollbar {
   width: 4px;
 }
 
-.transaction-list::-webkit-scrollbar-track {
+.payment-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.transaction-list::-webkit-scrollbar-thumb {
+.payment-list::-webkit-scrollbar-thumb {
   background-color: rgba(156, 163, 175, 0.3);
   border-radius: 4px;
 }
 
-.transaction-item {
+.payment-item {
   animation: fadeIn 0.3s ease-in-out;
 }
 
