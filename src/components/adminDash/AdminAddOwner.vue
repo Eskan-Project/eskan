@@ -203,7 +203,7 @@ import { auth, db } from "@/config/firebase";
 import { app } from "@/config/firebase";
 import Swal from "sweetalert2";
 // Initialize EmailJS
-emailjs.init(import.meta.env.VITE_EMAILJS_USER_ID2);
+emailjs.init("aQTbmvnAXB72PTixL");
 
 export default {
   data() {
@@ -334,10 +334,12 @@ export default {
           user_role: "Owner", // Capitalize first letter
           message: `Your account has been created as an Owner . Please use the credentials below to log in.`,
         };
-        console.log(this.serviceId);
+
         try {
+          const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
+          console.log(serviceID);
           const response = await emailjs.send(
-            "service_ofkte97",
+            "service_itsyzca",
             import.meta.env.VITE_EMAILJS_TEMPLATE_ID5,
             templateParams
           );
