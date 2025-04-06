@@ -151,7 +151,7 @@
         <div
           v-for="(stat, index) in stats"
           :key="index"
-          class="stat-card group relative bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
+          class="stat-card group relative bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700 hover:shadow-md transition-all duration-200"
         >
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
             {{ stat.label }}
@@ -318,6 +318,8 @@ export default {
         total: 0,
         status: "",
       },
+      chartLock: false,
+      themeObserver: null,
     };
   },
   computed: {
@@ -443,12 +445,30 @@ export default {
   mounted() {
     this.setupRealtimeListener();
     window.addEventListener("resize", this.handleResize);
+
+    // Add theme change detection
+    this.themeObserver = new MutationObserver(() => {
+      if (this.chart) {
+        this.rerenderChart();
+      }
+    });
+
+    // Observe the html element for class changes (dark mode toggle)
+    this.themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
   },
   beforeUnmount() {
     this.cleanupChart();
     if (this.unsubscribe) this.unsubscribe();
     if (this.renderTimeout) clearTimeout(this.renderTimeout);
     window.removeEventListener("resize", this.handleResize);
+
+    // Disconnect theme observer
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+    }
   },
   methods: {
     async fetchTransactions() {
@@ -557,11 +577,21 @@ export default {
       }
     },
     cleanupChart() {
+      if (this.renderTimeout) {
+        clearTimeout(this.renderTimeout);
+        this.renderTimeout = null;
+      }
+
       if (this.chart) {
-        this.chart.destroy();
+        try {
+          this.chart.destroy();
+        } catch (err) {
+          console.warn("Chart cleanup warning:", err);
+        }
         this.chart = null;
       }
       this.isRendering = false;
+      this.renderPending = false;
     },
     createGradient(ctx, chartArea) {
       if (this.chartType !== "line") return "rgba(79, 70, 229, 0.6)";
@@ -577,25 +607,38 @@ export default {
       return gradient;
     },
     async renderChart() {
-      if (this.isRendering || !this.chartData) {
-        if (!this.renderPending && this.chartData) {
-          this.renderPending = true;
-          this.renderTimeout = setTimeout(() => this.renderChart(), 100);
-        }
+      // Use a lock to prevent concurrent rendering attempts
+      if (this.chartLock) {
+        console.log("Chart rendering locked, queueing render for later");
+        this.renderPending = true;
         return;
       }
 
-      this.isRendering = true;
-      this.renderPending = false;
-      if (this.renderTimeout) clearTimeout(this.renderTimeout);
+      if (!this.chartData) {
+        console.log("No chart data available");
+        return;
+      }
+
+      this.chartLock = true;
 
       try {
         await nextTick();
+
+        // Clean up existing chart first
         this.cleanupChart();
 
+        // Get canvas after cleanup
         const canvas = this.$refs.chartCanvas;
-        if (!canvas || !document.contains(canvas)) {
-          throw new Error("Canvas element not found or not in DOM");
+        if (!canvas || !document.body.contains(canvas)) {
+          console.warn(
+            "Canvas element not found or not in DOM, deferring chart render"
+          );
+          this.renderPending = true;
+          this.renderTimeout = setTimeout(() => {
+            this.chartLock = false;
+            this.renderChart();
+          }, 200);
+          return;
         }
 
         const ctx = canvas.getContext("2d");
@@ -611,6 +654,7 @@ export default {
           ...this.chartData.labels.map((l) => l.length)
         );
         const rotation = dataLength > 12 || maxLabelLength > 10 ? 45 : 0;
+        const isDarkMode = document.documentElement.classList.contains("dark");
 
         this.chartData.datasets[0].backgroundColor = (context) => {
           const chart = context.chart;
@@ -619,6 +663,7 @@ export default {
           return this.createGradient(chartCtx, chartArea);
         };
 
+        // Create new chart with proper configuration
         this.chart = new Chart(ctx, {
           type: this.chartType,
           data: this.chartData,
@@ -634,14 +679,18 @@ export default {
                 beginAtZero: true,
                 max: yAxisMax,
                 grid: {
-                  color: "rgba(0, 0, 0, 0.05)",
+                  color: isDarkMode
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "rgba(0, 0, 0, 0.05)",
                   drawBorder: false,
                   drawTicks: false,
                 },
                 title: {
                   display: true,
                   text: "Amount (EGP)",
-                  color: "rgba(0, 0, 0, 0.7)",
+                  color: isDarkMode
+                    ? "rgba(229, 231, 235, 0.8)"
+                    : "rgba(0, 0, 0, 0.7)",
                   font: { size: 12, weight: "500" },
                 },
                 ticks: {
@@ -650,16 +699,25 @@ export default {
                       maximumFractionDigits: 0,
                     })}`,
                   stepSize: stepSize,
-                  color: "rgba(0, 0, 0, 0.6)",
+                  color: isDarkMode
+                    ? "rgba(229, 231, 235, 0.7)"
+                    : "rgba(0, 0, 0, 0.6)",
                   padding: 10,
                 },
               },
               x: {
-                grid: { display: false },
+                grid: {
+                  display: false,
+                  color: isDarkMode
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "rgba(0, 0, 0, 0.05)",
+                },
                 title: {
                   display: true,
                   text: this.selectedPeriod,
-                  color: "rgba(0, 0, 0, 0.7)",
+                  color: isDarkMode
+                    ? "rgba(229, 231, 235, 0.8)"
+                    : "rgba(0, 0, 0, 0.7)",
                   font: { size: 12, weight: "500" },
                 },
                 ticks: {
@@ -667,7 +725,9 @@ export default {
                   maxTicksLimit: this.selectedPeriod === "Weekly" ? 7 : 10,
                   maxRotation: rotation,
                   minRotation: rotation,
-                  color: "rgba(0, 0, 0, 0.6)",
+                  color: isDarkMode
+                    ? "rgba(229, 231, 235, 0.7)"
+                    : "rgba(0, 0, 0, 0.6)",
                   padding: 10,
                 },
               },
@@ -675,11 +735,15 @@ export default {
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: "rgba(0, 0, 0, 0.85)",
+                backgroundColor: isDarkMode
+                  ? "rgba(17, 24, 39, 0.9)"
+                  : "rgba(0, 0, 0, 0.85)",
                 padding: 12,
                 cornerRadius: 8,
                 bodyFont: { size: 12 },
                 titleFont: { size: 14, weight: "bold" },
+                titleColor: "rgba(255, 255, 255, 0.95)",
+                bodyColor: "rgba(255, 255, 255, 0.9)",
                 callbacks: {
                   label: (context) => {
                     const value = Math.floor(context.raw);
@@ -702,16 +766,30 @@ export default {
             },
           },
         });
+
+        // The chart was successfully rendered
+        this.renderPending = false;
       } catch (error) {
         console.error("Chart rendering error:", error);
-        this.cleanupChart();
-        this.renderTimeout = setTimeout(() => this.renderChart(), 200);
-      } finally {
-        this.isRendering = false;
+
+        // Queue a retry with increasing delay if needed
         if (this.renderPending) {
-          this.renderPending = false;
-          this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+          this.renderTimeout = setTimeout(() => {
+            this.chartLock = false;
+            this.renderChart();
+          }, 300);
         }
+      } finally {
+        // Release the lock after a short delay to prevent rapid consecutive renders
+        setTimeout(() => {
+          this.chartLock = false;
+
+          // If there's a pending render request, process it
+          if (this.renderPending) {
+            this.renderPending = false;
+            this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+          }
+        }, 100);
       }
     },
     getTotalAmount() {
@@ -924,23 +1002,35 @@ export default {
       if (steps < 4) return step / 2;
       return step;
     },
+    rerenderChart() {
+      // Mark as pending and schedule a render
+      this.renderPending = true;
+      if (this.renderTimeout) {
+        clearTimeout(this.renderTimeout);
+      }
+
+      // Clean up first, then schedule redraw
+      this.cleanupChart();
+      this.renderTimeout = setTimeout(() => this.renderChart(), 200);
+    },
   },
   watch: {
     chartData: {
       handler() {
         if (this.renderTimeout) clearTimeout(this.renderTimeout);
-        this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+        this.renderTimeout = setTimeout(() => this.renderChart(), 150);
       },
       deep: true,
     },
     chartType() {
-      if (this.renderTimeout) clearTimeout(this.renderTimeout);
-      this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+      // When chart type changes, do a complete cleanup and redraw
+      this.cleanupChart();
+      // Use a longer timeout to ensure DOM is ready
+      this.renderTimeout = setTimeout(() => this.renderChart(), 250);
     },
     selectedPeriod(newPeriod) {
       this.filterTransactionsByPeriod();
-      if (this.renderTimeout) clearTimeout(this.renderTimeout);
-      this.renderTimeout = setTimeout(() => this.renderChart(), 100);
+      this.rerenderChart();
     },
   },
 };
