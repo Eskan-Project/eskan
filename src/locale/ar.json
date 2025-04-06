@@ -50,10 +50,16 @@
   },
   "home": {
     "hero": {
-      "title": "منزلك الجديد بعيداً عن المنزل",
-      "description": "اعثر على سكنك المشترك المثالي بسهولة. سواء كنت تنتقل للعمل أو الدراسة أو المغامرة، يربطك إسكان بخيارات سكنية آمنة وبأسعار معقولة وموثقة تناسب احتياجاتك.",
-      "find_home": "ابحث عن منزل جديد"
-    },
+    "title": "اعثر على المزيد من العقارات المناسبة",
+    "description": "ابحث عن عقار أحلامك بسهولة وراحة. تغلب على جميع العقبات في العثور على منزلك المثالي.",
+    "find_home_button": "ابدأ الآن",
+    "premium_product_count": "٢٥٠٠+",
+    "premium_product_label": "منتج مميز",
+    "happy_customers_count": "٥٢٠٠+",
+    "happy_customers_label": "عملاء سعداء",
+    "award_winning_count": "٣٧٠+",
+    "award_winning_label": "حائز على جوائز"
+  },
     "features": {
       "section_title": "اعثر على كل ما تحتاجه في مكان واحد",
       "verified": {
@@ -167,7 +173,12 @@
     "send": "إرسال",
     "sending": "جاري الإرسال...",
     "success": "تم إرسال الرسالة بنجاح!",
-    "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا."
+    "error": "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا.",
+
+    "success_message": "تم إرسال الرسالة بنجاح!",
+
+    "error_message": "Failed to send message. Please try again later.",
+    "location_message":"نحن هنا"
   },
   "createProperty": {
     "progress": {

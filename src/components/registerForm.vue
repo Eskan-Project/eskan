@@ -2,10 +2,9 @@
   <auth-header />
   <div
     class="md:p-10 flex justify-center items-center h-screen bg-gray-50 dark:bg-[#111827]"
+    :class="{ 'mt-30 md:mt-5': isOwner }"
   >
-    <div
-      class="container rounded-xl bg-[#364365] w-full md:w-1/2 shadow-md mt-10"
-    >
+    <div class="container rounded-xl bg-[#364365] w-full md:w-1/2 shadow-md">
       <div class="main-text p-8 rounded-r-xl bg-white dark:bg-[#1F2937]">
         <h1
           class="text-[#364365] dark:text-white text-3xl text-center font-bold pb-10"
@@ -16,7 +15,7 @@
           <div class="mb-3">
             <label
               for="username"
-              class="block mb-1 text-[#364365] dark:text-white"
+              class="block mb-0 md:mb-1 text-[#364365] dark:text-white"
               >{{ $t("auth.register.name") }}</label
             >
             <input
@@ -24,7 +23,7 @@
               type="text"
               id="username"
               name="name"
-              class="border-b-2 border-gray-300 dark:border-gray-600 w-full focus:outline-none focus:border-black dark:focus:border-white text-black dark:text-white dark:bg-[#1F2937]"
+              class="border-b-2 dark:border-gray-600 w-full outline-none focus:outline-none text-black dark:text-white dark:bg-[#1F2937]"
               :class="{
                 'border-red-500': errors.name,
                 'border-gray-300 dark:border-gray-600': !errors.name,
@@ -37,7 +36,7 @@
           <div class="mb-3">
             <label
               for="email"
-              class="block mb-1 text-[#364365] dark:text-white"
+              class="block mb-0 md:mb-1 text-[#364365] dark:text-white"
               >{{ $t("auth.register.email") }}</label
             >
             <input
@@ -58,7 +57,7 @@
           <div class="mb-3 relative">
             <label
               for="password"
-              class="block mb-1 text-[#364365] dark:text-white"
+              class="block mb-0 md:mb-1 text-[#364365] dark:text-white"
               >{{ $t("auth.register.password") }}</label
             >
             <input
@@ -500,3 +499,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+input:focus {
+  outline: none !important;
+}
+</style>

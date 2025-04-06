@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="property && !loadingCount"
-    class="container mx-auto py-5 sm:py-10 px-3 sm:px-5 mt-15 sm:mt-5 dark:bg-gray-900"
+    class="container mx-auto py-5 sm:py-10 px-6 mt-15 sm:mt-5 dark:bg-gray-900 theme-transition"
   >
     <!-- Back Button -->
     <div class="mb-5 sm:mt-0">
@@ -9,7 +9,11 @@
         to="/properties"
         class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 font-medium"
       >
-        <i class="bi bi-arrow-left"></i>
+        <i
+          :class="`bi  ${
+            this.$i18n.locale === 'ar' ? 'bi-arrow-right' : 'bi-arrow-left'
+          }`"
+        ></i>
         <span>{{ $t("propertyItemView.back_to_properties") }}</span>
       </router-link>
     </div>
@@ -18,35 +22,35 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
       <!-- Left Column (Images & Details) -->
       <div
-        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg col-span-3"
+        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg col-span-3 theme-transition"
       >
         <div
           class="flex flex-col sm:flex-row justify-between items-start gap-4"
         >
           <div class="space-y-2 w-full sm:w-auto">
             <h1
-              class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 capitalize break-words"
+              class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 capitalize break-words theme-transition leading-tight"
             >
               {{ property.title || $t("propertyItemView.untitled_property") }}
             </h1>
             <p
-              class="text-base sm:text-lg text-gray-600 dark:text-gray-400 flex items-center capitalize break-words"
+              class="text-base text-gray-600 dark:text-gray-400 flex items-center capitalize break-words theme-transition"
             >
               <i class="bi bi-geo-alt mr-2 text-blue-500 flex-shrink-0"></i>
-              <span>{{ locationText }}</span>
+              <span class="line-clamp-2">{{ locationText }}</span>
             </p>
           </div>
           <div
-            class="flex flex-col items-start sm:items-end justify-between gap-2 sm:gap-4 w-full sm:w-auto"
+            class="flex flex-col items-start xs:items-end sm:items-end justify-between gap-2 w-full sm:w-auto mt-2 sm:mt-0"
           >
             <p
-              class="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400"
+              class="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400 theme-transition"
             >
               {{ formattedPrice(property.price) }}
               {{ $t("propertyCard.currency") }}
             </p>
             <div
-              class="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-3"
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-3 theme-transition"
             >
               <p>
                 <i class="bi bi-calendar3 mr-1"></i>
@@ -59,9 +63,11 @@
 
       <div class="col-span-3 md:col-span-2 space-y-5 sm:space-y-8">
         <!-- Main Image Gallery -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg theme-transition"
+        >
           <div
-            class="relative w-full h-60 xs:h-72 sm:h-96 rounded-lg overflow-hidden group"
+            class="relative w-full h-64 xs:h-72 sm:h-96 rounded-lg overflow-hidden group"
           >
             <div
               v-if="!imageLoaded"
@@ -92,44 +98,44 @@
             />
             <button
               @click="prevImage"
-              class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-70 sm:opacity-0 group-hover:opacity-100"
               aria-label="Previous Image"
             >
               <i class="bi bi-chevron-left text-base sm:text-xl"></i>
             </button>
             <button
               @click="nextImage"
-              class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition opacity-70 sm:opacity-0 group-hover:opacity-100"
               aria-label="Next Image"
             >
               <i class="bi bi-chevron-right text-base sm:text-xl"></i>
             </button>
             <button
               @click="toggleFullScreen"
-              class="cursor-pointer absolute bottom-4 right-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition opacity-60 sm:opacity-0 group-hover:opacity-100"
+              class="cursor-pointer absolute bottom-4 right-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-10 h-10 sm:w-10 sm:h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 transition opacity-70 sm:opacity-0 group-hover:opacity-100"
               aria-label="View Fullscreen"
             >
               <i class="bi bi-arrows-fullscreen text-base sm:text-lg"></i>
             </button>
             <div
-              class="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm"
+              class="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm"
             >
               {{ currentImageIndex + 1 }} / {{ property.images.length }}
             </div>
           </div>
 
           <!-- Thumbnails -->
-          <div class="relative mt-3 sm:mt-4">
+          <div class="relative mt-4">
             <div
               ref="thumbnailContainer"
-              class="flex overflow-x-auto gap-2 sm:gap-3 py-2 scroll-smooth thumbnail-gallery px-2"
+              class="flex overflow-x-auto gap-3 py-2 scroll-smooth thumbnail-gallery px-1 sm:px-2 no-scrollbar"
             >
               <img
                 v-for="(img, index) in property.images"
                 :key="index"
                 :src="img"
                 loading="lazy"
-                class="h-16 w-16 xs:h-18 xs:w-18 sm:h-24 sm:w-32 object-cover rounded-lg cursor-pointer transition-all duration-200 hover:opacity-100 flex-shrink-0 hover:shadow-lg dark:hover:shadow-gray-700"
+                class="h-16 w-20 xs:h-18 xs:w-24 sm:h-24 sm:w-32 object-cover rounded-lg cursor-pointer transition-all duration-200 hover:opacity-100 flex-shrink-0 hover:shadow-lg dark:hover:shadow-gray-700"
                 :class="{
                   'ring-2 ring-blue-500 shadow-md opacity-100 scale-105':
                     currentImageIndex === index,
@@ -159,12 +165,20 @@
               <i class="bi bi-chevron-right text-xs sm:text-base"></i>
             </button>
           </div>
+
+          <!-- Mobile-only swipe instruction -->
+          <div
+            class="text-center text-xs text-gray-500 dark:text-gray-400 mt-2 md:hidden"
+          >
+            <i class="bi bi-arrow-left-right mr-1"></i> Swipe to view more
+            images
+          </div>
         </div>
 
         <!-- Property Description (if available) -->
         <div
           v-if="property.description"
-          class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg"
+          class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg theme-transition"
         >
           <h2
             class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4"
@@ -200,24 +214,26 @@
       <!-- Right Column (Contact & Details) -->
       <div class="col-span-3 md:col-span-1 space-y-5 sm:space-y-8">
         <!-- Contact Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg theme-transition"
+        >
           <PropertyDetails :property="property" :id="property?.id" />
         </div>
         <div
-          class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-4 shadow-lg"
+          class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-4 shadow-lg theme-transition"
         >
           <h3
             class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100"
           >
             {{ $t("propertyItemView.share_property") }}
           </h3>
-          <div class="grid grid-cols-3 gap-4 mb-2">
+          <div class="grid grid-cols-3 gap-4 mb-4">
             <button
               @click="shareVia('facebook')"
               class="cursor-pointer flex flex-col items-center text-blue-600 dark:text-blue-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-2"
+                class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-facebook text-xl"></i>
               </div>
@@ -228,7 +244,7 @@
               class="cursor-pointer flex flex-col items-center text-sky-500 dark:text-sky-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center mb-2"
+                class="w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-twitter text-xl"></i>
               </div>
@@ -239,7 +255,7 @@
               class="cursor-pointer flex flex-col items-center text-green-600 dark:text-green-400 hover:opacity-80 transition"
             >
               <div
-                class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-2"
+                class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-2"
               >
                 <i class="bi bi-whatsapp text-xl"></i>
               </div>
@@ -256,8 +272,8 @@
                   : shareUrl
               "
               :class="[
-                $i18n.locale === 'ar' ? 'ml-10 text-right' : 'mr-10 text-left',
-                'dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 text-gray-900 ',
+                $i18n.locale === 'ar' ? 'ml-14 text-right' : 'mr-14 text-left',
+                'dark:text-white w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 text-gray-900',
               ]"
               dir="ltr"
               ref="shareUrlInput"
@@ -272,10 +288,21 @@
             >
               <i
                 class="bi"
-                :class="copied ? 'bi-check-lg text-green-600' : 'bi-clipboard'"
+                :class="copied ? 'bi-check-lg text-green-400' : 'bi-clipboard'"
               ></i>
             </button>
           </div>
+          <!-- Native share button for mobile devices -->
+          <button
+            v-if="supportsNativeShare"
+            @click="shareProperty"
+            class="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2 md:hidden"
+          >
+            <i class="bi bi-share-fill"></i>
+            <span>{{
+              $t("propertyItemView.share_via_device") || "Share via your device"
+            }}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -283,7 +310,9 @@
     <!-- Additional Information Section -->
     <div class="mt-5 sm:mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
       <!-- General Information -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg theme-transition"
+      >
         <h2
           class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 flex items-center"
         >
@@ -353,7 +382,9 @@
       </div>
 
       <!-- Location Map -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg theme-transition"
+      >
         <h2
           class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 flex items-center"
         >
@@ -470,6 +501,15 @@ import "vue3-toastify/dist/index.css";
 import { toast } from "vue3-toastify";
 import Swal from "sweetalert2";
 
+// Utility function for debouncing
+function debounce(fn, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 export default {
   name: "PropertyDetail",
   props: ["title"],
@@ -490,6 +530,11 @@ export default {
       shareUrl: "",
       copied: false,
       similarProperties: [],
+      themeObserver: null,
+      geocodeCache: {},
+      pendingMapUpdate: false,
+      transitionStyleElement: null,
+      touchHandlers: null,
     };
   },
   computed: {
@@ -547,6 +592,12 @@ export default {
       }
       return null;
     },
+    isDarkMode() {
+      return document.documentElement.classList.contains("dark");
+    },
+    supportsNativeShare() {
+      return navigator && typeof navigator.share === "function";
+    },
   },
   watch: {
     property: {
@@ -563,6 +614,16 @@ export default {
         }
       },
     },
+    isDarkMode: {
+      handler() {
+        // Update map styling when theme changes
+        this.$nextTick(() => {
+          if (this.mapInstance) {
+            this.updateMapStyling();
+          }
+        });
+      },
+    },
   },
   mounted() {
     this.getProperty(this.title).then(() => {
@@ -570,6 +631,9 @@ export default {
       this.$nextTick(() => {
         this.initMapWithFallback();
         this.scrollToActiveThumbnail();
+
+        // Setup touch events for mobile swiping
+        this.setupMobileTouchEvents();
       });
       this.updateGalleryStartIndex();
       this.fetchSimilarProperties();
@@ -581,16 +645,212 @@ export default {
     });
 
     this.updateVisibleThumbnails();
-    window.addEventListener("resize", this.handleResize);
+    // Use debounced resize handler
+    window.addEventListener("resize", this.debouncedHandleResize);
+
+    // Add MutationObserver to detect theme changes
+    this.setupThemeChangeObserver();
+
+    // Add transition class to body for smoother theme changes
+    document.body.classList.add("theme-transition-body");
+
+    // Create global transition styles for theme switching
+    this.createTransitionStyles();
   },
   beforeDestroy() {
     if (this.mapInstance) {
       this.mapInstance.remove();
     }
-    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("resize", this.debouncedHandleResize);
+
+    // Clean up MutationObserver
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+    }
+
+    // Remove transition class from body
+    document.body.classList.remove("theme-transition-body");
+
+    // Remove the added style element if it exists
+    if (this.transitionStyleElement) {
+      document.head.removeChild(this.transitionStyleElement);
+    }
+
+    // Remove touch event listeners
+    this.removeMobileTouchEvents();
   },
   methods: {
     ...mapActions("property", ["getProperty"]),
+
+    // Setup touch events for mobile swipe navigation
+    setupMobileTouchEvents() {
+      if (this.windowWidth > 640) return; // Only for mobile devices
+
+      const galleryContainer = document.querySelector(".relative.w-full.h-64");
+      if (!galleryContainer) return;
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      // Store event handlers to remove them later
+      this.touchHandlers = {
+        start: (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        },
+        end: (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe(touchStartX, touchEndX);
+        },
+      };
+
+      galleryContainer.addEventListener(
+        "touchstart",
+        this.touchHandlers.start,
+        { passive: true }
+      );
+      galleryContainer.addEventListener("touchend", this.touchHandlers.end, {
+        passive: true,
+      });
+    },
+
+    // Remove touch event listeners
+    removeMobileTouchEvents() {
+      if (!this.touchHandlers) return;
+
+      const galleryContainer = document.querySelector(".relative.w-full.h-64");
+      if (!galleryContainer) return;
+
+      galleryContainer.removeEventListener(
+        "touchstart",
+        this.touchHandlers.start
+      );
+      galleryContainer.removeEventListener("touchend", this.touchHandlers.end);
+    },
+
+    // Handle swipe gestures
+    handleSwipe(startX, endX) {
+      const threshold = 50; // Minimum swipe distance
+
+      if (startX - endX > threshold) {
+        // Swipe left -> next image
+        this.nextImage();
+      } else if (endX - startX > threshold) {
+        // Swipe right -> previous image
+        this.prevImage();
+      }
+    },
+
+    // New method to create global transition styles
+    createTransitionStyles() {
+      // Create a style element for global transitions
+      const styleElement = document.createElement("style");
+      styleElement.textContent = `
+        .theme-transition-body {
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .theme-transition {
+          transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        /* Specifically target leaflet elements to remove transitions */
+        .leaflet-container, .leaflet-control, .leaflet-marker-icon, 
+        .leaflet-marker-shadow, .leaflet-popup, .leaflet-popup-content-wrapper, 
+        .leaflet-popup-tip {
+          transition: none !important;
+        }
+      `;
+
+      // Add the style element to the document head
+      document.head.appendChild(styleElement);
+
+      // Store reference for cleanup
+      this.transitionStyleElement = styleElement;
+    },
+
+    // Create debounced versions of handlers
+    debouncedHandleResize: debounce(function () {
+      this.handleResize();
+    }, 150),
+
+    debouncedUpdateMapStyling: debounce(function () {
+      this.updateMapStyling();
+    }, 50),
+
+    // New method to set up theme change observer
+    setupThemeChangeObserver() {
+      // Use MutationObserver to detect theme class changes
+      this.themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.attributeName === "class" &&
+            mutation.target === document.documentElement
+          ) {
+            // Update map styling when root class changes
+            if (this.mapInstance && !this.pendingMapUpdate) {
+              this.pendingMapUpdate = true;
+
+              // Apply immediate style updates to prevent flicker
+              document.body.style.transition = "background-color 0.3s ease";
+
+              // Call the debounced method for map update
+              this.debouncedUpdateMapStyling();
+
+              // Reset the flag after a delay
+              setTimeout(() => {
+                this.pendingMapUpdate = false;
+              }, 300);
+            }
+          }
+        });
+      });
+
+      // Start observing the document root for class changes
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    },
+
+    // New method to update map styling based on theme
+    updateMapStyling() {
+      if (!this.mapInstance) return;
+
+      // Invalidate size to force redraw
+      this.mapInstance.invalidateSize();
+
+      // Get map container and update its styles
+      const mapContainer = document.getElementById("map");
+      if (mapContainer) {
+        // Make sure any transitions are applied immediately for the map
+        mapContainer.style.transition = "none";
+
+        // Force reflow
+        void mapContainer.offsetWidth;
+
+        // Restore transition after a brief delay
+        setTimeout(() => {
+          mapContainer.style.transition = "";
+        }, 50);
+      }
+
+      // Apply smooth transitions to main container elements
+      this.applySmoothTransitions();
+    },
+
+    // New method to apply smooth transitions to main elements
+    applySmoothTransitions() {
+      // Add theme-transition class to containers
+      const mainContainers = document.querySelectorAll(
+        ".bg-white, .dark\\:bg-gray-800"
+      );
+      mainContainers.forEach((container) => {
+        container.classList.add("theme-transition");
+
+        // Remove the class after transition completes to avoid performance issues
+        setTimeout(() => {
+          container.classList.remove("theme-transition");
+        }, 400); // Slightly longer than transition duration
+      });
+    },
 
     // Share functionality
     shareProperty() {
@@ -598,14 +858,39 @@ export default {
         // Native share API (mobile devices)
         navigator
           .share({
-            title: this.property.title,
-            text: `Check out this property: ${this.property.title}`,
+            title: this.property.title || "Property Listing",
+            text: `Check out this property: ${
+              this.property.title || "Property"
+            } in ${this.locationText}`,
             url: window.location.href,
           })
-          .catch((error) => console.log("Error sharing", error));
+          .then(() => {
+            console.log("Successfully shared");
+          })
+          .catch((error) => {
+            console.log("Error sharing:", error);
+            // Fall back to showing share options if sharing failed
+            if (error.name !== "AbortError") {
+              toast.info(
+                this.$t("propertyItemView.try_manual_share") ||
+                  "Please use the share buttons above",
+                {
+                  autoClose: 3000,
+                  position: toast.POSITION.TOP_RIGHT,
+                }
+              );
+            }
+          });
       } else {
-        // Show share modal for desktops
-        this.showShareModal = true;
+        // Show toast for desktops
+        toast.info(
+          this.$t("propertyItemView.use_share_buttons") ||
+            "Please use the share buttons above",
+          {
+            autoClose: 3000,
+            position: toast.POSITION.TOP_RIGHT,
+          }
+        );
       }
     },
 
@@ -670,7 +955,10 @@ export default {
 
       // Invalidate map size on resize to prevent display issues
       if (this.mapInstance) {
-        this.mapInstance.invalidateSize();
+        // Use setTimeout to delay the map update for better performance
+        setTimeout(() => {
+          this.mapInstance.invalidateSize();
+        }, 100);
       }
     },
     updateVisibleThumbnails() {
@@ -783,10 +1071,23 @@ export default {
 
       // Step 4: Initialize map with validated coordinates
       try {
-        this.mapInstance = L.map("map", { scrollWheelZoom: false }).setView(
+        // If map already exists, remove it to prevent duplicates
+        if (this.mapInstance) {
+          this.mapInstance.remove();
+          this.mapInstance = null;
+        }
+
+        // Create map with optimization options
+        this.mapInstance = L.map("map", {
+          scrollWheelZoom: false,
+          fadeAnimation: false, // Disable fade animations for better performance
+          zoomAnimation: false, // Disable zoom animations for better performance
+          markerZoomAnimation: false, // Disable marker animations
+        }).setView(
           [lat, lng],
           this.property?.coordinates ? 13 : 10 // Zoom level based on source
         );
+
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap contributors",
         }).addTo(this.mapInstance);
@@ -805,6 +1106,9 @@ export default {
         }
 
         marker.openPopup();
+
+        // Apply current theme styling
+        this.updateMapStyling();
       } catch (error) {
         console.error("Map initialization error:", error);
       } finally {
@@ -812,16 +1116,32 @@ export default {
       }
     },
     async geocodeLocation(locationText) {
-      console.log(locationText);
+      // Check if result is already in cache
+      if (this.geocodeCache[locationText]) {
+        console.log("Using cached geocode result for:", locationText);
+        return this.geocodeCache[locationText];
+      }
+
+      console.log("Geocoding location:", locationText);
       const locationParts = locationText.split("-");
       const filteredLocation = locationParts.slice(0, 2).join(" ");
       const query = encodeURIComponent(filteredLocation);
-      console.log(query);
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
-      );
-      const data = await response.json();
-      return data.length > 0 ? data[0] : null;
+
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+        );
+        const data = await response.json();
+        const result = data.length > 0 ? data[0] : null;
+
+        // Cache the result
+        this.geocodeCache[locationText] = result;
+
+        return result;
+      } catch (error) {
+        console.error("Geocoding fetch error:", error);
+        return null;
+      }
     },
     getCustomIcon(color) {
       return L.icon({
@@ -896,15 +1216,103 @@ export default {
   max-width: 1200px;
 }
 
+/* Add a global transition class for smoother dark mode changes */
+::v-deep(.theme-transition) {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 #map {
   z-index: 0 !important;
   position: relative;
   height: 300px;
   border-radius: 10px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: height 0.3s ease;
+  transition: height 0.3s ease, box-shadow 0.3s ease;
+  /* Prevent transition delays with map */
+  transition-property: height, box-shadow;
+  will-change: auto;
 }
 
+/* Performance optimizations for dark mode transitions */
+:deep(.leaflet-container),
+:deep(.leaflet-control),
+:deep(.leaflet-marker-icon),
+:deep(.leaflet-marker-shadow),
+:deep(.leaflet-popup),
+:deep(.leaflet-popup-content-wrapper),
+:deep(.leaflet-popup-tip) {
+  transition: none !important;
+}
+
+/* Optimize theme transition performance with smoother transitions */
+.bg-white,
+.dark .bg-gray-800,
+.text-gray-900,
+.dark .text-gray-100,
+.text-gray-700,
+.dark .text-gray-300,
+.dark .text-gray-400,
+.text-blue-600,
+.text-gray-600,
+.shadow-lg {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+}
+
+/* Smooth container transitions */
+.bg-white.dark\:bg-gray-800,
+.bg-white.rounded-lg,
+.dark .bg-gray-800 {
+  transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+/* Smooth button transitions */
+button,
+a {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, opacity 0.3s ease, transform 0.2s ease !important;
+}
+
+/* Optimize image container during theme changes */
+img,
+.group img,
+.thumbnail-gallery img,
+.w-full.h-full.object-cover {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  will-change: transform, opacity;
+  /* Remove background/color transitions from images */
+  transition-property: transform, opacity;
+}
+
+/* Cancel transitions on elements that don't need them */
+.bi,
+svg,
+i,
+.animate-pulse {
+  transition: none !important;
+}
+
+/* Improved dark mode transitions for inputs and form elements */
+:deep(input),
+:deep(textarea),
+:deep(select) {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Enhanced mobile experience */
 @media (max-width: 640px) {
   #map {
     height: 200px;
@@ -912,6 +1320,55 @@ export default {
 
   .container {
     padding-top: 1rem;
+  }
+
+  /* Make image navigation buttons more visible on mobile */
+  .group button.opacity-70 {
+    opacity: 0.9 !important;
+    backdrop-filter: blur(1px);
+  }
+
+  /* Make the image navigation buttons larger and easier to tap */
+  .w-10.h-10 {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .thumbnail-gallery img {
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  }
+
+  /* Add subtle indicator for horizontal scroll */
+  .thumbnail-gallery {
+    position: relative;
+    padding-bottom: 16px;
+  }
+
+  .thumbnail-gallery::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background-color: rgba(203, 213, 224, 0.5);
+    border-radius: 4px;
+  }
+
+  .dark .thumbnail-gallery::after {
+    background-color: rgba(75, 85, 99, 0.5);
+  }
+
+  /* Full-screen image viewer enhancements */
+  .fixed.inset-0.bg-black.bg-opacity-95 button {
+    transform: scale(1.1);
+    opacity: 0.95 !important;
   }
 }
 
@@ -935,6 +1392,19 @@ export default {
   background: #a0aec0;
 }
 
+/* Dark mode scrollbar style */
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
 /* Thumbnail Gallery */
 .thumbnail-gallery {
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -951,19 +1421,6 @@ export default {
 .thumbnail-gallery img:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Make controls always visible on touch devices */
-@media (max-width: 640px) {
-  .group:hover button.opacity-60 {
-    opacity: 0.8 !important;
-  }
-
-  /* Ensure touch targets are large enough */
-  button {
-    min-width: 36px;
-    min-height: 36px;
-  }
 }
 
 /* Animations and Transitions */
@@ -1017,75 +1474,30 @@ img[loading] {
   }
 }
 
-/* Card hover effects */
-.bg-white {
+/* Card hover effects - more optimized */
+.bg-white,
+.dark .bg-gray-800 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.bg-white:hover {
+.bg-white:hover,
+.dark .bg-gray-800:hover {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Feature icons */
-.w-10.h-10 {
-  transition: all 0.3s ease;
+/* Dark mode optimized button transitions */
+.dark button.bg-gray-700:hover,
+.dark button.bg-gray-800:hover {
+  background-color: #374151 !important;
 }
 
-.w-10.h-10:hover {
-  transform: scale(1.1);
-  background-color: rgba(59, 130, 246, 0.2);
-}
-
-/* Wishlist heart animation */
-.bi-heart-fill {
-  animation: heartBeat 0.5s ease-in-out;
-}
-
-@keyframes heartBeat {
-  0% {
-    transform: scale(1);
-  }
-  14% {
-    transform: scale(1.3);
-  }
-  28% {
-    transform: scale(1);
-  }
-  42% {
-    transform: scale(1.3);
-  }
-  70% {
-    transform: scale(1);
-  }
-}
-
-/* Button styles */
-button {
-  transition: all 0.2s ease;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-/* Share modal animations */
-.fixed.inset-0 {
-  backdrop-filter: blur(2px);
-}
-
-/* Loading indicator pulse */
-.animate-pulse {
-  animation: pulse-loading 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-loading {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+/* Improved line clamping for mobile */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

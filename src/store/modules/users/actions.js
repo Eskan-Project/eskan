@@ -102,7 +102,7 @@ export default {
         uid: doc.id,
         ...doc.data(),
       }));
-      commit("setUser", users);
+      commit("setUsers", users);
       return users;
     } catch (error) {
       commit("setError", error.message);
