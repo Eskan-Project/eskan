@@ -40,7 +40,8 @@
       "pending": "Pending",
       "completed": "Completed",
       "rejected": "Rejected",
-      "expired": "Expired"
+      "expired": "Expired",
+      "Meeting Scheduled": "Meeting Scheduled"
     },
     "pay_now": "Pay Now",
     "paid": "Paid",
