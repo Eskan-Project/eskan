@@ -40,7 +40,8 @@
       "pending": "قيد الانتظار",
       "completed": "مكتمل",
       "rejected": "مرفوض",
-      "expired": "منتهي الصلاحية"
+      "expired": "منتهي الصلاحية",
+      "Meeting Scheduled": "جلسة مجدولة"
     },
     "pay_now": "ادفع الآن",
     "paid": "مدفوع",
