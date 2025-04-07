@@ -5,7 +5,6 @@
     <div class="mx-auto max-w-7xl">
       <transition name="fade" appear>
         <div
-          v-if="!formSubmitted"
           class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:bg-white dark:md:bg-[#1F2937] rounded-2xl shadow-md overflow-hidden"
         >
           <div class="p-4 sm:p-6 md:p-8 lg:p-10 text-[#364365] dark:text-white">
