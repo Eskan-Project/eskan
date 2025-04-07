@@ -47,15 +47,15 @@
            </button>
          </div>
          <div class="mt-6 flex flex-wrap md:flex-nowrap lg:flex-wrap lg:gap-4 md:gap-2 sm:gap-6 justify-center md:justify-start" :class="{ 'flex-row-reverse': isRTL }">
-           <div class="text-center drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
+           <div class="text-center my-2 mx-3 lg:m-1 drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
              <span class="text-xl sm:text-xl md:text-md lg:text-3xl xl:text-4xl font-bold text-gray-200">{{ $t('home.hero.premium_product_count') }}</span>
              <p class="text-gray-400 text-xs sm:text-sm md:text-sm">{{ $t("home.hero.premium_product_label") }}</p>
            </div>
-           <div class="text-center drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
+           <div class="text-center my-2 mx-3 lg:m-1 drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
              <span class="text-xl sm:text-xl md:text-md lg:text-3xl xl:text-4xl font-bold text-gray-200">{{ $t('home.hero.happy_customers_count') }}</span>
              <p class="text-gray-400 text-xs sm:text-sm md:text-sm">{{ $t('home.hero.happy_customers_label') }}</p>
            </div>
-           <div class="text-center drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
+           <div class="text-center my-2 mx-3 lg:m-1 drop-shadow-[0_3px_6px_rgba(0,0,0,0.3)]" :class="{ 'ml-0 md:ml-auto': isRTL, 'mr-0 md:mr-auto': !isRTL }">
              <span class="text-xl sm:text-xl md:text-md lg:text-3xl xl:text-4xl font-bold text-gray-200">{{ $t('home.hero.award_winning_count') }}</span>
              <p class="text-gray-400 text-xs sm:text-sm md:text-sm">{{ $t('home.hero.award_winning_label') }}</p>
            </div>
