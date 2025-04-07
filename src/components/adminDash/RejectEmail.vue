@@ -80,10 +80,10 @@
 </template>
 
 <script>
-import emailjs from "emailjs-com";
 import Swal from "sweetalert2";
 import { mapActions } from "vuex";
-emailjs.init("aQTbmvnAXB72PTixL"); // Initialize EmailJS with your user ID
+import axios from "axios";
+
 export default {
   name: "RejectEmail",
   props: {
@@ -119,8 +119,8 @@ export default {
           },
         });
 
-        // Prepare email template parameters
-        const templateParams = {
+        // Prepare email data
+        const emailData = {
           to_name: this.request.propertyContact?.name || "Property Owner",
           property_title: this.request.title || "Property Request",
           rejection_reason: this.localRejectionData.reason,
@@ -128,14 +128,15 @@ export default {
           property_address: this.locationText || "Property Location",
         };
 
-        // Send email through EmailJS
-        const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
-        console.log(serviceID);
-        await emailjs.send(
-          "service_itsyzca",
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID3,
-          templateParams
+        // Send email through our server instead of EmailJS
+        const response = await axios.post(
+          "http://localhost:3001/send-rejection-email",
+          emailData
         );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to send rejection email");
+        }
 
         // Delete the request and send notification
         await this.deleteRequest(this.request.id);
