@@ -414,19 +414,6 @@
                 />
               </div>
 
-              <div class="flex flex-col space-y-2">
-                <label class="text-gray-700 dark:text-gray-300 font-medium"
-                  >Admin Email:</label
-                >
-                <input
-                  type="email"
-                  v-model="meetingData.adminEmail"
-                  required
-                  placeholder="Your email for meeting notifications"
-                  class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                />
-              </div>
-
               <div class="flex gap-3 mt-6">
                 <button
                   type="button"
@@ -507,7 +494,6 @@ export default {
         date: "",
         duration: 30,
         ownerEmail: "",
-        adminEmail: "",
       },
       rejectionInfo: false,
       id: null,
@@ -677,15 +663,6 @@ export default {
         }
 
         // Check if admin email is provided
-        if (!this.meetingData.adminEmail) {
-          Swal.fire({
-            title: "Admin Email Required",
-            text: "Please provide your email to receive meeting notifications",
-            icon: "warning",
-            confirmButtonText: "OK",
-          });
-          return;
-        }
 
         // Show loading indicator
         Swal.fire({
@@ -748,7 +725,7 @@ export default {
           meeting_duration: this.meetingData.duration + " minutes",
           meet_link: meetLink,
           owner_email: this.meetingData.ownerEmail,
-          admin_email: this.meetingData.adminEmail,
+
           property_address: this.locationText || "Property Location",
           calendar_details: calendarDetails,
         };
@@ -787,7 +764,7 @@ export default {
         Swal.fire({
           title: "Meeting Scheduled!",
           html: `
-            <p>Meeting details have been sent to ${this.meetingData.ownerEmail} and ${this.meetingData.adminEmail}</p>
+            <p>Meeting details have been sent to ${this.meetingData.ownerEmail}</p>
           `,
           icon: "success",
           confirmButtonText: "OK",
@@ -797,7 +774,7 @@ export default {
         this.meetingData.date = "";
         this.meetingData.duration = 30;
         this.meetingData.ownerEmail = "";
-        this.meetingData.adminEmail = "";
+
         this.meetingInfo = false;
       } catch (error) {
         console.error("Scheduling failed:", error);
@@ -1010,7 +987,7 @@ export default {
         url: meetLink,
         status: "CONFIRMED",
         busyStatus: "BUSY",
-        organizer: { name: "Eskan Admin", email: this.meetingData.adminEmail },
+        organizer: { name: "Eskan Admin", email: "eskan3040@gmail.com" },
         attendees: [
           {
             name: this.request.propertyContact?.name || "Property Owner",
@@ -1021,7 +998,7 @@ export default {
           },
           {
             name: "Eskan Admin",
-            email: this.meetingData.adminEmail,
+            email: "eskan3040@gmail.com",
             rsvp: true,
             partstat: "ACCEPTED",
             role: "CHAIR",

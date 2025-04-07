@@ -357,7 +357,7 @@ export default {
         status: "approved",
         approvedBy: userDetails.uid,
         isPaid: false,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+        expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days = 2 weeks
       };
 
       delete propertyData.id; // Remove request ID
