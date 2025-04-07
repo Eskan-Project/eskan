@@ -1,6 +1,6 @@
 <template>
   <header
-    class="fixed top-0 w-full transition-all px-2 sm:px-3 bg-creative z-20"
+    class="sticky top-0 w-full transition-all px-2 sm:px-3 bg-creative z-20"
   >
     <div class="container mx-auto">
       <div class="flex justify-between items-center">

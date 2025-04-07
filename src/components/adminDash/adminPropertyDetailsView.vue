@@ -276,19 +276,20 @@
 </template>
 
 <script>
-import L from "leaflet";
 import { nextTick } from "vue";
 import Swal from "sweetalert2";
 import { mapActions, mapState } from "vuex";
 import PropertyDetails from "../PropertyDetails.vue";
 import governorates from "@/assets/data/governorates.json";
 import cities from "@/assets/data/cities.json";
+import "leaflet/dist/leaflet.css";
+import { initializePropertyMap, geocodeLocation } from "@/services/mapService";
 
 export default {
   components: { PropertyDetails },
   data() {
     return {
-      id: null,
+      title: null,
       currentImageIndex: 0,
       userLocation: null,
       distance: null,
@@ -324,10 +325,10 @@ export default {
   },
   mounted() {
     // Safely get the ID from route params
-    this.id = this.$route?.params?.id;
+    this.title = this.$route?.params?.title;
 
-    if (!this.id) {
-      this.error = "Property ID is missing";
+    if (!this.title) {
+      this.error = "Property title is missing";
       this.loading = false;
       return;
     }
@@ -344,10 +345,10 @@ export default {
 
   // Use watch to handle route changes
   watch: {
-    "$route.params.id": {
-      handler(newId) {
-        if (newId && newId !== this.id) {
-          this.id = newId;
+    "$route.params.title": {
+      handler(newTitle) {
+        if (newTitle && newTitle !== this.title) {
+          this.title = newTitle;
           this.loadData();
         }
       },
@@ -386,7 +387,7 @@ export default {
         if (!result.isConfirmed) return;
 
         this.loading = true;
-        await this.deleteProperty(this.id);
+        await this.deleteProperty(this.title);
 
         await Swal.fire(
           "Deleted!",
@@ -465,7 +466,7 @@ export default {
           // If coordinates are invalid or in an unknown format, try to geocode from location text
           if (!lat || !lng) {
             console.log("Coordinates not in expected format, trying geocoding");
-            const coords = await this.geocodeLocation(this.locationText);
+            const coords = await geocodeLocation(this.locationText);
             if (coords) {
               lat = coords.lat;
               lng = coords.lon;
@@ -476,7 +477,7 @@ export default {
           }
         } else {
           console.log("No coordinates in property data, trying geocoding");
-          const coords = await this.geocodeLocation(this.locationText);
+          const coords = await geocodeLocation(this.locationText);
           if (coords) {
             lat = coords.lat;
             lng = coords.lon;
@@ -493,24 +494,17 @@ export default {
         }
 
         console.log("Initializing map with coordinates:", lat, lng);
-        this.mapInstance = L.map("map", { scrollWheelZoom: false }).setView(
-          [lat, lng],
-          13
+
+        // Use the map service instead of direct Leaflet implementation
+        const { map } = initializePropertyMap(
+          "map",
+          { lat, lng },
+          this.property.title || "Property",
+          this.locationText || "Unknown Location",
+          "red"
         );
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "© OpenStreetMap contributors",
-        }).addTo(this.mapInstance);
-
-        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(this.mapInstance)
-          .bindPopup(
-            `<b>${this.property.title || "Property"}</b><br>${
-              this.locationText || "Location"
-            }`
-          )
-          .openPopup();
-
+        this.mapInstance = map;
         console.log("Map initialization complete");
       } catch (error) {
         console.error("Map initialization error:", error);
@@ -519,17 +513,13 @@ export default {
         this.mapLoading = false;
       }
     },
+
+    // This method is no longer needed as it's available in mapService
     async geocodeLocation(locationText) {
-      console.log(locationText);
-      const locationParts = locationText.split("-");
-      const filteredLocation = locationParts.slice(0, 2).join(" ");
-      const query = encodeURIComponent(filteredLocation);
-      console.log(query);
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+      console.warn(
+        "Using deprecated local geocodeLocation. Consider using mapService.geocodeLocation instead"
       );
-      const data = await response.json();
-      return data.length > 0 ? data[0] : null;
+      return await geocodeLocation(locationText);
     },
 
     // Optimized data fetching
@@ -539,7 +529,7 @@ export default {
 
       try {
         this.error = null;
-        await this.getProperty(this.id);
+        await this.getProperty(this.title);
 
         if (!this.property) {
           throw new Error("Property not found");
@@ -595,24 +585,36 @@ export default {
           this.mapInstance = null;
         }
 
-        const { lat, lng } = this.property.coordinates;
+        let lat, lng;
 
-        // Create new map instance
-        this.mapInstance = L.map("map", {
-          scrollWheelZoom: false,
-          zIndex: 1, // Set lower z-index
-        }).setView([lat, lng], 13);
+        // Determine coordinates format
+        if (
+          "latitude" in this.property.coordinates &&
+          "longitude" in this.property.coordinates
+        ) {
+          lat = this.property.coordinates.latitude;
+          lng = this.property.coordinates.longitude;
+        } else if (
+          "lat" in this.property.coordinates &&
+          "lng" in this.property.coordinates
+        ) {
+          lat = this.property.coordinates.lat;
+          lng = this.property.coordinates.lng;
+        } else {
+          console.error("Invalid coordinates format");
+          return;
+        }
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(this.mapInstance);
+        // Use the map service instead of direct Leaflet
+        const { map } = initializePropertyMap(
+          "map",
+          { lat, lng },
+          this.property.title || "Property",
+          this.locationText || "Unknown Location",
+          "red"
+        );
 
-        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(this.mapInstance)
-          .bindPopup(`<b>${this.property.title}</b><br>${this.locationText}`)
-          .openPopup();
-
-        this.mapLoaded = true;
+        this.mapInstance = map;
       } catch (error) {
         console.error("Map initialization error:", error);
       } finally {
@@ -622,12 +624,10 @@ export default {
 
     // Method to get Custom Icon
     getCustomIcon(color) {
-      return L.icon({
-        iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
+      console.warn(
+        "getCustomIcon is deprecated, use mapService.getCustomIcon instead"
+      );
+      return {};
     },
     // Owner details methods
     toggleOwnerDetails() {

@@ -250,8 +250,6 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import uploadToCloudinary from "@/services/uploadToCloudinary";
-import { toast } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
 import { validateImage } from "@/services/imageValidationService";
 import Turnstile from "./Turnstile.vue";
 import AuthHeader from "./AuthHeader.vue";
@@ -320,19 +318,10 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["register", "loginWithGoogle"]),
+    ...mapActions("notifications", ["addNotification"]),
     googleLogin() {
       const role = this.isOwner ? "owner" : "user";
-      this.loginWithGoogle(role).then(() => {
-        if (!this.isOwner) {
-          toast.success(`Welcome! You have 3 free property views.`, {
-            position: "top-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-          });
-        }
-      });
+      this.loginWithGoogle(role);
     },
     handleTurnstileVerified(token) {
       this.captchaToken = token;
@@ -408,15 +397,7 @@ export default {
         };
 
         const result = await this.register(userData);
-        this.$router.push({ name: "Home" }).then(() => {
-          toast.success(result.message, {
-            position: "top-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-          });
-        });
+        this.$router.push({ name: "Home" });
       } catch (error) {
         if (error.code === "auth/email-already-in-use") {
           this.errors.server = this.$t("auth.register.validation.email_in_use");

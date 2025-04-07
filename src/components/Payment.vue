@@ -83,7 +83,7 @@
           </h2>
           <h4></h4>
           <p class="text-lg text-gray-700 mb-6 text-center">
-            {{ $t("payment.fee_description", { fee: "200EGP" }) }}
+            {{ $t("payment.details_fee_description") }}
           </p>
 
           <div class="space-y-6">
@@ -124,9 +124,7 @@
                 ></path>
               </svg>
               {{
-                loading
-                  ? $t("payment.processing")
-                  : $t("payment.pay_button", { fee: "$50" })
+                loading ? $t("payment.processing") : $t("payment.pay_button")
               }}
             </button>
 
@@ -240,12 +238,45 @@ export default {
     },
     async processPayment() {
       this.loading = true;
+      this.error = false;
+      this.message = "";
+
       try {
-        const paymentId = await this.handlePayment(this.property.id);
-        console.log(paymentId);
-        if (paymentId) {
+        // Step 1: Fetch Payment Intent from server
+        const response = await fetch(
+          "http://localhost:3001/create-payment-intent",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: 100, // Use property price
+              propertyId: this.property.id,
+            }),
+          }
+        );
+
+        const { clientSecret } = await response.json();
+        if (!clientSecret) throw new Error("Failed to create payment intent");
+
+        // Step 2: Confirm payment with Stripe
+        const { error, paymentIntent } = await this.stripe.confirmCardPayment(
+          clientSecret,
+          {
+            payment_method: {
+              card: this.card,
+            },
+          }
+        );
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        if (paymentIntent.status === "succeeded") {
+          // Step 3: Update Firestore only if payment succeeds
+          const paymentId = await this.handlePayment(this.property.id);
+          console.log(paymentId);
           this.success = true;
-          this.loading = false;
           this.redirecting = true;
           setTimeout(() => {
             this.redirecting = false;
@@ -255,6 +286,7 @@ export default {
       } catch (error) {
         this.message = error.message;
         this.error = true;
+      } finally {
         this.loading = false;
       }
     },

@@ -174,16 +174,24 @@ export default {
 
   async updateProperty(
     { commit, rootState },
-    { propertyId, updatedData, files = [] }
+    { title, updatedData, files = [] }
   ) {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = rootState.auth.userDetails;
       if (!currentUser?.uid) throw new Error("User not authenticated");
+      const propertiesSnapshot = await getDocs(collection(db, "properties"));
 
-      const propertyRef = doc(db, "properties", propertyId);
-      const propertyDoc = await getDoc(propertyRef);
-      if (!propertyDoc.exists()) throw new Error("Property not found");
+      const propertyDoc = propertiesSnapshot.docs.find((doc) => {
+        const data = doc.data();
+        return data.title && data.title.toLowerCase() === title.toLowerCase();
+      });
+      if (!propertyDoc) throw new Error("Property not found");
+
+      const property = {
+        id: propertyDoc.id,
+        ...propertyDoc.data(),
+      };
 
       const existingData = propertyDoc.data();
       if (
@@ -193,6 +201,9 @@ export default {
         throw new Error("Unauthorized to update this property");
       }
 
+      // Prepare document reference
+      const propertyRef = doc(db, "properties", property.id);
+
       let newImages = [];
       if (files.length) {
         newImages = await Promise.all(
@@ -200,13 +211,13 @@ export default {
             uploadToCloudinary(
               file,
               import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
-              `properties/${propertyId}`
+              `properties/${property.id}`
             )
           )
         );
       }
 
-      // Process contract image if exists and it's a data URL
+      // Process contract image
       let updatedDataClone = { ...updatedData };
       if (
         updatedData.propertyContact?.contract &&
@@ -219,15 +230,13 @@ export default {
           const contractImageUrl = await uploadToCloudinary(
             contractImage,
             import.meta.env.VITE_CLOUDINARY_UPLOAD_PROPERTY_PRESET,
-            `properties/${propertyId}/contracts`
+            `properties/${property.id}/contracts`
           );
 
-          // Create a deep copy and update contract with Cloudinary URL
           updatedDataClone = JSON.parse(JSON.stringify(updatedData));
           updatedDataClone.propertyContact.contract = contractImageUrl;
         } catch (error) {
           console.error("Error uploading contract image:", error);
-          // Continue even if contract upload fails
         }
       }
 
@@ -256,7 +265,10 @@ export default {
       };
 
       await updateDoc(propertyRef, finalData);
-      commit("updateFirebaseProperty", { propertyId, updatedData: finalData });
+      commit("updateFirebaseProperty", {
+        propertyId: property.id,
+        updatedData: finalData,
+      });
       return true;
     } catch (error) {
       console.error("Error updating property:", error);
@@ -266,26 +278,36 @@ export default {
     }
   },
 
-  async deleteProperty({ commit, rootState }, propertyId) {
+  async deleteProperty({ commit, rootState }, title) {
     commit("startLoading", null, { root: true });
     try {
       const currentUser = rootState.auth.userDetails;
       if (!currentUser?.uid) throw new Error("User not authenticated");
 
-      const propertyRef = doc(db, "properties", propertyId);
-      const propertyDoc = await getDoc(propertyRef);
-      if (!propertyDoc.exists()) throw new Error("Property not found");
+      const propertiesSnapshot = await getDocs(collection(db, "properties"));
+      const propertyDoc = propertiesSnapshot.docs.find((doc) => {
+        const data = doc.data();
+        return data.title && data.title.toLowerCase() === title.toLowerCase();
+      });
 
-      const propertyData = propertyDoc.data();
+      if (!propertyDoc) throw new Error("Property not found");
+
+      const property = {
+        id: propertyDoc.id,
+        ...propertyDoc.data(),
+      };
+
       if (
-        propertyData.ownerId !== currentUser.uid &&
+        property.ownerId !== currentUser.uid &&
         currentUser.role !== "admin"
       ) {
         throw new Error("Unauthorized to delete this property");
       }
 
+      const propertyRef = doc(db, "properties", property.id);
       await deleteDoc(propertyRef);
-      commit("deleteProperty", propertyId);
+
+      commit("deleteProperty", property.id);
       return true;
     } catch (error) {
       console.error("Error deleting property:", error);
@@ -315,6 +337,9 @@ export default {
         propertyId,
         amount: propertyData.price,
         userId: currentUser.uid,
+        userName: currentUser.name,
+        userEmail: currentUser.email,
+        userPhoto: currentUser.photo,
         createdAt: new Date(),
       };
       await Promise.all([
@@ -357,7 +382,7 @@ export default {
         status: "approved",
         approvedBy: userDetails.uid,
         isPaid: false,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+        expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days = 2 weeks
       };
 
       delete propertyData.id; // Remove request ID

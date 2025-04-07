@@ -39,12 +39,16 @@
 </template>
 
 <script>
-import L from "leaflet";
 import governoratesData from "@/assets/data/governorates.json";
 import citiesData from "@/assets/data/cities.json";
 import InputField from "../InputField.vue";
 import { mapState } from "vuex";
 import { reverseGeocode } from "@/services/geocodingService";
+import {
+  initializeMap,
+  updateMarkerPosition,
+  getUserGeolocation,
+} from "@/services/mapService";
 
 export default {
   components: {
@@ -122,18 +126,12 @@ export default {
         : [];
     },
     initMap() {
-      const { lat, lng } =
+      const coordinates =
         this.propertyDetails.coordinates || this.defaultCoordinates;
-      this.map = L.map("map", { scrollWheelZoom: false }).setView(
-        [lat, lng],
-        13
-      );
+      const { map, marker } = initializeMap("map", coordinates);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(this.map);
-
-      this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+      this.map = map;
+      this.marker = marker;
 
       this.marker.on("dragend", (e) => {
         const { lat, lng } = e.target.getLatLng();
@@ -141,9 +139,8 @@ export default {
       });
     },
     updateMarker(lat, lng) {
-      if (this.map) {
-        this.marker.setLatLng([lat, lng]);
-        this.map.setView([lat, lng], 13);
+      if (this.map && this.marker) {
+        updateMarkerPosition(this.map, this.marker, lat, lng);
       }
     },
     async updateLocation(lat, lng) {
@@ -157,24 +154,16 @@ export default {
       });
     },
     async getUserLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            this.updateMarker(lat, lng);
-            this.updateLocation(lat, lng);
-          },
-          (error) => {
-            console.error("Geolocation error:", error);
-            if (error.code === error.PERMISSION_DENIED) {
-              alert(this.$t("createProperty.validation.selectLocation"));
-            }
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-      } else {
-        console.log("Geolocation is not supported by your browser.");
+      try {
+        const { lat, lng } = await getUserGeolocation();
+        this.updateMarker(lat, lng);
+        this.updateLocation(lat, lng);
+      } catch (error) {
+        console.error("Geolocation error:", error);
+        if (error.code === 1) {
+          // Permission denied
+          alert(this.$t("createProperty.validation.selectLocation"));
+        }
       }
     },
   },

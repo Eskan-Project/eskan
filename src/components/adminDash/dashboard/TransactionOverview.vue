@@ -349,63 +349,79 @@ export default {
       ];
     },
     chartData() {
-      if (!this.filteredTransactions.length) return null;
+      if (!this.filteredTransactions.length && this.selectedPeriod !== "Weekly")
+        return null;
 
       const dataPoints = this.filteredTransactions
         .filter(
           (p) =>
-            p.timestamp?.seconds &&
-            !isNaN(p.timestamp.seconds) &&
+            p.createdAt?.seconds &&
+            !isNaN(p.createdAt.seconds) &&
             Number.isFinite(Number(p.amount))
         )
         .map((payment) => ({
-          x: new Date(payment.timestamp.seconds * 1000),
+          x: new Date(payment.createdAt.seconds * 1000),
           y: Math.floor(Number(payment.amount)),
         }));
 
-      if (!dataPoints.length) {
+      if (!dataPoints.length && this.selectedPeriod !== "Weekly") {
         console.warn("No valid payment data for chart");
         return null;
       }
 
-      const periodData = {};
-      if (this.selectedPeriod === "Weekly") {
-        // Get the last 7 days
-        const today = new Date();
-        today.setHours(23, 59, 59, 999); // End of today
-        const startDate = new Date(today);
-        startDate.setDate(today.getDate() - 6); // 7 days total
-        startDate.setHours(0, 0, 0, 0); // Start of the day
+      // Sort data points by date to ensure chronological order
+      dataPoints.sort((a, b) => a.x - b.x);
 
-        // Initialize periodData with the last 7 days
+      const periodData = {};
+      let labels = [];
+
+      if (this.selectedPeriod === "Weekly") {
+        // Get the start date (7 days ago)
+        const now = new Date();
+        const startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 6);
+        startDate.setHours(0, 0, 0, 0);
+
+        // Create an array of all 7 dates in the week
+        const weekDates = [];
         for (let i = 0; i < 7; i++) {
           const date = new Date(startDate);
           date.setDate(startDate.getDate() + i);
-          const dateKey = date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-          periodData[dateKey] = 0;
+          weekDates.push(date);
         }
 
-        // Aggregate data by date
+        // Format each date with our helper and initialize with zero
+        weekDates.forEach((date) => {
+          const dateKey = this.formatDateKey(date);
+          periodData[dateKey] = 0;
+          labels.push(dateKey);
+        });
+
+        // Process each transaction and add its amount to the correct day
         dataPoints.forEach((point) => {
-          const date = new Date(point.x);
-          const dateKey = date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          });
-          if (date >= startDate && date <= today) {
-            periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+          const dateKey = this.formatDateKey(point.x);
+
+          // Only add if the date is one of our week days
+          if (dateKey in periodData) {
+            periodData[dateKey] += point.y;
           }
         });
       } else if (this.selectedPeriod === "Monthly") {
         dataPoints.forEach((point) => {
           const date = new Date(point.x);
+          // Use year-month format for monthly view
           const dateKey = `${date.toLocaleString("en-US", {
             month: "short",
           })} ${date.getFullYear()}`;
           periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+          if (!labels.includes(dateKey)) labels.push(dateKey);
+        });
+
+        // Sort labels chronologically
+        labels.sort((a, b) => {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
+          return dateA - dateB;
         });
       } else {
         // Yearly
@@ -413,12 +429,15 @@ export default {
           const date = new Date(point.x);
           const dateKey = date.getFullYear().toString();
           periodData[dateKey] = (periodData[dateKey] || 0) + point.y;
+          if (!labels.includes(dateKey)) labels.push(dateKey);
         });
+
+        // Sort labels numerically for years
+        labels.sort((a, b) => parseInt(a) - parseInt(b));
       }
 
-      const labels = Object.keys(periodData);
-      const values = Object.values(periodData);
-      const maxAmount = Math.max(...values);
+      const values = labels.map((label) => periodData[label]);
+      const maxAmount = Math.max(...values, 1); // Ensure at least 1 to avoid division by zero
       const stepSize = this.calculateOptimalStepSize(maxAmount);
 
       return {
@@ -500,6 +519,37 @@ export default {
         timeout = setTimeout(() => func.apply(context, args), wait);
       };
     },
+    // Helper method to consistently format date keys
+    formatDateKey(date) {
+      // Ensure we're working with a Date object
+      const dateObj = date instanceof Date ? date : new Date(date);
+
+      // Make sure date is valid
+      if (isNaN(dateObj.getTime())) {
+        console.warn("Invalid date in formatDateKey:", date);
+        return "Invalid Date";
+      }
+
+      // Get month abbreviation in a cross-browser compatible way
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const monthStr = months[dateObj.getMonth()];
+
+      // Return formatted date as "MMM DD" (e.g., "Jan 15")
+      return `${monthStr} ${dateObj.getDate()}`;
+    },
     async fetchTransactions() {
       try {
         const cached = localStorage.getItem("paymentsCache");
@@ -544,7 +594,7 @@ export default {
 
       if (this.selectedPeriod === "Weekly") {
         startDate = new Date(now);
-        startDate.setDate(now.getDate() - 6); // Last 7 days
+        startDate.setDate(startDate.getDate() - 6); // Last 7 days
         startDate.setHours(0, 0, 0, 0); // Start of the first day
       } else if (this.selectedPeriod === "Monthly") {
         startDate = new Date(now.setMonth(now.getMonth() - 1));
@@ -552,10 +602,39 @@ export default {
         startDate = new Date(now.setFullYear(now.getFullYear() - 1));
       }
 
+      console.log(
+        `Filtering for period: ${
+          this.selectedPeriod
+        }, start date: ${startDate.toISOString()}`
+      );
+      console.log(`Before filtering: ${this.transactions.length} transactions`);
+
       this.filteredTransactions = this.transactions.filter((t) => {
         const txDate = new Date(t.timestamp.seconds * 1000);
         return txDate >= startDate;
       });
+
+      console.log(
+        `After filtering: ${this.filteredTransactions.length} transactions`
+      );
+
+      // Debug: Log transaction dates in weekly view
+      if (this.selectedPeriod === "Weekly") {
+        const dateGroups = {};
+        this.filteredTransactions.forEach((t) => {
+          const txDate = new Date(t.timestamp.seconds * 1000);
+          const dateKey = this.formatDateKey(txDate);
+          if (!dateGroups[dateKey]) {
+            dateGroups[dateKey] = [];
+          }
+          dateGroups[dateKey].push({
+            id: t.id,
+            amount: t.amount,
+            date: txDate.toISOString(),
+          });
+        });
+        console.log("Transactions by day:", dateGroups);
+      }
     },
     setupRealtimeListener() {
       this.loading = true;
@@ -617,6 +696,39 @@ export default {
       this.isRendering = false;
       this.renderPending = false;
     },
+    // Debug utility to add sample data for the past 7 days
+    addDebugSampleData() {
+      // Create sample data for each day of the past week
+      const now = new Date();
+      const tempTransactions = [...this.transactions]; // Create a copy
+
+      // Add one transaction per day for the past 7 days
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        date.setHours(12, 0, 0, 0); // Set to noon
+
+        const sampleTransaction = {
+          id: `sample-${i}`,
+          amount: 1000 + i * 500, // Different amount for each day
+          timestamp: { seconds: Math.floor(date.getTime() / 1000) },
+          status: "Completed",
+          userId: "sample-user",
+          propertyId: "sample-property",
+          paymentMethod: "Credit Card",
+        };
+
+        tempTransactions.push(sampleTransaction);
+      }
+
+      // Use the temporary data
+      this.transactions = tempTransactions;
+      this.filterTransactionsByPeriod();
+
+      // Refresh the chart
+      this.renderChart();
+      console.log("Added sample data for debugging");
+    },
     createGradient(ctx, chartArea) {
       if (this.chartType !== "line") return "rgba(79, 70, 229, 0.6)";
       const gradient = ctx.createLinearGradient(
@@ -646,17 +758,30 @@ export default {
       this.chartLock = true;
 
       try {
+        // Wait for next tick and ensure canvas is mounted
         await nextTick();
+
+        // Add a small delay to ensure DOM is fully updated
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         // Clean up existing chart first
         this.cleanupChart();
 
         // Get canvas after cleanup
         const canvas = this.$refs.chartCanvas;
-        if (!canvas || !document.body.contains(canvas)) {
-          console.warn(
-            "Canvas element not found or not in DOM, deferring chart render"
-          );
+        if (!canvas) {
+          console.warn("Canvas element not found, deferring chart render");
+          this.renderPending = true;
+          this.renderTimeout = setTimeout(() => {
+            this.chartLock = false;
+            this.renderChart();
+          }, 200);
+          return;
+        }
+
+        // Ensure canvas is in DOM
+        if (!document.body.contains(canvas)) {
+          console.warn("Canvas element not in DOM, deferring chart render");
           this.renderPending = true;
           this.renderTimeout = setTimeout(() => {
             this.chartLock = false;

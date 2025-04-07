@@ -32,7 +32,11 @@
                     v-model="propertyData.title"
                     type="text"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.title }"
                   />
+                  <p v-if="formErrors.title" class="mt-1 text-sm text-red-500">
+                    {{ formErrors.title }}
+                  </p>
                 </div>
 
                 <div>
@@ -41,10 +45,15 @@
                     >Price</label
                   >
                   <input
-                    v-model="propertyData.price"
+                    v-model.number="propertyData.price"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.price }"
                   />
+                  <p v-if="formErrors.price" class="mt-1 text-sm text-red-500">
+                    {{ formErrors.price }}
+                  </p>
                 </div>
 
                 <!-- Similar changes for other input fields -->
@@ -54,7 +63,7 @@
                     >Floor Location</label
                   >
                   <input
-                    v-model="propertyData.floor"
+                    v-model.number="propertyData.floor"
                     type="number"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
@@ -66,10 +75,15 @@
                     >Area (m²)</label
                   >
                   <input
-                    v-model="propertyData.area"
+                    v-model.number="propertyData.area"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.area }"
                   />
+                  <p v-if="formErrors.area" class="mt-1 text-sm text-red-500">
+                    {{ formErrors.area }}
+                  </p>
                 </div>
               </div>
 
@@ -95,8 +109,9 @@
                     >Rooms</label
                   >
                   <input
-                    v-model="propertyData.rooms"
+                    v-model.number="propertyData.rooms"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
@@ -108,8 +123,9 @@
                     >Living Rooms</label
                   >
                   <input
-                    v-model="propertyData.livingRooms"
+                    v-model.number="propertyData.livingRooms"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
@@ -120,8 +136,9 @@
                     >Bathrooms</label
                   >
                   <input
-                    v-model="propertyData.bathrooms"
+                    v-model.number="propertyData.bathrooms"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
@@ -132,8 +149,9 @@
                     >Kitchens</label
                   >
                   <input
-                    v-model="propertyData.kitchens"
+                    v-model.number="propertyData.kitchens"
                     type="number"
+                    min="0"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   />
                 </div>
@@ -149,10 +167,18 @@
                   <select
                     v-model="propertyData.propertyStatus"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.propertyStatus }"
                   >
-                    <option value="for-sale">For Sale</option>
-                    <option value="for-rent">For Rent</option>
+                    <option value="new">New</option>
+                    <option value="second-hand">Second Hand</option>
+                    <option value="renovated">Renovated</option>
                   </select>
+                  <p
+                    v-if="formErrors.propertyStatus"
+                    class="mt-1 text-sm text-red-500"
+                  >
+                    {{ formErrors.propertyStatus }}
+                  </p>
                 </div>
 
                 <div>
@@ -164,8 +190,8 @@
                     v-model="propertyData.furnished"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
                   >
-                    <option :value="true">Yes</option>
-                    <option :value="false">No</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
                   </select>
                 </div>
               </div>
@@ -180,6 +206,7 @@
                   <select
                     v-model="propertyData.governorate"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.governorate }"
                   >
                     <option
                       v-for="gov in governorates"
@@ -189,6 +216,12 @@
                       {{ gov.governorate_name_en }}
                     </option>
                   </select>
+                  <p
+                    v-if="formErrors.governorate"
+                    class="mt-1 text-sm text-red-500"
+                  >
+                    {{ formErrors.governorate }}
+                  </p>
                 </div>
 
                 <div>
@@ -199,6 +232,7 @@
                   <select
                     v-model="propertyData.city"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.city }"
                   >
                     <option
                       v-for="city in filteredCities"
@@ -208,6 +242,9 @@
                       {{ city.city_name_en }}
                     </option>
                   </select>
+                  <p v-if="formErrors.city" class="mt-1 text-sm text-red-500">
+                    {{ formErrors.city }}
+                  </p>
                 </div>
 
                 <div>
@@ -234,7 +271,14 @@
                     v-model="propertyData.propertyContact.name"
                     type="text"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.contact_name }"
                   />
+                  <p
+                    v-if="formErrors.contact_name"
+                    class="mt-1 text-sm text-red-500"
+                  >
+                    {{ formErrors.contact_name }}
+                  </p>
                 </div>
 
                 <div>
@@ -246,7 +290,14 @@
                     v-model="propertyData.propertyContact.phone"
                     type="tel"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.contact_phone }"
                   />
+                  <p
+                    v-if="formErrors.contact_phone"
+                    class="mt-1 text-sm text-red-500"
+                  >
+                    {{ formErrors.contact_phone }}
+                  </p>
                 </div>
 
                 <div>
@@ -258,7 +309,14 @@
                     v-model="propertyData.propertyContact.email"
                     type="email"
                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:text-white dark:bg-gray-700"
+                    :class="{ 'border-red-500': formErrors.contact_email }"
                   />
+                  <p
+                    v-if="formErrors.contact_email"
+                    class="mt-1 text-sm text-red-500"
+                  >
+                    {{ formErrors.contact_email }}
+                  </p>
                 </div>
               </div>
 
@@ -319,38 +377,54 @@
 
               <!-- Images -->
               <div class="mt-6">
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >Add New Images</label
-                >
-                <input
-                  type="file"
-                  multiple
-                  @change="handleImageChange"
-                  accept="image/*"
-                  class="mt-1 block w-full dark:text-gray-300 dark:file:bg-gray-700 dark:file:text-white dark:file:border-gray-600 dark:hover:file:bg-gray-600"
-                />
-
+                <div class="flex items-center gap-2">
+                  <label
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Add New Images
+                  </label>
+                  <label for="imageUpload" class="cursor-pointer">
+                    <i
+                      class="bi bi-plus-circle-fill text-2xl text-blue-600"
+                    ></i>
+                  </label>
+                  <input
+                    id="imageUpload"
+                    type="file"
+                    multiple
+                    @change="handleImageChange"
+                    accept="image/*"
+                    class="hidden"
+                  />
+                </div>
                 <!-- Existing Images Preview -->
                 <div
                   v-if="propertyData.images && propertyData.images.length"
-                  class="grid grid-cols-4 gap-4 mt-4"
+                  class="mt-4"
                 >
-                  <div
-                    v-for="(img, index) in propertyData.images"
-                    :key="index"
-                    class="relative"
+                  <p
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
-                    <img
-                      :src="img"
-                      class="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      @click="removeImage(index)"
-                      class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                    Existing Images:
+                  </p>
+                  <div class="grid grid-cols-4 gap-4">
+                    <div
+                      v-for="(img, index) in propertyData.images"
+                      :key="`existing-${index}`"
+                      class="relative"
                     >
-                      ✕
-                    </button>
+                      <img
+                        :src="img"
+                        class="w-full h-24 object-cover rounded-lg"
+                      />
+                      <button
+                        @click="removeImage(index)"
+                        class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -389,9 +463,10 @@ export default {
   data() {
     return {
       loading: true,
-      propertyId: this.$route.params.id,
+      title: this.$route.params.title,
       contractImage: null,
       contractError: null,
+      formErrors: {},
       propertyData: {
         title: "",
         description: "",
@@ -411,6 +486,7 @@ export default {
           name: "",
           phone: "",
           email: "",
+          contract: "",
         },
         images: [],
       },
@@ -432,7 +508,7 @@ export default {
 
   async created() {
     try {
-      await this.getProperty(this.propertyId);
+      await this.getProperty(this.title);
       this.propertyData = { ...this.property };
 
       // Set contract image if available
@@ -451,6 +527,59 @@ export default {
 
     async handleSubmit() {
       try {
+        // Reset form errors
+        this.formErrors = {};
+
+        // Validate required fields
+        const requiredFields = [
+          "title",
+          "price",
+          "area",
+          "propertyStatus",
+          "governorate",
+          "city",
+        ];
+        let hasErrors = false;
+
+        requiredFields.forEach((field) => {
+          if (!this.propertyData[field]) {
+            this.formErrors[field] = `${
+              field.charAt(0).toUpperCase() + field.slice(1)
+            } is required`;
+            hasErrors = true;
+          }
+        });
+
+        // Validate contact information
+        const contactFields = ["name", "phone"];
+        contactFields.forEach((field) => {
+          if (!this.propertyData.propertyContact[field]) {
+            this.formErrors[
+              `contact_${field}`
+            ] = `Contact ${field} is required`;
+            hasErrors = true;
+          }
+        });
+
+        // Validate email format if provided
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (
+          this.propertyData.propertyContact.email &&
+          !emailRegex.test(this.propertyData.propertyContact.email)
+        ) {
+          this.formErrors.contact_email = "Please enter a valid email address";
+          hasErrors = true;
+        }
+
+        if (hasErrors) {
+          Swal.fire(
+            "Validation Error",
+            "Please fix the errors in the form",
+            "error"
+          );
+          return;
+        }
+
         const result = await Swal.fire({
           title: "Are you sure?",
           text: "Your edits will be saved",
@@ -465,20 +594,11 @@ export default {
 
         this.loading = true;
 
-        // Convert numeric strings to numbers
-        const cleanedData = {
-          ...this.propertyData,
-          price: Number(this.propertyData.price),
-          floor: Number(this.propertyData.floor),
-          area: Number(this.propertyData.area),
-          rooms: Number(this.propertyData.rooms),
-          livingRooms: Number(this.propertyData.livingRooms),
-          bathrooms: Number(this.propertyData.bathrooms),
-          kitchens: Number(this.propertyData.kitchens),
-        };
+        // Using v-model.number so manual conversion is not needed
+        const cleanedData = { ...this.propertyData };
 
         await this.updateProperty({
-          propertyId: this.propertyId,
+          title: this.title,
           updatedData: cleanedData,
           files: this.newImages,
         });
@@ -489,7 +609,7 @@ export default {
           "success"
         );
 
-        this.$router.push(`/admin/properties/${this.propertyId}`);
+        this.$router.push(`/admin/properties/${this.title}`);
       } catch (error) {
         console.error("Error updating property:", error);
         Swal.fire(
@@ -504,16 +624,12 @@ export default {
 
     async handleImageChange(event) {
       const files = Array.from(event.target.files);
-      this.newImages = files; // Store the actual files
-
-      // Clear previous preview images
-      this.uploadedNewImages = [];
 
       // Generate previews
       files.forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.uploadedNewImages.push(e.target.result);
+          this.propertyData.images.push(e.target.result);
         };
         reader.readAsDataURL(file);
       });
@@ -521,6 +637,11 @@ export default {
 
     removeImage(index) {
       this.propertyData.images.splice(index, 1);
+    },
+
+    removeNewImage(index) {
+      this.uploadedNewImages.splice(index, 1);
+      this.newImages.splice(index, 1);
     },
 
     handleContractUpload(event) {

@@ -163,7 +163,10 @@
               property.propertyContact.email
             }}</span>
           </p>
-          <p class="flex flex-col items-center space-y-1">
+          <p
+            class="flex flex-col items-center space-y-1"
+            v-if="property.address"
+          >
             <span class="font-semibold dark:text-white"
               >{{ $t("propertyDetails.address") }}:</span
             >
