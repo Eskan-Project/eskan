@@ -1,24 +1,26 @@
 <template>
-  <!-- Template remains unchanged -->
-  <div class="p-5 h-full">
+  <!-- Template with mobile optimizations -->
+  <div class="p-3 sm:p-5 h-full">
     <div
-      class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4"
     >
       <h3
-        class="text-xl font-semibold text-gray-800 dark:text-white flex items-center"
+        class="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white flex items-center"
       >
         <span class="inline-block w-1.5 h-6 bg-indigo-500 mr-3 rounded"></span>
         Transactions Overview
       </h3>
 
-      <div class="flex items-center gap-3 flex-wrap">
-        <div class="flex space-x-2">
+      <div class="flex items-center gap-2 sm:gap-3 flex-wrap w-full sm:w-auto">
+        <div
+          class="flex space-x-1 sm:space-x-2 overflow-x-auto hide-scrollbar w-full sm:w-auto"
+        >
           <button
             v-for="period in periods"
             :key="period"
             @click="selectedPeriod = period"
             :class="[
-              'px-4 py-2 text-sm rounded-md transition-all duration-200',
+              'px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-md transition-all duration-200 whitespace-nowrap flex-shrink-0',
               selectedPeriod === period
                 ? 'bg-indigo-600 text-white shadow-md'
                 : 'bg-white text-gray-600 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700',
@@ -30,7 +32,7 @@
         </div>
         <button
           @click="exportToCSV"
-          class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
           title="Export to CSV"
           aria-label="Export transactions to CSV"
         >
@@ -146,39 +148,39 @@
 
     <div v-else class="chart-wrapper">
       <div
-        class="stats-summary grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"
+        class="stats-summary grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6"
       >
         <div
           v-for="(stat, index) in stats"
           :key="index"
-          class="stat-card group relative bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700 hover:shadow-md transition-all duration-200"
+          class="stat-card group relative bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm dark:shadow-gray-700 hover:shadow-md transition-all duration-200"
         >
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+          <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">
             {{ stat.label }}
           </p>
-          <p class="text-2xl font-semibold" :class="stat.color">
+          <p class="text-xl sm:text-2xl font-semibold" :class="stat.color">
             {{ stat.value }}
           </p>
           <div
-            class="absolute invisible group-hover:visible top-full mt-2 bg-gray-800 text-white text-xs rounded py-1 px-2 z-10"
+            class="absolute hidden group-hover:block top-full mt-2 bg-gray-800 text-white text-xs rounded py-1 px-2 z-10"
           >
             {{ stat.tooltip }}
           </div>
         </div>
       </div>
 
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-        <div class="flex justify-end items-center mb-3">
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm">
+        <div class="flex justify-end items-center mb-2 sm:mb-3">
           <select
             v-model="chartType"
-            class="text-sm bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-1 border-none focus:ring-2 focus:ring-indigo-500"
+            class="text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 rounded-md px-2 sm:px-3 py-1 border-none focus:ring-2 focus:ring-indigo-500"
             aria-label="Select chart type"
           >
             <option value="bar">Bar Chart</option>
             <option value="line">Line Chart</option>
           </select>
         </div>
-        <div id="chart-container" class="w-full h-[350px]">
+        <div id="chart-container" class="w-full h-[280px] sm:h-[350px]">
           <canvas
             ref="chartCanvas"
             class="w-full h-full"
@@ -186,7 +188,7 @@
           ></canvas>
         </div>
       </div>
-      <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+      <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-2">
         Last updated: {{ lastUpdated }}
       </p>
     </div>
@@ -320,6 +322,7 @@ export default {
       },
       chartLock: false,
       themeObserver: null,
+      isMobile: false,
     };
   },
   computed: {
@@ -444,6 +447,23 @@ export default {
   },
   mounted() {
     this.setupRealtimeListener();
+
+    // Initial mobile detection
+    this.isMobile = window.innerWidth < 768;
+
+    // Improved resize handler with debounce
+    this.handleResize = this.debounce(() => {
+      const wasMobile = this.isMobile;
+      this.isMobile = window.innerWidth < 768;
+
+      // Only rerender if mobile state changed or chart needs resizing
+      if (wasMobile !== this.isMobile) {
+        this.rerenderChart();
+      } else if (this.chart) {
+        this.chart.resize();
+      }
+    }, 250);
+
     window.addEventListener("resize", this.handleResize);
 
     // Add theme change detection
@@ -471,6 +491,15 @@ export default {
     }
   },
   methods: {
+    // Add debounce utility method
+    debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    },
     async fetchTransactions() {
       try {
         const cached = localStorage.getItem("paymentsCache");
@@ -571,11 +600,6 @@ export default {
           ? "You don't have permission to access this data. Contact your administrator."
           : err.message || "Failed to load payments. Please try again.";
     },
-    handleResize() {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    },
     cleanupChart() {
       if (this.renderTimeout) {
         clearTimeout(this.renderTimeout);
@@ -653,7 +677,14 @@ export default {
         const maxLabelLength = Math.max(
           ...this.chartData.labels.map((l) => l.length)
         );
-        const rotation = dataLength > 12 || maxLabelLength > 10 ? 45 : 0;
+        // Determine if we're on a mobile device
+        const isMobile = window.innerWidth < 768;
+        // Adjust rotation and display based on screen size
+        const rotation = isMobile
+          ? 60
+          : dataLength > 12 || maxLabelLength > 10
+          ? 45
+          : 0;
         const isDarkMode = document.documentElement.classList.contains("dark");
 
         this.chartData.datasets[0].backgroundColor = (context) => {
@@ -671,8 +702,16 @@ export default {
             responsive: true,
             maintainAspectRatio: false,
             animation: {
-              duration: 1000,
+              duration: isMobile ? 600 : 1000, // Faster animations on mobile
               easing: "easeOutQuart",
+            },
+            layout: {
+              padding: {
+                left: isMobile ? 0 : 10,
+                right: isMobile ? 0 : 10,
+                top: 10,
+                bottom: isMobile ? 15 : 10,
+              },
             },
             scales: {
               y: {
@@ -686,7 +725,7 @@ export default {
                   drawTicks: false,
                 },
                 title: {
-                  display: true,
+                  display: !isMobile, // Hide title on mobile
                   text: "Amount (EGP)",
                   color: isDarkMode
                     ? "rgba(229, 231, 235, 0.8)"
@@ -695,14 +734,20 @@ export default {
                 },
                 ticks: {
                   callback: (value) =>
-                    `EGP ${value.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}`,
+                    isMobile
+                      ? `${(value / 1000).toFixed(0)}k` // Shorter format on mobile
+                      : `EGP ${value.toLocaleString("en-US", {
+                          maximumFractionDigits: 0,
+                        })}`,
                   stepSize: stepSize,
                   color: isDarkMode
                     ? "rgba(229, 231, 235, 0.7)"
                     : "rgba(0, 0, 0, 0.6)",
-                  padding: 10,
+                  padding: isMobile ? 5 : 10,
+                  font: {
+                    size: isMobile ? 10 : 12,
+                  },
+                  maxTicksLimit: isMobile ? 5 : 8, // Fewer ticks on mobile
                 },
               },
               x: {
@@ -713,7 +758,7 @@ export default {
                     : "rgba(0, 0, 0, 0.05)",
                 },
                 title: {
-                  display: true,
+                  display: !isMobile, // Hide title on mobile
                   text: this.selectedPeriod,
                   color: isDarkMode
                     ? "rgba(229, 231, 235, 0.8)"
@@ -721,39 +766,55 @@ export default {
                   font: { size: 12, weight: "500" },
                 },
                 ticks: {
-                  autoSkip: false, // Show all days
-                  maxTicksLimit: this.selectedPeriod === "Weekly" ? 7 : 10,
+                  autoSkip: true, // Allow skipping on mobile
+                  maxTicksLimit: isMobile
+                    ? this.selectedPeriod === "Weekly"
+                      ? 3
+                      : 5
+                    : this.selectedPeriod === "Weekly"
+                    ? 7
+                    : 10,
                   maxRotation: rotation,
                   minRotation: rotation,
                   color: isDarkMode
                     ? "rgba(229, 231, 235, 0.7)"
                     : "rgba(0, 0, 0, 0.6)",
-                  padding: 10,
+                  padding: isMobile ? 5 : 10,
+                  font: {
+                    size: isMobile ? 10 : 12,
+                  },
                 },
               },
             },
             plugins: {
               legend: { display: false },
               tooltip: {
+                enabled: true,
                 backgroundColor: isDarkMode
                   ? "rgba(17, 24, 39, 0.9)"
                   : "rgba(0, 0, 0, 0.85)",
-                padding: 12,
+                padding: isMobile ? 8 : 12,
                 cornerRadius: 8,
-                bodyFont: { size: 12 },
-                titleFont: { size: 14, weight: "bold" },
+                bodyFont: { size: isMobile ? 11 : 12 },
+                titleFont: { size: isMobile ? 12 : 14, weight: "bold" },
                 titleColor: "rgba(255, 255, 255, 0.95)",
                 bodyColor: "rgba(255, 255, 255, 0.9)",
+                displayColors: false, // Hide color boxes in tooltip
                 callbacks: {
                   label: (context) => {
                     const value = Math.floor(context.raw);
-                    const prevValue =
-                      context.dataset.data[context.dataIndex - 1] || 0;
-                    const diff = value - prevValue;
-                    const trend = diff > 0 ? "↑" : diff < 0 ? "↓" : "→";
-                    return `EGP ${value.toLocaleString()} (${trend} ${Math.abs(
-                      diff
-                    ).toLocaleString()})`;
+                    if (isMobile) {
+                      // Simpler tooltip for mobile
+                      return `EGP ${value.toLocaleString()}`;
+                    } else {
+                      const prevValue =
+                        context.dataset.data[context.dataIndex - 1] || 0;
+                      const diff = value - prevValue;
+                      const trend = diff > 0 ? "↑" : diff < 0 ? "↓" : "→";
+                      return `EGP ${value.toLocaleString()} (${trend} ${Math.abs(
+                        diff
+                      ).toLocaleString()})`;
+                    }
                   },
                   title: (tooltipItems) => tooltipItems[0].label,
                 },
@@ -761,7 +822,7 @@ export default {
             },
             hover: {
               mode: "nearest",
-              intersect: true,
+              intersect: false, // Easier to interact on mobile
               animationDuration: 200,
             },
           },
@@ -1060,9 +1121,39 @@ export default {
   transform: translateY(-3px);
 }
 
+/* Mobile optimizations */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Touch-friendly targets for mobile */
 @media (max-width: 640px) {
   .stats-summary {
     grid-template-columns: 1fr;
+  }
+
+  /* Increase touch targets for mobile */
+  button,
+  select {
+    min-height: 44px;
+  }
+
+  /* Optimize chart padding for small screens */
+  #chart-container {
+    margin: 0 -8px;
+  }
+}
+
+/* Make sure tooltips are visible on touch devices */
+@media (hover: none) {
+  .stat-card .group-hover\:visible {
+    visibility: visible;
+    opacity: 0.9;
   }
 }
 </style>
