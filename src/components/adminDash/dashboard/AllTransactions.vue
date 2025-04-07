@@ -154,13 +154,7 @@
 </template>
 
 <script>
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 async function getPayments() {
@@ -173,28 +167,6 @@ async function getPayments() {
     });
   });
   return payments;
-}
-
-async function getUserDetails(userId) {
-  if (!userId) return null;
-  try {
-    const ownerRef = doc(db, "owners", userId);
-    const ownerSnap = await getDoc(ownerRef);
-    if (ownerSnap.exists()) {
-      return ownerSnap.data();
-    }
-
-    const userRef = doc(db, "users", userId);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-      return userSnap.data();
-    }
-
-    return null;
-  } catch (error) {
-    console.error(`Error fetching user (${userId}):`, error);
-    return null;
-  }
 }
 
 export default {
@@ -211,13 +183,9 @@ export default {
       return this.payments
         .slice()
         .sort((a, b) => {
-          const dateA = a.timestamp?.seconds
-            ? a.timestamp.seconds * 1000
-            : Date.now();
-          const dateB = b.timestamp?.seconds
-            ? b.timestamp.seconds * 1000
-            : Date.now();
-          return dateB - dateA; // Newest first
+          const dateA = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : 0;
+          const dateB = b.timestamp?.seconds ? b.timestamp.seconds * 1000 : 0;
+          return dateB - dateA; // Sort by newest first
         })
         .slice(0, 10); // Limit to 10 most recent
     },
@@ -257,16 +225,15 @@ export default {
         const payments = await getPayments();
         const enrichedPayments = await Promise.all(
           payments.map(async (payment) => {
-            const user = payment.userId
-              ? await getUserDetails(payment.userId)
-              : null;
             return {
               ...payment,
-              userName: user?.name,
-              userEmail: user?.email,
-              userPhoto: user?.photo,
+              userName: payment.userName || "Unknown User",
+              userEmail: payment.userEmail || "No email",
+              userPhoto: payment.userPhoto || null,
               amount: Number(payment.amount) || 0,
-              timestamp: payment.timestamp || { seconds: Date.now() / 1000 },
+              // Use createdAt if it exists, otherwise fallback to current time
+              timestamp: payment.createdAt ||
+                payment.timestamp || { seconds: Date.now() / 1000 },
             };
           })
         );

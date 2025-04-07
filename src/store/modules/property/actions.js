@@ -315,6 +315,9 @@ export default {
         propertyId,
         amount: propertyData.price,
         userId: currentUser.uid,
+        userName: currentUser.name,
+        userEmail: currentUser.email,
+        userPhoto: currentUser.photo,
         createdAt: new Date(),
       };
       await Promise.all([

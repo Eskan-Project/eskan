@@ -791,6 +791,8 @@ export default {
           `,
           icon: "success",
           confirmButtonText: "OK",
+        }).then(() => {
+          this.$router.push("/admin/requests");
         });
 
         // Reset form and hide it

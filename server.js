@@ -38,11 +38,20 @@ if (!admin.apps.length) {
 }
 app.post("/create-payment-intent", async (req, res) => {
   try {
+    const { amount, propertyId } = req.body; // Accept amount and propertyId from frontend
+    if (!amount || !propertyId) {
+      return res
+        .status(400)
+        .send({ error: "Amount and propertyId are required" });
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 5000,
+      amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
       payment_method_types: ["card"],
+      metadata: { propertyId }, // Optional: track property in Stripe
     });
+
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     res.status(500).send({ error: error.message });

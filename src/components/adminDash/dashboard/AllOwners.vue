@@ -137,7 +137,7 @@ export default {
   },
   async mounted() {
     window.addEventListener("resize", this.updateWindowWidth);
-    if (this.properties.length > 0) {
+    if (this.properties.length > 0 || this.pendingRequests.length > 0) {
       await nextTick();
       this.renderChart();
     }
@@ -156,7 +156,11 @@ export default {
       try {
         this.properties = await this.getProperties();
         this.pendingRequests = await this.getRequests();
-        console.log(this.pendingRequests);
+        console.log("Pending Requests:", this.pendingRequests);
+        console.log(
+          "Unpaid Properties:",
+          this.properties.filter((property) => property.isPaid === false)
+        );
       } catch (error) {
         console.error("Fetch owners error:", error);
       } finally {
@@ -190,9 +194,10 @@ export default {
         this.chart = new Chart(ctx, {
           type: "doughnut",
           data: {
+            labels: ["Unpaid", "Pending"], // Added for clarity (though legend is disabled)
             datasets: [
               {
-                data: [this.unpaidCount, this.pendingCount],
+                data: [this.unpaidCount, this.pendingRequests.length],
                 backgroundColor: ["#8B5CF6", "#E5E7EB"],
                 borderWidth: 0,
               },
@@ -204,10 +209,17 @@ export default {
             cutout: "75%",
             plugins: {
               legend: {
-                display: false,
+                display: false, // Set to true if you want to debug with labels
               },
               tooltip: {
-                enabled: false,
+                enabled: true, // Enable tooltips to verify data
+                callbacks: {
+                  label: (context) => {
+                    const label = context.label || "";
+                    const value = context.raw || 0;
+                    return `${label}: ${value}`;
+                  },
+                },
               },
             },
             animation: {
@@ -221,9 +233,8 @@ export default {
       }
     },
     getStatusMessage() {
-      const percentage = Math.round(
-        (this.unpaidCount / this.properties.length) * 100
-      );
+      const total = this.properties.length || 1; // Avoid division by zero
+      const percentage = Math.round((this.unpaidCount / total) * 100);
       if (percentage < 50) return "Many properties pending payment";
       if (percentage < 80) return "Payment process in progress";
       return "Most properties need payment";
@@ -236,8 +247,20 @@ export default {
           this.chart.destroy();
           this.chart = null;
         }
-
-        if (this.properties.length > 0) {
+        if (this.properties.length > 0 || this.pendingRequests.length > 0) {
+          await nextTick();
+          this.renderChart();
+        }
+      },
+      deep: true,
+    },
+    pendingRequests: {
+      async handler() {
+        if (this.chart) {
+          this.chart.destroy();
+          this.chart = null;
+        }
+        if (this.properties.length > 0 || this.pendingRequests.length > 0) {
           await nextTick();
           this.renderChart();
         }
