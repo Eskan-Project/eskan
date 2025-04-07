@@ -96,7 +96,8 @@
               class="h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"
             ></span>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              Pending: <span class="font-medium">{{ pendingCount }}</span>
+              Pending:
+              <span class="font-medium">{{ pendingRequests.length }}</span>
             </p>
           </div>
         </div>
@@ -118,20 +119,17 @@ export default {
       isLoading: false,
       isStacked: window.innerWidth <= 1225,
       properties: [],
+      pendingRequests: [],
     };
   },
   computed: {
     requests() {
-      return this.unpaidCount + this.pendingCount;
+      return this.unpaidCount + this.pendingRequests.length;
     },
     unpaidCount() {
       return Math.round(
         this.properties.filter((property) => property.isPaid === false).length
-      ); // Simulated data
-    },
-    pendingCount() {
-      return this.properties.filter((property) => property.status === "pending")
-        .length;
+      );
     },
   },
   async created() {
@@ -139,7 +137,6 @@ export default {
   },
   async mounted() {
     window.addEventListener("resize", this.updateWindowWidth);
-
     if (this.properties.length > 0) {
       await nextTick();
       this.renderChart();
@@ -153,10 +150,13 @@ export default {
   },
   methods: {
     ...mapActions("property", ["getProperties"]),
+    ...mapActions("requests", ["getRequests"]),
     async refreshData() {
       this.isLoading = true;
       try {
         this.properties = await this.getProperties();
+        this.pendingRequests = await this.getRequests();
+        console.log(this.pendingRequests);
       } catch (error) {
         console.error("Fetch owners error:", error);
       } finally {
