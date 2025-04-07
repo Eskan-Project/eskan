@@ -84,11 +84,9 @@ export default {
   methods: {
     ...mapActions(["startLoading", "stopLoading"]),
     canToggleStep(index) {
-      // Allow toggling if not completed and within maxSteps, or if it's the last step
-      return (
-        (!this.isCompleted && index <= this.maxSteps) ||
-        index === this.steps.length - 1
-      );
+      // Only allow clicking on steps that are less than or equal to maxSteps
+      // Remove the special case for the last step (completed)
+      return !this.isCompleted && index <= this.maxSteps;
     },
     isStepActiveOrCompleted(index) {
       // Highlight step if it's active, or if it's the last step when completed

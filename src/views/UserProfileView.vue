@@ -243,126 +243,125 @@
       </div>
     </div>
     <div v-if="userDetails?.role !== 'user'" class="max-w-6xl mx-auto p-6">
-  <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-    {{ $t("profile.my_properties") }}
-  </h2>
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+        {{ $t("profile.my_properties") }}
+      </h2>
 
-  <p v-if="loading" class="text-gray-600 dark:text-gray-300">
-    {{ $t("profile.loading_properties") }}
-  </p>
+      <p v-if="loading" class="text-gray-600 dark:text-gray-300">
+        {{ $t("profile.loading_properties") }}
+      </p>
 
-  <p
-    v-else-if="allProperties && allProperties.length === 0"
-    class="text-gray-600 dark:text-gray-300"
-  >
-    {{ $t("profile.no_properties") }}
-  </p>
+      <p
+        v-else-if="allProperties && allProperties.length === 0"
+        class="text-gray-600 dark:text-gray-300"
+      >
+        {{ $t("profile.no_properties") }}
+      </p>
 
-  <div
-    v-else-if="allProperties && allProperties.length > 0"
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-  >
-    <div
-      v-for="property in allProperties"
-      :key="property.id"
-      class="bg-white dark:bg-[#1F2937] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-    >
-      <div class="relative">
-        <img
-          v-if="property.images?.length"
-          :src="property.images[0]"
-          alt="Property Image"
-          class="w-full h-48 object-cover"
-          loading="lazy"
-        />
+      <div
+        v-else-if="allProperties && allProperties.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
         <div
-          v-else
-          class="w-full h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
+          v-for="property in allProperties"
+          :key="property.id"
+          class="bg-white dark:bg-[#1F2937] shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
         >
-          <i
-            class="bi bi-building text-4xl text-gray-500 dark:text-gray-400"
-          ></i>
-        </div>
-        <div class="absolute top-2 right-2">
-          <span
-            :class="[
-              'text-xs font-bold px-2 py-1 rounded-full shadow',
-              property.status === 'approved'
-                ? 'bg-green-500 text-white'
-                : property.status === 'pending'
-                ? 'bg-yellow-500 text-white'
-                : property.status === 'completed'
-                ? 'bg-blue-500 text-white'
-                : 'bg-red-500 text-white',
-            ]"
-          >
-            {{ $t(`profile.property_status.${property.status}`) }}
-          </span>
+          <div class="relative">
+            <img
+              v-if="property.images?.length"
+              :src="property.images[0]"
+              alt="Property Image"
+              class="w-full h-48 object-cover"
+              loading="lazy"
+            />
+            <div
+              v-else
+              class="w-full h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
+            >
+              <i
+                class="bi bi-building text-4xl text-gray-500 dark:text-gray-400"
+              ></i>
+            </div>
+            <div class="absolute top-2 right-2">
+              <span
+                :class="[
+                  'text-xs font-bold px-2 py-1 rounded-full shadow',
+                  property.status === 'approved'
+                    ? 'bg-green-500 text-white'
+                    : property.status === 'pending'
+                    ? 'bg-yellow-500 text-white'
+                    : property.status === 'completed'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-red-500 text-white',
+                ]"
+              >
+                {{ $t(`profile.property_status.${property.status}`) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="p-4">
+            <h4
+              class="text-xl font-bold text-gray-800 dark:text-white truncate capitalize text-center mb-4"
+            >
+              {{ property.title }}
+            </h4>
+
+            <div
+              class="flex items-center text-gray-600 dark:text-gray-300 mb-2"
+            >
+              <i class="bi bi-geo-alt mr-1"></i>
+              <span class="truncate"
+                >{{ getCityName(property) }},
+                {{ getGovernorateName(property) }}</span
+              >
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-3 ml-1">
+              <div class="flex items-center">
+                <span class="font-semibold dark:text-white"
+                  >{{ formattedPrice(property.price) }}
+                  {{ $t("profile.currency") }}</span
+                >
+              </div>
+              <div class="flex items-center text-gray-600 dark:text-gray-300">
+                <i
+                  class="bi bi-door-open mr-1 text-blue-500 dark:text-[#3D8BFF]"
+                ></i>
+                <span>
+                  {{
+                    property.rooms > 1
+                      ? property.rooms + " " + $t("profile.select_rooms")
+                      : $t("profile.select_room")
+                  }}</span
+                >
+              </div>
+            </div>
+
+            <div
+              v-if="property.isPaid"
+              class="flex flex-wrap gap-2 border-t dark:border-gray-700 pt-3 mt-2"
+            >
+              <span
+                v-if="property.isPaid"
+                class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center"
+              >
+                <i class="bi bi-check-circle-fill mr-1"></i>
+                {{ $t("profile.paid") }}
+              </span>
+            </div>
+
+            <button
+              v-if="!property.isPaid && property.status === 'approved'"
+              @click="goToPaymentPage(property)"
+              class="mt-3 w-full bg-blue-600 dark:bg-[#3D8BFF] hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+            >
+              <i class="bi bi-credit-card mr-2"></i> {{ $t("profile.pay_now") }}
+            </button>
+          </div>
         </div>
       </div>
-
-      <div class="p-4">
-        <h4
-          class="text-xl font-bold text-gray-800 dark:text-white truncate capitalize text-center mb-4"
-        >
-          {{ property.title }}
-        </h4>
-
-        <div
-          class="flex items-center text-gray-600 dark:text-gray-300 mb-2"
-        >
-          <i class="bi bi-geo-alt mr-1"></i>
-          <span class="truncate"
-            >{{ getCityName(property) }},
-            {{ getGovernorateName(property) }}</span
-          >
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-3 ml-1">
-          <div class="flex items-center">
-            <span class="font-semibold dark:text-white"
-              >{{ formattedPrice(property.price) }}
-              {{ $t("profile.currency") }}</span
-            >
-          </div>
-          <div class="flex items-center text-gray-600 dark:text-gray-300">
-            <i
-              class="bi bi-door-open mr-1 text-blue-500 dark:text-[#3D8BFF]"
-            ></i>
-            <span>
-              {{
-                property.rooms.length > 1
-                  ? property.rooms + " " + $t("profile.select_rooms")
-                  : $t("profile.select_room")
-              }}</span
-            >
-          </div>
-        </div>
-
-        <div
-          v-if="property.isPaid"
-          class="flex flex-wrap gap-2 border-t dark:border-gray-700 pt-3 mt-2"
-        >
-          <span
-            v-if="property.isPaid"
-            class="text-xs font-medium px-2 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center"
-          >
-            <i class="bi bi-check-circle-fill mr-1"></i>
-            {{ $t("profile.paid") }}
-          </span>
-        </div>
-
-        <button
-          v-if="!property.isPaid && property.status === 'approved'"
-          @click="goToPaymentPage(property)"
-          class="mt-3 w-full bg-blue-600 dark:bg-[#3D8BFF] hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-        >
-          <i class="bi bi-credit-card mr-2"></i> {{ $t("profile.pay_now") }}
-        </button>
-      </div>
-    </div>
-  </div>
-
     </div>
   </main>
 </template>
@@ -573,12 +572,12 @@ export default {
     },
     formattedPrice(price) {
       if (typeof price !== "number" && isNaN(Number(price))) {
-        return price; 
+        return price;
       }
       const locale = this.$i18n.locale === "ar" ? "ar-EG" : "en-US";
       return new Intl.NumberFormat(locale, {
         minimumFractionDigits: 0,
-        maximumFractionDigits: 2, 
+        maximumFractionDigits: 2,
       }).format(price);
     },
     getCityName(property) {
