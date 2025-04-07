@@ -107,7 +107,7 @@
 
 <script>
 import { toast } from "vue3-toastify";
-import apiClient from "@/services/api";
+import api from "@/services/api";
 import "leaflet/dist/leaflet.css";
 import { initializeMapWithPopup } from "@/services/mapService";
 
@@ -146,7 +146,7 @@ export default {
       };
 
       try {
-        const response = await apiClient.post("/contact", templateParams);
+        const response = await api.post("/send-email", templateParams);
         console.log("API Response:", response.data);
 
         this.formSubmitted = true;

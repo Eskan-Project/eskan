@@ -58,26 +58,26 @@ app.post("/create-payment-intent", async (req, res) => {
   }
 });
 app.post("/send-email", async (req, res) => {
-  const { name, email, phone, contactMethod, message } = req.body;
+  const { name, email, phone, message } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: process.env.ESKAN_EMAIL,
-      pass: process.env.ESKAN_PASSWORD,
+      user: "eskan3040@gmail.com",
+      pass: "nhbtdpgwsodeipcd",
     },
   });
 
   const mailOptions = {
-    from: process.env.ESKAN_EMAIL,
-    to: process.env.ESKAN_EMAIL,
+    from: email,
+    to: "eskan3040@gmail.com",
     subject: `New Contact Message from ${name}`,
     text: `You have received a new message from:
       
       Name: ${name}
       Email: ${email}
       Phone: ${phone}
-      Preferred Contact Method: ${contactMethod}
+  
       
       Message:
       ${message}`,
