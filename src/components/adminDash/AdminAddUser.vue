@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import emailjs from "emailjs-com";
+import axios from "axios";
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -129,7 +129,7 @@ import {
 import { auth, db } from "@/config/firebase";
 import { app } from "@/config/firebase";
 import Swal from "sweetalert2";
-emailjs.init("aQTbmvnAXB72PTixL");
+
 export default {
   data() {
     return {
@@ -221,31 +221,21 @@ export default {
 
         // Create user document using admin's auth context
         await setDoc(doc(db, "users", userCredential.user.uid), userData);
-        const templateParams = {
-          to_email: this.formData.email,
+        const emailData = {
           to_name: this.formData.name,
           user_email: this.formData.email,
           user_password: this.password,
-          user_role: "User", // Capitalize first letter
-          message: `Your account has been created as an user . Please use the credentials below to log in.`,
+          user_role: "user",
+          message: `Your account has been created as a user You can now login to our platform.`,
         };
-        try {
-          const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
 
-          const response = await emailjs.send(
-            "service_itsyzca",
-            import.meta.env.VITE_EMAILJS_TEMPLATE_ID5,
-            templateParams
-          );
+        const response = await axios.post(
+          "http://localhost:3001/send-welcome-email",
+          emailData
+        );
 
-          console.log("Email sent successfully:", response);
-
-          if (response.status !== 200) {
-            throw new Error("Failed to send welcome email");
-          }
-        } catch (emailError) {
-          console.error("EmailJS error:", emailError);
-          throw new Error("Failed to send welcome email: " + emailError.text);
+        if (response.status !== 200) {
+          throw new Error("Failed to send create email");
         }
         await Swal.fire({
           title: "Success",

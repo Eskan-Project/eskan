@@ -178,7 +178,8 @@
 </template>
 
 <script>
-import emailjs from "emailjs-com";
+// Remove emailjs import
+import axios from "axios"; // Add axios import if not already present
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -202,8 +203,7 @@ import {
 import { auth, db } from "@/config/firebase";
 import { app } from "@/config/firebase";
 import Swal from "sweetalert2";
-// Initialize EmailJS
-emailjs.init("aQTbmvnAXB72PTixL");
+// Remove emailjs.init
 
 export default {
   data() {
@@ -326,33 +326,24 @@ export default {
         const userRef = doc(db, "owners", newUserUid);
         await setDoc(userRef, userData);
 
-        const templateParams = {
-          to_email: this.formData.email,
+        // Replace EmailJS with server API call
+        const emailData = {
           to_name: this.formData.name,
           user_email: this.formData.email,
           user_password: this.password,
-          user_role: "Owner", // Capitalize first letter
-          message: `Your account has been created as an Owner . Please use the credentials below to log in.`,
+          user_role: "Property Owner",
+          message: `Your account has been created as a Property Owner. You can now list your properties on our platform.`,
         };
 
-        try {
-          const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID2;
-          console.log(serviceID);
-          const response = await emailjs.send(
-            "service_itsyzca",
-            import.meta.env.VITE_EMAILJS_TEMPLATE_ID5,
-            templateParams
-          );
+        const response = await axios.post(
+          "http://localhost:3001/send-welcome-email",
+          emailData
+        );
 
-          console.log("Email sent successfully:", response);
-
-          if (response.status !== 200) {
-            throw new Error("Failed to send welcome email");
-          }
-        } catch (emailError) {
-          console.error("EmailJS error:", emailError);
-          throw new Error("Failed to send welcome email: " + emailError.text);
+        if (response.status !== 200) {
+          throw new Error("Failed to send create email");
         }
+
         await Swal.fire({
           title: "Success",
           text: "Owner created successfully. Password Sent to Owner Email.",
