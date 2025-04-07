@@ -23,19 +23,20 @@
        </div>
  
        <div class="text-left order-2 md:order-1" >
-         <h1
-           class="text-2xl sm:text-3xl md:text-2xl lg:text-4xl xl:text-5xl font-extrabold leading-tight text-white dark:text-gray-200 drop-shadow-[0_5px_10px_rgba(0,0,0,0.5)] dark:drop-shadow-[0_5px_10px_rgba(0,0,55,0.5)]"
-           :class="{ 'text-right': isRTL, 'text-left': !isRTL }"
-         >
-           {{ $t('home.hero.title') }} <br />
-         </h1>
- 
-         <p
-           class="mt-3 md:max-w-lg text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
-           :class="{ 'text-right': isRTL, 'text-left': !isRTL }"
-         >
-           {{ $t('home.hero.description') }}
-         </p>
+        <h1
+  class="text-2xl sm:text-3xl md:text-2xl lg:text-4xl xl:text-5xl font-extrabold leading-tight text-white dark:text-gray-200 drop-shadow-[0_5px_10px_rgba(0,0,0,0.5)] dark:drop-shadow-[0_5px_10px_rgba(0,0,55,0.5)] text-center md:text-left"
+  :class="{ 'md:text-right': isRTL, 'md:text-left': !isRTL }"
+>
+  {{ $t('home.hero.title') }} <br />
+</h1>
+
+<p
+  class="mt-3 md:max-w-lg text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] text-center md:text-left"
+  :class="{ 'md:text-right': isRTL, 'md:text-left': !isRTL }"
+>
+  {{ $t('home.hero.description') }}
+</p>
+
  
          <div class="mt-5 flex justify-center md:justify-start">
            <button
