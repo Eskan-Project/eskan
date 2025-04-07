@@ -10,7 +10,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
   async getRequests({ commit }) {

@@ -126,13 +126,13 @@ export default {
       return this.windowWidth <= 1225;
     },
     members() {
-      return (this.users?.length || 0) + (this.owners?.length || 0);
+      return this.usersCount + this.ownersCount;
     },
     usersCount() {
       return this.users?.length || 0;
     },
     ownersCount() {
-      return this.owners?.length || 0;
+      return this.owners?.filter((owner) => owner.role === "owner").length || 0;
     },
     growthPercentage() {
       return Math.min(

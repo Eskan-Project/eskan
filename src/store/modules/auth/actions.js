@@ -89,7 +89,7 @@ export default {
       commit("stopLoading", null, { root: true });
     }
   },
-  async loginWithGoogle({ commit }, intendedRole) {
+  async loginWithGoogle({ commit, dispatch }, intendedRole) {
     commit("setError", null);
     commit("startLoading", null, { root: true });
 
@@ -129,6 +129,17 @@ export default {
         };
         await storeUserInCollection(user.uid, userDetails);
         commit("setUser", userDetails);
+
+        // Add notification after successful registration with Google
+        dispatch(
+          "notifications/addNotification",
+          {
+            message: `Welcome ${user.displayName}! You have 3 free property views.`,
+            type: "success",
+          },
+          { root: true }
+        );
+
         router.push("/");
       } else if (!existingRole) {
         return router.push({
@@ -183,7 +194,7 @@ export default {
     }
   },
   async register(
-    { commit, state },
+    { commit, state, dispatch },
     { name, email, password, role, idImage, turnstileToken }
   ) {
     commit("startLoading");
@@ -209,10 +220,23 @@ export default {
 
       await storeUserInCollection(user.uid, userDetails);
       commit("setUser", userDetails);
+
+      const message = `Welcome ${name}! You have 3 free property views.`;
+
+      // Add notification after successful registration
+      dispatch(
+        "notifications/addNotification",
+        {
+          message,
+          type: "success",
+        },
+        { root: true }
+      );
+
       router.push("/");
       return {
         success: true,
-        message: `Welcome ${name}! You have 3 free property views.`,
+        message,
       };
     } catch (error) {
       commit("setError", error.message);
