@@ -463,7 +463,7 @@ export default {
   data() {
     return {
       loading: true,
-      propertyId: this.$route.params.id,
+      title: this.$route.params.title,
       contractImage: null,
       contractError: null,
       formErrors: {},
@@ -508,7 +508,7 @@ export default {
 
   async created() {
     try {
-      await this.getProperty(this.propertyId);
+      await this.getProperty(this.title);
       this.propertyData = { ...this.property };
 
       // Set contract image if available
@@ -598,7 +598,7 @@ export default {
         const cleanedData = { ...this.propertyData };
 
         await this.updateProperty({
-          propertyId: this.propertyId,
+          title: this.title,
           updatedData: cleanedData,
           files: this.newImages,
         });
@@ -609,7 +609,7 @@ export default {
           "success"
         );
 
-        this.$router.push(`/admin/properties/${this.propertyId}`);
+        this.$router.push(`/admin/properties/${this.title}`);
       } catch (error) {
         console.error("Error updating property:", error);
         Swal.fire(

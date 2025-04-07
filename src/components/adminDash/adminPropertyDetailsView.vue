@@ -289,7 +289,7 @@ export default {
   components: { PropertyDetails },
   data() {
     return {
-      id: null,
+      title: null,
       currentImageIndex: 0,
       userLocation: null,
       distance: null,
@@ -325,10 +325,10 @@ export default {
   },
   mounted() {
     // Safely get the ID from route params
-    this.id = this.$route?.params?.id;
+    this.title = this.$route?.params?.title;
 
-    if (!this.id) {
-      this.error = "Property ID is missing";
+    if (!this.title) {
+      this.error = "Property title is missing";
       this.loading = false;
       return;
     }
@@ -345,10 +345,10 @@ export default {
 
   // Use watch to handle route changes
   watch: {
-    "$route.params.id": {
-      handler(newId) {
-        if (newId && newId !== this.id) {
-          this.id = newId;
+    "$route.params.title": {
+      handler(newTitle) {
+        if (newTitle && newTitle !== this.title) {
+          this.title = newTitle;
           this.loadData();
         }
       },
@@ -387,7 +387,7 @@ export default {
         if (!result.isConfirmed) return;
 
         this.loading = true;
-        await this.deleteProperty(this.id);
+        await this.deleteProperty(this.title);
 
         await Swal.fire(
           "Deleted!",
@@ -529,7 +529,7 @@ export default {
 
       try {
         this.error = null;
-        await this.getProperty(this.id);
+        await this.getProperty(this.title);
 
         if (!this.property) {
           throw new Error("Property not found");

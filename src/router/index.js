@@ -161,12 +161,12 @@ const routes = [
         component: AdminPropertiesList,
       },
       {
-        path: "properties/:id",
+        path: "properties/:title",
         name: "adminPropertyDetails",
         component: adminPropertyDetails,
       },
       {
-        path: "properties/edit/:id",
+        path: "properties/edit/:title",
         name: "adminEditPropertyDetails",
         component: AdminEditPropertyDetails,
       },
