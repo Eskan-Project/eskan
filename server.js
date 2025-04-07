@@ -4,11 +4,38 @@ import stripePackage from "stripe";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import axios from "axios";
+import admin from "firebase-admin"; // Add this import
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+import fs from "fs";
+import path from "path";
+
 dotenv.config();
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// Initialize Firebase Admin SDK using environment variables
+// Resolve directory path
+const __dirname = path.dirname(
+  path.resolve(
+    decodeURIComponent(new URL(import.meta.url).pathname).substring(1)
+  )
+);
+
+// Load the service account JSON file
+const serviceAccount = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "serviceAccountKey.json"), "utf8")
+);
+
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 app.post("/create-payment-intent", async (req, res) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -52,7 +79,6 @@ app.post("/send-email", async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Email sent successfully!" });
   } catch (error) {
-    console.error("Error sending email:", error);
     res.status(500).json({ error: "Failed to send email." });
   }
 });
@@ -87,7 +113,6 @@ app.post("/verify-turnstile", async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Turnstile verification error:", error);
     return res.status(500).json({ error: "Failed to verify Turnstile token" });
   }
 });
@@ -132,7 +157,6 @@ app.post("/send-rejection-email", async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Rejection email sent successfully!" });
   } catch (error) {
-    console.error("Error sending rejection email:", error);
     res.status(500).json({ error: "Failed to send rejection email." });
   }
 });
@@ -173,10 +197,48 @@ app.post("/send-welcome-email", async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Welcome email sent successfully!" });
   } catch (error) {
-    console.error("Error sending welcome email:", error);
     res.status(500).json({ error: "Failed to send welcome email." });
   }
 });
+// Add new endpoint for deleting users from Firebase Auth
+app.post("/delete-auth-user", async (req, res) => {
+  try {
+    const { uid } = req.body;
+
+    if (!uid) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    try {
+      // First check if the user exists
+      const userRecord = await admin.auth().getUser(uid);
+    } catch (userError) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found in Firebase Authentication",
+      });
+    }
+
+    // If we get here, the user exists, so try to delete
+    await admin.auth().deleteUser(uid);
+
+    res.status(200).json({
+      success: true,
+      message: "User authentication deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to delete user authentication",
+      code: error.code || "unknown",
+      details: error.toString(),
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

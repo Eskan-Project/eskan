@@ -10,6 +10,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import axios from "axios";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
@@ -82,6 +83,18 @@ export default {
   async deleteOwner({ commit }, uid) {
     commit("startLoading", null, { root: true });
     try {
+      // First delete from Firebase Auth via our backend endpoint
+      const response1 = await axios.post(
+        "http://localhost:3001/delete-auth-user",
+        {
+          uid: uid,
+        }
+      );
+      if (response1.status !== 200) {
+        throw new Error("Failed to delete Owner");
+      }
+
+      // Then delete from Firestore
       await deleteDoc(doc(db, "owners", uid));
       commit("resetOwnerInfo");
       return true;
