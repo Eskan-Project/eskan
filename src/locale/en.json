@@ -51,16 +51,16 @@
   },
   "home": {
     "hero": {
-    "title": "Explore More Suitable Property",
-    "description": "Find your dream property with ease and comfort. Overcome all obstacles in finding your perfect home.",
-    "find_home_button": "Get Started",
-    "premium_product_count": "2500+",
-    "premium_product_label": "Premium Product",
-    "happy_customers_count": "5200+",
-    "happy_customers_label": "Happy Customers",
-    "award_winning_count": "370+",
-    "award_winning_label": "Award Winning"
-  },
+      "title": "Explore More Suitable Property",
+      "description": "Find your dream property with ease and comfort. Overcome all obstacles in finding your perfect home.",
+      "find_home_button": "Get Started",
+      "premium_product_count": "2500+",
+      "premium_product_label": "Premium Product",
+      "happy_customers_count": "5200+",
+      "happy_customers_label": "Happy Customers",
+      "award_winning_count": "370+",
+      "award_winning_label": "Award Winning"
+    },
     "features": {
       "section_title": "Find Everything You Need in One Place",
       "verified": {
@@ -175,11 +175,11 @@
     "sending": "Sending...",
     "success": "Message sent successfully!",
     "error": "Failed to send message. Please try again later.",
-  
+
     "success_message": "your message has been sent successfully",
-  
+
     "error_message": "Failed to send message. Please try again later.",
-    "location_message":"We are here"
+    "location_message": "We are here"
   },
   "createProperty": {
     "progress": {
@@ -494,10 +494,11 @@
     "success": "Payment Successful!",
     "thank_you": "Thank you for your payment. Enjoy exclusive access!",
     "confirm_payment": "Confirm Payment",
-    "fee_description": "A fee will be charged to view the owner's contact details.",
+    "details_fee_description": "A 100 EGP fee will be charged to view the owner's contact details.",
+    "create_property_fee_description": "A 100 EGP fee will be charged to create a property.",
     "payment_method": "Payment Method",
     "processing": "Processing...",
-    "pay_button": "Pay {fee} Now",
+    "pay_button": "Pay 100 EGP Now",
     "secure_payment": "Secure payment powered by Stripe"
   }
 }

@@ -51,16 +51,16 @@
   },
   "home": {
     "hero": {
-    "title": "اعثر على المزيد من العقارات المناسبة",
-    "description": "ابحث عن عقار أحلامك بسهولة وراحة. تغلب على جميع العقبات في العثور على منزلك المثالي.",
-    "find_home_button": "ابدأ الآن",
-    "premium_product_count": "٢٥٠٠+",
-    "premium_product_label": "منتج مميز",
-    "happy_customers_count": "٥٢٠٠+",
-    "happy_customers_label": "عملاء سعداء",
-    "award_winning_count": "٣٧٠+",
-    "award_winning_label": "حائز على جوائز"
-  },
+      "title": "اعثر على المزيد من العقارات المناسبة",
+      "description": "ابحث عن عقار أحلامك بسهولة وراحة. تغلب على جميع العقبات في العثور على منزلك المثالي.",
+      "find_home_button": "ابدأ الآن",
+      "premium_product_count": "٢٥٠٠+",
+      "premium_product_label": "منتج مميز",
+      "happy_customers_count": "٥٢٠٠+",
+      "happy_customers_label": "عملاء سعداء",
+      "award_winning_count": "٣٧٠+",
+      "award_winning_label": "حائز على جوائز"
+    },
     "features": {
       "section_title": "اعثر على كل ما تحتاجه في مكان واحد",
       "verified": {
@@ -179,7 +179,7 @@
     "success_message": "تم إرسال الرسالة بنجاح!",
 
     "error_message": "Failed to send message. Please try again later.",
-    "location_message":"نحن هنا"
+    "location_message": "نحن هنا"
   },
   "createProperty": {
     "progress": {
@@ -491,10 +491,11 @@
     "success": "تمت عملية الدفع بنجاح!",
     "thank_you": "شكراً لك على الدفع. استمتع بالوصول الحصري!",
     "confirm_payment": "تأكيد الدفع",
-    "fee_description": "سيتم فرض رسوم  لعرض بيانات التواصل للمالك.",
+    "details_fee_description": "سيتم فرض رسوم قدرها 100 جنيه لعرض بيانات التواصل للمالك.",
+    "create_property_fee_description": "سيتم فرض رسوم قدرها 100 جنيه لإنشاء عقار.",
     "payment_method": "طريقة الدفع",
     "processing": "جاري المعالجة...",
-    "pay_button": "ادفع {fee} الآن",
+    "pay_button": "ادفع 100 جنيه الآن",
     "secure_payment": "دفع آمن بواسطة Stripe"
   }
 }

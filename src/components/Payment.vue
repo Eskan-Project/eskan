@@ -83,7 +83,7 @@
           </h2>
           <h4></h4>
           <p class="text-lg text-gray-700 mb-6 text-center">
-            {{ $t("payment.fee_description", { fee: "200EGP" }) }}
+            {{ $t("payment.details_fee_description") }}
           </p>
 
           <div class="space-y-6">
@@ -124,9 +124,7 @@
                 ></path>
               </svg>
               {{
-                loading
-                  ? $t("payment.processing")
-                  : $t("payment.pay_button", { fee: "$50" })
+                loading ? $t("payment.processing") : $t("payment.pay_button")
               }}
             </button>
 
@@ -251,7 +249,7 @@ export default {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              amount: this.property.price, // Use property price
+              amount: 100, // Use property price
               propertyId: this.property.id,
             }),
           }
