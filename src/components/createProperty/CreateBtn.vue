@@ -34,61 +34,83 @@ export default {
     async nextStep() {
       this.startLoading();
       try {
-        let storedStep = localStorage.getItem("activeStep");
+        let storedStep = parseInt(localStorage.getItem("activeStep")) || 0;
 
         if (this.name === "propertyPreview") {
-          this.$emit("validateAndProceed", (valid) => {
-            if (valid) {
-              storedStep++;
-              localStorage.setItem("activeStep", storedStep);
-              this.$router.push({ name: this.name }).then(() => {
-                this.stopLoading();
-              });
-            } else {
-              this.stopLoading();
-            }
-          });
+          await this.handlePropertyPreview(storedStep);
         } else if (this.name === "propertyContact") {
-          storedStep++;
-          localStorage.setItem("activeStep", storedStep);
-          await this.$router.push({ name: this.name });
-          this.stopLoading();
+          await this.handlePropertyContact(storedStep);
         } else if (this.name === "completed") {
-          const parentComponent = this.$parent;
-
-          if (
-            parentComponent &&
-            typeof parentComponent.validateBeforeSubmit === "function"
-          ) {
-            const isValid = parentComponent.validateBeforeSubmit();
-            if (!isValid) {
-              this.stopLoading();
-              return;
-            }
-          }
-
-          storedStep++;
-          localStorage.setItem("activeStep", storedStep);
-          const localImages = JSON.parse(localStorage.getItem("localImages"));
-          const propertyDetails = localStorage.getItem("propertyDetails");
-          this.updateProperty(JSON.parse(propertyDetails));
-          await this.createProperty(localImages);
-          await this.$router.push({ name: "completed" });
-          this.stopLoading();
+          await this.handleCompleted(storedStep);
         } else {
           await this.$router.push({ name: this.name });
-          setTimeout(() => {
-            localStorage.removeItem("localImages");
-            localStorage.removeItem("propertyDetails");
-            localStorage.removeItem("activeStep");
-            localStorage.removeItem("maxSteps");
-          }, 0);
-          this.stopLoading();
         }
       } catch (error) {
         console.error("Error in nextStep:", error);
+      } finally {
         this.stopLoading();
       }
+    },
+
+    async handlePropertyPreview(storedStep) {
+      return new Promise((resolve) => {
+        this.$emit("validateAndProceed", (valid) => {
+          if (valid) {
+            storedStep++;
+            localStorage.setItem("activeStep", storedStep);
+            this.$router.push({ name: this.name }).then(resolve);
+          } else {
+            resolve();
+          }
+        });
+      });
+    },
+
+    async handlePropertyContact(storedStep) {
+      storedStep++;
+      localStorage.setItem("activeStep", storedStep);
+      await this.$router.push({ name: this.name });
+    },
+
+    async handleCompleted(storedStep) {
+      const parentComponent = this.$parent;
+
+      // Validate before submission
+      if (
+        parentComponent &&
+        typeof parentComponent.validateBeforeSubmit === "function"
+      ) {
+        const isValid = parentComponent.validateBeforeSubmit();
+        if (!isValid) {
+          return;
+        }
+      }
+
+      // Increment step and prepare data
+      storedStep++;
+      localStorage.setItem("activeStep", storedStep);
+      const localImages = JSON.parse(
+        localStorage.getItem("localImages") || "[]"
+      );
+      const propertyDetails = JSON.parse(
+        localStorage.getItem("propertyDetails") || "{}"
+      );
+      this.updateProperty(propertyDetails);
+
+      // Submit property and clean up
+      await this.createProperty(localImages);
+      await this.$router.push({ name: "completed" });
+      this.clearLocalStorage();
+    },
+
+    clearLocalStorage() {
+      localStorage.removeItem("localImages");
+      localStorage.removeItem("propertyDetails");
+      localStorage.removeItem("activeStep");
+      localStorage.removeItem("maxSteps");
+      localStorage.removeItem("isCompleted");
+      // Clear property details in Vuex store
+      this.updateProperty({});
     },
   },
 };
