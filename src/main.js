@@ -8,7 +8,8 @@ import "leaflet/dist/leaflet.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import En from "./locale/en.json";
 import Ar from "./locale/ar.json";
-
+import Vue3Toastify from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 import store from "./store";
 
 const app = createApp(App);
@@ -24,6 +25,7 @@ const i18n = createI18n({
 app.use(i18n);
 app.use(router);
 app.use(store);
+app.use(Vue3Toastify);
 store.dispatch("auth/checkAuth").then(() => {
   app.mount("#app");
 });

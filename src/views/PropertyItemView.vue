@@ -491,7 +491,6 @@
 </template>
 
 <script>
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropertyDetails from "../components/PropertyDetails.vue";
 import { mapActions, mapState } from "vuex";
@@ -500,6 +499,7 @@ import cities from "@/assets/data/cities.json";
 import "vue3-toastify/dist/index.css";
 import { toast } from "vue3-toastify";
 import Swal from "sweetalert2";
+import { initializePropertyMap, geocodeLocation } from "@/services/mapService";
 
 // Utility function for debouncing
 function debounce(fn, delay) {
@@ -1048,7 +1048,7 @@ export default {
         ({ latitude: lat, longitude: lng } = this.property.coordinates);
       } else {
         try {
-          const coords = await this.geocodeLocation(this.locationText);
+          const coords = await geocodeLocation(this.locationText);
           if (coords && coords.lat && coords.lon) {
             lat = coords.lat;
             lng = coords.lon;
@@ -1077,35 +1077,15 @@ export default {
           this.mapInstance = null;
         }
 
-        // Create map with optimization options
-        this.mapInstance = L.map("map", {
-          scrollWheelZoom: false,
-          fadeAnimation: false, // Disable fade animations for better performance
-          zoomAnimation: false, // Disable zoom animations for better performance
-          markerZoomAnimation: false, // Disable marker animations
-        }).setView(
-          [lat, lng],
-          this.property?.coordinates ? 13 : 10 // Zoom level based on source
+        const { map, marker } = initializePropertyMap(
+          "map",
+          { lat, lng },
+          this.property?.title || "Unknown Property",
+          this.locationText,
+          "red"
         );
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "© OpenStreetMap contributors",
-        }).addTo(this.mapInstance);
-
-        const marker = L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(this.mapInstance)
-          .bindPopup(
-            `<b>${this.property?.title || "Unknown Property"}</b><br>${
-              this.locationText
-            }`
-          );
-
-        // Add pulse animation to the marker
-        if (marker._icon) {
-          marker._icon.classList.add("map-marker-pulse");
-        }
-
-        marker.openPopup();
+        this.mapInstance = map;
 
         // Apply current theme styling
         this.updateMapStyling();
@@ -1115,41 +1095,13 @@ export default {
         this.mapLoading = false;
       }
     },
-    async geocodeLocation(locationText) {
-      // Check if result is already in cache
-      if (this.geocodeCache[locationText]) {
-        console.log("Using cached geocode result for:", locationText);
-        return this.geocodeCache[locationText];
-      }
-
-      console.log("Geocoding location:", locationText);
-      const locationParts = locationText.split("-");
-      const filteredLocation = locationParts.slice(0, 2).join(" ");
-      const query = encodeURIComponent(filteredLocation);
-
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
-        );
-        const data = await response.json();
-        const result = data.length > 0 ? data[0] : null;
-
-        // Cache the result
-        this.geocodeCache[locationText] = result;
-
-        return result;
-      } catch (error) {
-        console.error("Geocoding fetch error:", error);
-        return null;
-      }
-    },
     getCustomIcon(color) {
-      return L.icon({
-        iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
+      // This method is no longer needed as it's handled in mapService
+      // But keeping stub for compatibility
+      console.warn(
+        "getCustomIcon is deprecated, use mapService.getCustomIcon instead"
+      );
+      return {};
     },
     formatDate(timestamp) {
       let date;

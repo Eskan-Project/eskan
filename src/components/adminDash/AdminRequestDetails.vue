@@ -483,13 +483,14 @@
 </template>
 
 <script>
-import L from "leaflet";
 import Swal from "sweetalert2";
 import { mapActions, mapState } from "vuex";
 import emailjs from "emailjs-com";
 import { createEvent } from "ics";
 import { nextTick } from "vue";
 import RejectEmail from "./RejectEmail.vue";
+import "leaflet/dist/leaflet.css";
+import { initializePropertyMap } from "@/services/mapService";
 
 // Initialize EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_USER_ID);
@@ -948,21 +949,16 @@ export default {
 
         const { lat, lng } = this.request.coordinates;
 
-        // Create new map instance
-        this.mapInstance = L.map("map", {
-          scrollWheelZoom: false,
-          zIndex: 1, // Set lower z-index
-        }).setView([lat, lng], 13);
+        // Use the map service instead of direct Leaflet implementation
+        const { map } = initializePropertyMap(
+          "map",
+          { lat, lng },
+          this.request.title || "Property Request",
+          this.locationText,
+          "red"
+        );
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(this.mapInstance);
-
-        L.marker([lat, lng], { icon: this.getCustomIcon("red") })
-          .addTo(this.mapInstance)
-          .bindPopup(`<b>${this.request.title}</b><br>${this.locationText}`)
-          .openPopup();
-
+        this.mapInstance = map;
         this.mapLoaded = true;
       } catch (error) {
         console.error("Map initialization error:", error);
@@ -971,14 +967,12 @@ export default {
       }
     },
 
-    // Method to get Custom Icon
+    // Method to get Custom Icon - No longer needed as it's handled by mapService
     getCustomIcon(color) {
-      return L.icon({
-        iconUrl: `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
+      console.warn(
+        "getCustomIcon is deprecated, use mapService.getCustomIcon instead"
+      );
+      return {};
     },
 
     // Add the missing generateCalendarFile method

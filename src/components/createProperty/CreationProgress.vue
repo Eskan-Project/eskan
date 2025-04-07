@@ -5,9 +5,9 @@
         <span
           @click="toggleActive(index)"
           :class="
-            index <= maxSteps && !isCompleted
+            canToggleStep(index)
               ? 'cursor-pointer'
-              : 'cursor-not-allowed'
+              : 'cursor-not-allowed opacity-50'
           "
         >
           <i
@@ -68,10 +68,9 @@ export default {
   },
   watch: {
     $route: {
-      handler: function (val) {
-        this.loadActiveStep();
-        this.loadMaxSteps();
-        this.updateMaxSteps();
+      handler(val) {
+        this.loadState();
+        this.updateStateBasedOnRoute(val.path);
       },
       immediate: true,
     },
@@ -80,47 +79,73 @@ export default {
     ...mapGetters(["isLoading"]),
   },
   created() {
-    this.loadActiveStep();
-    this.loadMaxSteps();
-    this.updateMaxSteps();
+    this.loadState();
   },
   methods: {
     ...mapActions(["startLoading", "stopLoading"]),
+    canToggleStep(index) {
+      // Allow toggling if not completed and within maxSteps, or if it's the last step
+      return (
+        (!this.isCompleted && index <= this.maxSteps) ||
+        index === this.steps.length - 1
+      );
+    },
+    isStepActiveOrCompleted(index) {
+      // Highlight step if it's active, or if it's the last step when completed
+      return (
+        index <= this.activeStep ||
+        (this.isCompleted && index === this.steps.length - 1)
+      );
+    },
     toggleActive(index) {
-      if (index > this.maxSteps) {
-        return;
+      if (!this.canToggleStep(index)) {
+        return; // Do nothing if step cannot be toggled
       }
-      if (this.maxSteps === 3) {
-        this.isCompleted = true;
-        return;
-      }
+
       this.startLoading();
       this.activeStep = index;
-      this.saveActiveStep();
+
+      // Set isCompleted to true when reaching the last step
+      if (index === this.steps.length - 1) {
+        this.isCompleted = true;
+      }
+
+      this.updateMaxSteps();
+      this.saveState();
       this.$router.push(this.steps[index].path).then(() => {
         this.stopLoading();
       });
     },
-    saveActiveStep() {
-      localStorage.setItem("activeStep", this.activeStep);
-      localStorage.setItem("maxSteps", this.maxSteps);
-    },
-    loadActiveStep() {
-      const storedStep = localStorage.getItem("activeStep");
-      if (storedStep !== null) {
-        this.activeStep = parseInt(storedStep);
-      }
-    },
-    loadMaxSteps() {
-      const storedMaxSteps = localStorage.getItem("maxSteps");
-      if (storedMaxSteps !== null) {
-        this.maxSteps = parseInt(storedMaxSteps);
-      }
-    },
     updateMaxSteps() {
       if (this.activeStep > this.maxSteps) {
         this.maxSteps = this.activeStep;
-        localStorage.setItem("maxSteps", this.maxSteps);
+      }
+    },
+    saveState() {
+      localStorage.setItem("activeStep", this.activeStep);
+      localStorage.setItem("maxSteps", this.maxSteps);
+      localStorage.setItem("isCompleted", this.isCompleted);
+    },
+    loadState() {
+      const storedStep = localStorage.getItem("activeStep");
+      const storedMaxSteps = localStorage.getItem("maxSteps");
+      const storedCompleted = localStorage.getItem("isCompleted");
+
+      this.activeStep = storedStep !== null ? parseInt(storedStep) : 0;
+      this.maxSteps = storedMaxSteps !== null ? parseInt(storedMaxSteps) : 0;
+      this.isCompleted = storedCompleted === "true"; // Convert string to boolean
+    },
+    updateStateBasedOnRoute(currentPath) {
+      const stepIndex = this.steps.findIndex(
+        (step) => step.path === currentPath
+      );
+      if (stepIndex !== -1) {
+        this.activeStep = stepIndex;
+        if (stepIndex === this.steps.length - 1) {
+          this.isCompleted = true;
+        }
+        this.updateMaxSteps();
+        this.saveState();
       }
     },
   },

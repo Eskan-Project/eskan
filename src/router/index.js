@@ -31,7 +31,6 @@ import AdminAddAdmin from "@/components/adminDash/AdminAddAdmin.vue";
 import AdminRequestList from "@/components/adminDash/AdminRequestList.vue";
 import AdminRequestDetails from "@/components/adminDash/AdminRequestDetails.vue";
 import Payment from "@/components/Payment.vue";
-import AdminRequestDetailsVue from "@/components/adminDash/AdminRequestDetails.vue";
 import FaqView from "@/views/FaqView.vue";
 import TurnstileVerificationView from "@/views/TurnstileVerificationView.vue";
 import Overview from "@/components/adminDash/dashboard/Overview.vue";
@@ -55,7 +54,6 @@ const routes = [
       { path: "propertyItem", name: "item", component: PropertyItemView },
       { path: "property/:title", component: PropertyItemView, props: true },
       { path: "payment", name: "payment", component: Payment },
-
       {
         path: "userProfile",
         name: "userProfile",
@@ -99,43 +97,49 @@ const routes = [
       },
     ],
   },
-  // lazily load views when they are needed
+  // Lazily load views when they are needed
   {
     path: "/login",
     name: "login",
     component: () => import("@/views/LoginView.vue"),
+    meta: { authRestricted: true },
   },
   {
     path: "/register",
     name: "register",
     component: () => import("@/views/RegisterView.vue"),
+    meta: { authRestricted: true },
   },
   {
     path: "/register-user",
     name: "registerUser",
     component: () => import("@/views/RegisterUserView.vue"),
+    meta: { authRestricted: true },
   },
   {
     path: "/register-owner",
     name: "registerOwner",
     component: () => import("@/views/RegisterOwnerView.vue"),
+    meta: { authRestricted: true },
   },
   {
     path: "/forget-password",
     name: "forgetPassword",
     component: ForgetPasswordView,
+    meta: { authRestricted: true },
   },
   {
     path: "/reset-password",
     name: "resetPassword",
     component: ResetPasswordView,
+    meta: { authRestricted: true },
   },
   {
     path: "/select-role",
     name: "SelectRole",
     component: SelectRole,
+    meta: { authRestricted: true },
   },
-
   {
     path: "/admin",
     component: AdminDashboardView,
@@ -218,14 +222,6 @@ const routes = [
       },
     ],
   },
-
-  /**
-   ********************************************************************************************
-   ********************************************************************************************
-   ******                         Always leave this as last one                          ******
-   ********************************************************************************************
-   ********************************************************************************************
-   */
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
@@ -284,6 +280,18 @@ async function handleAuthAndRole(to, next) {
   const isAuth = store.getters["auth/isAuth"];
   const role = store.getters["auth/getRole"];
 
+  // Prevent logged-in users from accessing auth-related routes
+  if (isAuth && to.meta.authRestricted) {
+    if (role === "admin") {
+      next({ name: "adminProfile" });
+    } else {
+      next({ name: "Home" });
+    }
+    store.dispatch("stopLoading");
+    return;
+  }
+
+  // Existing auth and role checks
   if (to.meta.requiresAuth && !isAuth) {
     next({ name: "login" });
   } else if (to.meta.requiresAdmin && role !== "admin") {
