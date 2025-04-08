@@ -730,7 +730,7 @@ export default {
           property_address: this.locationText || "Property Location",
           calendar_details: calendarDetails,
         };
-
+console.log(templateParams);
         // Send email through EmailJS
         await emailjs.send(
           import.meta.env.VITE_EMAILJS_SERVICE_ID,
