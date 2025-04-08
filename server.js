@@ -63,14 +63,14 @@ app.post("/send-email", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: "eskan3040@gmail.com",
-      pass: "nhbtdpgwsodeipcd",
+      user: "mariamsamuel122@gmail.com",
+      pass: "hjifexrdpjsufufa",
     },
   });
 
   const mailOptions = {
     from: email,
-    to: "eskan3040@gmail.com",
+    to: "mariamsamuel122@gmail.com",
     subject: `New Contact Message from ${name}`,
     text: `You have received a new message from:
       
@@ -88,6 +88,7 @@ app.post("/send-email", async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Email sent successfully!" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Failed to send email." });
   }
 });
@@ -138,8 +139,8 @@ app.post("/send-rejection-email", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: "eskan3040@gmail.com",
-      pass: "nhbtdpgwsodeipcd",
+      user: "mariamsamuel122@gmail.com",
+      pass: "hjifexrdpjsufufa",
     },
   });
 
@@ -177,8 +178,8 @@ app.post("/send-welcome-email", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: "eskan3040@gmail.com",
-      pass: "nhbtdpgwsodeipcd",
+      user: "mariamsamuel122@gmail.com",
+      pass: "hjifexrdpjsufufa",
     },
   });
 

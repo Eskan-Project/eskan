@@ -330,9 +330,6 @@ export default {
       if (!propertyDoc.exists()) throw new Error("Property not found");
 
       const propertyData = propertyDoc.data();
-      if (propertyData.ownerId !== currentUser.uid) {
-        throw new Error("Unauthorized to pay for this property");
-      }
 
       const paymentId = doc(collection(db, "payments")).id;
       const paymentData = {
